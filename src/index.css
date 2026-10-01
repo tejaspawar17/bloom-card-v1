@@ -1,0 +1,335 @@
+@import "tailwindcss";
+
+@layer base {
+  * {
+    box-sizing: border-box;
+  }
+
+  body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    background-color: #0e0e0e;
+    color: #ffffff;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  ::-webkit-scrollbar {
+    width: 4px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 999px;
+  }
+}
+
+@layer utilities {
+  /* Liquid Glass effect */
+  .glass {
+    background: rgba(14, 14, 14, 0.6);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+  }
+
+  .glass-dark {
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+  }
+
+  .glass-card {
+    background: rgba(20, 20, 20, 0.75);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0px 40px 40px 10px rgba(40, 40, 40, 0.2);
+  }
+
+  .glass-button {
+    background: rgba(14, 14, 14, 0.8);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(166, 166, 166, 0.5);
+    box-shadow: 0px 8px 15px 0px rgba(0, 0, 0, 0.04),
+      inset 0px 40px 30px -40px rgba(230, 230, 230, 1),
+      inset 0px -40px 10px -40px rgba(26, 26, 26, 1);
+    transition: all 0.2s ease;
+  }
+
+  .glass-button:hover {
+    background: rgba(30, 30, 30, 0.9);
+    border-color: rgba(200, 200, 200, 0.6);
+  }
+
+  .glass-button-primary {
+    background: rgba(30, 110, 244, 0.85);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.3),
+      0px 8px 12px 6px rgba(0, 0, 0, 0.15);
+    transition: all 0.2s ease;
+  }
+
+  .glass-button-primary:hover {
+    background: rgba(40, 130, 255, 0.9);
+    box-shadow: 0px 6px 8px 0px rgba(0, 0, 0, 0.4),
+      0px 10px 16px 8px rgba(0, 0, 0, 0.2);
+    transform: translateY(-1px);
+  }
+
+  /* Bloom branding gradient text */
+  .bloom-text {
+    font-family: 'Georgia', 'Times New Roman', serif;
+    font-style: italic;
+    letter-spacing: -0.05em;
+  }
+
+  /* Noise texture overlay */
+  .noise-overlay {
+    position: relative;
+  }
+
+  .noise-overlay::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    opacity: 0.03;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='1'/%3E%3C/svg%3E");
+    pointer-events: none;
+    border-radius: inherit;
+  }
+
+  /* Mood chip */
+  .mood-chip {
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    transition: all 0.2s ease;
+  }
+
+  .mood-chip:hover {
+    background: rgba(255, 255, 255, 0.15);
+    border-color: rgba(255, 255, 255, 0.3);
+    transform: translateY(-2px);
+  }
+
+  .mood-chip.selected {
+    background: rgba(30, 110, 244, 0.3);
+    border-color: rgba(30, 110, 244, 0.8);
+    box-shadow: 0 0 16px rgba(30, 110, 244, 0.3);
+  }
+
+  /* Card flip animation */
+  .card-container {
+    perspective: 1200px;
+  }
+
+  .card-inner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    transition: transform 0.65s cubic-bezier(0.4, 0, 0.2, 1);
+    transform-style: preserve-3d;
+  }
+
+  .card-inner.flipped {
+    transform: rotateY(180deg);
+  }
+
+  .card-front,
+  .card-back {
+    position: absolute;
+    inset: 0;
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+  }
+
+  .card-back {
+    transform: rotateY(180deg);
+  }
+
+  /* Scrim */
+  .scrim {
+    background: rgba(14, 14, 14, 0.8);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+  }
+
+  /* Modal */
+  .modal-enter {
+    animation: modal-in 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  @keyframes modal-in {
+    from {
+      opacity: 0;
+      transform: scale(0.92) translateY(8px);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1) translateY(0);
+    }
+  }
+
+  /* Segmented control */
+  .seg-tab {
+    transition: all 0.2s ease;
+    color: rgba(255, 255, 255, 0.5);
+  }
+
+  .seg-tab.active {
+    background: rgba(255, 255, 255, 0.12);
+    color: rgba(255, 255, 255, 0.9);
+  }
+
+  /* Flower card gradients per mood */
+  .mood-bg-apologetic {
+    background: linear-gradient(
+      135deg,
+      rgba(106, 17, 203, 0.4) 0%,
+      rgba(37, 117, 252, 0.3) 100%
+    );
+  }
+
+  .mood-bg-happy {
+    background: linear-gradient(
+      135deg,
+      rgba(255, 200, 50, 0.4) 0%,
+      rgba(255, 120, 30, 0.3) 100%
+    );
+  }
+
+  .mood-bg-sad {
+    background: linear-gradient(
+      135deg,
+      rgba(30, 80, 180, 0.4) 0%,
+      rgba(60, 130, 200, 0.3) 100%
+    );
+  }
+
+  .mood-bg-angry {
+    background: linear-gradient(
+      135deg,
+      rgba(200, 30, 30, 0.4) 0%,
+      rgba(255, 80, 50, 0.3) 100%
+    );
+  }
+
+  .mood-bg-grateful {
+    background: linear-gradient(
+      135deg,
+      rgba(34, 150, 100, 0.4) 0%,
+      rgba(80, 200, 120, 0.3) 100%
+    );
+  }
+
+  .mood-bg-excited {
+    background: linear-gradient(
+      135deg,
+      rgba(255, 100, 180, 0.4) 0%,
+      rgba(200, 50, 255, 0.3) 100%
+    );
+  }
+
+  .mood-bg-celebratory {
+    background: linear-gradient(
+      135deg,
+      rgba(255, 180, 0, 0.4) 0%,
+      rgba(255, 80, 150, 0.3) 100%
+    );
+  }
+
+  .mood-bg-love {
+    background: linear-gradient(
+      135deg,
+      rgba(220, 30, 80, 0.4) 0%,
+      rgba(255, 100, 130, 0.3) 100%
+    );
+  }
+
+  .mood-bg-birthday {
+    background: linear-gradient(
+      135deg,
+      rgba(255, 150, 0, 0.4) 0%,
+      rgba(255, 50, 150, 0.3) 100%
+    );
+  }
+
+  .mood-bg-friendship {
+    background: linear-gradient(
+      135deg,
+      rgba(0, 180, 200, 0.4) 0%,
+      rgba(0, 120, 255, 0.3) 100%
+    );
+  }
+
+  /* Flower name pill */
+  .flower-pill {
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+  }
+
+  /* Paper card texture */
+  .paper-card {
+    background: #f5f0e8;
+    box-shadow: 1px 1px 2px 0px rgba(0, 0, 0, 0.35);
+  }
+
+  /* Metallic card */
+  .metallic-card {
+    background: linear-gradient(
+      135deg,
+      #d4d4d4 0%,
+      #a8a8a8 25%,
+      #e8e8e8 50%,
+      #c0c0c0 75%,
+      #d4d4d4 100%
+    );
+    box-shadow: 2px 2px 2px 0.5px rgba(0, 0, 0, 0.25);
+  }
+
+  /* Pokemon card */
+  .pokemon-card {
+    background: linear-gradient(
+      135deg,
+      #ffde59 0%,
+      #ff914d 30%,
+      #ff2d55 60%,
+      #5856d6 100%
+    );
+  }
+
+  /* Stamp */
+  .stamp {
+    width: 80px;
+    height: 80px;
+    background: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.5rem;
+    box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.35);
+  }
+
+  /* Window panel */
+  .window-panel {
+    background: rgba(0, 0, 0, 0.4);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0px 4px 20px 0px rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+  }
+}
