@@ -115,7 +115,7 @@ export default function RightPanel({ className = '' }) {
             title="Decorate with Stickers" 
             bodyClassName="pt-[13px] pr-[4px] pb-[15px] pl-[15px] xl:pt-[15px] xl:pr-[4px] xl:pb-[17px] xl:pl-[17px] 2xl:pt-[16px] 2xl:pr-[4px] 2xl:pb-[18px] 2xl:pl-[18px] overflow-hidden"
           >
-            <div ref={stickerContainerRef} className="relative w-full h-[115px] xl:h-[131px] 2xl:h-[144px]">
+            <div ref={stickerContainerRef} className="relative w-full h-[min(115px,calc(100dvh-465px))] xl:h-[min(131px,calc(100dvh-603px))] 2xl:h-[min(144px,calc(100dvh-632px))]">
               <ScrollArea
                 className="h-full w-full"
                 viewportClassName="w-full rounded-[10px] xl:rounded-[11px] 2xl:rounded-[12px] overflow-hidden"
