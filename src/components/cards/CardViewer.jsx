@@ -147,7 +147,7 @@ export default function CardViewer({ onConfirm, onOpenEditTitle, onOpenEditMessa
       </div>
 
       {/* Main Center Stage */}
-      <div className="relative flex items-start justify-center mb-1.5 xl:mb-2 w-[min(280px,calc((100dvh-192px)*688/960))] xl:w-[min(360px,calc((100dvh-252px)*688/960))] 2xl:w-[min(380px,calc((100dvh-252px)*688/960))] mx-auto">
+      <div className="relative flex items-start justify-center mb-1.5 xl:mb-2 w-[min(280px,calc((100dvh-192px)*688/960))] xl:w-[min(360px,calc((100dvh-228px)*688/960))] 2xl:w-[min(380px,calc((100dvh-240px)*688/960))] mx-auto">
         {/* 2. Left Vertical Switcher (type="pill") */}
         <div className={`absolute top-1/2 -translate-y-1/2 right-full mr-[10px] xl:mr-[16px] z-20 flex justify-end transition-opacity duration-300 ${state.cardType === 'pokemon' ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
           <VerticalCardSelector

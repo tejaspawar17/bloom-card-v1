@@ -82,7 +82,7 @@ export default function LeftPanel() {
         title={listTitle}
         bodyClassName="pt-[13px] pr-[4px] pb-[15px] pl-[15px] xl:pt-[15px] xl:pr-[4px] xl:pb-[17px] xl:pl-[17px] 2xl:pt-[16px] 2xl:pr-[4px] 2xl:pb-[18px] 2xl:pl-[18px] overflow-hidden"
       >
-        <div ref={containerRef} className="relative w-full h-[min(186px,calc(100dvh-420px))] xl:h-[min(229px,calc(100dvh-505px))] 2xl:h-[min(246px,calc(100dvh-530px))]">
+        <div ref={containerRef} className="relative w-full h-[min(186px,calc(100dvh-410px))] xl:h-[min(229px,calc(100dvh-482px))] 2xl:h-[min(246px,calc(100dvh-510px))]">
           {isPokemonMode ? (
             /* Pokemon Mode: 5 cards in a static 2-row grid */
             <AnimatePresence mode="wait">
