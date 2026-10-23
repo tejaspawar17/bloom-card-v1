@@ -17,12 +17,12 @@ export default function FigmaWindow({
       )}
       {...rest}
     >
-      {/* Figma #1155:15736 Window Background: 402x646 around 364px panels -> 19px X / 20px Y padding, r=40px, blur=10px */}
-      <div className="absolute -inset-x-[15px] -inset-y-[16px] xl:-inset-x-[17px] xl:-inset-y-[18px] 2xl:-inset-x-[19px] 2xl:-inset-y-[20px] z-0 rounded-[34px] xl:rounded-[38px] 2xl:rounded-[40px] blur-[10px] shadow-[0px_40px_40px_10px_rgba(40,40,40,0.2)] pointer-events-none figma-aura-gradient">
+      {/* Outer Aura Glow around Window Panels */}
+      <div className="absolute -inset-[8px] xl:-inset-[10px] 2xl:-inset-[12px] z-0 rounded-[26px] xl:rounded-[30px] 2xl:rounded-[32px] blur-[9px] shadow-[0px_30px_30px_8px_rgba(40,40,40,0.2)] pointer-events-none figma-aura-gradient">
       </div>
       
       {/* Dark Film Overlay (Figma fill rgba(0, 0, 0, 0.5)) */}
-      <div className="absolute -inset-x-[15px] -inset-y-[16px] xl:-inset-x-[17px] xl:-inset-y-[18px] 2xl:-inset-x-[19px] 2xl:-inset-y-[20px] bg-black/50 z-0 pointer-events-none rounded-[34px] xl:rounded-[38px] 2xl:rounded-[40px] blur-[10px]"></div>
+      <div className="absolute -inset-[8px] xl:-inset-[10px] 2xl:-inset-[12px] bg-black/50 z-0 pointer-events-none rounded-[26px] xl:rounded-[30px] 2xl:rounded-[32px] blur-[9px]"></div>
       
       {/* Content wrapper matching Left/Right Menu Section */}
       <div className={clsx(
