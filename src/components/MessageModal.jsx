@@ -1,97 +1,300 @@
-import { useState } from 'react';
-import { X } from 'lucide-react';
-import { useCard } from '../context/CardContext';
+import React, { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { useCard } from '@/context/CardContext';
+import { X } from '@phosphor-icons/react';
+import LiquidGlassIconButton from '@/components/ui/LiquidGlassIconButton';
+import LiquidGlassButton from '@/components/ui/LiquidGlassButton';
 
-/**
- * MessageModal — Slide-up overlay to compose the card message (To, From, Message).
- */
 export default function MessageModal({ onClose }) {
   const { state, dispatch } = useCard();
   const [to, setTo] = useState(state.to || '');
   const [from, setFrom] = useState(state.from || '');
   const [message, setMessage] = useState(state.message || '');
+  const [trainerName, setTrainerName] = useState(state.trainerName || '');
+  const [trainerBio, setTrainerBio] = useState(state.trainerBio || '');
 
-  const handleConfirm = () => {
+  // Handle escape key
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') onClose();
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [onClose]);
+
+  const handleSubmit = (e) => {
+    e?.preventDefault();
     dispatch({ type: 'SET_TO', payload: to });
     dispatch({ type: 'SET_FROM', payload: from });
     dispatch({ type: 'SET_MESSAGE', payload: message });
+    dispatch({ type: 'SET_TRAINER_NAME', payload: trainerName });
+    dispatch({ type: 'SET_TRAINER_BIO', payload: trainerBio });
     onClose();
   };
 
+  const isTrainer = state.cardType === 'pokemon' && state.pokemonSubtype === 'trainer';
+
+  const handleReset = () => {
+    if (isTrainer) {
+      setTrainerName('');
+      setTrainerBio('');
+    } else {
+      setTo('');
+      setFrom('');
+      setMessage('');
+    }
+  };
+
+  const badge = (() => {
+    if (state.cardType === 'pokemon') {
+      return {
+        label: isTrainer ? 'Trainer Card' : 'Pokémon Card',
+        icon: isTrainer ? '🧢' : '⚡',
+        badgeClass: 'bg-blue-500/15 text-blue-400 border-blue-500/30'
+      };
+    }
+    if (state.cardType === 'metallic') {
+      return {
+        label: 'Metallic Card',
+        icon: '🪙',
+        badgeClass: 'bg-amber-400/15 text-amber-300 border-amber-400/30'
+      };
+    }
+    return {
+      label: 'Flower Card',
+      icon: '🌸',
+      badgeClass: 'bg-emerald-400/15 text-emerald-300 border-emerald-400/30'
+    };
+  })();
+
+  // UX Copywriting: Emotionally resonant occasion-aware placeholders
+  const messagePlaceholder = (() => {
+    switch (state.occasion) {
+      case 'birthday': return 'Write your warmest birthday wishes and memories...';
+      case 'love': return 'Pour your heart out and say what they mean to you...';
+      case 'thank_you': return 'Share what you are deeply grateful for...';
+      case 'sorry': return 'Speak from the heart and make things right...';
+      case 'celebration': return 'Cheer for their big moment and achievements...';
+      case 'miss_you': return 'Tell them how much you miss having them around...';
+      case 'get_well': return 'Send your gentle thoughts and healing energy...';
+      case 'so_proud': return 'Celebrate how hard they worked to get here...';
+      case 'angry': return 'Say your piece and let it all out...';
+      case 'tired': return 'Remind them to rest, recharge, and take care...';
+      case 'homie': return 'Drop a note for your day-one partner in crime...';
+      default: return "Write what you've been wanting to say...";
+    }
+  })();
+
   return (
-    <div
-      className="fixed inset-0 z-40 flex items-center justify-center scrim"
-      onClick={onClose}
-    >
-      <div
-        className="window-panel rounded-3xl w-full max-w-md mx-4 modal-enter"
-        onClick={(e) => e.stopPropagation()}
-      >
-        {/* Header */}
-        <div className="flex items-center justify-between px-5 pt-5 pb-3">
-          <h3 className="text-white font-semibold text-lg">Write Message</h3>
-          <button
-            onClick={onClose}
-            className="glass-button w-9 h-9 rounded-full flex items-center justify-center text-white/60 hover:text-white"
-          >
-            <X size={16} />
-          </button>
-        </div>
-
-        <div className="px-5 pb-5 flex flex-col gap-4">
-          {/* To / From row */}
-          <div className="flex gap-3">
-            <div className="flex-1">
-              <label className="text-white/50 text-xs font-medium mb-1.5 block">To</label>
-              <input
-                type="text"
-                value={to}
-                onChange={(e) => setTo(e.target.value)}
-                placeholder="Recipient's name"
-                className="w-full glass rounded-xl px-4 py-3 text-sm text-white placeholder-white/30 outline-none focus:border-blue-400/60 transition-colors"
-                style={{ border: '1px solid rgba(255,255,255,0.15)' }}
-              />
+    <AnimatePresence>
+      <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+        {/* Backdrop */}
+        <motion.div
+          className="absolute inset-0 bg-black/60 backdrop-blur-md"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.25 }}
+          onClick={onClose}
+        />
+        
+        {/* Modal Window matching Figma Tablets */}
+        <motion.div
+          role="dialog"
+          aria-modal="true"
+          aria-label={isTrainer ? "Edit Trainer Details" : "Edit Card Message"}
+          className="relative z-10 w-full max-w-[480px] bg-[#131416] rounded-[32px] overflow-hidden flex flex-col shadow-[0_20px_50px_rgba(0,0,0,0.85)] border border-white/[0.12] select-none"
+          initial={{ opacity: 0, scale: 0.95, y: 8 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          exit={{ opacity: 0, scale: 0.95, y: 8 }}
+          transition={{ type: "spring", stiffness: 420, damping: 28, mass: 0.9 }}
+          onClick={(e) => e.stopPropagation()}
+        >
+          {/* Header Bar matching Figma Tablet Surface */}
+          <div className="flex items-center justify-between h-[64px] pl-6 pr-2.5 bg-[#232427] border-b border-white/[0.08]">
+            <div className="flex items-center gap-2.5">
+              <h2 className="text-white font-semibold text-[17px] leading-[22px] tracking-[-0.0253em] font-sans">
+                {isTrainer ? 'Trainer Details' : 'With love or Something'}
+              </h2>
+              {/* Context Tag preserved */}
+              <span className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-medium leading-[14px] border ${badge.badgeClass} font-sans`}>
+                <span>{badge.icon}</span>
+                <span>{badge.label}</span>
+              </span>
             </div>
-            <div className="flex-1">
-              <label className="text-white/50 text-xs font-medium mb-1.5 block">From</label>
-              <input
-                type="text"
-                value={from}
-                onChange={(e) => setFrom(e.target.value)}
-                placeholder="Your name"
-                className="w-full glass rounded-xl px-4 py-3 text-sm text-white placeholder-white/30 outline-none focus:border-blue-400/60 transition-colors"
-                style={{ border: '1px solid rgba(255,255,255,0.15)' }}
-              />
-            </div>
-          </div>
-
-          {/* Message */}
-          <div>
-            <label className="text-white/50 text-xs font-medium mb-1.5 block">
-              Message
-            </label>
-            <textarea
-              value={message}
-              onChange={(e) => setMessage(e.target.value)}
-              placeholder="Write your message here..."
-              rows={5}
-              className="w-full glass rounded-xl px-4 py-3 text-sm text-white placeholder-white/30 outline-none resize-none focus:border-blue-400/60 transition-colors"
-              style={{ border: '1px solid rgba(255,255,255,0.15)' }}
+            
+            {/* Liquid Glass Red Cross Button from Preview Mode */}
+            <LiquidGlassIconButton 
+              size="sm"
+              label="Close dialog"
+              onClick={onClose}
+              icon={<X size={26} weight="regular" className="text-[#FF383C]" />}
             />
-            <div className="text-right text-white/30 text-xs mt-1">
-              {message.length} / 300
-            </div>
           </div>
 
-          {/* Confirm button */}
-          <button
-            onClick={handleConfirm}
-            className="glass-button-primary w-full py-3 rounded-full text-white font-semibold text-sm"
-          >
-            Confirm
-          </button>
-        </div>
+          {/* Form Content Area */}
+          <form onSubmit={handleSubmit} className="p-6 flex flex-col gap-4 bg-[#131416]">
+            {isTrainer ? (
+              <>
+                {/* Name Field */}
+                <div className="flex flex-col gap-1.5">
+                  <div className="flex items-center justify-between">
+                    <label htmlFor="trainer-name-input" className="text-[13px] leading-[18px] font-semibold text-[rgba(229,229,234,0.85)] font-sans">
+                      Trainer Name:
+                    </label>
+                    <span className="text-[11px] text-[rgba(235,235,245,0.4)] font-sans">
+                      Badge name
+                    </span>
+                  </div>
+                  <div className="relative rounded-[14px] bg-[#1B1C1F] hover:bg-[#202125] focus-within:bg-[#202125] border border-white/[0.08] focus-within:border-[#0066FF] focus-within:ring-2 focus-within:ring-[#0066FF]/30 transition-all duration-150">
+                    <input
+                      id="trainer-name-input"
+                      type="text"
+                      placeholder="e.g., Red, Ash, Sarah..."
+                      value={trainerName}
+                      onChange={(e) => setTrainerName(e.target.value)}
+                      maxLength={15}
+                      className="w-full bg-transparent px-4 py-3 text-[15px] leading-[20px] text-white placeholder-[#5A5B60] outline-none font-sans pr-16"
+                      autoFocus
+                    />
+                    <div className={`absolute right-3.5 top-1/2 -translate-y-1/2 text-[11px] font-medium font-sans ${trainerName.length >= 15 ? 'text-amber-400 font-semibold' : 'text-[rgba(235,235,245,0.40)]'}`}>
+                      {trainerName.length} / 15
+                    </div>
+                  </div>
+                </div>
+
+                {/* Bio Field */}
+                <div className="flex flex-col gap-1.5">
+                  <div className="flex items-center justify-between">
+                    <label htmlFor="trainer-bio-input" className="text-[13px] leading-[18px] font-semibold text-[rgba(229,229,234,0.85)] font-sans">
+                      Bio & Battle Stats:
+                    </label>
+                    <span className="text-[11px] text-[rgba(235,235,245,0.4)] font-sans">
+                      Bottom banner
+                    </span>
+                  </div>
+                  <div className="relative rounded-[14px] bg-[#1B1C1F] hover:bg-[#202125] focus-within:bg-[#202125] border border-white/[0.08] focus-within:border-[#0066FF] focus-within:ring-2 focus-within:ring-[#0066FF]/30 transition-all duration-150">
+                    <textarea
+                      id="trainer-bio-input"
+                      value={trainerBio}
+                      placeholder="e.g., Level 99 Coffee Lover • HT: 5'8&quot; WT: 150 lbs"
+                      onChange={(e) => setTrainerBio(e.target.value)}
+                      maxLength={80}
+                      rows={3}
+                      className="w-full bg-transparent px-4 pt-3.5 pb-7 text-[15px] leading-[22px] text-white placeholder-[#5A5B60] outline-none resize-none font-sans h-[96px]"
+                    />
+                    <div className={`absolute bottom-2.5 right-3 text-[11px] font-medium font-sans ${trainerBio.length >= 80 ? 'text-amber-400 font-semibold' : 'text-[rgba(235,235,245,0.40)]'}`}>
+                      {trainerBio.length} / 80
+                    </div>
+                  </div>
+                </div>
+              </>
+            ) : (
+              <>
+                {/* To Field */}
+                <div className="flex flex-col gap-1.5">
+                  <div className="flex items-center justify-between">
+                    <label htmlFor="card-to-input" className="text-[13px] leading-[18px] font-semibold text-[rgba(229,229,234,0.85)] font-sans">
+                      To:
+                    </label>
+                    <span className="text-[11px] text-[rgba(235,235,245,0.4)] font-sans">
+                      Recipient
+                    </span>
+                  </div>
+                  <div className="relative rounded-[14px] bg-[#1B1C1F] hover:bg-[#202125] focus-within:bg-[#202125] border border-white/[0.08] focus-within:border-[#0066FF] focus-within:ring-2 focus-within:ring-[#0066FF]/30 transition-all duration-150">
+                    <input
+                      id="card-to-input"
+                      type="text"
+                      placeholder="e.g., Maya, Bestie, Mom..."
+                      value={to}
+                      onChange={(e) => setTo(e.target.value)}
+                      maxLength={15}
+                      className="w-full bg-transparent px-4 py-3 text-[15px] leading-[20px] text-white placeholder-[#5A5B60] outline-none font-sans pr-16"
+                      autoFocus
+                    />
+                    <div className={`absolute right-3.5 top-1/2 -translate-y-1/2 text-[11px] font-medium font-sans ${to.length >= 15 ? 'text-amber-400 font-semibold' : 'text-[rgba(235,235,245,0.40)]'}`}>
+                      {to.length} / 15
+                    </div>
+                  </div>
+                </div>
+
+                {/* From Field */}
+                <div className="flex flex-col gap-1.5">
+                  <div className="flex items-center justify-between">
+                    <label htmlFor="card-from-input" className="text-[13px] leading-[18px] font-semibold text-[rgba(229,229,234,0.85)] font-sans">
+                      From:
+                    </label>
+                    <span className="text-[11px] text-[rgba(235,235,245,0.4)] font-sans">
+                      Sender
+                    </span>
+                  </div>
+                  <div className="relative rounded-[14px] bg-[#1B1C1F] hover:bg-[#202125] focus-within:bg-[#202125] border border-white/[0.08] focus-within:border-[#0066FF] focus-within:ring-2 focus-within:ring-[#0066FF]/30 transition-all duration-150">
+                    <input
+                      id="card-from-input"
+                      type="text"
+                      placeholder="e.g., Alex, Secret Admirer..."
+                      value={from}
+                      onChange={(e) => setFrom(e.target.value)}
+                      maxLength={15}
+                      className="w-full bg-transparent px-4 py-3 text-[15px] leading-[20px] text-white placeholder-[#5A5B60] outline-none font-sans pr-16"
+                    />
+                    <div className={`absolute right-3.5 top-1/2 -translate-y-1/2 text-[11px] font-medium font-sans ${from.length >= 15 ? 'text-amber-400 font-semibold' : 'text-[rgba(235,235,245,0.40)]'}`}>
+                      {from.length} / 15
+                    </div>
+                  </div>
+                </div>
+
+                {/* Message Field */}
+                <div className="flex flex-col gap-1.5">
+                  <div className="flex items-center justify-between">
+                    <label htmlFor="card-message-input" className="text-[13px] leading-[18px] font-semibold text-[rgba(229,229,234,0.85)] font-sans">
+                      Message:
+                    </label>
+                    <span className="text-[11px] text-[rgba(235,235,245,0.4)] font-sans">
+                      Printed on back
+                    </span>
+                  </div>
+
+                  <div className="relative rounded-[14px] bg-[#1B1C1F] hover:bg-[#202125] focus-within:bg-[#202125] border border-white/[0.08] focus-within:border-[#0066FF] focus-within:ring-2 focus-within:ring-[#0066FF]/30 transition-all duration-150">
+                    <textarea
+                      id="card-message-input"
+                      placeholder={messagePlaceholder}
+                      value={message}
+                      onChange={(e) => setMessage(e.target.value)}
+                      maxLength={194}
+                      className="w-full h-[140px] bg-transparent px-4 pt-3.5 pb-8 text-[15px] leading-[22px] text-white placeholder-[#5A5B60] outline-none resize-none font-sans"
+                    />
+                    <div className={`absolute bottom-2.5 right-3 text-[11px] font-medium font-sans ${message.length >= 194 ? 'text-amber-400 font-semibold' : 'text-[rgba(235,235,245,0.40)]'}`}>
+                      {message.length} / 194
+                    </div>
+                  </div>
+                </div>
+              </>
+            )}
+
+            {/* Footer Action Buttons matching Figma Pills */}
+            <div className="flex items-center justify-end gap-3 pt-2">
+              {/* Clear All Pill Button */}
+              <button 
+                type="button" 
+                onClick={handleReset}
+                className="dark-liquid-glass-pill h-[44px] px-5 text-[15px] leading-[20px] font-medium text-white font-sans"
+              >
+                Clear All
+              </button>
+
+              {/* Done Primary Blue Pill Button */}
+              <LiquidGlassButton 
+                variant="primary" 
+                size="md" 
+                type="submit"
+              >
+                Done
+              </LiquidGlassButton>
+            </div>
+          </form>
+        </motion.div>
       </div>
-    </div>
+    </AnimatePresence>
   );
 }

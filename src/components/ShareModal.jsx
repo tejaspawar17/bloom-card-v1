@@ -1,112 +1,258 @@
-import { useState } from 'react';
-import { Check, Copy, X, Link } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { X, Check, Link, FileArrowDown, Sparkle, Heart, Eye } from '@phosphor-icons/react';
+import { useCard } from '@/context/CardContext';
+import { saveSharedCard } from '@/lib/supabase';
+import LiquidGlassIconButton from '@/components/ui/LiquidGlassIconButton';
+import LiquidGlassButton from '@/components/ui/LiquidGlassButton';
 
-/**
- * ShareModal — Generate + copy a shareable link for the card.
- * (In a real app, this would call a backend to persist and return a URL)
- */
-export default function ShareModal({ onClose }) {
-  const [stage, setStage] = useState('idle'); // idle | generating | ready
+// Shared spring physics matching TitleModal and MessageModal
+const springTransition = {
+  type: "spring",
+  stiffness: 420,
+  damping: 28,
+  mass: 0.9
+};
+
+export default function ShareModal({ onClose, onOpenRecipientPreview }) {
+  const { state, dispatch } = useCard();
+  const [step, setStep] = useState('choice'); // 'choice' | 'success'
   const [copied, setCopied] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+  const [shareUrl, setShareUrl] = useState(`${window.location.origin}/?preview=recipient`);
 
-  const fakeLink = `https://bloom.cards/share/${Math.random().toString(36).slice(2, 10)}`;
-
-  const handleGenerate = () => {
-    setStage('generating');
-    setTimeout(() => setStage('ready'), 1800);
-  };
+  // Handle ESC to close
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') onClose();
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [onClose]);
 
   const handleCopy = () => {
-    navigator.clipboard.writeText(fakeLink).then(() => {
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    });
+    navigator.clipboard.writeText(shareUrl);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2200);
   };
 
+  const handleGenerateLink = async () => {
+    if (isSaving) return;
+    setIsSaving(true);
+    try {
+      const result = await saveSharedCard(state);
+      if (result.state?.selectedBackImage && result.state.selectedBackImage !== state.selectedBackImage) {
+        dispatch({ type: 'SET_BACK_IMAGE', payload: result.state.selectedBackImage });
+      }
+      setShareUrl(result.shareUrl);
+      window.history.replaceState(null, '', `/?card=${result.id}`);
+      setStep('success');
+    } catch (err) {
+      console.error('Failed to save card to Supabase:', err);
+      setShareUrl(`${window.location.origin}/?preview=recipient`);
+      setStep('success');
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const handleDownloadPDF = () => {
+    alert("Generating print-ready PDF keepsake with card textures...");
+  };
+
+  const badge = (() => {
+    if (state.cardType === 'pokemon') {
+      return {
+        label: state.pokemonSubtype === 'trainer' ? 'Trainer Card' : 'Pokémon Card',
+        icon: '⚡',
+        badgeClass: 'bg-blue-500/15 text-blue-400 border-blue-500/30'
+      };
+    }
+    if (state.cardType === 'metallic') {
+      return {
+        label: 'Metallic Card',
+        icon: '🪙',
+        badgeClass: 'bg-amber-400/15 text-amber-300 border-amber-400/30'
+      };
+    }
+    return {
+      label: 'Flower Card',
+      icon: '🌸',
+      badgeClass: 'bg-emerald-400/15 text-emerald-300 border-emerald-400/30'
+    };
+  })();
+
   return (
-    <div
-      className="fixed inset-0 z-50 flex items-center justify-center"
-      style={{ background: 'rgba(14,14,14,0.85)', backdropFilter: 'blur(12px)' }}
-      onClick={onClose}
-    >
-      <div
-        className="window-panel rounded-3xl w-full max-w-md mx-4 modal-enter"
-        onClick={(e) => e.stopPropagation()}
-      >
-        {/* Header */}
-        <div className="flex items-center justify-between px-5 pt-5 pb-3">
-          <h3 className="text-white font-semibold text-lg">Share Card</h3>
-          <button
-            onClick={onClose}
-            className="glass-button w-9 h-9 rounded-full flex items-center justify-center text-white/60 hover:text-white"
-          >
-            <X size={16} />
-          </button>
-        </div>
+    <AnimatePresence>
+      <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+        {/* Backdrop matching Form Modals */}
+        <motion.div
+          className="absolute inset-0 bg-black/60 backdrop-blur-md"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.25 }}
+          onClick={onClose}
+        />
 
-        <div className="px-5 pb-5 flex flex-col gap-4">
-          {stage === 'idle' && (
-            <>
-              <p className="text-white/50 text-sm">
-                Generate a unique link to share your Bloom card with anyone.
-              </p>
-              <button
-                onClick={handleGenerate}
-                className="glass-button-primary w-full py-3 rounded-full text-white font-semibold text-sm flex items-center justify-center gap-2"
-              >
-                <Link size={16} />
-                Generate Link
-              </button>
-            </>
-          )}
-
-          {stage === 'generating' && (
-            <div className="flex flex-col items-center py-6 gap-3">
-              <div
-                className="w-10 h-10 rounded-full border-2 border-blue-400 border-t-transparent animate-spin"
-              />
-              <p className="text-white/60 text-sm">Generating your card link...</p>
-            </div>
-          )}
-
-          {stage === 'ready' && (
-            <>
-              <p className="text-white/50 text-sm">Your card is ready to share!</p>
-              {/* Link display */}
-              <div
-                className="glass rounded-xl px-4 py-3 flex items-center gap-3"
-                style={{ border: '1px solid rgba(255,255,255,0.15)' }}
-              >
-                <Link size={14} className="text-white/40 flex-shrink-0" />
-                <span className="text-white/70 text-sm flex-1 truncate">
-                  {fakeLink}
+        {/* Modal Window matching Figma Tablets & Form Modals */}
+        <motion.div
+          layout
+          role="dialog"
+          aria-modal="true"
+          aria-label="Share Bloom Card"
+          className="relative z-10 w-full max-w-[466px] flex flex-col select-none rounded-[32px] bg-[#131416] border border-white/[0.12] overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.85)]"
+          onClick={(e) => e.stopPropagation()}
+          initial={{ opacity: 0, scale: 0.95, y: 8 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          exit={{ opacity: 0, scale: 0.95, y: 8 }}
+          transition={springTransition}
+        >
+          {/* Header Bar matching Figma Tablet Surface */}
+          <div className="flex items-center justify-between h-[64px] pl-6 pr-2.5 bg-[#232427] border-b border-white/[0.08]">
+            <div className="flex items-center gap-2.5">
+              <h2 className="text-white font-semibold text-[17px] leading-[22px] tracking-[-0.0253em] font-sans">
+                {step === 'choice' ? 'Share Your Creation' : 'Interactive Link'}
+              </h2>
+              {step === 'choice' ? (
+                <span className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-medium leading-[14px] border ${badge.badgeClass} font-sans`}>
+                  <span>{badge.icon}</span>
+                  <span>{badge.label}</span>
                 </span>
-              </div>
+              ) : (
+                <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-medium leading-[14px] border bg-emerald-500/15 text-emerald-400 border-emerald-500/30 font-sans">
+                  <span>✓</span>
+                  <span>Live & Ready</span>
+                </span>
+              )}
+            </div>
 
-              <button
-                onClick={handleCopy}
-                className={`w-full py-3 rounded-full font-semibold text-sm flex items-center justify-center gap-2 transition-all ${
-                  copied
-                    ? 'bg-green-500/20 border border-green-400/60 text-green-400'
-                    : 'glass-button-primary text-white'
-                }`}
+            {/* Liquid Glass Red Cross Button from Preview Mode */}
+            <LiquidGlassIconButton 
+              size="sm"
+              label="Close dialog"
+              onClick={onClose}
+              icon={<X size={26} weight="regular" className="text-[#FF383C]" />}
+            />
+          </div>
+
+          <AnimatePresence mode="wait">
+            {step === 'choice' ? (
+              <motion.div
+                key="choice"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                transition={{ duration: 0.2 }}
+                className="p-7 flex flex-col items-center text-center bg-[#131416]"
               >
-                {copied ? (
-                  <>
-                    <Check size={16} />
-                    Copied!
-                  </>
-                ) : (
-                  <>
-                    <Copy size={16} />
-                    Copy Link
-                  </>
-                )}
-              </button>
-            </>
-          )}
-        </div>
+                {/* Hero Sparkle Orb */}
+                <div className="w-16 h-16 rounded-full bg-gradient-to-b from-[#0066FF]/20 to-[#0066FF]/5 border border-[#0066FF]/30 flex items-center justify-center mb-5 shadow-[0_0_24px_rgba(0,102,255,0.25)]">
+                  <Sparkle size={30} weight="fill" className="text-[#0088FF]" />
+                </div>
+
+                <h3 className="text-white font-semibold text-[22px] leading-[28px] tracking-tight mb-2.5 font-sans">
+                  Ready to Send the Magic?
+                </h3>
+                
+                <p className="text-[rgba(229,229,234,0.7)] text-[14px] leading-[21px] max-w-[390px] mb-8 font-sans">
+                  Generate an interactive 3D link so your recipient can flip, tilt, and explore every detail — or download a print-ready keepsake PDF.
+                </p>
+
+                {/* Hero UI Actions */}
+                <div className="flex items-center gap-3 w-full justify-center">
+                  <button
+                    type="button"
+                    onClick={handleDownloadPDF}
+                    className="dark-liquid-glass-pill flex-1 max-w-[190px] h-[44px] px-5 text-[15px] leading-[20px] font-medium text-white flex items-center justify-center gap-2 font-sans"
+                  >
+                    <FileArrowDown size={26} weight="regular" className="text-white/80" />
+                    <span>Download PDF</span>
+                  </button>
+                  <LiquidGlassButton
+                    variant="primary"
+                    size="md"
+                    onClick={handleGenerateLink}
+                    icon={<Link size={26} weight="regular" />}
+                    className="flex-1 max-w-[200px]"
+                  >
+                    {isSaving ? 'Saving...' : 'Generate Link'}
+                  </LiquidGlassButton>
+                </div>
+              </motion.div>
+            ) : (
+              <motion.div
+                key="success"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                transition={{ duration: 0.2 }}
+                className="p-7 flex flex-col items-center text-center bg-[#131416]"
+              >
+                {/* Hero Glowing Check Disc */}
+                <div className="w-16 h-16 rounded-full bg-gradient-to-b from-[#0066FF]/25 to-[#0066FF]/10 border-2 border-[#0088FF] flex items-center justify-center mb-5 shadow-[0_0_32px_rgba(0,136,255,0.4)]">
+                  <Check size={32} weight="regular" className="text-[#0088FF]" />
+                </div>
+                
+                <h3 className="text-white font-semibold text-[22px] leading-[28px] tracking-tight mb-2 font-sans">
+                  Your Link is Ready! 🎉
+                </h3>
+                
+                <p className="text-[rgba(229,229,234,0.7)] text-[14px] leading-[21px] max-w-[390px] mb-6 font-sans">
+                  Anyone with this link can open the 3D card, unfold the message, and enjoy all interactive effects. Spread the warmth!
+                </p>
+
+                {/* Recessed Capsule Input matching Form UI */}
+                <div className="w-full flex items-center justify-between bg-[#1B1C1F] border border-white/[0.10] focus-within:border-[#0066FF] focus-within:ring-2 focus-within:ring-[#0066FF]/25 rounded-full p-1.5 pl-4 transition-all duration-150 mb-5 shadow-[inset_0_2px_4px_rgba(0,0,0,0.4)]">
+                  <input
+                    type="text"
+                    readOnly
+                    value={shareUrl}
+                    className="bg-transparent text-white/90 text-[13px] font-mono flex-1 outline-none truncate mr-2 select-all"
+                  />
+                  <button
+                    type="button"
+                    onClick={handleCopy}
+                    className={`h-[36px] w-[98px] shrink-0 rounded-full text-[13px] leading-[18px] font-semibold flex items-center justify-center gap-1.5 cursor-pointer font-sans active:scale-[0.96] outline-none primary-liquid-glass-button text-white ${
+                      copied ? 'is-success' : ''
+                    }`}
+                  >
+                    {copied ? (
+                      <>
+                        <Check size={18} weight="regular" />
+                        <span>Copied</span>
+                      </>
+                    ) : (
+                      <>
+                        <Link size={18} weight="regular" />
+                        <span>Copy</span>
+                      </>
+                    )}
+                  </button>
+                </div>
+
+                {/* Recipient Link Preview Action */}
+                <div className="w-full mb-5">
+                  <button
+                    type="button"
+                    onClick={onOpenRecipientPreview}
+                    className="dark-liquid-glass-pill w-full h-[44px] px-5 text-[15px] leading-[20px] font-medium text-white flex items-center justify-center gap-2 font-sans cursor-pointer active:scale-[0.98] transition-transform"
+                  >
+                    <Eye size={22} weight="regular" className="text-white/80" />
+                    <span>Preview Reveal as Recipient</span>
+                  </button>
+                </div>
+
+                {/* Delight / Review Micro-copy */}
+                <div className="flex items-center gap-1.5 text-[12px] text-[rgba(235,235,245,0.45)] font-sans">
+                  <Heart size={14} weight="fill" className="text-pink-400" />
+                  <span>Made someone smile today? Leave a review or craft another Bloom!</span>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </motion.div>
       </div>
-    </div>
+    </AnimatePresence>
   );
 }

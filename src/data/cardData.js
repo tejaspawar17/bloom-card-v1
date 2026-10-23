@@ -1,166 +1,96 @@
-// Mood → Flower + Card mapping data
+// Exact Bloom Card Data matching the UI Reference Screen
 
-export const MOODS = [
-  {
-    id: 'apologetic',
-    label: 'Apologetic',
-    emoji: '🥺',
-    description: 'Sincere apology',
-  },
-  {
-    id: 'happy',
-    label: 'Happy',
-    emoji: '😄',
-    description: 'Joyful & bright',
-  },
-  {
-    id: 'sad',
-    label: 'Sad',
-    emoji: '😢',
-    description: 'Gentle & comforting',
-  },
-  {
-    id: 'angry',
-    label: 'Angry',
-    emoji: '😡',
-    description: 'Bold & fierce',
-  },
-  {
-    id: 'grateful',
-    label: 'Grateful',
-    emoji: '🙏',
-    description: 'Warm & thankful',
-  },
-  {
-    id: 'excited',
-    label: 'Excited',
-    emoji: '🤩',
-    description: 'Electric & vibrant',
-  },
-  {
-    id: 'celebratory',
-    label: 'Celebratory',
-    emoji: '🎉',
-    description: 'Party & festive',
-  },
-  {
-    id: 'love',
-    label: 'Love',
-    emoji: '❤️',
-    description: 'Romantic & warm',
-  },
-  {
-    id: 'birthday',
-    label: 'Birthday',
-    emoji: '🎂',
-    description: 'Special day',
-  },
-  {
-    id: 'friendship',
-    label: 'Friendship',
-    emoji: '🤝',
-    description: 'Bond & loyalty',
-  },
+export const OCCASIONS = [
+  { id: 'sorry', label: "I'm Sorry", emoji: 'pleading-face', defaultSubject: "I'm So Sorry,\nForgive Me?", defaultCardType: 'paper', defaultFlower: 'flower_1', defaultPokemon: 'gengar' },
+  { id: 'birthday', label: 'Birthday', emoji: 'birthday-cake', defaultSubject: 'Happy Birthday!\nBest Day!', defaultCardType: 'paper', defaultFlower: 'flower_2', defaultPokemon: 'psyduck' },
+  { id: 'celebration', label: 'Celebration', emoji: 'partying-face', defaultSubject: 'Big Congrats!\nCheers! ✨', defaultCardType: 'paper', defaultFlower: 'flower_3', defaultPokemon: 'oshawott' },
+  { id: 'thank_you', label: 'Thank You', emoji: 'growing-heart', defaultSubject: 'Thank You\nFor Everything', defaultCardType: 'paper', defaultFlower: 'flower_4', defaultPokemon: 'squirtle' },
+  { id: 'get_well', label: 'Get Well Soon', emoji: 'face-with-head-bandage', defaultSubject: 'Get Well Soon,\nRest Up!', defaultCardType: 'paper', defaultFlower: 'flower_5', defaultPokemon: 'psyduck' },
+  { id: 'miss_you', label: 'Miss You', emoji: 'smiling-face-with-tear', defaultSubject: 'Missing You\nEvery Day', defaultCardType: 'paper', defaultFlower: 'flower_6', defaultPokemon: 'opposites' },
+  { id: 'love', label: 'Love', emoji: 'face-blowing-a-kiss', defaultSubject: 'All My Love,\nAlways Yours', defaultCardType: 'paper', defaultFlower: 'flower_7', defaultPokemon: 'opposites' },
+  { id: 'so_proud', label: 'So Proud', emoji: 'smiling-face', defaultSubject: 'You Did It!\nSo Proud!', defaultCardType: 'paper', defaultFlower: 'flower_8', defaultPokemon: 'squirtle' },
+  { id: 'sad', label: 'Sad', emoji: 'dizzy-face', defaultSubject: 'Here For You,\nAlways', defaultCardType: 'paper', defaultFlower: 'flower_9', defaultPokemon: 'psyduck' },
+  { id: 'angry', label: 'Angry', emoji: 'face-with-symbols-on-mouth', defaultSubject: 'Still Mad!\nTalk Soon.', defaultCardType: 'pokemon', defaultFlower: 'flower_10', defaultPokemon: 'oshawott' },
+  { id: 'tired', label: 'Tired', emoji: 'melting-face', defaultSubject: 'Running On Low,\nNeed Rest', defaultCardType: 'paper', defaultFlower: 'flower_10', defaultPokemon: 'psyduck' },
+  { id: 'homie', label: 'Homie', emoji: 'people-hugging', defaultSubject: 'Real Ones,\nHomie For Life', defaultCardType: 'pokemon', defaultFlower: 'flower_2', defaultPokemon: 'squirtle' },
 ];
 
-export const FLOWERS = {
-  apologetic: {
-    name: 'White Chrysanthemum',
-    emoji: '🌸',
-    meaning: 'Symbolizes sincerity and honesty — the perfect way to say sorry.',
-    color: '#e8e8e8',
-    accent: '#9b59b6',
-  },
-  happy: {
-    name: 'Sunflower',
-    emoji: '🌻',
-    meaning: 'Radiates warmth and positivity — just like your happiness.',
-    color: '#FFD700',
-    accent: '#FF8C00',
-  },
-  sad: {
-    name: 'Blue Hydrangea',
-    emoji: '💙',
-    meaning: 'Conveys heartfelt emotion and understanding in tough times.',
-    color: '#6baed6',
-    accent: '#2171b5',
-  },
-  angry: {
-    name: 'Red Protea',
-    emoji: '🌺',
-    meaning: 'Bold and fierce, representing courage to express strong feelings.',
-    color: '#e74c3c',
-    accent: '#c0392b',
-  },
-  grateful: {
-    name: 'Pink Carnation',
-    emoji: '🌷',
-    meaning: 'A timeless symbol of deep gratitude and admiration.',
-    color: '#FF69B4',
-    accent: '#C71585',
-  },
-  excited: {
-    name: 'Bird of Paradise',
-    emoji: '🦜',
-    meaning: 'As vibrant and extraordinary as your excitement.',
-    color: '#FF6347',
-    accent: '#FF4500',
-  },
-  celebratory: {
-    name: 'Yellow Tulip',
-    emoji: '🌼',
-    meaning: 'Bright and cheerful — perfect for every celebration.',
-    color: '#FFD700',
-    accent: '#FFA500',
-  },
-  love: {
-    name: 'Red Rose',
-    emoji: '🌹',
-    meaning: 'The timeless declaration of deep love and passion.',
-    color: '#DC143C',
-    accent: '#8B0000',
-  },
-  birthday: {
-    name: 'Gerbera Daisy',
-    emoji: '🌸',
-    meaning: 'Cheerful and vibrant — the perfect birthday surprise.',
-    color: '#FF69B4',
-    accent: '#FF1493',
-  },
-  friendship: {
-    name: 'Yellow Acacia',
-    emoji: '💛',
-    meaning: 'Represents true friendship, secret love, and faithful bonds.',
-    color: '#FFD700',
-    accent: '#DAA520',
-  },
-};
-
-export const CARD_TYPES = [
-  { id: 'paper', label: 'Paper', icon: '📄' },
-  { id: 'metallic', label: 'Metallic', icon: '✨' },
-  { id: 'pokemon', label: 'Pokémon', icon: '⚡' },
+export const POKEMON_CARDS = [
+  { id: 'gengar', name: 'FU Gengar', image: '/pokemon/003-003-gengar.png' },
+  { id: 'squirtle', name: 'FU Squirtle', image: '/pokemon/001-003-squirtle.png' },
+  { id: 'opposites', name: 'Opposites...', image: '/pokemon/001-002-opposites-attract.png' },
+  { id: 'oshawott', name: 'Oshawott', image: '/pokemon/001-002-oshawott.png' },
+  { id: 'psyduck', name: 'Psyduck', image: '/pokemon/001-002-psyduck.png' },
 ];
 
-export const POKEMON_LIST = [
-  { id: 'pikachu', name: 'Pikachu', type: 'Electric', emoji: '⚡', hp: 60, art: '🐭' },
-  { id: 'charmander', name: 'Charmander', type: 'Fire', emoji: '🔥', hp: 39, art: '🦎' },
-  { id: 'bulbasaur', name: 'Bulbasaur', type: 'Grass', emoji: '🌿', hp: 45, art: '🦕' },
-  { id: 'squirtle', name: 'Squirtle', type: 'Water', emoji: '💧', hp: 44, art: '🐢' },
-  { id: 'mewtwo', name: 'Mewtwo', type: 'Psychic', emoji: '🔮', hp: 106, art: '👾' },
-  { id: 'eevee', name: 'Eevee', type: 'Normal', emoji: '🌟', hp: 55, art: '🦊' },
-  { id: 'gengar', name: 'Gengar', type: 'Ghost', emoji: '👻', hp: 60, art: '😈' },
-  { id: 'snorlax', name: 'Snorlax', type: 'Normal', emoji: '😴', hp: 160, art: '🐻' },
+export const BACK_IMAGES = [
+  { id: 'landscape', label: 'Landscape', image: '/assets/polaroid-defaults/image1.png', borderColor: 'border-blue-500' },
+  { id: 'portrait', label: 'Portrait', image: '/assets/polaroid-defaults/image2.png', borderColor: 'border-red-500' },
 ];
 
-export const DEFAULT_CARD_STATE = {
-  mood: null,
-  flower: null,
+export const EMOTE_EMOJIS = [
+  { id: 'pleading-face', name: 'Pleading', src: '/assets/emojis/pleading-face.png' },
+  { id: 'smiling-face-with-tear', name: 'Tear Smile', src: '/assets/emojis/smiling-face-with-tear.png' },
+  { id: 'birthday-cake', name: 'Cake', src: '/assets/emojis/birthday-cake.png' },
+  { id: 'face-with-tears-of-joy', name: 'Joy', src: '/assets/emojis/face-with-tears-of-joy.png' },
+  { id: 'growing-heart', name: 'Heart', src: '/assets/emojis/growing-heart.png' },
+  { id: 'face-blowing-a-kiss', name: 'Kiss', src: '/assets/emojis/face-blowing-a-kiss.png' },
+  { id: 'face-with-head-bandage', name: 'Bandage', src: '/assets/emojis/face-with-head-bandage.png' },
+  { id: 'smiling-face', name: 'Smile', src: '/assets/emojis/smiling-face.png' },
+  { id: 'flexed-biceps', name: 'Flex', src: '/assets/emojis/flexed-biceps.png' },
+  { id: 'partying-face', name: 'Party', src: '/assets/emojis/partying-face.png' },
+  { id: 'smirking-face', name: 'Smirk', src: '/assets/emojis/smirking-face.png' },
+  { id: 'middle-finger', name: 'Middle Finger', src: '/assets/emojis/middle-finger.png' },
+  { id: 'face-with-symbols-on-mouth', name: 'Curse', src: '/assets/emojis/face-with-symbols-on-mouth.png' },
+  { id: 'dizzy-face', name: 'Dizzy', src: '/assets/emojis/dizzy-face.png' },
+  { id: 'people-hugging', name: 'Hug', src: '/assets/emojis/people-hugging.png' },
+  { id: 'melting-face', name: 'Melting', src: '/assets/emojis/melting-face.png' }
+];
+
+export const STICKERS = [
+  { id: 'cmiygl', name: 'CMIYGL', image: '/assets/stickers/CMIYGL.png' },
+  { id: 'apples', name: "Don't Let...", image: "/assets/stickers/Don't Let Your Apples Rot.png" },
+  { id: 'blond', name: 'Blond', image: '/assets/stickers/Blond.png' },
+  { id: 'igor', name: 'Igor', image: '/assets/stickers/IGOR.png' },
+  { id: 'sos', name: 'SOS', image: '/assets/stickers/SOS SZA.png' },
+  { id: 'brat', name: 'Brat', image: '/assets/stickers/Brat.png' },
+  { id: 'believin', name: "Don't Stop...", image: "/assets/stickers/Don't Stop Believin'.png" },
+  { id: 'start_living', name: 'Start living', image: '/assets/stickers/Start living.png' },
+  { id: 'pink_floyd', name: 'Pink Floyd', image: '/assets/stickers/Pink Floyd.png' },
+  { id: 'duck_you', name: 'Duck You', image: '/assets/stickers/Duck You.png' },
+  { id: 'smile', name: 'Smile', image: '/assets/stickers/Smile.png' },
+];
+
+export const FLOWERS = [
+  { id: 'flower_1', name: 'White Tulip', image: '/assets/flower-illustrations/white_tulip.png', meaning: 'Sincere Forgiveness, Humility & A Clean Slate' },
+  { id: 'flower_2', name: 'Sunflower', image: '/assets/flower-illustrations/sunflower.png', meaning: 'Pure Joy, Vitality & Radiant Warmth' },
+  { id: 'flower_3', name: 'Pink Peony', image: '/assets/flower-illustrations/pink_peony.png', meaning: 'Prosperity, High Honor & Victorious Energy' },
+  { id: 'flower_4', name: 'Pink Carnation', image: '/assets/flower-illustrations/pink_carnation.png', meaning: 'Deep Gratitude, Fondness & Eternal Appreciation' },
+  { id: 'flower_5', name: 'Lavender', image: '/assets/flower-illustrations/lavender.png', meaning: 'Holistic Healing, Serenity & Restorative Calm' },
+  { id: 'flower_6', name: 'Parijat', image: '/assets/flower-illustrations/parijat.png', meaning: 'Enduring Memory, Longing & Unbreakable Bonds' },
+  { id: 'flower_7', name: 'Red Rose', image: '/assets/flower-illustrations/red_rose.png', meaning: 'Romance, Soulful Devotion & Deep Passion' },
+  { id: 'flower_8', name: 'Gladiolus', image: '/assets/flower-illustrations/gladiolus.png', meaning: 'Strength of Character, Integrity & Heroic Honor' },
+  { id: 'flower_9', name: 'White Lily', image: '/assets/flower-illustrations/white_lily.png', meaning: 'Solace, Solemn Comfort & Rebirth of Peace' },
+  { id: 'flower_10', name: 'Blue Hydrangea', image: '/assets/flower-illustrations/hydrangea.png', meaning: 'Heartfelt understanding, abundance, and sincere emotion' },
+];
+
+export const DEFAULT_STATE = {
+  occasion: 'sorry',
   cardType: 'paper',
-  pokemon: null,
-  title: '',
+  pokemonSubtype: 'standard',
+  activeSide: 'front',
+  selectedPokemon: 'gengar',
+  selectedBackImage: 'landscape',
+  selectedFlower: 'flower_1',
+  subject: "I'm So Sorry,\nForgive Me?",
   message: '',
-  from: '',
   to: '',
-  isFlipped: false,
+  from: '',
+  trainerName: '',
+  trainerBio: '',
+  stampEmoji: 'pleading-face',
+  placedSticker: null,
+  stickerPos: { x: 30, y: 160 },
+  stickers: [],
 };
+

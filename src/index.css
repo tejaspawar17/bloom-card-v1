@@ -1,22 +1,46 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Homemade+Apple&family=Vampiro+One&family=Caveat:wght@400;700&family=Syne+Tactile&display=swap');
+@theme {
+  --color-obsidian: #070908;
+  --font-script: 'Homemade Apple', cursive;
+  --font-serif: 'Instrument Serif', Georgia, serif;
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif;
+  --shadow-emerald-glow: 0 0 60px -15px rgba(74, 222, 128, 0.15);
+}
 @import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+@import "@fontsource-variable/geist";
+
+@custom-variant dark (&:is(.dark *));
 
 @layer base {
   * {
     box-sizing: border-box;
+    @apply border-border outline-ring/50;
+  }
+
+  html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    @apply font-sans;
   }
 
   body {
     margin: 0;
     padding: 0;
-    font-family: 'Inter', system-ui, -apple-system, sans-serif;
-    background-color: #0e0e0e;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", system-ui, sans-serif;
+    background-color: var(--color-obsidian, #070908);
     color: #ffffff;
     min-height: 100vh;
     overflow-x: hidden;
+    @apply bg-background text-foreground;
   }
 
+  /* Custom HIG Scrollbar */
   ::-webkit-scrollbar {
-    width: 4px;
+    width: 6px;
+    height: 6px;
   }
 
   ::-webkit-scrollbar-track {
@@ -24,312 +48,577 @@
   }
 
   ::-webkit-scrollbar-thumb {
-    background: rgba(255, 255, 255, 0.2);
-    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.18);
+    border-radius: 9999px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.32);
   }
 }
 
 @layer utilities {
-  /* Liquid Glass effect */
-  .glass {
-    background: rgba(14, 14, 14, 0.6);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.12);
+  .font-instrument-serif {
+    font-family: 'Instrument Serif', Georgia, serif;
   }
 
-  .glass-dark {
-    background: rgba(0, 0, 0, 0.6);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border: 1px solid rgba(255, 255, 255, 0.15);
+  .font-instrument-sans {
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", 'Instrument Sans', sans-serif;
   }
 
-  .glass-card {
-    background: rgba(20, 20, 20, 0.75);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    box-shadow: 0px 40px 40px 10px rgba(40, 40, 40, 0.2);
+  /* Apple HIG Focus Ring */
+  .hig-focus {
+    outline: none;
+  }
+  .hig-focus:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 2px #000000, 0 0 0 4px #007AFF;
   }
 
-  .glass-button {
-    background: rgba(14, 14, 14, 0.8);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    border: 1px solid rgba(166, 166, 166, 0.5);
-    box-shadow: 0px 8px 15px 0px rgba(0, 0, 0, 0.04),
-      inset 0px 40px 30px -40px rgba(230, 230, 230, 1),
-      inset 0px -40px 10px -40px rgba(26, 26, 26, 1);
-    transition: all 0.2s ease;
+  /* Atmospheric Top Menu Glow */
+  .menu-halo {
+    position: absolute;
+    top: -24px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 520px;
+    height: 130px;
+    background: radial-gradient(ellipse, rgba(134, 183, 90, 0.32) 0%, rgba(79, 121, 62, 0.16) 45%, transparent 75%);
+    filter: blur(32px);
+    pointer-events: none;
+    z-index: 0;
   }
 
-  .glass-button:hover {
-    background: rgba(30, 30, 30, 0.9);
-    border-color: rgba(200, 200, 200, 0.6);
-  }
-
-  .glass-button-primary {
-    background: rgba(30, 110, 244, 0.85);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.3),
-      0px 8px 12px 6px rgba(0, 0, 0, 0.15);
-    transition: all 0.2s ease;
-  }
-
-  .glass-button-primary:hover {
-    background: rgba(40, 130, 255, 0.9);
-    box-shadow: 0px 6px 8px 0px rgba(0, 0, 0, 0.4),
-      0px 10px 16px 8px rgba(0, 0, 0, 0.2);
-    transform: translateY(-1px);
-  }
-
-  /* Bloom branding gradient text */
-  .bloom-text {
-    font-family: 'Georgia', 'Times New Roman', serif;
-    font-style: italic;
-    letter-spacing: -0.05em;
-  }
-
-  /* Noise texture overlay */
-  .noise-overlay {
+  /* Window Cyan-Green Outer Glow matching reference image */
+  .window-outer-aura {
     position: relative;
   }
 
-  .noise-overlay::after {
+  .window-outer-aura::before {
     content: '';
     position: absolute;
     inset: 0;
-    opacity: 0.03;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='1'/%3E%3C/svg%3E");
+    border-radius: 2.5rem;
+    background: linear-gradient(0deg, rgba(0, 0, 0, 0.50) 0%, rgba(0, 0, 0, 0.50) 100%), linear-gradient(180deg, #132013 -16.28%, #4F793E 12.79%, #719D53 41.86%, #86B75A 59.54%, #CFC531 77.75%, #ADD9AD 93.5%, #7CE0DC 100%);
+    box-shadow: 0 40px 40px 10px rgba(40, 40, 40, 0.20);
+    filter: blur(10px);
     pointer-events: none;
-    border-radius: inherit;
+    z-index: -1;
   }
 
-  /* Mood chip */
-  .mood-chip {
-    background: rgba(255, 255, 255, 0.08);
-    border: 1px solid rgba(255, 255, 255, 0.15);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
-    transition: all 0.2s ease;
+  /* Apple HIG Translucent Material Container */
+  .reference-window {
+    background: rgba(10, 12, 11, 0.96);
+    backdrop-filter: blur(30px) saturate(180%);
+    -webkit-backdrop-filter: blur(30px) saturate(180%);
+    border-radius: 28px;
+    border: 1px solid rgba(124, 224, 220, 0.24);
+    box-shadow: 0 0 35px 2px rgba(124, 224, 220, 0.14), 
+                0 20px 40px rgba(0, 0, 0, 0.8),
+                inset 0 1px 1px 0 rgba(255, 255, 255, 0.1);
   }
 
-  .mood-chip:hover {
-    background: rgba(255, 255, 255, 0.15);
-    border-color: rgba(255, 255, 255, 0.3);
-    transform: translateY(-2px);
+  .figma-inner-panel {
+    border-radius: 16px;
+    background: rgba(14, 16, 15, 0.80);
+    backdrop-filter: blur(24px) saturate(140%);
+    -webkit-backdrop-filter: blur(20px);
+    overflow: hidden;
+    position: relative;
+    border: none;
+    box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.08), inset 0 -1px 2px rgba(0, 0, 0, 0.3);
+  }
+  .figma-inner-panel::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 16px;
+    padding: 0.5px;
+    background: linear-gradient(160deg, rgba(255,255,255,0.18) 0%, rgba(255,255,255,0.04) 50%, rgba(255,255,255,0.08) 100%);
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+    z-index: 20;
+  }
+  @media (min-width: 1280px) {
+    .figma-inner-panel,
+    .figma-inner-panel::before {
+      border-radius: 20px;
+    }
+  }
+  .figma-window {
+    background: rgba(10, 12, 11, 0.96);
+    backdrop-filter: blur(30px) saturate(180%);
+    -webkit-backdrop-filter: blur(30px) saturate(180%);
+    border-radius: 28px;
+    border: none;
+    box-shadow:
+      0 20px 40px rgba(0, 0, 0, 0.6),
+      inset 0 1px 1px rgba(255, 255, 255, 0.12);
+    position: relative;
+    overflow: hidden;
+  }
+  .figma-window::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 28px;
+    padding: 1px;
+    background: linear-gradient(160deg, rgba(255,255,255,0.28) 0%, rgba(255,255,255,0.06) 40%, rgba(255,255,255,0.02) 70%, rgba(255,255,255,0.12) 100%);
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+    z-index: 20;
+  }.figma-panel-header {
+    background: rgba(22, 25, 23, 0.75);
+    backdrop-filter: blur(16px) saturate(130%);
+    border-bottom: 0.5px solid rgba(255, 255, 255, 0.10);
   }
 
-  .mood-chip.selected {
-    background: rgba(30, 110, 244, 0.3);
-    border-color: rgba(30, 110, 244, 0.8);
-    box-shadow: 0 0 16px rgba(30, 110, 244, 0.3);
+  /* HIG Interactive Occasion Pill */
+  .occasion-pill {
+    background: rgba(114, 114, 114, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 9999px;
+    transition: all 0.2s cubic-bezier(0.25, 1, 0.5, 1);
+    box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.08);
   }
 
-  /* Card flip animation */
-  .card-container {
+  .occasion-pill:hover {
+    background: rgba(44, 46, 45, 0.95);
+    border-color: rgba(255, 255, 255, 0.2);
+    transform: translateY(-0.5px);
+  }
+
+  .occasion-pill:active {
+    transform: scale(0.97);
+  }
+
+  .occasion-pill.is-active {
+    background: rgba(37, 99, 235, 0.35);
+    border-color: #3b82f6;
+    color: #ffffff;
+    box-shadow: 0 0 10px rgba(59, 130, 246, 0.4), inset 0 1px 1px rgba(255, 255, 255, 0.3);
+  }
+
+  /* Apple HIG Segmented Control Surface */
+  .segmented-pill {
+    background: rgba(27, 29, 28, 0.85);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5), inset 0 1px 0 0 rgba(255, 255, 255, 0.1);
+  }
+
+  /* 3D Card Perspective */
+  .perspective-container {
     perspective: 1200px;
   }
 
-  .card-inner {
-    position: relative;
-    width: 100%;
-    height: 100%;
-    transition: transform 0.65s cubic-bezier(0.4, 0, 0.2, 1);
+  .flipper-card {
+    transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1);
     transform-style: preserve-3d;
   }
 
-  .card-inner.flipped {
+  .flipper-card.is-flipped {
     transform: rotateY(180deg);
   }
 
-  .card-front,
-  .card-back {
+  .flip-face {
     position: absolute;
     inset: 0;
-    -webkit-backface-visibility: hidden;
     backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
   }
 
-  .card-back {
+  .flip-back {
     transform: rotateY(180deg);
   }
 
-  /* Scrim */
-  .scrim {
-    background: rgba(14, 14, 14, 0.8);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-  }
-
-  /* Modal */
-  .modal-enter {
-    animation: modal-in 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
-  }
-
-  @keyframes modal-in {
-    from {
-      opacity: 0;
-      transform: scale(0.92) translateY(8px);
-    }
-    to {
-      opacity: 1;
-      transform: scale(1) translateY(0);
-    }
-  }
-
-  /* Segmented control */
-  .seg-tab {
-    transition: all 0.2s ease;
-    color: rgba(255, 255, 255, 0.5);
-  }
-
-  .seg-tab.active {
-    background: rgba(255, 255, 255, 0.12);
-    color: rgba(255, 255, 255, 0.9);
-  }
-
-  /* Flower card gradients per mood */
-  .mood-bg-apologetic {
-    background: linear-gradient(
-      135deg,
-      rgba(106, 17, 203, 0.4) 0%,
-      rgba(37, 117, 252, 0.3) 100%
-    );
-  }
-
-  .mood-bg-happy {
-    background: linear-gradient(
-      135deg,
-      rgba(255, 200, 50, 0.4) 0%,
-      rgba(255, 120, 30, 0.3) 100%
-    );
-  }
-
-  .mood-bg-sad {
-    background: linear-gradient(
-      135deg,
-      rgba(30, 80, 180, 0.4) 0%,
-      rgba(60, 130, 200, 0.3) 100%
-    );
-  }
-
-  .mood-bg-angry {
-    background: linear-gradient(
-      135deg,
-      rgba(200, 30, 30, 0.4) 0%,
-      rgba(255, 80, 50, 0.3) 100%
-    );
-  }
-
-  .mood-bg-grateful {
-    background: linear-gradient(
-      135deg,
-      rgba(34, 150, 100, 0.4) 0%,
-      rgba(80, 200, 120, 0.3) 100%
-    );
-  }
-
-  .mood-bg-excited {
-    background: linear-gradient(
-      135deg,
-      rgba(255, 100, 180, 0.4) 0%,
-      rgba(200, 50, 255, 0.3) 100%
-    );
-  }
-
-  .mood-bg-celebratory {
-    background: linear-gradient(
-      135deg,
-      rgba(255, 180, 0, 0.4) 0%,
-      rgba(255, 80, 150, 0.3) 100%
-    );
-  }
-
-  .mood-bg-love {
-    background: linear-gradient(
-      135deg,
-      rgba(220, 30, 80, 0.4) 0%,
-      rgba(255, 100, 130, 0.3) 100%
-    );
-  }
-
-  .mood-bg-birthday {
-    background: linear-gradient(
-      135deg,
-      rgba(255, 150, 0, 0.4) 0%,
-      rgba(255, 50, 150, 0.3) 100%
-    );
-  }
-
-  .mood-bg-friendship {
-    background: linear-gradient(
-      135deg,
-      rgba(0, 180, 200, 0.4) 0%,
-      rgba(0, 120, 255, 0.3) 100%
-    );
-  }
-
-  /* Flower name pill */
-  .flower-pill {
-    background: rgba(255, 255, 255, 0.15);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
-    border: 1px solid rgba(255, 255, 255, 0.25);
-  }
-
-  /* Paper card texture */
-  .paper-card {
-    background: #f5f0e8;
-    box-shadow: 1px 1px 2px 0px rgba(0, 0, 0, 0.35);
-  }
-
-  /* Metallic card */
-  .metallic-card {
-    background: linear-gradient(
-      135deg,
-      #d4d4d4 0%,
-      #a8a8a8 25%,
-      #e8e8e8 50%,
-      #c0c0c0 75%,
-      #d4d4d4 100%
-    );
-    box-shadow: 2px 2px 2px 0.5px rgba(0, 0, 0, 0.25);
-  }
-
-  /* Pokemon card */
-  .pokemon-card {
-    background: linear-gradient(
-      135deg,
-      #ffde59 0%,
-      #ff914d 30%,
-      #ff2d55 60%,
-      #5856d6 100%
-    );
-  }
-
-  /* Stamp */
-  .stamp {
-    width: 80px;
-    height: 80px;
-    background: white;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 2.5rem;
-    box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.35);
-  }
-
-  /* Window panel */
-  .window-panel {
-    background: rgba(0, 0, 0, 0.4);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    box-shadow: 0px 4px 20px 0px rgba(0, 0, 0, 0.8);
+  /* HIG Sheet / Modal Scrim */
+  .figma-scrim {
+    background: rgba(0, 0, 0, 0.75);
     backdrop-filter: blur(16px);
     -webkit-backdrop-filter: blur(16px);
   }
+
+  .figma-modal-window {
+    background: rgba(20, 22, 21, 0.96);
+    backdrop-filter: blur(30px);
+    -webkit-backdrop-filter: blur(30px);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    border-radius: 28px;
+    box-shadow: 0px 16px 48px rgba(0, 0, 0, 0.95), inset 0 1px 1px 0 rgba(255, 255, 255, 0.15);
+  }
+
+  /* Figma Typography Scale Utilities (SF Pro mapped to Inter/Geist) */
+  .typography-caption2-emphasized,
+  .text-caption2-emphasized {
+    font-weight: 600;
+    font-size: 11px;
+    line-height: 13px;
+    letter-spacing: 0.0055em;
+  }
+
+  .typography-caption2-regular,
+  .text-caption2-regular {
+    font-weight: 400;
+    font-size: 11px;
+    line-height: 13px;
+    letter-spacing: 0.0055em;
+  }
+
+  .typography-subheadline-regular,
+  .text-subheadline-regular,
+  .text-subheadline {
+    font-weight: 400;
+    font-size: 13px;
+    line-height: 18px;
+    letter-spacing: -0.0177em;
+  }
+
+  .typography-footnote-regular,
+  .text-footnote-regular,
+  .text-footnote {
+    font-weight: 400;
+    font-size: 13px;
+    line-height: 18px;
+    letter-spacing: -0.0062em;
+  }
+
+  .typography-headline-regular,
+  .text-headline-regular,
+  .text-headline {
+    font-weight: 600;
+    font-size: 17px;
+    line-height: 22px;
+    letter-spacing: -0.0253em;
+  }
+
+  .typography-body-regular,
+  .text-body-regular,
+  .text-body {
+    font-weight: 400;
+    font-size: 17px;
+    line-height: 22px;
+    letter-spacing: -0.0253em;
+  }
+
+  .typography-title2-emphasized,
+  .text-title2-emphasized,
+  .text-title2 {
+    font-weight: 700;
+    font-size: 20px;
+    line-height: 25px;
+    letter-spacing: -0.013em;
+  }
+
+  /* Figma Shadows & Visual Utilities */
+  .figma-card-shadow {
+    box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.3), 0px 8px 12px 6px rgba(0, 0, 0, 0.15);
+  }
+
+  .figma-window-shadow {
+    box-shadow: 0px 40px 40px 10px rgba(40, 40, 40, 0.20);
+  }
+
+  .figma-aura-gradient {
+    background: linear-gradient(180deg, #132013 0%, #4F793E 13%, #719D53 42%, #86B75A 60%, #CFC531 78%, #ADD9AD 94%, #7CE0DC 100%);
+  }
+
+  .figma-backdrop-window {
+    backdrop-filter: blur(30px) saturate(180%);
+    -webkit-backdrop-filter: blur(30px) saturate(180%);
+  }
+
+  .figma-backdrop-panel {
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+  }
+
+  .figma-backdrop-scrim {
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+  }
+
+  .figma-backdrop-header {
+    backdrop-filter: blur(3px);
+    -webkit-backdrop-filter: blur(3px);
+  }
 }
+
+@theme inline {
+  --font-heading: var(--font-sans);
+  --font-sans: 'Geist Variable', sans-serif;
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --color-foreground: var(--foreground);
+  --color-background: var(--background);
+
+  /* Figma Design Tokens - Colors */
+  --color-window-surface: var(--window-surface);
+  --color-panel-surface: var(--panel-surface);
+  --color-panel-header: var(--panel-header);
+  --color-window-stroke: var(--window-stroke);
+  --color-selection-blue: var(--selection-blue);
+  --color-active-blue: var(--active-blue);
+  --color-pill-hover: var(--pill-hover);
+  --color-pill-active: var(--pill-active);
+  --color-text-primary: var(--text-primary);
+  --color-text-secondary: var(--text-secondary);
+  --color-text-tertiary: var(--text-tertiary);
+  --color-text-quaternary: var(--text-quaternary);
+  --color-vibrant-secondary: var(--vibrant-secondary);
+  --color-vibrant-fill-dark: var(--vibrant-fill-dark);
+  --color-separator: var(--separator);
+  --color-occasion-active-bg: var(--occasion-active-bg);
+  --color-occasion-active-border: var(--occasion-active-border);
+  --color-scrim: var(--scrim);
+  --color-teal-accent: var(--teal-accent);
+
+  /* Figma Design Tokens - Radii */
+  --radius-window: var(--radius-window);
+  --radius-panel: var(--radius-panel);
+  --radius-card: var(--radius-card);
+  --radius-pill: var(--radius-pill);
+  --radius-selection: var(--radius-selection);
+  --radius-thumbnail: var(--radius-thumbnail);
+  --radius-button: var(--radius-button);
+
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+  --radius-4xl: calc(var(--radius) * 2.6);
+}
+
+:root {
+  /* Shadcn Dark-Mode-First Semantic Colors */
+  --background: #000000;
+  --foreground: #FFFFFF;
+  --card: rgba(17, 19, 18, 0.94);
+  --card-foreground: #FFFFFF;
+  --popover: rgba(20, 22, 21, 0.96);
+  --popover-foreground: #FFFFFF;
+  --primary: #0088FF;
+  --primary-foreground: #FFFFFF;
+  --secondary: #1F1F1F;
+  --secondary-foreground: #FFFFFF;
+  --muted: rgba(0, 0, 0, 0.40);
+  --muted-foreground: rgba(229, 229, 234, 0.7);
+  --accent: rgba(153, 153, 153, 0.15);
+  --accent-foreground: #FFFFFF;
+  --destructive: #ef4444;
+  --destructive-foreground: #FFFFFF;
+  --border: rgba(255, 255, 255, 0.20);
+  --input: rgba(255, 255, 255, 0.20);
+  --ring: #0088FF;
+  --chart-1: #0088FF;
+  --chart-2: #3b82f6;
+  --chart-3: #7CE0DC;
+  --chart-4: #86B75A;
+  --chart-5: #CFC531;
+  --radius: 0.625rem;
+  --sidebar: rgba(17, 19, 18, 0.94);
+  --sidebar-foreground: #FFFFFF;
+  --sidebar-primary: #0088FF;
+  --sidebar-primary-foreground: #FFFFFF;
+  --sidebar-accent: rgba(153, 153, 153, 0.15);
+  --sidebar-accent-foreground: #FFFFFF;
+  --sidebar-border: rgba(255, 255, 255, 0.20);
+  --sidebar-ring: #0088FF;
+
+  /* Figma Design System Tokens */
+  --window-surface: rgba(17, 19, 18, 0.94);
+  --panel-surface: rgba(0, 0, 0, 0.40);
+  --panel-header: rgba(31, 31, 31, 0.55);
+  --window-stroke: rgba(255, 255, 255, 0.20);
+  --window-background-aura: linear-gradient(180deg, #132013 0%, #4F793E 13%, #719D53 42%, #86B75A 60%, #CFC531 78%, #ADD9AD 94%, #7CE0DC 100%);
+  --window-background-shadow: 0px 40px 40px 10px rgba(40, 40, 40, 0.20);
+
+  --selection-blue: #0088FF;
+  --active-blue: #0165E2;
+  --pill-hover: rgba(153, 153, 153, 0.15);
+  --pill-active: rgba(153, 153, 153, 0.17);
+
+  --text-primary: #FFFFFF;
+  --text-secondary: rgba(229, 229, 234, 0.7);
+  --text-tertiary: rgba(235, 235, 245, 0.3);
+  --text-quaternary: rgba(255, 255, 255, 0.85);
+  --vibrant-secondary: #999999;
+  --vibrant-fill-dark: #1F1F1F;
+  --separator: rgba(118, 118, 128, 0.24);
+  --occasion-active-bg: rgba(37, 99, 235, 0.35);
+  --occasion-active-border: #3b82f6;
+  --card-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.3), 0px 8px 12px 6px rgba(0, 0, 0, 0.15);
+  --scrim: rgba(0, 0, 0, 0.75);
+  --teal-accent: rgba(124, 224, 220, 0.24);
+
+  /* Figma Spacing & Radii */
+  --radius-window: 28px;
+  --radius-panel: 20px;
+  --radius-card: 16px;
+  --radius-pill: 9999px;
+  --radius-selection: 15px;
+  --radius-thumbnail: 12px;
+  --radius-button: 1000px;
+
+  /* Figma Effects */
+  --blur-window: blur(30px) saturate(180%);
+  --blur-panel: blur(20px);
+  --blur-scrim: blur(16px);
+  --blur-panel-header: blur(3px);
+}
+
+.dark {
+  --background: #000000;
+  --foreground: #FFFFFF;
+  --card: rgba(17, 19, 18, 0.94);
+  --card-foreground: #FFFFFF;
+  --popover: rgba(20, 22, 21, 0.96);
+  --popover-foreground: #FFFFFF;
+  --primary: #0088FF;
+  --primary-foreground: #FFFFFF;
+  --secondary: #1F1F1F;
+  --secondary-foreground: #FFFFFF;
+  --muted: rgba(0, 0, 0, 0.40);
+  --muted-foreground: rgba(229, 229, 234, 0.7);
+  --accent: rgba(153, 153, 153, 0.15);
+  --accent-foreground: #FFFFFF;
+  --destructive: #ef4444;
+  --destructive-foreground: #FFFFFF;
+  --border: rgba(255, 255, 255, 0.20);
+  --input: rgba(255, 255, 255, 0.20);
+  --ring: #0088FF;
+  --chart-1: #0088FF;
+  --chart-2: #3b82f6;
+  --chart-3: #7CE0DC;
+  --chart-4: #86B75A;
+  --chart-5: #CFC531;
+  --radius: 0.625rem;
+  --sidebar: rgba(17, 19, 18, 0.94);
+  --sidebar-foreground: #FFFFFF;
+  --sidebar-primary: #0088FF;
+  --sidebar-primary-foreground: #FFFFFF;
+  --sidebar-accent: rgba(153, 153, 153, 0.15);
+  --sidebar-accent-foreground: #FFFFFF;
+  --sidebar-border: rgba(255, 255, 255, 0.20);
+  --sidebar-ring: #0088FF;
+
+  /* Figma Design System Tokens */
+  --window-surface: rgba(17, 19, 18, 0.94);
+  --panel-surface: rgba(0, 0, 0, 0.40);
+  --panel-header: rgba(31, 31, 31, 0.55);
+  --window-stroke: rgba(255, 255, 255, 0.20);
+  --window-background-aura: linear-gradient(180deg, #132013 0%, #4F793E 13%, #719D53 42%, #86B75A 60%, #CFC531 78%, #ADD9AD 94%, #7CE0DC 100%);
+  --window-background-shadow: 0px 40px 40px 10px rgba(40, 40, 40, 0.20);
+
+  --selection-blue: #0088FF;
+  --active-blue: #0165E2;
+  --pill-hover: rgba(153, 153, 153, 0.15);
+  --pill-active: rgba(153, 153, 153, 0.17);
+
+  --text-primary: #FFFFFF;
+  --text-secondary: rgba(229, 229, 234, 0.7);
+  --text-tertiary: rgba(235, 235, 245, 0.3);
+  --text-quaternary: rgba(255, 255, 255, 0.85);
+  --vibrant-secondary: #999999;
+  --vibrant-fill-dark: #1F1F1F;
+  --separator: rgba(118, 118, 128, 0.24);
+  --occasion-active-bg: rgba(37, 99, 235, 0.35);
+  --occasion-active-border: #3b82f6;
+  --card-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.3), 0px 8px 12px 6px rgba(0, 0, 0, 0.15);
+  --scrim: rgba(0, 0, 0, 0.75);
+  --teal-accent: rgba(124, 224, 220, 0.24);
+
+  /* Figma Spacing & Radii */
+  --radius-window: 28px;
+  --radius-panel: 20px;
+  --radius-card: 16px;
+  --radius-pill: 9999px;
+  --radius-selection: 15px;
+  --radius-thumbnail: 12px;
+  --radius-button: 1000px;
+
+  /* Figma Effects */
+  --blur-window: blur(30px) saturate(180%);
+  --blur-panel: blur(20px);
+  --blur-scrim: blur(16px);
+  --blur-panel-header: blur(3px);
+}@theme {
+  --color-primary-figma: var(--color-primary-figma);
+  --color-surface-figma: var(--color-surface-figma);
+  --color-panel-figma: var(--color-panel-figma);
+  --radius-window-figma: var(--radius-window-figma);
+  --radius-panel-figma: var(--radius-panel-figma);
+}
+
+:root {
+  --color-primary-figma: #0088FF;
+  --color-surface-figma: rgba(17, 19, 18, 0.94);
+  --color-panel-figma: rgba(0, 0, 0, 0.40);
+  --radius-window-figma: 28px;
+  --radius-panel-figma: 20px;
+}
+
+
+
+
+
+.figma-glass-icon-btn {
+  position: relative;
+  background: rgba(40, 40, 40, 0.65);
+  backdrop-filter: blur(16px) saturate(160%);
+  -webkit-backdrop-filter: blur(16px) saturate(160%);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow:
+    0 6px 16px rgba(0, 0, 0, 0.5),
+    inset 0 1px 1px rgba(255, 255, 255, 0.15),
+    inset 0 -1px 1px rgba(0, 0, 0, 0.3);
+  transition: transform 0.15s ease, background 0.15s ease;
+}
+.figma-glass-icon-btn:hover {
+  background: rgba(55, 55, 55, 0.75);
+  transform: scale(1.05);
+}
+.figma-glass-icon-btn:active {
+  transform: scale(0.95);
+}
+
+
+
+
+
+

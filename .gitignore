@@ -22,3 +22,11 @@ Thumbs.db
 .env
 .env.local
 .env.production
+
+# Large Figma dumps
+full_file.json
+figma_layout.json
+figma_*.json
+node*.json
+stamp_node.json
+*_tree.txt

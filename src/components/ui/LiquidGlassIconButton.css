@@ -1,0 +1,155 @@
+.liquid-glass-icon-button {
+  position: relative;
+  display: inline-flex;
+  width: 42px;
+  height: 42px;
+  cursor: pointer;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  overflow: hidden;
+  border: 0;
+  border-radius: 1000px;
+  background: linear-gradient(
+    180deg,
+    rgb(70 70 70 / 40%),
+    rgb(44 44 44 / 34%)
+  );
+  -webkit-backdrop-filter: blur(16px) saturate(140%);
+  backdrop-filter: blur(16px) saturate(140%);
+  box-shadow:
+    inset 0 1px 1px rgb(255 255 255 / 12%),
+    inset 0 -1px 1px rgb(0 0 0 / 18%),
+    1.25px 0 0 -0.75px rgb(255 255 255 / 20%),
+    -1.25px 0 0 -0.75px rgb(255 255 255 / 20%),
+    0 0 0 0.5px rgb(255 255 255 / 22%),
+    0 8px 15px rgb(0 0 0 / 8%);
+  transition:
+    filter 140ms ease,
+    transform 140ms ease,
+    box-shadow 140ms ease;
+}
+
+.liquid-glass-icon-button__glass {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  overflow: hidden;
+  place-items: center;
+  border-radius: inherit;
+}
+
+.liquid-glass-icon-button img,
+.liquid-glass-icon-button svg {
+  display: block;
+  width: 24px;
+  height: 24px;
+  filter: drop-shadow(0 1px 1px rgb(0 0 0 / 55%));
+  pointer-events: none;
+}
+
+@media (min-width: 1280px) {
+  .liquid-glass-icon-button {
+    width: 48px;
+    height: 48px;
+  }
+
+  .liquid-glass-icon-button img,
+  .liquid-glass-icon-button svg {
+    width: 28px;
+    height: 28px;
+  }
+}
+
+.liquid-glass-icon-button--sm {
+  width: 40px;
+  height: 40px;
+}
+
+.liquid-glass-icon-button--sm img,
+.liquid-glass-icon-button--sm svg {
+  width: 22px;
+  height: 22px;
+}
+
+.liquid-glass-icon-button:hover {
+  filter: brightness(1.04);
+  box-shadow:
+    inset 0 1px 1px rgb(255 255 255 / 16%),
+    inset 0 -1px 1px rgb(0 0 0 / 16%),
+    1.25px 0 0 -0.75px rgb(255 255 255 / 26%),
+    -1.25px 0 0 -0.75px rgb(255 255 255 / 26%),
+    0 0 0 0.5px rgb(255 255 255 / 28%),
+    0 10px 18px rgb(0 0 0 / 10%);
+}
+
+.liquid-glass-icon-button:active {
+  filter: brightness(0.96);
+  transform: scale(0.94);
+}
+
+.liquid-glass-icon-button:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .liquid-glass-icon-button,
+  .dark-liquid-glass-pill {
+    transition: none;
+  }
+}
+
+/* Dark Liquid Glass Pill for text/icon buttons (Feedback, Download PDF, Clear) */
+.dark-liquid-glass-pill {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  overflow: hidden;
+  border: 0;
+  border-radius: 9999px;
+  background: linear-gradient(
+    180deg,
+    rgb(70 70 70 / 40%),
+    rgb(44 44 44 / 34%)
+  );
+  -webkit-backdrop-filter: blur(16px) saturate(140%);
+  backdrop-filter: blur(16px) saturate(140%);
+  box-shadow:
+    inset 0 1px 1px rgb(255 255 255 / 12%),
+    inset 0 -1px 1px rgb(0 0 0 / 18%),
+    1.25px 0 0 -0.75px rgb(255 255 255 / 20%),
+    -1.25px 0 0 -0.75px rgb(255 255 255 / 20%),
+    0 0 0 0.5px rgb(255 255 255 / 22%),
+    0 8px 15px rgb(0 0 0 / 8%);
+  transition:
+    filter 140ms ease,
+    transform 140ms ease,
+    box-shadow 140ms ease;
+  user-select: none;
+  -webkit-user-select: none;
+  outline: none;
+}
+
+.dark-liquid-glass-pill:hover {
+  filter: brightness(1.08);
+  box-shadow:
+    inset 0 1px 1px rgb(255 255 255 / 16%),
+    inset 0 -1px 1px rgb(0 0 0 / 16%),
+    1.25px 0 0 -0.75px rgb(255 255 255 / 26%),
+    -1.25px 0 0 -0.75px rgb(255 255 255 / 26%),
+    0 0 0 0.5px rgb(255 255 255 / 28%),
+    0 10px 18px rgb(0 0 0 / 10%);
+}
+
+.dark-liquid-glass-pill:active {
+  filter: brightness(0.95);
+  transform: scale(0.96);
+}
+
+.dark-liquid-glass-pill:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 3px;
+}

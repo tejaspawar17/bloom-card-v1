@@ -1,145 +1,112 @@
-import { useCard } from '../context/CardContext';
+import React, { useState, useEffect, useRef } from 'react';
+import { motion } from 'framer-motion';
+import { useCard } from '@/context/CardContext';
+import { FlowerInfoPill } from '@/components/card/FlowerInfoPill';
+import { EmojiStamp } from '@/components/card/EmojiStamp';
+import { PolaroidFrame } from '@/components/card/PolaroidFrame';
+import TertiaryLiquidGlassButton from '@/components/ui/TertiaryLiquidGlassButton';
+import { Check, ArrowsClockwise, X } from '@phosphor-icons/react';
+import { STICKERS } from '@/data/cardData';
+import { DraggableSticker } from '@/components/card/DraggableSticker';
 
-/**
- * PaperCard — Greeting Card Paper style, front and back
- */
-export function PaperCardFront() {
-  const { state } = useCard();
-  const { flower, mood, title } = state;
+export function PaperCardBack({ onOpenEditMessage, isPreview = false }) {
+  const { state, dispatch } = useCard();
+  const [currentDate, setCurrentDate] = useState("");
+  const [currentTime, setCurrentTime] = useState("");
+  const [isEditing, setIsEditing] = useState(false);
 
-  const bgColor = flower?.color || '#f5f0e8';
-  const accentColor = flower?.accent || '#666';
+  useEffect(() => {
+    const now = new Date();
+    const dateFormatted = now.toLocaleDateString("en-US", { day: "numeric", month: "short", year: "numeric" });
+    const timeFormatted = now.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit", hour12: true });
+    setCurrentDate(dateFormatted);
+    setCurrentTime(timeFormatted);
+  }, []);
 
-  return (
-    <div
-      className="paper-card rounded-2xl overflow-hidden relative w-full h-full flex flex-col"
-      style={{ minHeight: '460px' }}
-    >
-      {/* Flower image area */}
-      <div
-        className="flex-1 flex items-center justify-center relative overflow-hidden"
-        style={{
-          background: `linear-gradient(135deg, ${bgColor}33, ${accentColor}33)`,
-          minHeight: '300px',
-        }}
-      >
-        {/* Large flower emoji as placeholder art */}
-        <div className="text-center">
-          <div className="text-8xl mb-4 filter drop-shadow-lg">
-            {flower?.emoji || '🌸'}
-          </div>
-          <div className="text-xs font-medium opacity-60 tracking-widest uppercase">
-            {flower?.name || 'Select a mood'}
-          </div>
-        </div>
-
-        {/* Flower name pill */}
-        {flower && (
-          <div
-            className="flower-pill absolute top-4 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full text-xs font-medium text-white whitespace-nowrap"
-          >
-            {flower.name}
-          </div>
-        )}
-      </div>
-
-      {/* Subject section */}
-      <div
-        className="p-4 flex flex-col gap-2"
-        style={{ background: '#fff', borderTop: `3px solid ${accentColor}33` }}
-      >
-        <div
-          className="text-sm font-semibold"
-          style={{ color: accentColor || '#333', minHeight: '20px' }}
-        >
-          {title || (mood ? `A ${state.mood} greeting` : 'Your greeting...')}
-        </div>
-        <div className="text-xs text-gray-500">
-          {flower?.meaning || 'Select a mood to discover your flower'}
-        </div>
-      </div>
-
-      {/* Date badge */}
-      <div className="absolute top-3 right-3">
-        <div
-          className="text-xs px-2 py-1 rounded-full font-medium"
-          style={{ background: 'rgba(255,255,255,0.7)', color: '#666' }}
-        >
-          {new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
-        </div>
-      </div>
-    </div>
-  );
-}
-
-export function PaperCardBack() {
-  const { state } = useCard();
-  const { flower, message, from, to } = state;
-  const accentColor = flower?.accent || '#666';
-
-  return (
-    <div
-      className="paper-card rounded-2xl overflow-hidden relative w-full h-full flex flex-col"
-      style={{ minHeight: '460px', background: '#faf8f4' }}
-    >
-      {/* Flower usecase pill */}
-      {flower && (
-        <div className="px-5 pt-5">
-          <div
-            className="flower-pill inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium"
-            style={{ color: 'rgba(0,0,0,0.6)' }}
-          >
-            <span>{flower.emoji}</span>
-            <span>{flower.meaning}</span>
-          </div>
-        </div>
-      )}
-
-      {/* Message card */}
-      <div className="flex-1 flex items-center justify-center p-5">
-        <div
-          className="w-full rounded-2xl p-5 shadow-md"
-          style={{
-            background: '#fff',
-            border: `1px solid ${accentColor}22`,
-            boxShadow: '0px 4px 4px rgba(0,0,0,0.08)',
-          }}
-        >
-          {/* To / From */}
-          <div className="flex justify-between text-xs text-gray-400 mb-3">
-            <span>To: <span className="font-medium text-gray-600">{to || '—'}</span></span>
-            <span>From: <span className="font-medium text-gray-600">{from || '—'}</span></span>
-          </div>
-
-          <div className="text-sm text-gray-700 leading-relaxed min-h-20">
-            {message || (
-              <span className="text-gray-400 italic">
-                Your message will appear here...
-              </span>
-            )}
-          </div>
-        </div>
-      </div>
-
-      {/* Stamp */}
-      <div className="absolute bottom-4 right-4">
-        <div className="stamp" style={{ width: 64, height: 64, fontSize: '1.8rem' }}>
-          {state.mood ? getMoodEmoji(state.mood) : '🌸'}
-        </div>
-      </div>
-
-      {/* Lines decoration */}
-      <div className="absolute bottom-20 left-5 right-5 border-t border-gray-200" />
-      <div className="absolute bottom-28 left-5 right-5 border-t border-gray-100" />
-    </div>
-  );
-}
-
-function getMoodEmoji(mood) {
-  const map = {
-    apologetic: '🥺', happy: '😄', sad: '😢', angry: '😡',
-    grateful: '🙏', excited: '🤩', celebratory: '🎉', love: '❤️',
-    birthday: '🎂', friendship: '🤝',
+  const getBackImageSrc = () => {
+    if (state.selectedBackImage === 'none') return null;
+    if (state.selectedBackImage === 'portrait') return '/assets/polaroid-defaults/image2.png';
+    if (state.selectedBackImage === 'landscape') return '/assets/polaroid-defaults/image1.png';
+    return state.selectedBackImage;
   };
-  return map[mood] || '🌸';
+
+  const backImageSrc = getBackImageSrc();
+
+  return (
+    <div className="relative w-full h-full aspect-[688/960] rounded-none overflow-hidden shadow-2xl select-none bg-[#E5E1D6] @container" style={{ containerType: "inline-size" }}>
+      <FlowerInfoPill variant="back" />
+      <img
+        src="/assets/bloom/paper_back_blank_labels.png"
+        alt="Paper Card Back"
+        className="absolute inset-0 w-full h-full object-cover pointer-events-none"
+      />
+
+      {state.selectedBackImage && state.selectedBackImage !== 'none' && (
+        <div className="absolute inset-0 pointer-events-none translate-y-[clamp(10px,2.8%,15px)] z-10">
+          <PolaroidFrame imageSrc={backImageSrc} />
+          <EmojiStamp emoji={state.stampEmoji} className="left-[42%] top-[clamp(118px,38.4cqw,146px)]" />
+        </div>
+      )}      
+      
+      
+        {/* Labels added as real text for crisp rendering */}
+        <div className="absolute z-30 top-[50.8%] left-[23.5%] font-['Instrument_Serif',serif] text-[4.44cqw] leading-[5.33cqw] antialiased text-[#141413] font-normal tracking-wide" style={{ WebkitTextStroke: '0.2px currentColor' }}>To:</div>
+        <div className="absolute z-30 bottom-[13.9%] left-[44%] font-['Instrument_Serif',serif] text-[4.44cqw] leading-[5.33cqw] antialiased text-[#141413] font-normal tracking-wide" style={{ WebkitTextStroke: '0.2px currentColor' }}>From:</div>
+        <div className="absolute z-30 bottom-[4.3%] left-[4%] font-['Instrument_Serif',serif] text-[4.2cqw] leading-[5.2cqw] antialiased text-[#141413] font-normal tracking-wide" style={{ WebkitTextStroke: '0.2px currentColor' }}>Date :</div>
+        <div className="absolute z-30 bottom-[4.3%] left-[53%] font-['Instrument_Serif',serif] text-[4.2cqw] leading-[5.2cqw] antialiased text-[#141413] font-normal tracking-wide" style={{ WebkitTextStroke: '0.2px currentColor' }}>Time :</div>
+
+        <div 
+        className={"absolute z-30 top-[50.8%] left-[30.8%] font-['Syne_Tactile',cursive] text-[4.44cqw] leading-[5.33cqw] text-[#141413] tracking-normal rounded px-1 -ml-1 outline-none min-w-[50px] min-h-[20px] truncate max-w-[55%] block antialiased " + (isEditing ? 'ring-1 ring-black/10 cursor-text' : (isPreview ? '' : 'cursor-pointer'))}
+        onClick={() => !isPreview && !isEditing && onOpenEditMessage?.()}
+        contentEditable={isEditing}
+        suppressContentEditableWarning={true}
+        onBlur={(e) => dispatch({ type: 'SET_TO', payload: e.currentTarget.textContent })}
+          style={{ WebkitTextStroke: '0.2px currentColor' }}
+      >
+        {state.to}
+      </div>
+
+      <div 
+        className={"absolute z-30 top-[58%] left-[22.8%] right-[12.8%] font-['Source_Serif_4','Source_Serif_Pro',serif] text-[3.33cqw] leading-[4.17cqw] text-[#141413] font-normal tracking-normal text-left rounded p-1 -ml-1 outline-none min-w-[50px] min-h-[20px] break-words whitespace-pre-wrap antialiased " + (isEditing ? 'bg-black/5 ring-1 ring-black/10 cursor-text' : (isPreview ? '' : 'cursor-pointer hover:bg-black/5'))}
+        onClick={() => !isPreview && !isEditing && onOpenEditMessage?.()}
+        contentEditable={isEditing}
+        suppressContentEditableWarning={true}
+        onBlur={(e) => dispatch({ type: 'SET_MESSAGE', payload: e.currentTarget.textContent })}
+          style={{ WebkitTextStroke: '0.2px currentColor' }}
+      >
+        {state.message}
+      </div>
+
+      <div 
+        className={"absolute z-30 bottom-[13.9%] left-[56.2%] font-['Syne_Tactile',cursive] text-[4.44cqw] leading-[5.33cqw] text-[#141413] tracking-normal rounded px-1 -ml-1 outline-none min-w-[50px] min-h-[20px] truncate max-w-[40%] block antialiased " + (isEditing ? 'ring-1 ring-black/10 cursor-text' : (isPreview ? '' : 'cursor-pointer'))}
+        onClick={() => !isPreview && !isEditing && onOpenEditMessage?.()}
+        contentEditable={isEditing}
+        suppressContentEditableWarning={true}
+        onBlur={(e) => dispatch({ type: 'SET_FROM', payload: e.currentTarget.textContent })}
+          style={{ WebkitTextStroke: '0.2px currentColor' }}
+      >
+        {state.from}
+      </div>
+
+      <div className={`absolute z-30 bottom-[4.3%] left-[13.2%] font-['Instrument_Serif',serif] text-[4.2cqw] leading-[5.2cqw] antialiased text-[#141413] font-normal tracking-wide rounded px-1 -ml-1 text-left w-auto whitespace-nowrap ${isPreview ? '' : 'cursor-pointer'}`}
+         onClick={() => !isPreview && !isEditing && onOpenEditMessage?.()} style={{ WebkitTextStroke: '0.2px currentColor' }}>
+        {state.date || currentDate}
+      </div>
+
+      <div className={`absolute z-30 bottom-[4.3%] left-[62.8%] font-['Instrument_Serif',serif] text-[4.2cqw] leading-[5.2cqw] antialiased text-[#141413] font-normal tracking-wide rounded px-1 -ml-1 text-left w-auto whitespace-nowrap ${isPreview ? '' : 'cursor-pointer'}`}
+         onClick={() => !isPreview && !isEditing && onOpenEditMessage?.()} style={{ WebkitTextStroke: '0.2px currentColor' }}>
+        {state.time || currentTime}
+      </div>
+
+      <div className="absolute z-50 pointer-events-auto bottom-[9.5%] right-[2.5%]">
+        {onOpenEditMessage && <TertiaryLiquidGlassButton onClick={onOpenEditMessage} isEditing={isEditing} />}
+      </div>
+
+      {state?.stickers?.filter(s => s.side === 'back').map(sticker => (
+        <DraggableSticker key={sticker.id} stickerData={sticker} />
+      ))}
+    </div>
+  );
 }
+
+

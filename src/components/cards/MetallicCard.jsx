@@ -1,171 +1,115 @@
-import { useCard } from '../../context/CardContext';
+import React, { useState } from 'react';
+import { useCard } from '@/context/CardContext';
+import { DraggableSticker } from '@/components/card/DraggableSticker';
+import { FlowerInfoPill } from '@/components/card/FlowerInfoPill';
+import TertiaryLiquidGlassButton from '@/components/ui/TertiaryLiquidGlassButton';
+import { EmojiStamp } from '@/components/card/EmojiStamp';
+import { PolaroidFrame } from '@/components/card/PolaroidFrame';
+import { FlowerNameBadge, FlowerUsecaseBadge, Polaroid, Stamp, CardSubjectBox, CardMessageBox } from '@/components/ui';
 
-/**
- * MetallicCard — Greeting Card Metallic style, front and back
- */
-export function MetallicCardFront() {
-  const { state } = useCard();
-  const { flower, mood, title } = state;
+export function MetallicCardFront({ onOpenEditTitle, isPreview = false }) {
+  const { state, flower } = useCard();
 
   return (
-    <div
-      className="metallic-card rounded-2xl overflow-hidden relative w-full h-full flex flex-col"
-      style={{ minHeight: '460px' }}
-    >
-      {/* Sheen overlay */}
-      <div
-        className="absolute inset-0 pointer-events-none"
+    <div className="relative w-full h-full aspect-[688/960] rounded-[12px] overflow-hidden shadow-2xl select-none bg-black @container" style={{ containerType: "inline-size" }}>
+      {/* Background artwork */}
+      <img
+        src={flower?.image || '/assets/flower-illustrations/flower_1.png'}
+        alt="Metallic Card Flower"
+        className="absolute inset-0 w-full h-full object-cover pointer-events-none"
+      />
+
+      <FlowerInfoPill variant="front" />
+
+      {/* Metallic Sheen Overlay */}
+      <div 
+        className="absolute inset-0 pointer-events-none mix-blend-overlay opacity-40 z-10"
         style={{
-          background:
-            'linear-gradient(135deg, rgba(255,255,255,0.3) 0%, rgba(255,255,255,0) 50%, rgba(255,255,255,0.15) 100%)',
+          background: 'linear-gradient(135deg, rgba(255,255,255,0.7) 0%, rgba(200,200,200,0) 40%, rgba(255,255,255,0.6) 70%, rgba(0,0,0,0.3) 100%)'
         }}
       />
 
-      {/* Flower area */}
-      <div
-        className="flex-1 flex items-center justify-center relative overflow-hidden"
-        style={{ minHeight: '320px' }}
-      >
-        <div className="text-center z-10">
-          <div
-            className="text-8xl mb-4"
-            style={{
-              filter:
-                'drop-shadow(2px 2px 4px rgba(0,0,0,0.3)) drop-shadow(0 0 20px rgba(255,255,255,0.3))',
-            }}
-          >
-            {flower?.emoji || '✨'}
-          </div>
-          <div className="text-xs font-medium text-white/70 tracking-widest uppercase">
-            {flower?.name || 'Select a mood'}
-          </div>
-        </div>
+      {/* Silver Frame Overlay */}
+      <img 
+        src="/assets/polaroid-defaults/metallic_frame.png" 
+        alt="" 
+        className="absolute inset-0 w-full h-full pointer-events-none z-20" 
+      />
 
-        {/* Flower name pill */}
-        {flower && (
-          <div
-            className="absolute top-4 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full text-xs font-medium text-white whitespace-nowrap"
-            style={{
-              background: 'rgba(0,0,0,0.3)',
-              backdropFilter: 'blur(8px)',
-              border: '1px solid rgba(255,255,255,0.3)',
-            }}
-          >
-            {flower.name}
-          </div>
-        )}
-      </div>
+      {state?.stickers?.filter(s => s.side === 'front').map(sticker => ( <DraggableSticker key={sticker.id} stickerData={sticker} /> ))} 
 
-      {/* Subject */}
-      <div
-        className="p-4"
-        style={{
-          background: 'rgba(0,0,0,0.25)',
-          backdropFilter: 'blur(4px)',
-        }}
-      >
-        <div className="text-white font-semibold text-sm">
-          {title || (mood ? `A ${mood} card` : 'Your greeting...')}
-        </div>
-        <div className="text-white/60 text-xs mt-1">
-          {flower?.meaning || 'Select a mood to reveal your flower'}
-        </div>
-      </div>
-
-      {/* Date */}
-      <div className="absolute top-3 right-3">
-        <div
-          className="text-xs px-2 py-1 rounded-full font-medium text-white"
-          style={{ background: 'rgba(0,0,0,0.3)', backdropFilter: 'blur(4px)' }}
-        >
-          {new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
-        </div>
+      {/* Subject Box */}
+      <div className="absolute bottom-[4.5%] inset-x-0 mx-auto w-[86%] aspect-[738/474] z-30">
+        <CardSubjectBox variant="metallic" onClick={onOpenEditTitle} isPreview={isPreview} className="w-full h-full" />
       </div>
     </div>
   );
 }
 
-export function MetallicCardBack() {
-  const { state } = useCard();
-  const { flower, message, from, to, mood } = state;
+export function MetallicCardBack({ onOpenEditMessage, isPreview = false }) {
+  const { state, flower, dispatch } = useCard();
+  const [isEditing, setIsEditing] = useState(false);
+
+  const getBackImageSrc = () => {
+    if (state.selectedBackImage === 'none') return null;
+    if (state.selectedBackImage === 'portrait') return '/assets/polaroid-defaults/image2.png';
+    if (state.selectedBackImage === 'landscape') return '/assets/polaroid-defaults/image1.png';
+    return state.selectedBackImage;
+  };
+  const backImageSrc = getBackImageSrc();
 
   return (
-    <div
-      className="metallic-card rounded-2xl overflow-hidden relative w-full h-full flex flex-col"
-      style={{ minHeight: '460px' }}
-    >
-      {/* Sheen */}
-      <div
-        className="absolute inset-0 pointer-events-none"
-        style={{
-          background:
-            'linear-gradient(135deg, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0) 50%, rgba(255,255,255,0.1) 100%)',
-        }}
+    <div className="relative w-full h-full aspect-[688/960] rounded-[16px] overflow-hidden shadow-2xl select-none border border-[#95a0a6]/60 bg-black @container" style={{ containerType: "inline-size" }}>
+      <img
+        src="/assets/bloom/metallic_back.png"
+        alt="Metallic Card Back"
+        className="absolute inset-0 w-full h-full object-cover pointer-events-none"
       />
 
-      {/* Flower usecase pill */}
-      {flower && (
-        <div className="px-5 pt-5 z-10">
-          <div
-            className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium text-white"
-            style={{
-              background: 'rgba(0,0,0,0.3)',
-              backdropFilter: 'blur(8px)',
-              border: '1px solid rgba(255,255,255,0.25)',
-            }}
-          >
-            <span>{flower.emoji}</span>
-            <span>{flower.meaning}</span>
-          </div>
+      <FlowerInfoPill variant="back" />
+
+      {state.selectedBackImage && state.selectedBackImage !== 'none' && (
+        <div className="absolute inset-0 pointer-events-none translate-y-[clamp(10px,2.8%,15px)] z-10">
+          <PolaroidFrame imageSrc={backImageSrc} />
+          <EmojiStamp emoji={state.stampEmoji} className="left-[42%] top-[clamp(118px,38.4cqw,146px)]" />
         </div>
       )}
 
-      {/* Message */}
-      <div className="flex-1 flex items-center justify-center p-5 z-10">
-        <div
-          className="w-full rounded-2xl p-5"
-          style={{
-            background: 'rgba(255,255,255,0.15)',
-            backdropFilter: 'blur(8px)',
-            border: '1px solid rgba(255,255,255,0.3)',
-            boxShadow: '1px 3px 2px rgba(0,0,0,0.3)',
-          }}
-        >
-          <div className="flex justify-between text-xs text-white/60 mb-3">
-            <span>To: <span className="font-medium text-white/80">{to || '—'}</span></span>
-            <span>From: <span className="font-medium text-white/80">{from || '—'}</span></span>
-          </div>
-          <div className="text-sm text-white/90 leading-relaxed min-h-20">
-            {message || (
-              <span className="text-white/40 italic">Your message will appear here...</span>
-            )}
-          </div>
-        </div>
+      {/* Labels added as real text for crisp rendering */}
+      <div className="absolute z-30 top-[54.5%] left-[17%] font-['Instrument_Serif',serif] text-[4.44cqw] leading-[5.33cqw] antialiased text-[#141413] font-normal tracking-wide" style={{ WebkitTextStroke: '0.2px currentColor' }}>To:</div>
+      <div className="absolute z-30 bottom-[13.3%] left-[39.25%] font-['Instrument_Serif',serif] text-[4.44cqw] leading-[5.33cqw] antialiased text-[#141413] font-normal tracking-wide" style={{ WebkitTextStroke: '0.2px currentColor' }}>From:</div>
+
+      <div 
+        className={`absolute z-30 top-[54.5%] left-[24%] font-['Syne_Tactile',cursive] text-[4.44cqw] leading-[5.33cqw] text-[#141413] tracking-normal rounded px-1 -ml-1 outline-none min-w-[50px] min-h-[20px] truncate max-w-[55%] block antialiased ${isPreview ? '' : 'cursor-pointer'}`}
+        onClick={() => !isPreview && onOpenEditMessage?.()}
+        style={{ WebkitTextStroke: '0.2px currentColor' }}
+      >
+        {state.to}
       </div>
 
-      {/* Stamp */}
-      <div className="absolute bottom-4 right-4 z-10">
-        <div
-          className="w-16 h-16 rounded-full flex items-center justify-center text-2xl"
-          style={{
-            background: 'rgba(255,255,255,0.2)',
-            backdropFilter: 'blur(8px)',
-            border: '1px solid rgba(255,255,255,0.4)',
-            boxShadow: '1px 1px 2px rgba(0,0,0,0.35)',
-          }}
-        >
-          {getMoodEmoji(mood)}
-        </div>
+      <div 
+        className={`absolute z-30 top-[60.5%] left-[16%] right-[16%] font-['Source_Serif_4','Source_Serif_Pro',serif] text-[3.33cqw] leading-[4.17cqw] text-[#141413] font-normal tracking-normal text-left rounded p-1 -ml-1 outline-none min-w-[50px] min-h-[20px] break-words whitespace-pre-wrap antialiased ${isPreview ? '' : 'cursor-pointer hover:bg-black/5'}`}
+        onClick={() => !isPreview && onOpenEditMessage?.()}
+        style={{ WebkitTextStroke: '0.2px currentColor' }}
+      >
+        {state.message}
       </div>
+
+      <div 
+        className={`absolute z-30 bottom-[13.3%] left-[50.25%] font-['Syne_Tactile',cursive] text-[4.44cqw] leading-[5.33cqw] text-[#141413] tracking-normal rounded px-1 -ml-1 outline-none min-w-[50px] min-h-[20px] truncate max-w-[40%] block antialiased ${isPreview ? '' : 'cursor-pointer'}`}
+        onClick={() => !isPreview && onOpenEditMessage?.()}
+        style={{ WebkitTextStroke: '0.2px currentColor' }}
+      >
+        {state.from}
+      </div>
+
+      <div className="absolute z-50 pointer-events-auto bottom-[6%] right-[6%]">
+        {onOpenEditMessage && <TertiaryLiquidGlassButton onClick={onOpenEditMessage} isEditing={isEditing} />}
+      </div>
+
+      {/* Equipped Sticker on back */}
+      {state?.stickers?.filter(s => s.side === 'back').map(sticker => ( <DraggableSticker key={sticker.id} stickerData={sticker} /> ))}
+      
     </div>
   );
-}
-
-function getMoodEmoji(mood) {
-  const map = {
-    apologetic: '🥺', happy: '😄', sad: '😢', angry: '😡',
-    grateful: '🙏', excited: '🤩', celebratory: '🎉', love: '❤️',
-    birthday: '🎂', friendship: '🤝',
-  };
-  return map[mood] || '✨';
 }

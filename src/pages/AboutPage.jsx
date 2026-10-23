@@ -1,47 +1,38 @@
-/**
- * AboutPage — Describes what Bloom is and how it works.
- */
+import React from 'react';
+import { BloomLogo, WindowPanel } from '@/components/ui';
+
 export default function AboutPage() {
   return (
-    <div className="min-h-screen pt-32 pb-16 px-6 flex flex-col items-center justify-center">
-      <div
-        className="window-panel rounded-3xl max-w-xl w-full p-8 modal-enter text-center"
-      >
-        {/* Logo */}
-        <div className="text-6xl mb-4">🌸</div>
+    <div className="min-h-[85vh] flex items-center justify-center px-6 py-16">
+      <div className="figma-window max-w-2xl w-full p-8 md:p-12 flex flex-col items-center text-center gap-6 select-none">
+        {/* Master Component: Bloom Logo */}
+        <BloomLogo size="lg" version="ver. 1.1" />
 
-        <h1
-          className="text-4xl font-serif italic tracking-tight text-white mb-2"
-          style={{ fontFamily: "'Georgia', serif", letterSpacing: '-0.05em' }}
-        >
-          Bloom
+        <h1 className="text-2xl md:text-3xl font-bold text-white tracking-tight">
+          Mood-Driven Greetings & Pokémon Cards
         </h1>
-        <p className="text-white/40 text-xs mb-8 tracking-widest">ver. 1.1</p>
 
-        <p className="text-white/70 text-base leading-relaxed mb-6">
-          Bloom is a mood-based greeting card generator that selects the perfect
-          flower — or Pokémon card — to express exactly how you feel.
+        <p className="text-sm md:text-base text-neutral-300 leading-relaxed max-w-lg">
+          Bloom transforms real feelings into collectible physical-digital cards.
+          Pick any occasion or mood—from honest apologies to celebratory milestones—and Bloom pairs it with the botanical flower meaning or custom Pokémon card, styled in Liquid Glass aesthetics.
         </p>
 
-        <div className="grid grid-cols-3 gap-4 mb-8">
-          {[
-            { icon: '📝', title: 'Paper', desc: 'Classic & timeless' },
-            { icon: '✨', title: 'Metallic', desc: 'Shiny & special' },
-            { icon: '⚡', title: 'Pokémon', desc: 'Fun & unique' },
-          ].map(({ icon, title, desc }) => (
-            <div
-              key={title}
-              className="glass rounded-2xl p-4 flex flex-col items-center gap-1"
-            >
-              <span className="text-2xl">{icon}</span>
-              <span className="text-white/80 text-sm font-medium">{title}</span>
-              <span className="text-white/40 text-xs">{desc}</span>
-            </div>
-          ))}
-        </div>
+        {/* 3 Card Types rendered in Master WindowPanel components */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 w-full pt-4 text-left">
+          <WindowPanel title="Paper Card" bodyClassName="p-4 flex flex-col items-center text-center gap-1.5">
+            <span className="text-3xl">📄</span>
+            <p className="text-xs text-neutral-400">Classic pressed card with flower textures & date stamps.</p>
+          </WindowPanel>
 
-        <div className="flex flex-col gap-2 text-white/50 text-sm">
-          <p>🌹 Pick your mood → get your flower → customize your card → share it</p>
+          <WindowPanel title="Metallic Card" bodyClassName="p-4 flex flex-col items-center text-center gap-1.5">
+            <span className="text-3xl">✨</span>
+            <p className="text-xs text-neutral-400">Shimmering foil card with liquid glass badges.</p>
+          </WindowPanel>
+
+          <WindowPanel title="Pokémon & Trainer" bodyClassName="p-4 flex flex-col items-center text-center gap-1.5">
+            <span className="text-3xl">⚡</span>
+            <p className="text-xs text-neutral-400">Battle card format with polaroid frames, stamps & bios.</p>
+          </WindowPanel>
         </div>
       </div>
     </div>

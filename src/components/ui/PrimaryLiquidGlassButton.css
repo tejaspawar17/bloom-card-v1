@@ -1,0 +1,88 @@
+.primary-liquid-glass-button {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  overflow: hidden;
+  border-radius: 9999px;
+
+  /* Planar Studio Blue (Flat 3D glass slab matching reference image) */
+  background: #2277FF;
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  backdrop-filter: blur(16px) saturate(180%);
+
+  /* Subtle, seamless glass outer border (no prominent white outline) */
+  border: 1px solid rgba(255, 255, 255, 0.05);
+
+  /* Flat 3D Symmetric Specular Glare (Soft, subtle micro-glints matching image) */
+  box-shadow:
+    /* Top delicate subtle glare */
+    inset 0 1px 0.5px 0 rgba(255, 255, 255, 0.16),
+    /* Bottom symmetric subtle glare */
+    inset 0 -1px 0.5px 0 rgba(255, 255, 255, 0.14),
+    /* Grounding drop shadow */
+    0 6px 14px 0 rgba(0, 0, 0, 0.16);
+
+  transition:
+    background 180ms ease,
+    border-color 180ms ease,
+    filter 140ms ease,
+    transform 140ms ease,
+    box-shadow 140ms ease;
+  user-select: none;
+  -webkit-user-select: none;
+  outline: none;
+}
+
+/* Copied / Success State: Emerald Liquid Glass with identical flat 3D surface */
+.primary-liquid-glass-button.is-success,
+.primary-liquid-glass-button--green {
+  background: #28CD41;
+  border-color: rgba(255, 255, 255, 0.08);
+  box-shadow:
+    inset 0 1px 0.5px 0 rgba(255, 255, 255, 0.22),
+    inset 0 -1px 0.5px 0 rgba(255, 255, 255, 0.16),
+    0 6px 14px 0 rgba(0, 0, 0, 0.16);
+}
+
+.primary-liquid-glass-button.is-success:hover,
+.primary-liquid-glass-button--green:hover {
+  filter: brightness(1.05);
+  border-color: rgba(255, 255, 255, 0.12);
+  box-shadow:
+    inset 0 1px 0.5px 0 rgba(255, 255, 255, 0.26),
+    inset 0 -1px 0.5px 0 rgba(255, 255, 255, 0.20),
+    0 8px 18px 0 rgba(0, 0, 0, 0.20);
+}
+
+/* Hover: subtle brighten and crisp sheen */
+.primary-liquid-glass-button:hover {
+  filter: brightness(1.05);
+  border-color: rgba(255, 255, 255, 0.10);
+  box-shadow:
+    inset 0 1px 0.5px 0 rgba(255, 255, 255, 0.22),
+    inset 0 -1px 0.5px 0 rgba(255, 255, 255, 0.18),
+    0 8px 18px 0 rgba(0, 0, 0, 0.20);
+}
+
+/* Active: tactile press */
+.primary-liquid-glass-button:active {
+  filter: brightness(0.96);
+  transform: scale(0.96);
+  box-shadow:
+    inset 0 1px 0.5px 0 rgba(255, 255, 255, 0.12),
+    inset 0 -1px 0.5px 0 rgba(255, 255, 255, 0.10),
+    0 2px 6px 0 rgba(0, 0, 0, 0.12);
+}
+
+.primary-liquid-glass-button:focus-visible {
+  outline: 2px solid #ffffff;
+  outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .primary-liquid-glass-button {
+    transition: none;
+  }
+}

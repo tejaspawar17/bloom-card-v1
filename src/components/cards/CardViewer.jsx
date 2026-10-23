@@ -1,54 +1,285 @@
-import { useCard } from '../../context/CardContext';
-import { PaperCardFront, PaperCardBack } from './PaperCard';
-import { MetallicCardFront, MetallicCardBack } from './MetallicCard';
+import React, { useState, useEffect } from 'react';
+import { motion } from 'framer-motion';
+import { Eye, ArrowClockwise, ArrowLeft } from '@phosphor-icons/react';
+import { useCard } from '@/context/CardContext';
+
 import { PokemonCardFront, PokemonCardBack } from './PokemonCard';
+import { MetallicCardFront, MetallicCardBack } from './MetallicCard';
+import { PaperCardBack } from './PaperCard';
+import { PaperCardFront } from '@/components/card/modes/PaperCardFront';
 
-/**
- * CardViewer — Shows the correct card type with a 3D flip animation.
- * Handles Paper, Metallic, and Pokémon card types.
- */
-export default function CardViewer() {
-  const { state, dispatch } = useCard();
-  const { cardType, isFlipped } = state;
+import LiquidGlassButton from '@/components/ui/LiquidGlassButton';
+import LiquidGlassIconButton from '@/components/ui/LiquidGlassIconButton';
+import GlassSegmentedControl from '@/components/ui/GlassSegmentedControl';
+import VerticalCardSelector from '@/components/ui/VerticalCardSelector';
 
-  const renderFront = () => {
-    switch (cardType) {
-      case 'metallic': return <MetallicCardFront />;
-      case 'pokemon': return <PokemonCardFront />;
-      default: return <PaperCardFront />;
+export default function CardViewer({ onConfirm, onOpenEditTitle, onOpenEditMessage }) {
+  const { state, dispatch, flower } = useCard();
+  const [isFullscreen, setIsFullscreen] = useState(false);
+  const [isAnimating, setIsAnimating] = useState(false);
+  const [isSwapping, setIsSwapping] = useState(false);
+  // Mouse tracking for Pokemon TCG style tilt in preview
+  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+
+  // Magic Spin Decoy State
+  const [spinDegrees, setSpinDegrees] = useState(0);
+  const [visualCardType, setVisualCardType] = useState(state.cardType);
+
+  useEffect(() => {
+    if (state.cardType !== visualCardType) {
+      setIsSwapping(true); // Apple Shrink!
+      setTimeout(() => {
+        setVisualCardType(state.cardType); // Instant swap while tiny
+      }, 160);
+      setTimeout(() => {
+        setIsSwapping(false); // Spring back up!
+      }, 270);
     }
+  }, [state.cardType, visualCardType]);
+
+  const isFlipped = state.activeSide === 'back';
+
+  const handlePreviewMouseMove = (e) => {
+    if (!isFullscreen) return;
+    const rect = e.currentTarget.getBoundingClientRect();
+    const x = (e.clientX - rect.left) / rect.width - 0.5;
+    const y = (e.clientY - rect.top) / rect.height - 0.5;
+    setMousePos({ x, y });
   };
 
-  const renderBack = () => {
-    switch (cardType) {
-      case 'metallic': return <MetallicCardBack />;
-      case 'pokemon': return <PokemonCardBack />;
-      default: return <PaperCardBack />;
-    }
+  const handlePreviewMouseLeave = () => {
+    setMousePos({ x: 0, y: 0 });
+  };
+
+  const renderFront = (preview = false) => {
+    return (
+      <div className="w-full h-full relative">
+        <div 
+          className="absolute inset-0"
+          style={{ 
+            visibility: visualCardType === 'pokemon' ? 'visible' : 'hidden',
+            pointerEvents: visualCardType === 'pokemon' ? 'auto' : 'none'
+          }}
+        >
+          <PokemonCardFront onOpenEditTitle={preview ? null : onOpenEditTitle} isPreview={preview} />
+        </div>
+        <div 
+          className="absolute inset-0"
+          style={{ 
+            visibility: visualCardType === 'metallic' ? 'visible' : 'hidden',
+            pointerEvents: visualCardType === 'metallic' ? 'auto' : 'none'
+          }}
+        >
+          <MetallicCardFront onOpenEditTitle={preview ? null : onOpenEditTitle} isPreview={preview} />
+        </div>
+        <div 
+          className="absolute inset-0"
+          style={{ 
+            visibility: visualCardType === 'paper' ? 'visible' : 'hidden',
+            pointerEvents: visualCardType === 'paper' ? 'auto' : 'none'
+          }}
+        >
+          <PaperCardFront state={state} flower={flower} onOpenEditTitle={preview ? null : onOpenEditTitle} isPreview={preview} />
+        </div>
+      </div>
+    );
+  };
+
+  const renderBack = (preview = false) => {
+    return (
+      <div className="w-full h-full relative">
+        <div 
+          className="absolute inset-0"
+          style={{ 
+            visibility: visualCardType === 'pokemon' ? 'visible' : 'hidden',
+            pointerEvents: visualCardType === 'pokemon' ? 'auto' : 'none'
+          }}
+        >
+          <PokemonCardBack onOpenEditMessage={preview ? null : onOpenEditMessage} isPreview={preview} />
+        </div>
+        <div 
+          className="absolute inset-0"
+          style={{ 
+            visibility: visualCardType === 'metallic' ? 'visible' : 'hidden',
+            pointerEvents: visualCardType === 'metallic' ? 'auto' : 'none'
+          }}
+        >
+          <MetallicCardBack onOpenEditMessage={preview ? null : onOpenEditMessage} isPreview={preview} />
+        </div>
+        <div 
+          className="absolute inset-0"
+          style={{ 
+            visibility: visualCardType === 'paper' ? 'visible' : 'hidden',
+            pointerEvents: visualCardType === 'paper' ? 'auto' : 'none'
+          }}
+        >
+          <PaperCardBack onOpenEditMessage={preview ? null : onOpenEditMessage} isPreview={preview} />
+        </div>
+      </div>
+    );
   };
 
   return (
-    <div className="flex flex-col items-center gap-4">
-      {/* Card with flip */}
-      <div className="card-container" style={{ width: 344, height: 480 }}>
-        <div className={`card-inner ${isFlipped ? 'flipped' : ''}`}>
-          <div className="card-front">
-            {renderFront()}
-          </div>
-          <div className="card-back">
-            {renderBack()}
-          </div>
+    <div className="flex flex-col items-center select-none" role="region" aria-label="Card Studio Viewer">
+      {/* 1. Top Switcher: Segmented Control (Glass) */}
+      <div className="mb-1.5 xl:mb-2 flex justify-center">
+        <GlassSegmentedControl 
+          value={state.cardType}
+          onValueChange={(val) => dispatch({ type: 'SET_CARD_TYPE', payload: val })}
+          segments={[
+              {
+                value: "pokemon",
+                label: "Pokemon Card",
+                image: "/assets/ui/segmented-pokemon.svg"
+              },
+              {
+                value: "metallic",
+                label: "Metal Card",
+                image: "/assets/ui/segmented-metal.svg"
+              },
+              {
+                value: "paper",
+                label: "Flower Card",
+                image: "/assets/ui/segmented-flower.svg"
+              }
+            ]}
+        />
+      </div>
+
+      {/* Main Center Stage */}
+      <div className="relative flex items-start justify-center mb-1.5 xl:mb-2 w-[min(280px,calc((100dvh-192px)*688/960))] xl:w-[min(360px,calc((100dvh-252px)*688/960))] 2xl:w-[min(380px,calc((100dvh-252px)*688/960))] mx-auto">
+        {/* 2. Left Vertical Switcher (type="pill") */}
+        <div className={`absolute top-1/2 -translate-y-1/2 right-full mr-[10px] xl:mr-[16px] z-20 flex justify-end transition-opacity duration-300 ${state.cardType === 'pokemon' ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
+          <VerticalCardSelector
+              value={state.pokemonSubtype || 'base'}
+              onValueChange={(val) => {
+                dispatch({ type: "SET_POKEMON_SUBTYPE", payload: val });
+                dispatch({ type: "SET_ACTIVE_SIDE", payload: "back" });
+              }}
+              segments={[
+                {
+                  value: "base",
+                  label: "Pokemon Card",
+                  image: "/assets/ui/segmented-vertical-pokemon.svg"
+                },
+                {
+                  value: "trainer",
+                  label: "Trainer Card",
+                  image: "/assets/ui/segmented-vertical-trainer.svg"
+                }
+              ]}
+            />
+        </div>
+
+        {/* 3. Interactive Card */}
+        <div className="perspective-container relative w-full h-full aspect-[688/960]">
+          <motion.div 
+              className="w-full h-full relative"
+              style={{ transformStyle: 'preserve-3d', willChange: 'auto' }}
+              animate={{ 
+                rotateY: (isFlipped ? 180 : 0) + spinDegrees,
+                scale: isSwapping ? 0.88 : 1
+              }} 
+              initial={false} transition={{ type: "spring", stiffness: 280, damping: 22, mass: 0.9 }}
+              onAnimationStart={() => setIsAnimating(true)}
+              onAnimationComplete={() => setIsAnimating(false)}
+            >
+              <div className={`absolute inset-0 ${isFlipped ? "pointer-events-none z-0" : "pointer-events-auto z-10"}`} style={{ backfaceVisibility: "hidden", WebkitBackfaceVisibility: "hidden", transform: isAnimating ? "rotateY(0deg) translateZ(1px)" : "rotateY(0deg)" }}>
+                {renderFront()}
+              </div>
+              <div className={`absolute inset-0 ${isFlipped ? "pointer-events-auto z-10" : "pointer-events-none z-0"}`} style={{ backfaceVisibility: "hidden", WebkitBackfaceVisibility: "hidden", transform: isAnimating ? "rotateY(180deg) translateZ(1px)" : "rotateY(180deg)" }}>
+                {renderBack()}
+              </div>
+            </motion.div>
+        </div>
+
+        {/* 4. Right Controls (Floating Action Buttons type="circle") */}
+        <div className="absolute top-1/2 -translate-y-1/2 left-full ml-[10px] xl:ml-[16px] flex flex-col items-start gap-[8px] xl:gap-[12px] z-20">
+          <LiquidGlassIconButton
+            aria-label="Fullscreen Preview"
+            onClick={() => setIsFullscreen(true)}
+            icon={<Eye weight="regular" />}
+          />
+
+          <LiquidGlassIconButton
+            aria-label="Flip card"
+            onClick={(e) => { e.preventDefault(); e.stopPropagation(); dispatch({ type: 'TOGGLE_SIDE' }); }}
+            icon={<ArrowClockwise weight="regular" />}
+          />
         </div>
       </div>
 
-      {/* Flip button */}
-      <button
-        onClick={() => dispatch({ type: 'FLIP_CARD' })}
-        className="glass-button px-5 py-2 rounded-full text-white/80 text-sm font-medium flex items-center gap-2"
-      >
-        <span>{isFlipped ? '↩' : '↪'}</span>
-        <span>{isFlipped ? 'Show Front' : 'Flip Card'}</span>
-      </button>
+      {/* 5. 'Confirm' Button Component */}
+      <div className="flex items-center justify-center mt-1 xl:mt-1.5 relative">
+        <LiquidGlassButton variant="primary" size="lg" className="h-[42px] xl:h-[48px] px-5 xl:px-6 text-[15px] xl:text-[17px]" onClick={onConfirm}>
+          Confirm
+        </LiquidGlassButton>
+      </div>
+
+      {/* Fullscreen Overlay with Pokemon TCG style interactive 3D scaling */}
+      {isFullscreen && (
+        <div 
+          className="fixed inset-0 z-50 bg-black/90 backdrop-blur-sm flex items-center justify-center cursor-pointer overflow-hidden" 
+          onClick={() => setIsFullscreen(false)}
+          onMouseMove={handlePreviewMouseMove}
+          onMouseLeave={handlePreviewMouseLeave}
+        >
+          {/* Back Button (Left) */}
+          <div className="absolute left-[calc(50%-220px)] sm:left-[calc(50%-320px)] top-1/2 -translate-y-1/2 z-50" onClick={e => e.stopPropagation()}>
+            <LiquidGlassIconButton
+              aria-label="Exit Preview"
+              onClick={() => setIsFullscreen(false)}
+              icon={<ArrowLeft weight="regular" className="text-red-500" />}
+            />
+          </div>
+
+          <div 
+            className="perspective-container relative w-[360px] xl:w-[380px] aspect-[688/960]" 
+            style={{ perspective: '1200px' }}
+            onClick={e => e.stopPropagation()}
+          >
+            <motion.div 
+                className="w-full h-full relative"
+                style={{ transformStyle: 'preserve-3d', willChange: 'auto' }}
+                animate={{ 
+                    rotateY: (isFlipped ? 180 : 0) + (mousePos.x * 25) + spinDegrees, // Tilt horizontally based on mouse
+                    rotateX: -(mousePos.y * 25), // Tilt vertically based on mouse
+                    scale: isSwapping ? 0.98 : 1.15, // Apple bounce
+                    y: 48 // Translate-y-12 equivalent (12 * 4px)
+                  }} 
+                initial={{ scale: 1, rotateY: isFlipped ? 180 : 0, rotateX: 0, y: 0 }} 
+                transition={{ type: "spring", stiffness: 320, damping: 26, mass: 0.9 }}
+                onAnimationStart={() => setIsAnimating(true)}
+                onAnimationComplete={() => setIsAnimating(false)}
+              >
+                {/* Dynamic Lighting Glare matching the tilt (Pokemon TCG effect) */}
+                <div 
+                  className="absolute inset-0 z-50 pointer-events-none rounded-[12px] mix-blend-overlay opacity-50"
+                  style={{
+                    background: `radial-gradient(circle at ${mousePos.x * 100 + 50}% ${mousePos.y * 100 + 50}%, rgba(255,255,255,0.8) 0%, transparent 60%)`,
+                    transform: 'translateZ(2px)' // Keep glare slightly above card surface
+                  }}
+                />
+
+                <div className={`absolute inset-0 ${isFlipped ? "pointer-events-none z-0" : "pointer-events-auto z-10"}`} style={{ backfaceVisibility: "hidden", WebkitBackfaceVisibility: "hidden", transform: isAnimating ? "rotateY(0deg) translateZ(1px)" : "rotateY(0deg)" }}>{renderFront(true)}</div>
+                <div className={`absolute inset-0 ${isFlipped ? "pointer-events-auto z-10" : "pointer-events-none z-0"}`} style={{ backfaceVisibility: "hidden", WebkitBackfaceVisibility: "hidden", transform: isAnimating ? "rotateY(180deg) translateZ(1px)" : "rotateY(180deg)" }}>{renderBack(true)}</div>
+              </motion.div>
+          </div>
+
+          {/* Flip Button (Right) */}
+          <div className="absolute right-[calc(50%-220px)] sm:right-[calc(50%-320px)] top-1/2 -translate-y-1/2 z-50" onClick={e => e.stopPropagation()}>
+            <LiquidGlassIconButton
+              aria-label="Flip card"
+              onClick={() => {
+                // Reset tilt momentarily on flip for cleaner flip animation
+                setMousePos({ x: 0, y: 0 });
+                dispatch({ type: 'TOGGLE_SIDE' });
+              }}
+              icon={<ArrowClockwise weight="regular" />}
+            />
+          </div>
+        </div>
+      )}
     </div>
   );
 }
