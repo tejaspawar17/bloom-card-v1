@@ -126,11 +126,12 @@ export default function LeftPanel() {
                       {/* Image Thumbnail (Figma: 66x66, y:3, r:12) */}
                       <div className="relative mt-[2.5px] xl:mt-[3px] w-[54px] h-[54px] xl:w-[61px] xl:h-[61px] 2xl:w-[66px] 2xl:h-[66px] rounded-[10px] xl:rounded-[11px] 2xl:rounded-[12px] overflow-hidden bg-black/40 z-10">
                         <img
-                          src={item.image}
+                          src={item.thumb || item.image}
                           alt=""
                           className="w-full h-full object-cover"
                           aria-hidden="true"
                           loading="lazy"
+                          decoding="async"
                         />
                       </div>
 

@@ -62,16 +62,16 @@ export const STICKERS = [
 ];
 
 export const FLOWERS = [
-  { id: 'flower_1', name: 'White Tulip', image: '/assets/flower-illustrations/white_tulip.png', meaning: 'Sincere Forgiveness, Humility & A Clean Slate' },
-  { id: 'flower_2', name: 'Sunflower', image: '/assets/flower-illustrations/sunflower.png', meaning: 'Pure Joy, Vitality & Radiant Warmth' },
-  { id: 'flower_3', name: 'Pink Peony', image: '/assets/flower-illustrations/pink_peony.png', meaning: 'Prosperity, High Honor & Victorious Energy' },
-  { id: 'flower_4', name: 'Pink Carnation', image: '/assets/flower-illustrations/pink_carnation.png', meaning: 'Deep Gratitude, Fondness & Eternal Appreciation' },
-  { id: 'flower_5', name: 'Lavender', image: '/assets/flower-illustrations/lavender.png', meaning: 'Holistic Healing, Serenity & Restorative Calm' },
-  { id: 'flower_6', name: 'Parijat', image: '/assets/flower-illustrations/parijat.png', meaning: 'Enduring Memory, Longing & Unbreakable Bonds' },
-  { id: 'flower_7', name: 'Red Rose', image: '/assets/flower-illustrations/red_rose.png', meaning: 'Romance, Soulful Devotion & Deep Passion' },
-  { id: 'flower_8', name: 'Gladiolus', image: '/assets/flower-illustrations/gladiolus.png', meaning: 'Strength of Character, Integrity & Heroic Honor' },
-  { id: 'flower_9', name: 'White Lily', image: '/assets/flower-illustrations/white_lily.png', meaning: 'Solace, Solemn Comfort & Rebirth of Peace' },
-  { id: 'flower_10', name: 'Blue Hydrangea', image: '/assets/flower-illustrations/hydrangea.png', meaning: 'Heartfelt understanding, abundance, and sincere emotion' },
+  { id: 'flower_1', name: 'White Tulip', image: '/assets/flower-illustrations/white_tulip.png', thumb: '/assets/flower-thumbs/white_tulip.png', meaning: 'Sincere Forgiveness, Humility & A Clean Slate' },
+  { id: 'flower_2', name: 'Sunflower', image: '/assets/flower-illustrations/sunflower.png', thumb: '/assets/flower-thumbs/sunflower.png', meaning: 'Pure Joy, Vitality & Radiant Warmth' },
+  { id: 'flower_3', name: 'Pink Peony', image: '/assets/flower-illustrations/pink_peony.png', thumb: '/assets/flower-thumbs/pink_peony.png', meaning: 'Prosperity, High Honor & Victorious Energy' },
+  { id: 'flower_4', name: 'Pink Carnation', image: '/assets/flower-illustrations/pink_carnation.png', thumb: '/assets/flower-thumbs/pink_carnation.png', meaning: 'Deep Gratitude, Fondness & Eternal Appreciation' },
+  { id: 'flower_5', name: 'Lavender', image: '/assets/flower-illustrations/lavender.png', thumb: '/assets/flower-thumbs/lavender.png', meaning: 'Holistic Healing, Serenity & Restorative Calm' },
+  { id: 'flower_6', name: 'Parijat', image: '/assets/flower-illustrations/parijat.png', thumb: '/assets/flower-thumbs/parijat.png', meaning: 'Enduring Memory, Longing & Unbreakable Bonds' },
+  { id: 'flower_7', name: 'Red Rose', image: '/assets/flower-illustrations/red_rose.png', thumb: '/assets/flower-thumbs/red_rose.png', meaning: 'Romance, Soulful Devotion & Deep Passion' },
+  { id: 'flower_8', name: 'Gladiolus', image: '/assets/flower-illustrations/gladiolus.png', thumb: '/assets/flower-thumbs/gladiolus.png', meaning: 'Strength of Character, Integrity & Heroic Honor' },
+  { id: 'flower_9', name: 'White Lily', image: '/assets/flower-illustrations/white_lily.png', thumb: '/assets/flower-thumbs/white_lily.png', meaning: 'Solace, Solemn Comfort & Rebirth of Peace' },
+  { id: 'flower_10', name: 'Blue Hydrangea', image: '/assets/flower-illustrations/hydrangea.png', thumb: '/assets/flower-thumbs/hydrangea.png', meaning: 'Heartfelt understanding, abundance, and sincere emotion' },
 ];
 
 export const DEFAULT_STATE = {
