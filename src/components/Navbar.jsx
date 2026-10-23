@@ -6,7 +6,7 @@ const GLASS_SHADOW = "0px 8px 15px 0px rgba(0, 0, 0, 0.1), 0px 0px 0px 0.5px rgb
 
 function NavTab({ children, isActive, onClick }) {
   return (
-    <div className="relative flex items-center justify-center w-[82px] h-[42px] xl:w-[88px] xl:h-[46px] 2xl:w-[96px] 2xl:h-[52px]">
+    <div className="relative flex items-center justify-center w-[86px] h-[44px] xl:w-[94px] xl:h-[50px] 2xl:w-[98px] 2xl:h-[54px]">
       {/* The Glowing Gradient Background */}
       <div className="absolute inset-0 z-0 rounded-[500px] blur-[12px] shadow-[0px_24px_24px_6px_rgba(40,40,40,0.2)] pointer-events-none figma-aura-gradient opacity-60"></div>
       
@@ -14,7 +14,7 @@ function NavTab({ children, isActive, onClick }) {
       <button
         type="button"
         onClick={onClick}
-        className="relative z-10 w-[64px] h-[34px] xl:w-[70px] xl:h-[38px] 2xl:w-[76px] 2xl:h-[42px] rounded-[1000px] flex items-center justify-center cursor-pointer select-none transition-all outline-none active:scale-95"
+        className="relative z-10 w-[68px] h-[36px] xl:w-[74px] xl:h-[42px] 2xl:w-[76px] 2xl:h-[44px] rounded-[1000px] flex items-center justify-center cursor-pointer select-none transition-all outline-none active:scale-95"
         style={{
           background: "rgba(14, 14, 14, 0.8)",
           backdropFilter: "blur(20px)",
@@ -38,7 +38,7 @@ function NavTab({ children, isActive, onClick }) {
 
 function BloomTab({ children, onClick }) {
   return (
-    <div className="relative flex items-center justify-center w-[118px] h-[46px] xl:w-[130px] xl:h-[54px] 2xl:w-[144px] 2xl:h-[60px]">
+    <div className="relative flex items-center justify-center w-[124px] h-[50px] xl:w-[140px] xl:h-[60px] 2xl:w-[146px] 2xl:h-[63px]">
       {/* The Glowing Gradient Background */}
       <div className="absolute inset-0 z-0 rounded-[500px] blur-[12px] shadow-[0px_24px_24px_6px_rgba(40,40,40,0.2)] pointer-events-none figma-aura-gradient opacity-60"></div>
       
@@ -46,7 +46,7 @@ function BloomTab({ children, onClick }) {
       <button
         type="button"
         onClick={onClick}
-        className="relative z-10 w-[98px] h-[38px] xl:w-[110px] xl:h-[44px] 2xl:w-[120px] 2xl:h-[48px] rounded-[1000px] flex flex-row items-center justify-center cursor-pointer select-none outline-none active:scale-95"
+        className="relative z-10 w-[102px] h-[40px] xl:w-[116px] xl:h-[48px] 2xl:w-[120px] 2xl:h-[50px] rounded-[1000px] flex flex-row items-center justify-center cursor-pointer select-none outline-none active:scale-95"
         style={{
           background: "rgba(14, 14, 14, 0.8)",
           backdropFilter: "blur(20px)",
@@ -78,10 +78,10 @@ export default function Navbar({ activeTab = 'design', onTabChange }) {
 
           <BloomTab onClick={() => onTabChange('design')}>
             <div className="flex flex-row items-baseline gap-[2px]">
-               <span className="font-serif italic text-[20px] xl:text-[21px] 2xl:text-[23px] tracking-[-0.05em] text-white leading-none">
+               <span className="font-serif italic text-[21px] xl:text-[22px] 2xl:text-[23px] tracking-[-0.05em] text-white leading-none">
                  Bloom
                </span>
-               <span className="font-sans text-[11.5px] xl:text-[12px] 2xl:text-[13px] tracking-[-0.05em] text-white leading-none">
+               <span className="font-sans text-[12px] xl:text-[12.5px] 2xl:text-[13px] tracking-[-0.05em] text-white leading-none">
                  Ver. 1.1
                </span>
             </div>

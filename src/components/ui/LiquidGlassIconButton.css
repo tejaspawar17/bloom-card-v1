@@ -1,8 +1,8 @@
 .liquid-glass-icon-button {
   position: relative;
   display: inline-flex;
-  width: 38px;
-  height: 38px;
+  width: 42px;
+  height: 42px;
   cursor: pointer;
   align-items: center;
   justify-content: center;
@@ -42,35 +42,35 @@
 .liquid-glass-icon-button img,
 .liquid-glass-icon-button svg {
   display: block;
-  width: 21px;
-  height: 21px;
+  width: 24px;
+  height: 24px;
   filter: drop-shadow(0 1px 1px rgb(0 0 0 / 55%));
   pointer-events: none;
 }
 
 @media (min-width: 1280px) {
   .liquid-glass-icon-button {
-    width: 42px;
-    height: 42px;
+    width: 48px;
+    height: 48px;
   }
 
   .liquid-glass-icon-button img,
   .liquid-glass-icon-button svg {
-    width: 23px;
-    height: 23px;
+    width: 28px;
+    height: 28px;
   }
 }
 
 @media (min-width: 1800px) {
   .liquid-glass-icon-button {
-    width: 46px;
-    height: 46px;
+    width: 48px;
+    height: 48px;
   }
 
   .liquid-glass-icon-button img,
   .liquid-glass-icon-button svg {
-    width: 25px;
-    height: 25px;
+    width: 28px;
+    height: 28px;
   }
 }
 
