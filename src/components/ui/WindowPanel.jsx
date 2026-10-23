@@ -22,7 +22,7 @@ export default function WindowPanel({
     <div className={clsx('figma-inner-panel flex flex-col rounded-[18px] xl:rounded-[19px] 2xl:rounded-[20px]', className)}>
       {/* Title Section (Figma: padding 18px 8px 16px 18px, h=56px, Inter 600 17/22, white/0.85) */}
       <div className="figma-panel-header pt-[15px] pr-[7px] pb-[13px] pl-[15px] xl:pt-[17px] xl:pr-[8px] xl:pb-[15px] xl:pl-[17px] 2xl:pt-[18px] 2xl:pr-[8px] 2xl:pb-[16px] 2xl:pl-[18px] flex items-center justify-between">
-        <h3 className="text-white/85 font-semibold text-[15px] leading-[20px] xl:text-[16px] xl:leading-[21px] 2xl:text-[17px] 2xl:leading-[22px] tracking-[-0.0253em] select-none font-sans">
+        <h3 className="text-white/85 font-semibold text-[14.5px] leading-[19px] xl:text-[15px] xl:leading-[20px] 2xl:text-[16px] 2xl:leading-[21px] tracking-[-0.022em] select-none font-sans">
           {title}
         </h3>
         {headerAction && (

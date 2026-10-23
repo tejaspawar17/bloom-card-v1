@@ -1,10 +1,10 @@
 .tertiary-liquid-glass-button {
   position: relative;
   display: inline-flex;
-  width: 40px;
-  height: 40px;
-  min-width: 40px;
-  min-height: 40px;
+  width: 38px;
+  height: 38px;
+  min-width: 38px;
+  min-height: 38px;
   flex-shrink: 0;
   cursor: pointer;
   align-items: center;
@@ -46,19 +46,36 @@
 .tertiary-liquid-glass-button img,
 .tertiary-liquid-glass-button svg {
   display: block;
-  width: 22px;
-  height: 22px;
-  max-width: 22px;
-  max-height: 22px;
+  width: 21px;
+  height: 21px;
+  max-width: 21px;
+  max-height: 21px;
   pointer-events: none;
 }
 
 @media (min-width: 1280px) {
   .tertiary-liquid-glass-button {
-    width: 44px;
-    height: 44px;
-    min-width: 44px;
-    min-height: 44px;
+    width: 42px;
+    height: 42px;
+    min-width: 42px;
+    min-height: 42px;
+  }
+
+  .tertiary-liquid-glass-button img,
+  .tertiary-liquid-glass-button svg {
+    width: 23px;
+    height: 23px;
+    max-width: 23px;
+    max-height: 23px;
+  }
+}
+
+@media (min-width: 1800px) {
+  .tertiary-liquid-glass-button {
+    width: 46px;
+    height: 46px;
+    min-width: 46px;
+    min-height: 46px;
   }
 
   .tertiary-liquid-glass-button img,

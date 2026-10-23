@@ -211,7 +211,7 @@ export default function CardViewer({ onConfirm, onOpenEditTitle, onOpenEditMessa
 
       {/* 5. 'Confirm' Button Component */}
       <div className="flex items-center justify-center mt-1 xl:mt-1.5 relative">
-        <LiquidGlassButton variant="primary" size="lg" className="h-[42px] xl:h-[48px] px-5 xl:px-6 text-[15px] xl:text-[17px]" onClick={onConfirm}>
+        <LiquidGlassButton variant="primary" size="lg" className="h-[38px] xl:h-[42px] 2xl:h-[46px] px-4 xl:px-5 2xl:px-6 text-[14px] xl:text-[15px] 2xl:text-[16px]" onClick={onConfirm}>
           Confirm
         </LiquidGlassButton>
       </div>
