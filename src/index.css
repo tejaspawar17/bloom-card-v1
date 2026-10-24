@@ -120,31 +120,17 @@
   }
 
   .figma-inner-panel {
-    border-radius: 16px;
-    background: rgba(14, 16, 15, 0.80);
+    border-radius: 18px;
+    background: rgba(8, 10, 9, 0.82);
     backdrop-filter: blur(24px) saturate(140%);
     -webkit-backdrop-filter: blur(20px);
     overflow: hidden;
     position: relative;
-    border: none;
-    box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.08), inset 0 -1px 2px rgba(0, 0, 0, 0.3);
-  }
-  .figma-inner-panel::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    border-radius: 16px;
-    padding: 0.5px;
-    background: linear-gradient(160deg, rgba(255,255,255,0.18) 0%, rgba(255,255,255,0.04) 50%, rgba(255,255,255,0.08) 100%);
-    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-    -webkit-mask-composite: xor;
-    mask-composite: exclude;
-    pointer-events: none;
-    z-index: 20;
+    border: 1px solid rgba(255, 255, 255, 0.20);
+    box-shadow: none;
   }
   @media (min-width: 1280px) {
-    .figma-inner-panel,
-    .figma-inner-panel::before {
+    .figma-inner-panel {
       border-radius: 20px;
     }
   }
@@ -173,9 +159,10 @@
     pointer-events: none;
     z-index: 20;
   }.figma-panel-header {
-    background: rgba(22, 25, 23, 0.75);
-    backdrop-filter: blur(16px) saturate(130%);
-    border-bottom: 0.5px solid rgba(255, 255, 255, 0.10);
+    background: rgba(31, 31, 31, 0.55);
+    backdrop-filter: blur(3px);
+    -webkit-backdrop-filter: blur(3px);
+    border-bottom: 0.67px solid rgba(255, 255, 255, 0.10);
   }
 
   /* HIG Interactive Occasion Pill */

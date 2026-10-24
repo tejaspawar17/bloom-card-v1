@@ -8,7 +8,7 @@ function NavTab({ children, isActive, onClick }) {
   return (
     <div className="relative flex items-center justify-center w-[86px] h-[44px] xl:w-[94px] xl:h-[50px] 2xl:w-[98px] 2xl:h-[54px]">
       {/* The Glowing Gradient Background */}
-      <div className="absolute inset-0 z-0 rounded-[500px] blur-[12px] shadow-[0px_24px_24px_6px_rgba(40,40,40,0.2)] pointer-events-none figma-aura-gradient opacity-60"></div>
+      <div className="absolute -inset-x-2 -inset-y-1.5 z-0 rounded-[500px] blur-[10px] pointer-events-none opacity-85" style={{ background: "radial-gradient(ellipse at center, rgba(134, 183, 90, 0.90) 0%, rgba(113, 157, 83, 0.65) 45%, rgba(79, 121, 62, 0.35) 75%, transparent 100%)" }}></div>
       
       {/* The Glass Button */}
       <button
@@ -40,7 +40,7 @@ function BloomTab({ children, onClick }) {
   return (
     <div className="relative flex items-center justify-center w-[124px] h-[50px] xl:w-[140px] xl:h-[60px] 2xl:w-[146px] 2xl:h-[63px]">
       {/* The Glowing Gradient Background */}
-      <div className="absolute inset-0 z-0 rounded-[500px] blur-[12px] shadow-[0px_24px_24px_6px_rgba(40,40,40,0.2)] pointer-events-none figma-aura-gradient opacity-60"></div>
+      <div className="absolute -inset-x-2.5 -inset-y-2 z-0 rounded-[500px] blur-[12px] pointer-events-none opacity-90" style={{ background: "radial-gradient(ellipse at center, rgba(134, 183, 90, 0.95) 0%, rgba(113, 157, 83, 0.70) 45%, rgba(79, 121, 62, 0.40) 75%, transparent 100%)" }}></div>
       
       {/* The Glass Button */}
       <button
@@ -68,7 +68,7 @@ export default function Navbar({ activeTab = 'design', onTabChange }) {
         
         {/* Menu Divider Line (exactly the width of the layout) */}
         <div className="absolute top-1/2 left-0 w-full h-[4px] -translate-y-1/2 z-0">
-          <div className="w-full h-full rounded-[24px] blur-[12px] shadow-[0px_24px_24px_6px_rgba(40,40,40,0.2)] pointer-events-none figma-aura-gradient opacity-60"></div>
+          <div className="w-full h-full rounded-[24px] blur-[8px] pointer-events-none figma-aura-gradient opacity-75"></div>
         </div>
 
         <div className="relative z-10 flex flex-row items-center gap-[10px]">

@@ -2,7 +2,7 @@ import React, { useRef, useState } from "react";
 import { useCard } from '@/context/CardContext';
 import WindowPanel from '@/components/ui/WindowPanel';
 import { cn } from '@/lib/utils';
-import { Upload, Ban } from 'lucide-react';
+import { UploadSimple, Prohibit } from '@phosphor-icons/react';
 
 const defaultImage = "/assets/polaroid-defaults/image1.png";
 const alternateImage = "/assets/polaroid-defaults/image2.png";
@@ -126,12 +126,12 @@ export default function WindowSelectBackImage() {
                   item.isUploadedCustom ? (
                     <img className="size-full object-cover" src={state.selectedBackImage} alt="Uploaded back" />
                   ) : (
-                    <Upload className="w-[16px] h-[16px] xl:w-[18px] xl:h-[18px] 2xl:w-5 2xl:h-5 text-[#F5F5F5] group-hover:text-white transition-colors" strokeWidth={1.75} />
+                    <UploadSimple className="w-[22px] h-[22px] xl:w-[25px] xl:h-[25px] 2xl:w-[28px] 2xl:h-[28px] text-[#F5F5F5] group-hover:text-white transition-colors" weight="bold" />
                   )
                 ) : item.image ? (
                   <img className="size-full object-cover" src={item.image} alt={item.label} />
                 ) : (
-                  <Ban className="w-[16px] h-[16px] xl:w-[18px] xl:h-[18px] 2xl:w-5 2xl:h-5 text-[#F5F5F5] group-hover:text-white transition-colors" strokeWidth={1.75} />
+                  <Prohibit className="w-[22px] h-[22px] xl:w-[25px] xl:h-[25px] 2xl:w-[28px] 2xl:h-[28px] text-[#F5F5F5] group-hover:text-white transition-colors" weight="bold" />
                 )}
               </div>
 
