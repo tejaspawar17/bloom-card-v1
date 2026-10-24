@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { motion } from 'framer-motion';
 import { Eye, ArrowClockwise, ArrowLeft } from '@phosphor-icons/react';
 import { useCard } from '@/context/CardContext';
@@ -36,6 +37,16 @@ export default function CardViewer({ onConfirm, onOpenEditTitle, onOpenEditMessa
       }, 270);
     }
   }, [state.cardType, visualCardType]);
+
+    // ESC key to close fullscreen preview
+  useEffect(() => {
+    if (!isFullscreen) return;
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') setIsFullscreen(false);
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isFullscreen]);
 
   const isFlipped = state.activeSide === 'back';
 
@@ -217,9 +228,9 @@ export default function CardViewer({ onConfirm, onOpenEditTitle, onOpenEditMessa
       </div>
 
       {/* Fullscreen Overlay with Pokemon TCG style interactive 3D scaling */}
-      {isFullscreen && (
+      {isFullscreen && typeof document !== 'undefined' && createPortal(
         <div 
-          className="fixed inset-0 z-50 bg-black/90 backdrop-blur-sm flex items-center justify-center cursor-pointer overflow-hidden" 
+          className="fixed inset-0 z-[100] bg-black/95 backdrop-blur-md flex items-center justify-center cursor-pointer overflow-hidden select-none" 
           onClick={() => setIsFullscreen(false)}
           onMouseMove={handlePreviewMouseMove}
           onMouseLeave={handlePreviewMouseLeave}
@@ -234,7 +245,7 @@ export default function CardViewer({ onConfirm, onOpenEditTitle, onOpenEditMessa
           </div>
 
           <div 
-            className="perspective-container relative w-[min(290px,calc((100dvh-180px)*688/960))] xl:w-[min(330px,calc((100dvh-200px)*688/960))] 2xl:w-[min(360px,calc((100dvh-220px)*688/960))] aspect-[688/960]" 
+            className="perspective-container relative w-[min(315px,calc((100dvh-130px)*688/960))] xl:w-[min(355px,calc((100dvh-140px)*688/960))] 2xl:w-[min(375px,calc((100dvh-150px)*688/960))] aspect-[688/960]" 
             style={{ perspective: '1200px' }}
             onClick={e => e.stopPropagation()}
           >
@@ -278,7 +289,8 @@ export default function CardViewer({ onConfirm, onOpenEditTitle, onOpenEditMessa
               icon={<ArrowClockwise weight="regular" />}
             />
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </div>
   );
