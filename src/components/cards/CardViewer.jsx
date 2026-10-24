@@ -235,59 +235,69 @@ export default function CardViewer({ onConfirm, onOpenEditTitle, onOpenEditMessa
           onMouseMove={handlePreviewMouseMove}
           onMouseLeave={handlePreviewMouseLeave}
         >
-          {/* Back Button (Left) */}
-          <div className="absolute left-[calc(50%-220px)] sm:left-[calc(50%-320px)] top-1/2 -translate-y-1/2 z-50" onClick={e => e.stopPropagation()}>
-            <LiquidGlassIconButton
-              aria-label="Exit Preview"
-              onClick={() => setIsFullscreen(false)}
-              icon={<ArrowLeft weight="regular" className="text-red-500" />}
-            />
-          </div>
+          {/* Card & Closer Flanking Controls Container */}
+          <div className="relative flex items-center justify-center">
+            {/* Back Button (Left - anchored closer to card) */}
+            <div 
+              className="absolute right-full mr-4 sm:mr-5 xl:mr-8 top-1/2 -translate-y-1/2 z-50 flex items-center justify-center" 
+              onClick={e => e.stopPropagation()}
+            >
+              <LiquidGlassIconButton
+                aria-label="Exit Preview"
+                onClick={() => setIsFullscreen(false)}
+                icon={<ArrowLeft weight="regular" className="text-red-500" />}
+              />
+            </div>
 
-          <div 
-            className="perspective-container relative w-[min(315px,calc((100dvh-130px)*688/960))] xl:w-[min(355px,calc((100dvh-140px)*688/960))] 2xl:w-[min(375px,calc((100dvh-150px)*688/960))] aspect-[688/960]" 
-            style={{ perspective: '1200px' }}
-            onClick={e => e.stopPropagation()}
-          >
-            <motion.div 
-                className="w-full h-full relative"
-                style={{ transformStyle: 'preserve-3d', willChange: 'auto' }}
-                animate={{ 
-                    rotateY: (isFlipped ? 180 : 0) + (mousePos.x * 25) + spinDegrees, // Tilt horizontally based on mouse
-                    rotateX: -(mousePos.y * 25), // Tilt vertically based on mouse
-                    scale: isSwapping ? 0.98 : 1.02, // Apple bounce
-                    y: 0
-                  }} 
-                initial={{ scale: 1, rotateY: isFlipped ? 180 : 0, rotateX: 0, y: 0 }} 
-                transition={{ type: "spring", stiffness: 320, damping: 26, mass: 0.9 }}
-                onAnimationStart={() => setIsAnimating(true)}
-                onAnimationComplete={() => setIsAnimating(false)}
-              >
-                {/* Dynamic Lighting Glare matching the tilt (Pokemon TCG effect) */}
-                <div 
-                  className="absolute inset-0 z-50 pointer-events-none rounded-[12px] mix-blend-overlay opacity-50"
-                  style={{
-                    background: `radial-gradient(circle at ${mousePos.x * 100 + 50}% ${mousePos.y * 100 + 50}%, rgba(255,255,255,0.8) 0%, transparent 60%)`,
-                    transform: 'translateZ(2px)' // Keep glare slightly above card surface
-                  }}
-                />
+            {/* Card (Slightly larger, dynamic viewport safe) */}
+            <div 
+              className="perspective-container relative w-[min(340px,calc((100dvh-110px)*688/960))] xl:w-[min(380px,calc((100dvh-120px)*688/960))] 2xl:w-[min(405px,calc((100dvh-130px)*688/960))] aspect-[688/960]" 
+              style={{ perspective: '1200px' }}
+              onClick={e => e.stopPropagation()}
+            >
+              <motion.div 
+                  className="w-full h-full relative"
+                  style={{ transformStyle: 'preserve-3d', willChange: 'auto' }}
+                  animate={{ 
+                      rotateY: (isFlipped ? 180 : 0) + (mousePos.x * 25) + spinDegrees, // Tilt horizontally based on mouse
+                      rotateX: -(mousePos.y * 25), // Tilt vertically based on mouse
+                      scale: isSwapping ? 0.98 : 1.02, // Apple bounce
+                      y: 0
+                    }} 
+                  initial={{ scale: 1, rotateY: isFlipped ? 180 : 0, rotateX: 0, y: 0 }} 
+                  transition={{ type: "spring", stiffness: 320, damping: 26, mass: 0.9 }}
+                  onAnimationStart={() => setIsAnimating(true)}
+                  onAnimationComplete={() => setIsAnimating(false)}
+                >
+                  {/* Dynamic Lighting Glare matching the tilt (Pokemon TCG effect) */}
+                  <div 
+                    className="absolute inset-0 z-50 pointer-events-none rounded-[12px] mix-blend-overlay opacity-50"
+                    style={{
+                      background: `radial-gradient(circle at ${mousePos.x * 100 + 50}% ${mousePos.y * 100 + 50}%, rgba(255,255,255,0.8) 0%, transparent 60%)`,
+                      transform: 'translateZ(2px)' // Keep glare slightly above card surface
+                    }}
+                  />
 
-                <div className={`absolute inset-0 ${isFlipped ? "pointer-events-none z-0" : "pointer-events-auto z-10"}`} style={{ backfaceVisibility: "hidden", WebkitBackfaceVisibility: "hidden", transform: isAnimating ? "rotateY(0deg) translateZ(1px)" : "rotateY(0deg)" }}>{renderFront(true)}</div>
-                <div className={`absolute inset-0 ${isFlipped ? "pointer-events-auto z-10" : "pointer-events-none z-0"}`} style={{ backfaceVisibility: "hidden", WebkitBackfaceVisibility: "hidden", transform: isAnimating ? "rotateY(180deg) translateZ(1px)" : "rotateY(180deg)" }}>{renderBack(true)}</div>
-              </motion.div>
-          </div>
+                  <div className={`absolute inset-0 ${isFlipped ? "pointer-events-none z-0" : "pointer-events-auto z-10"}`} style={{ backfaceVisibility: "hidden", WebkitBackfaceVisibility: "hidden", transform: isAnimating ? "rotateY(0deg) translateZ(1px)" : "rotateY(0deg)" }}>{renderFront(true)}</div>
+                  <div className={`absolute inset-0 ${isFlipped ? "pointer-events-auto z-10" : "pointer-events-none z-0"}`} style={{ backfaceVisibility: "hidden", WebkitBackfaceVisibility: "hidden", transform: isAnimating ? "rotateY(180deg) translateZ(1px)" : "rotateY(180deg)" }}>{renderBack(true)}</div>
+                </motion.div>
+            </div>
 
-          {/* Flip Button (Right) */}
-          <div className="absolute right-[calc(50%-220px)] sm:right-[calc(50%-320px)] top-1/2 -translate-y-1/2 z-50" onClick={e => e.stopPropagation()}>
-            <LiquidGlassIconButton
-              aria-label="Flip card"
-              onClick={() => {
-                // Reset tilt momentarily on flip for cleaner flip animation
-                setMousePos({ x: 0, y: 0 });
-                dispatch({ type: 'TOGGLE_SIDE' });
-              }}
-              icon={<ArrowClockwise weight="regular" />}
-            />
+            {/* Flip Button (Right - anchored closer to card) */}
+            <div 
+              className="absolute left-full ml-4 sm:ml-5 xl:ml-8 top-1/2 -translate-y-1/2 z-50 flex items-center justify-center" 
+              onClick={e => e.stopPropagation()}
+            >
+              <LiquidGlassIconButton
+                aria-label="Flip card"
+                onClick={() => {
+                  // Reset tilt momentarily on flip for cleaner flip animation
+                  setMousePos({ x: 0, y: 0 });
+                  dispatch({ type: 'TOGGLE_SIDE' });
+                }}
+                icon={<ArrowClockwise weight="regular" />}
+              />
+            </div>
           </div>
         </div>,
         document.body
