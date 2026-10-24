@@ -234,7 +234,7 @@ export default function CardViewer({ onConfirm, onOpenEditTitle, onOpenEditMessa
           </div>
 
           <div 
-            className="perspective-container relative w-[360px] xl:w-[380px] aspect-[688/960]" 
+            className="perspective-container relative w-[min(290px,calc((100dvh-180px)*688/960))] xl:w-[min(330px,calc((100dvh-200px)*688/960))] 2xl:w-[min(360px,calc((100dvh-220px)*688/960))] aspect-[688/960]" 
             style={{ perspective: '1200px' }}
             onClick={e => e.stopPropagation()}
           >
@@ -244,8 +244,8 @@ export default function CardViewer({ onConfirm, onOpenEditTitle, onOpenEditMessa
                 animate={{ 
                     rotateY: (isFlipped ? 180 : 0) + (mousePos.x * 25) + spinDegrees, // Tilt horizontally based on mouse
                     rotateX: -(mousePos.y * 25), // Tilt vertically based on mouse
-                    scale: isSwapping ? 0.98 : 1.15, // Apple bounce
-                    y: 48 // Translate-y-12 equivalent (12 * 4px)
+                    scale: isSwapping ? 0.98 : 1.02, // Apple bounce
+                    y: 0
                   }} 
                 initial={{ scale: 1, rotateY: isFlipped ? 180 : 0, rotateX: 0, y: 0 }} 
                 transition={{ type: "spring", stiffness: 320, damping: 26, mass: 0.9 }}
