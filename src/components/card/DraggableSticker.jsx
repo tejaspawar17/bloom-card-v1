@@ -3,11 +3,14 @@ import { motion, useDragControls, AnimatePresence, useMotionValue } from 'framer
 import { Check, ArrowsClockwise, X } from '@phosphor-icons/react';
 import { useCard } from '@/context/CardContext';
 import { STICKERS } from '@/data/cardData';
+import StampDustParticles from '@/components/ui/StampDustParticles';
 
 export function DraggableSticker({ stickerData }) {
   const { dispatch } = useCard();
   const [isEditingSticker, setIsEditingSticker] = useState(false);
   const [isRotating, setIsRotating] = useState(false);
+  const [hasLanded, setHasLanded] = useState(false);
+  const [landKey, setLandKey] = useState(0);
   const stickerRef = useRef(null);
   const dragControls = useDragControls();
 
@@ -22,9 +25,15 @@ export function DraggableSticker({ stickerData }) {
     latestRotationRef.current = stickerData.r || 0;
   }, [stickerData.r, rotate]);
 
-  // Automatically enter edit mode when newly added
+  // Tactile "slap on card" animation on initial spawn
   useEffect(() => {
     setIsEditingSticker(true);
+    // Fire land dust and trigger shadow compaction
+    const timer = setTimeout(() => {
+      setHasLanded(true);
+      setLandKey(Date.now());
+    }, 180);
+    return () => clearTimeout(timer);
   }, []);
 
   // Click outside sticker on card auto-commits / dismisses handles
@@ -40,6 +49,7 @@ export function DraggableSticker({ stickerData }) {
   }, [isEditingSticker]);
 
   const handleDragEnd = (event, info) => {
+    setLandKey(Date.now());
     dispatch({
       type: 'UPDATE_STICKER_POS',
       payload: { 
@@ -69,10 +79,8 @@ export function DraggableSticker({ stickerData }) {
       const newRot = initialRot + delta;
       
       latestRotationRef.current = newRot;
-      // Direct GPU transform update via MotionValue (Instant 1:1 cursor tracking with 0 re-renders)
       rotate.set(newRot);
       
-      // Update degree readout pill text directly in DOM
       if (degreeTextRef.current) {
         degreeTextRef.current.textContent = `${Math.round(newRot)}°`;
       }
@@ -84,7 +92,6 @@ export function DraggableSticker({ stickerData }) {
       window.removeEventListener('pointerup', onUp);
       window.removeEventListener('pointercancel', onUp);
 
-      // Single commit to global context on release
       dispatch({
         type: 'UPDATE_STICKER_POS',
         payload: { id: stickerData.id, pos: { r: latestRotationRef.current } }
@@ -102,17 +109,31 @@ export function DraggableSticker({ stickerData }) {
   return (
     <motion.div 
       ref={stickerRef}
-      className={"absolute pointer-events-auto top-0 left-0 " + (stickerData.stickerId === "cmiygl" ? "w-44 h-44" : "w-36 h-36") + " z-40 drop-shadow-[2px_6px_8px_rgba(0,0,0,0.5)] " + (isEditingSticker ? 'cursor-grab active:cursor-grabbing' : 'cursor-pointer')}
+      className={"absolute pointer-events-auto top-0 left-0 " + (stickerData.stickerId === "cmiygl" ? "w-44 h-44" : "w-36 h-36") + " z-40 " + (isEditingSticker ? 'cursor-grab active:cursor-grabbing' : 'cursor-pointer')}
       drag={isEditingSticker}
       dragControls={dragControls}
       dragListener={false}
       dragMomentum={false}
       style={{ rotate }}
-      initial={{ x: stickerData.x, y: stickerData.y }}
-      animate={{ x: stickerData.x, y: stickerData.y }}
+      initial={{ 
+        x: stickerData.x, 
+        y: stickerData.y - 14, 
+        scale: 1.28,
+        filter: "drop-shadow(0 16px 20px rgba(0,0,0,0.50))"
+      }}
+      animate={{ 
+        x: stickerData.x, 
+        y: stickerData.y,
+        scale: 1,
+        filter: hasLanded 
+          ? "drop-shadow(0 2px 3px rgba(0,0,0,0.45))" 
+          : "drop-shadow(0 14px 18px rgba(0,0,0,0.45))"
+      }}
       transition={{ 
-        x: { type: "spring", stiffness: 400, damping: 40 }, 
-        y: { type: "spring", stiffness: 400, damping: 40 } 
+        type: "spring", 
+        stiffness: 480, 
+        damping: 24,
+        mass: 0.8
       }}
       onDragEnd={handleDragEnd}
       onClick={(e) => {
@@ -122,6 +143,11 @@ export function DraggableSticker({ stickerData }) {
         }
       }}
     >
+      {/* Delicate tactile landing dust particles */}
+      <div className="absolute inset-0 pointer-events-none flex items-center justify-center">
+        <StampDustParticles triggerKey={landKey} color="#FFD60A" />
+      </div>
+
       <div className="w-full h-full relative" onPointerDown={(e) => { if (isEditingSticker) dragControls.start(e); }}>
         <img src={imageUrl} alt="Sticker" className="w-full h-full object-contain pointer-events-none select-none" draggable={false} />
       </div>
@@ -163,14 +189,16 @@ export function DraggableSticker({ stickerData }) {
               transition={{ type: "spring", stiffness: 500, damping: 25 }}
               whileHover={{ scale: 1.12 }}
               whileTap={{ scale: 0.88 }}
-              className="absolute top-[-20px] left-1/2 -translate-x-1/2 w-9 h-9 rounded-full bg-[#16171A]/90 backdrop-blur-md border border-white/25 shadow-[inset_0_1px_1px_rgba(255,255,255,0.3),0_8px_16px_rgba(0,0,0,0.5)] flex items-center justify-center cursor-pointer pointer-events-auto z-50 text-white hover:text-emerald-400 hover:bg-emerald-500/25 hover:border-emerald-400/60 transition-colors outline-none"
-              onPointerDown={(e) => e.stopPropagation()} 
-              onClick={(e) => { e.stopPropagation(); setIsEditingSticker(false); }}
+              onClick={(e) => {
+                e.stopPropagation();
+                setIsEditingSticker(false);
+              }}
+              className="absolute -top-4 left-1/2 -translate-x-1/2 w-8 h-8 rounded-full bg-[#0088FF] text-white flex items-center justify-center shadow-[0_4px_12px_rgba(0,136,255,0.4)] border border-white/40 cursor-pointer z-40 outline-none"
             >
-              <Check size={18} weight="regular" />
+              <Check size={16} weight="bold" />
             </motion.button>
-            
-            {/* Rotate Button (Spin) — Right */}
+
+            {/* Rotation Handle — Bottom */}
             <motion.button 
               key="rotate-handle"
               type="button"
@@ -181,14 +209,13 @@ export function DraggableSticker({ stickerData }) {
               transition={{ type: "spring", stiffness: 500, damping: 25 }}
               whileHover={{ scale: 1.12 }}
               whileTap={{ scale: 0.88 }}
-              className="absolute top-1/2 right-[-20px] -translate-y-1/2 w-9 h-9 rounded-full bg-[#16171A]/90 backdrop-blur-md border border-white/25 shadow-[inset_0_1px_1px_rgba(255,255,255,0.3),0_8px_16px_rgba(0,0,0,0.5)] flex items-center justify-center cursor-grab active:cursor-grabbing pointer-events-auto z-50 text-white hover:text-cyan-300 hover:bg-cyan-500/25 hover:border-cyan-400/60 transition-colors outline-none"
               onPointerDown={startRotation}
-              onClick={(e) => e.stopPropagation()} 
+              className="absolute -bottom-4 left-1/2 -translate-x-1/2 w-8 h-8 rounded-full bg-[#1A1A1A] text-white flex items-center justify-center shadow-[0_4px_12px_rgba(0,0,0,0.5)] border border-white/20 cursor-grab active:cursor-grabbing z-40 outline-none hover:bg-neutral-800"
             >
-              <ArrowsClockwise size={18} weight="regular" />
+              <ArrowsClockwise size={16} weight="bold" />
             </motion.button>
 
-            {/* Delete Button (Remove) — Bottom */}
+            {/* Delete Button (X) — Top Right */}
             <motion.button 
               key="delete-handle"
               type="button"
@@ -199,15 +226,13 @@ export function DraggableSticker({ stickerData }) {
               transition={{ type: "spring", stiffness: 500, damping: 25 }}
               whileHover={{ scale: 1.12 }}
               whileTap={{ scale: 0.88 }}
-              className="absolute bottom-[-20px] left-1/2 -translate-x-1/2 w-9 h-9 rounded-full bg-[#16171A]/90 backdrop-blur-md border border-white/25 shadow-[inset_0_1px_1px_rgba(255,255,255,0.3),0_8px_16px_rgba(0,0,0,0.5)] flex items-center justify-center cursor-pointer pointer-events-auto z-50 text-[#FF383C] hover:bg-[#FF383C]/25 hover:border-[#FF383C]/60 transition-colors outline-none"
-              onPointerDown={(e) => e.stopPropagation()}
-              onClick={(e) => { 
-                e.stopPropagation(); 
-                setIsEditingSticker(false); 
+              onClick={(e) => {
+                e.stopPropagation();
                 dispatch({ type: 'REMOVE_STICKER', payload: stickerData.id });
               }}
+              className="absolute -top-3 -right-3 w-7 h-7 rounded-full bg-red-600/90 text-white flex items-center justify-center shadow-lg border border-white/30 cursor-pointer z-40 outline-none hover:bg-red-500"
             >
-              <X size={18} weight="regular" />
+              <X size={14} weight="bold" />
             </motion.button>
           </>
         )}

@@ -8,6 +8,7 @@ import FigmaWindow from './ui/FigmaWindow';
 import WindowSelectBackImage from './WindowSelectBackImage';
 import WindowPanel from './ui/WindowPanel';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import StampDustParticles from './ui/StampDustParticles';
 
 export default function RightPanel({ className = '' }) {
   const { state, dispatch } = useCard();
@@ -16,6 +17,7 @@ export default function RightPanel({ className = '' }) {
   const [canScrollUp, setCanScrollUp] = useState(false);
   const [canScrollDown, setCanScrollDown] = useState(true);
   const [selectedSticker, setSelectedSticker] = useState(null);
+  const [activeStampTrigger, setActiveStampTrigger] = useState(null);
 
   const hasOverflow = STICKERS.length > 4;
 
@@ -44,6 +46,27 @@ export default function RightPanel({ className = '' }) {
     return `linear-gradient(to bottom, ${topStop}, ${bottomStop})`;
   }, [hasOverflow, canScrollUp, canScrollDown]);
 
+  const handleEmoteClick = (emoteId) => {
+    setActiveStampTrigger(`emote-${emoteId}-${Date.now()}`);
+    dispatch({ type: 'SET_STAMP_EMOJI', payload: emoteId });
+  };
+
+  const handleStickerClick = (sticker) => {
+    setSelectedSticker(sticker.id);
+    setActiveStampTrigger(`sticker-${sticker.id}-${Date.now()}`);
+    dispatch({ 
+      type: 'ADD_STICKER', 
+      payload: { 
+        id: Date.now().toString() + Math.random().toString(), 
+        stickerId: sticker.id, 
+        side: state.activeSide, 
+        x: 100, 
+        y: 100, 
+        r: (Math.random() * 20 - 10) 
+      } 
+    });
+  };
+
   return (
     <FigmaWindow aria-label="Card Decoration Selector" className={className} gapClassName="gap-[10px] xl:gap-[12px] 2xl:gap-[14px]">
         
@@ -61,49 +84,73 @@ export default function RightPanel({ className = '' }) {
             <div className="flex flex-col gap-[5px] xl:gap-[6px] w-[268px] xl:w-[305px] 2xl:w-[328px] mx-auto">
               {/* Row 1 (First 8 Emojis) */}
               <div className="flex flex-row justify-between items-center w-full">
-                {EMOTE_EMOJIS.slice(0, 8).map((emote) => (
-                  <motion.button
-                    whileTap={{ scale: 0.94 }}
-                    transition={{ type: "spring", stiffness: 400, damping: 25 }}
-                    key={emote.id}
-                    type="button"
-                    role="listitem"
-                    aria-label={"Mood: " + emote.name}
-                    onClick={() => dispatch({ type: "SET_STAMP_EMOJI", payload: emote.id })}
-                    className={clsx(
-                      "w-[28px] h-[28px] xl:w-[32px] xl:h-[32px] 2xl:w-[34px] 2xl:h-[34px] flex items-center justify-center rounded-full outline-none cursor-pointer select-none border-0 shadow-none transition-colors duration-150",
-                      state.stampEmoji === emote.id
-                        ? "bg-[#0088FF]"
-                        : "bg-[rgba(114,114,114,0.08)] hover:bg-[rgba(153,153,153,0.15)]"
-                    )}
-                    style={{ WebkitTapHighlightColor: "transparent" }}
-                  >
-                    <img src={emote.src} alt={emote.name} className="w-[16px] h-[16px] xl:w-[18px] xl:h-[18px] 2xl:w-[20px] 2xl:h-[20px] object-contain drop-shadow-sm pointer-events-none" draggable={false} />
-                  </motion.button>
-                ))}
+                {EMOTE_EMOJIS.slice(0, 8).map((emote) => {
+                  const isEmoteActive = activeStampTrigger?.startsWith(`emote-${emote.id}`);
+                  return (
+                    <div key={emote.id} className="relative">
+                      <StampDustParticles triggerKey={isEmoteActive ? activeStampTrigger : null} color="#0088FF" />
+                      <motion.button
+                        whileTap={{ scale: 0.88, y: 1 }}
+                        transition={{ type: "spring", stiffness: 450, damping: 20 }}
+                        type="button"
+                        role="listitem"
+                        aria-label={"Mood: " + emote.name}
+                        onClick={() => handleEmoteClick(emote.id)}
+                        className={clsx(
+                          "w-[28px] h-[28px] xl:w-[32px] xl:h-[32px] 2xl:w-[34px] 2xl:h-[34px] flex items-center justify-center rounded-full outline-none cursor-pointer select-none border-0 shadow-none transition-colors duration-150",
+                          state.stampEmoji === emote.id
+                            ? "bg-[#0088FF]"
+                            : "bg-[rgba(114,114,114,0.08)] hover:bg-[rgba(153,153,153,0.15)]"
+                        )}
+                        style={{ WebkitTapHighlightColor: "transparent" }}
+                      >
+                        <motion.img 
+                          src={emote.src} 
+                          alt={emote.name} 
+                          className="w-[16px] h-[16px] xl:w-[18px] xl:h-[18px] 2xl:w-[20px] 2xl:h-[20px] object-contain drop-shadow-sm pointer-events-none" 
+                          draggable={false}
+                          animate={isEmoteActive ? { scale: [1.25, 0.95, 1], rotate: [0, -6, 6, 0] } : {}}
+                          transition={{ duration: 0.35, ease: "easeOut" }}
+                        />
+                      </motion.button>
+                    </div>
+                  );
+                })}
               </div>
               {/* Row 2 (Next 8 Emojis) */}
               <div className="flex flex-row justify-between items-center w-full">
-                {EMOTE_EMOJIS.slice(8, 16).map((emote) => (
-                  <motion.button
-                    whileTap={{ scale: 0.94 }}
-                    transition={{ type: "spring", stiffness: 400, damping: 25 }}
-                    key={emote.id}
-                    type="button"
-                    role="listitem"
-                    aria-label={"Mood: " + emote.name}
-                    onClick={() => dispatch({ type: "SET_STAMP_EMOJI", payload: emote.id })}
-                    className={clsx(
-                      "w-[28px] h-[28px] xl:w-[32px] xl:h-[32px] 2xl:w-[34px] 2xl:h-[34px] flex items-center justify-center rounded-full outline-none cursor-pointer select-none border-0 shadow-none transition-colors duration-150",
-                      state.stampEmoji === emote.id
-                        ? "bg-[#0088FF]"
-                        : "bg-[rgba(114,114,114,0.08)] hover:bg-[rgba(153,153,153,0.15)]"
-                    )}
-                    style={{ WebkitTapHighlightColor: "transparent" }}
-                  >
-                    <img src={emote.src} alt={emote.name} className="w-[16px] h-[16px] xl:w-[18px] xl:h-[18px] 2xl:w-[20px] 2xl:h-[20px] object-contain drop-shadow-sm pointer-events-none" draggable={false} />
-                  </motion.button>
-                ))}
+                {EMOTE_EMOJIS.slice(8, 16).map((emote) => {
+                  const isEmoteActive = activeStampTrigger?.startsWith(`emote-${emote.id}`);
+                  return (
+                    <div key={emote.id} className="relative">
+                      <StampDustParticles triggerKey={isEmoteActive ? activeStampTrigger : null} color="#0088FF" />
+                      <motion.button
+                        whileTap={{ scale: 0.88, y: 1 }}
+                        transition={{ type: "spring", stiffness: 450, damping: 20 }}
+                        type="button"
+                        role="listitem"
+                        aria-label={"Mood: " + emote.name}
+                        onClick={() => handleEmoteClick(emote.id)}
+                        className={clsx(
+                          "w-[28px] h-[28px] xl:w-[32px] xl:h-[32px] 2xl:w-[34px] 2xl:h-[34px] flex items-center justify-center rounded-full outline-none cursor-pointer select-none border-0 shadow-none transition-colors duration-150",
+                          state.stampEmoji === emote.id
+                            ? "bg-[#0088FF]"
+                            : "bg-[rgba(114,114,114,0.08)] hover:bg-[rgba(153,153,153,0.15)]"
+                        )}
+                        style={{ WebkitTapHighlightColor: "transparent" }}
+                      >
+                        <motion.img 
+                          src={emote.src} 
+                          alt={emote.name} 
+                          className="w-[16px] h-[16px] xl:w-[18px] xl:h-[18px] 2xl:w-[20px] 2xl:h-[20px] object-contain drop-shadow-sm pointer-events-none" 
+                          draggable={false}
+                          animate={isEmoteActive ? { scale: [1.25, 0.95, 1], rotate: [0, -6, 6, 0] } : {}}
+                          transition={{ duration: 0.35, ease: "easeOut" }}
+                        />
+                      </motion.button>
+                    </div>
+                  );
+                })}
               </div>
             </div>
           </WindowPanel>
@@ -129,69 +176,62 @@ export default function RightPanel({ className = '' }) {
                 >
                   {STICKERS.map((sticker) => {
                     const isSelected = selectedSticker === sticker.id;
+                    const isStickerActive = activeStampTrigger?.startsWith(`sticker-${sticker.id}`);
                     const shortName =
                       sticker.name.length > 10
                         ? sticker.name.substring(0, 9) + '...'
                         : sticker.name;
 
                     return (
-                      <button
-                        key={sticker.id}
-                        type="button"
-                        role="listitem"
-                        aria-label={"Sticker: " + sticker.name}
-                        onClick={() => {
-                          setSelectedSticker(sticker.id);
-                          dispatch({ 
-                            type: 'ADD_STICKER', 
-                            payload: { 
-                              id: Date.now().toString() + Math.random().toString(), 
-                              stickerId: sticker.id, 
-                              side: state.activeSide, 
-                              x: 100, 
-                              y: 100, 
-                              r: (Math.random() * 20 - 10) 
-                            } 
-                          });
-                        }}
-                        className="relative flex flex-col items-center cursor-pointer group outline-none active:scale-[0.96] transition-transform duration-150 ease-out w-[54px] h-[74px] xl:w-[61px] xl:h-[84px] 2xl:w-[66px] 2xl:h-[90px] font-sans"
-                        style={{ WebkitTapHighlightColor: "transparent" }}
-                      >
-                        {/* Selection BG (Figma: 72x90, x:-3, r:15, #0088FF, hover rgba(153,153,153,0.15)) */}
-                        <div
-                          className={cn(
-                            'absolute top-0 -left-[2.5px] xl:-left-[3px] w-[59px] h-[74px] xl:w-[67px] xl:h-[84px] 2xl:w-[72px] 2xl:h-[90px] rounded-[13px] xl:rounded-[14px] 2xl:rounded-[15px] transition-colors duration-200 pointer-events-none',
-                            isSelected
-                              ? 'bg-[#0088FF]'
-                              : 'bg-transparent group-hover:bg-[rgba(153,153,153,0.15)]'
-                          )}
-                        />
-
-                        {/* Image Thumbnail (Figma: 66x66, y:3, r:12) */}
-                        <div className="relative mt-[2.5px] xl:mt-[3px] w-[54px] h-[54px] xl:w-[61px] xl:h-[61px] 2xl:w-[66px] 2xl:h-[66px] rounded-[10px] xl:rounded-[11px] 2xl:rounded-[12px] overflow-hidden bg-black/40 z-10 flex items-center justify-center p-1">
-                          <img
-                            src={sticker.image}
-                            alt=""
-                            className="w-full h-full object-contain pointer-events-none drop-shadow-sm"
-                            aria-hidden="true"
-                            loading="lazy"
-                            draggable={false}
-                          />
-                        </div>
-
-                        {/* Label (Figma: Inter 400 11/13, y:72, rgba(229,229,234,0.70)) */}
-                        <span
-                          className={cn(
-                            'relative mt-[2.5px] xl:mt-[3px] text-[10px] leading-[12px] xl:text-[10.5px] xl:leading-[12.5px] 2xl:text-[11px] 2xl:leading-[13px] tracking-[0.0055em] truncate w-[54px] xl:w-[61px] 2xl:w-[66px] text-center transition-colors duration-200 z-10 font-sans',
-                            isSelected
-                              ? 'text-white font-medium'
-                              : 'text-[rgba(229,229,234,0.70)] font-normal group-hover:text-white/85'
-                          )}
-                          title={sticker.name}
+                      <div key={sticker.id} className="relative flex flex-col items-center">
+                        <StampDustParticles triggerKey={isStickerActive ? activeStampTrigger : null} color="#FFD60A" />
+                        <motion.button
+                          type="button"
+                          role="listitem"
+                          aria-label={"Sticker: " + sticker.name}
+                          whileTap={{ scale: 0.92, y: 2 }}
+                          transition={{ type: "spring", stiffness: 450, damping: 22 }}
+                          onClick={() => handleStickerClick(sticker)}
+                          className="relative flex flex-col items-center cursor-pointer group outline-none w-[54px] h-[74px] xl:w-[61px] xl:h-[84px] 2xl:w-[66px] 2xl:h-[90px] font-sans"
+                          style={{ WebkitTapHighlightColor: "transparent" }}
                         >
-                          {shortName}
-                        </span>
-                      </button>
+                          {/* Selection BG (Figma: 72x90, x:-3, r:15, #0088FF, hover rgba(153,153,153,0.15)) */}
+                          <div
+                            className={cn(
+                              'absolute top-0 -left-[2.5px] xl:-left-[3px] w-[59px] h-[74px] xl:w-[67px] xl:h-[84px] 2xl:w-[72px] 2xl:h-[90px] rounded-[13px] xl:rounded-[14px] 2xl:rounded-[15px] transition-colors duration-200 pointer-events-none',
+                              isSelected
+                                ? 'bg-[#0088FF]'
+                                : 'bg-transparent group-hover:bg-[rgba(153,153,153,0.15)]'
+                            )}
+                          />
+
+                          {/* Image Thumbnail (Figma: 66x66, y:3, r:12) with tactile spring bounce */}
+                          <motion.div 
+                            animate={isStickerActive ? { scale: [1.14, 0.95, 1], rotate: [0, -4, 4, 0] } : {}}
+                            transition={{ duration: 0.35, ease: "easeOut" }}
+                            className="relative mt-[2.5px] xl:mt-[3px] w-[54px] h-[54px] xl:w-[61px] xl:h-[61px] 2xl:w-[66px] 2xl:h-[66px] rounded-[10px] xl:rounded-[11px] 2xl:rounded-[12px] overflow-hidden bg-black/40 z-10 flex items-center justify-center p-1"
+                          >
+                            <img
+                              src={sticker.image}
+                              alt=""
+                              className="w-full h-full object-contain pointer-events-none drop-shadow-sm"
+                              aria-hidden="true"
+                              loading="lazy"
+                              draggable={false}
+                            />
+                          </motion.div>
+
+                          {/* Label (Figma: Inter Regular 10, y:72, w:66) */}
+                          <div className="relative mt-1 z-10 w-[54px] xl:w-[61px] 2xl:w-[66px] text-center">
+                            <span
+                              className="text-[10px] xl:text-[11px] 2xl:text-[12px] leading-[12px] font-normal text-white/90 truncate block text-center"
+                              title={sticker.name}
+                            >
+                              {shortName}
+                            </span>
+                          </div>
+                        </motion.button>
+                      </div>
                     );
                   })}
                 </div>
@@ -200,6 +240,6 @@ export default function RightPanel({ className = '' }) {
           </WindowPanel>
         </div>
 
-      </FigmaWindow>
+    </FigmaWindow>
   );
 }
