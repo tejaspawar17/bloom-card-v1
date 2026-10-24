@@ -103,7 +103,7 @@ export default function MessageModal({ onClose }) {
           role="dialog"
           aria-modal="true"
           aria-label={isTrainer ? "Edit Trainer Details" : "Edit Card Message"}
-          className="relative z-10 w-full max-w-[480px] bg-[#131416] rounded-[32px] overflow-hidden flex flex-col shadow-[0_20px_50px_rgba(0,0,0,0.85)] border border-white/[0.12] select-none"
+          className="relative z-10 w-full max-w-[480px] bg-[#0E0E0E] rounded-[24px] overflow-hidden flex flex-col shadow-[0_24px_60px_rgba(0,0,0,0.85)] border border-white/[0.12] select-none"
           initial={{ opacity: 0, scale: 0.95, y: 8 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.95, y: 8 }}
@@ -111,19 +111,13 @@ export default function MessageModal({ onClose }) {
           onClick={(e) => e.stopPropagation()}
         >
           {/* Header Bar matching Figma Tablet Surface */}
-          <div className="flex items-center justify-between h-[64px] pl-6 pr-2.5 bg-[#232427] border-b border-white/[0.08]">
-            <div className="flex items-center gap-2.5">
-              <h2 className="text-white font-semibold text-[17px] leading-[22px] tracking-[-0.0253em] font-sans">
-                {isTrainer ? 'Trainer Details' : 'With love or Something'}
-              </h2>
-              {/* Context Tag preserved */}
-              <span className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-medium leading-[14px] border ${badge.badgeClass} font-sans`}>
-                <span>{badge.icon}</span>
-                <span>{badge.label}</span>
-              </span>
-            </div>
+          {/* Title Background Band matching Figma [466x60] */}
+          <div className="flex items-center justify-between h-[60px] pl-5 pr-3 bg-[#1F1F1F] border-b border-white/[0.08]">
+            <h2 className="text-white/85 font-semibold text-[17px] leading-[22px] tracking-[-0.02em] font-sans">
+              {isTrainer ? 'Trainer Details' : 'With love or Something'}
+            </h2>
             
-            {/* Liquid Glass Red Cross Button from Preview Mode */}
+            {/* Cancel Button (Destructive Icon Button) centered vertically 5px from edges */}
             <LiquidGlassIconButton 
               size="sm"
               label="Close dialog"
@@ -133,20 +127,20 @@ export default function MessageModal({ onClose }) {
           </div>
 
           {/* Form Content Area */}
-          <form onSubmit={handleSubmit} className="p-6 flex flex-col gap-4 bg-[#131416]">
+          <form onSubmit={handleSubmit} className="p-6 flex flex-col gap-4 bg-[#0E0E0E]">
             {isTrainer ? (
               <>
                 {/* Name Field */}
                 <div className="flex flex-col gap-1.5">
                   <div className="flex items-center justify-between">
-                    <label htmlFor="trainer-name-input" className="text-[13px] leading-[18px] font-semibold text-[rgba(229,229,234,0.85)] font-sans">
+                    <label htmlFor="trainer-name-input" className="text-[13px] leading-[18px] font-semibold text-[#D9D9D9] font-sans">
                       Trainer Name:
                     </label>
-                    <span className="text-[11px] text-[rgba(235,235,245,0.4)] font-sans">
+                    <span className="text-[11px] text-[#8E8E93] font-sans">
                       Badge name
                     </span>
                   </div>
-                  <div className="relative rounded-[14px] bg-[#1B1C1F] hover:bg-[#202125] focus-within:bg-[#202125] border border-white/[0.08] focus-within:border-[#0066FF] focus-within:ring-2 focus-within:ring-[#0066FF]/30 transition-all duration-150">
+                  <div className="relative rounded-[11px] bg-white/[0.05] hover:bg-white/[0.07] border border-white/[0.10] focus-within:border-[#0055D4]/60 transition-all duration-150">
                     <input
                       id="trainer-name-input"
                       type="text"
@@ -154,10 +148,10 @@ export default function MessageModal({ onClose }) {
                       value={trainerName}
                       onChange={(e) => setTrainerName(e.target.value)}
                       maxLength={15}
-                      className="w-full bg-transparent px-4 py-3 text-[15px] leading-[20px] text-white placeholder-[#5A5B60] outline-none font-sans pr-16"
+                      className="w-full bg-transparent px-4 py-3 text-[15px] leading-[20px] text-white placeholder-[#727272] outline-none font-sans pr-16"
                       autoFocus
                     />
-                    <div className={`absolute right-3.5 top-1/2 -translate-y-1/2 text-[11px] font-medium font-sans ${trainerName.length >= 15 ? 'text-amber-400 font-semibold' : 'text-[rgba(235,235,245,0.40)]'}`}>
+                    <div className={`absolute right-3.5 top-1/2 -translate-y-1/2 text-[11px] font-normal tabular-nums font-sans ${trainerName.length >= 15 ? 'text-[#FF6961]/70' : 'text-white/25'}`}>
                       {trainerName.length} / 15
                     </div>
                   </div>
@@ -166,14 +160,14 @@ export default function MessageModal({ onClose }) {
                 {/* Bio Field */}
                 <div className="flex flex-col gap-1.5">
                   <div className="flex items-center justify-between">
-                    <label htmlFor="trainer-bio-input" className="text-[13px] leading-[18px] font-semibold text-[rgba(229,229,234,0.85)] font-sans">
+                    <label htmlFor="trainer-bio-input" className="text-[13px] leading-[18px] font-semibold text-[#D9D9D9] font-sans">
                       Bio & Battle Stats:
                     </label>
-                    <span className="text-[11px] text-[rgba(235,235,245,0.4)] font-sans">
+                    <span className="text-[11px] text-[#8E8E93] font-sans">
                       Bottom banner
                     </span>
                   </div>
-                  <div className="relative rounded-[14px] bg-[#1B1C1F] hover:bg-[#202125] focus-within:bg-[#202125] border border-white/[0.08] focus-within:border-[#0066FF] focus-within:ring-2 focus-within:ring-[#0066FF]/30 transition-all duration-150">
+                  <div className="relative rounded-[11px] bg-white/[0.05] hover:bg-white/[0.07] border border-white/[0.10] focus-within:border-[#0055D4]/60 transition-all duration-150">
                     <textarea
                       id="trainer-bio-input"
                       value={trainerBio}
@@ -181,9 +175,9 @@ export default function MessageModal({ onClose }) {
                       onChange={(e) => setTrainerBio(e.target.value)}
                       maxLength={80}
                       rows={3}
-                      className="w-full bg-transparent px-4 pt-3.5 pb-7 text-[15px] leading-[22px] text-white placeholder-[#5A5B60] outline-none resize-none font-sans h-[96px]"
+                      className="w-full bg-transparent px-4 pt-3.5 pb-7 text-[15px] leading-[22px] text-white placeholder-[#727272] outline-none resize-none font-sans h-[96px]"
                     />
-                    <div className={`absolute bottom-2.5 right-3 text-[11px] font-medium font-sans ${trainerBio.length >= 80 ? 'text-amber-400 font-semibold' : 'text-[rgba(235,235,245,0.40)]'}`}>
+                    <div className={`absolute bottom-2.5 right-3 text-[11px] font-normal tabular-nums font-sans ${trainerBio.length >= 80 ? 'text-[#FF6961]/70' : 'text-white/25'}`}>
                       {trainerBio.length} / 80
                     </div>
                   </div>
@@ -194,14 +188,14 @@ export default function MessageModal({ onClose }) {
                 {/* To Field */}
                 <div className="flex flex-col gap-1.5">
                   <div className="flex items-center justify-between">
-                    <label htmlFor="card-to-input" className="text-[13px] leading-[18px] font-semibold text-[rgba(229,229,234,0.85)] font-sans">
+                    <label htmlFor="card-to-input" className="text-[13px] leading-[18px] font-semibold text-[#D9D9D9] font-sans">
                       To:
                     </label>
-                    <span className="text-[11px] text-[rgba(235,235,245,0.4)] font-sans">
+                    <span className="text-[11px] text-[#8E8E93] font-sans">
                       Recipient
                     </span>
                   </div>
-                  <div className="relative rounded-[14px] bg-[#1B1C1F] hover:bg-[#202125] focus-within:bg-[#202125] border border-white/[0.08] focus-within:border-[#0066FF] focus-within:ring-2 focus-within:ring-[#0066FF]/30 transition-all duration-150">
+                  <div className="relative rounded-[11px] bg-white/[0.05] hover:bg-white/[0.07] border border-white/[0.10] focus-within:border-[#0055D4]/60 transition-all duration-150">
                     <input
                       id="card-to-input"
                       type="text"
@@ -209,10 +203,10 @@ export default function MessageModal({ onClose }) {
                       value={to}
                       onChange={(e) => setTo(e.target.value)}
                       maxLength={15}
-                      className="w-full bg-transparent px-4 py-3 text-[15px] leading-[20px] text-white placeholder-[#5A5B60] outline-none font-sans pr-16"
+                      className="w-full bg-transparent px-4 py-3 text-[15px] leading-[20px] text-white placeholder-[#727272] outline-none font-sans pr-16"
                       autoFocus
                     />
-                    <div className={`absolute right-3.5 top-1/2 -translate-y-1/2 text-[11px] font-medium font-sans ${to.length >= 15 ? 'text-amber-400 font-semibold' : 'text-[rgba(235,235,245,0.40)]'}`}>
+                    <div className={`absolute right-3.5 top-1/2 -translate-y-1/2 text-[11px] font-normal tabular-nums font-sans ${to.length >= 15 ? 'text-[#FF6961]/70' : 'text-white/25'}`}>
                       {to.length} / 15
                     </div>
                   </div>
@@ -221,14 +215,14 @@ export default function MessageModal({ onClose }) {
                 {/* From Field */}
                 <div className="flex flex-col gap-1.5">
                   <div className="flex items-center justify-between">
-                    <label htmlFor="card-from-input" className="text-[13px] leading-[18px] font-semibold text-[rgba(229,229,234,0.85)] font-sans">
+                    <label htmlFor="card-from-input" className="text-[13px] leading-[18px] font-semibold text-[#D9D9D9] font-sans">
                       From:
                     </label>
-                    <span className="text-[11px] text-[rgba(235,235,245,0.4)] font-sans">
+                    <span className="text-[11px] text-[#8E8E93] font-sans">
                       Sender
                     </span>
                   </div>
-                  <div className="relative rounded-[14px] bg-[#1B1C1F] hover:bg-[#202125] focus-within:bg-[#202125] border border-white/[0.08] focus-within:border-[#0066FF] focus-within:ring-2 focus-within:ring-[#0066FF]/30 transition-all duration-150">
+                  <div className="relative rounded-[11px] bg-white/[0.05] hover:bg-white/[0.07] border border-white/[0.10] focus-within:border-[#0055D4]/60 transition-all duration-150">
                     <input
                       id="card-from-input"
                       type="text"
@@ -236,9 +230,9 @@ export default function MessageModal({ onClose }) {
                       value={from}
                       onChange={(e) => setFrom(e.target.value)}
                       maxLength={15}
-                      className="w-full bg-transparent px-4 py-3 text-[15px] leading-[20px] text-white placeholder-[#5A5B60] outline-none font-sans pr-16"
+                      className="w-full bg-transparent px-4 py-3 text-[15px] leading-[20px] text-white placeholder-[#727272] outline-none font-sans pr-16"
                     />
-                    <div className={`absolute right-3.5 top-1/2 -translate-y-1/2 text-[11px] font-medium font-sans ${from.length >= 15 ? 'text-amber-400 font-semibold' : 'text-[rgba(235,235,245,0.40)]'}`}>
+                    <div className={`absolute right-3.5 top-1/2 -translate-y-1/2 text-[11px] font-normal tabular-nums font-sans ${from.length >= 15 ? 'text-[#FF6961]/70' : 'text-white/25'}`}>
                       {from.length} / 15
                     </div>
                   </div>
@@ -247,24 +241,24 @@ export default function MessageModal({ onClose }) {
                 {/* Message Field */}
                 <div className="flex flex-col gap-1.5">
                   <div className="flex items-center justify-between">
-                    <label htmlFor="card-message-input" className="text-[13px] leading-[18px] font-semibold text-[rgba(229,229,234,0.85)] font-sans">
+                    <label htmlFor="card-message-input" className="text-[13px] leading-[18px] font-semibold text-[#D9D9D9] font-sans">
                       Message:
                     </label>
-                    <span className="text-[11px] text-[rgba(235,235,245,0.4)] font-sans">
+                    <span className="text-[11px] text-[#8E8E93] font-sans">
                       Printed on back
                     </span>
                   </div>
 
-                  <div className="relative rounded-[14px] bg-[#1B1C1F] hover:bg-[#202125] focus-within:bg-[#202125] border border-white/[0.08] focus-within:border-[#0066FF] focus-within:ring-2 focus-within:ring-[#0066FF]/30 transition-all duration-150">
+                  <div className="relative rounded-[11px] bg-white/[0.05] hover:bg-white/[0.07] border border-white/[0.10] focus-within:border-[#0055D4]/60 transition-all duration-150">
                     <textarea
                       id="card-message-input"
                       placeholder={messagePlaceholder}
                       value={message}
                       onChange={(e) => setMessage(e.target.value)}
                       maxLength={194}
-                      className="w-full h-[140px] bg-transparent px-4 pt-3.5 pb-8 text-[15px] leading-[22px] text-white placeholder-[#5A5B60] outline-none resize-none font-sans"
+                      className="w-full h-[140px] bg-transparent px-4 pt-3.5 pb-8 text-[15px] leading-[22px] text-white placeholder-[#727272] outline-none resize-none font-sans"
                     />
-                    <div className={`absolute bottom-2.5 right-3 text-[11px] font-medium font-sans ${message.length >= 194 ? 'text-amber-400 font-semibold' : 'text-[rgba(235,235,245,0.40)]'}`}>
+                    <div className={`absolute bottom-2.5 right-3 text-[11px] font-normal tabular-nums font-sans ${message.length >= 194 ? 'text-[#FF6961]/70' : 'text-white/25'}`}>
                       {message.length} / 194
                     </div>
                   </div>

@@ -89,7 +89,7 @@ export default function TitleModal({ onClose }) {
           role="dialog"
           aria-modal="true"
           aria-label="Edit Card Title"
-          className="relative z-10 w-full max-w-[466px] flex flex-col select-none rounded-[32px] bg-[#131416] border border-white/[0.12] overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.85)]"
+          className="relative z-10 w-full max-w-[466px] flex flex-col select-none rounded-[24px] bg-[#0E0E0E] border border-white/[0.12] overflow-hidden shadow-[0_24px_60px_rgba(0,0,0,0.85)]"
           onClick={(e) => e.stopPropagation()}
           initial={{ opacity: 0, scale: 0.95, y: 8 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -102,19 +102,13 @@ export default function TitleModal({ onClose }) {
           }}
         >
           {/* Header Bar matching Figma Tablet Surface */}
-          <div className="flex items-center justify-between h-[64px] pl-6 pr-2.5 bg-[#232427] border-b border-white/[0.08]">
-            <div className="flex items-center gap-2.5">
-              <h2 className="text-white font-semibold text-[17px] leading-[22px] tracking-[-0.0253em] font-sans">
-                Card Title
-              </h2>
-              {/* Context Tag preserved */}
-              <span className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-medium leading-[14px] border ${badge.badgeClass} font-sans`}>
-                <span>{badge.icon}</span>
-                <span>{badge.label}</span>
-              </span>
-            </div>
+          {/* Title Background Band matching Figma [466x60] */}
+          <div className="flex items-center justify-between h-[60px] pl-5 pr-3 bg-[#1F1F1F] border-b border-white/[0.08]">
+            <h2 className="text-white/85 font-semibold text-[17px] leading-[22px] tracking-[-0.02em] font-sans">
+              Card Title
+            </h2>
 
-            {/* Liquid Glass Red Cross Button from Preview Mode */}
+            {/* Cancel Button (Destructive Icon Button) centered vertically 5px from edges */}
             <LiquidGlassIconButton 
               size="sm"
               label="Close dialog"
@@ -124,23 +118,23 @@ export default function TitleModal({ onClose }) {
           </div>
 
           {/* Form Content Area */}
-          <form onSubmit={handleSubmit} className="flex flex-col p-6 gap-6 bg-[#131416]">
+          <form onSubmit={handleSubmit} className="flex flex-col p-6 gap-6 bg-[#0E0E0E]">
             {/* Title Field matching Figma Recessed Dark Box */}
             <div className="flex flex-col gap-2">
               <div className="flex items-center justify-between">
                 <label 
                   htmlFor="card-title-input" 
-                  className="text-[13px] leading-[18px] font-semibold text-[rgba(229,229,234,0.85)] font-sans"
+                  className="text-[13px] leading-[18px] font-semibold text-[#D9D9D9] font-sans"
                 >
                   Title:
                 </label>
                 {/* Spatial Context Helper Tag */}
-                <span className="text-[11px] text-[rgba(235,235,245,0.4)] font-sans">
+                <span className="text-[11px] text-[#8E8E93] font-sans">
                   Appears on front cover
                 </span>
               </div>
 
-              <div className="relative rounded-[14px] bg-[#1B1C1F] hover:bg-[#202125] focus-within:bg-[#202125] border border-white/[0.08] focus-within:border-[#0066FF] focus-within:ring-2 focus-within:ring-[#0066FF]/30 transition-all duration-150">
+              <div className="relative rounded-[11px] bg-white/[0.05] hover:bg-white/[0.07] border border-white/[0.10] focus-within:border-[#0055D4]/60 transition-all duration-150">
                 <textarea
                   id="card-title-input"
                   value={val}
@@ -148,14 +142,14 @@ export default function TitleModal({ onClose }) {
                   placeholder={placeholder}
                   rows={3}
                   maxLength={maxLength}
-                  className="w-full bg-transparent px-4 pt-3.5 pb-8 text-[15px] leading-[22px] text-white placeholder-[#5A5B60] outline-none resize-none font-sans"
+                  className="w-full bg-transparent px-4 pt-3.5 pb-8 text-[15px] leading-[22px] text-white placeholder-[#727272] outline-none resize-none font-sans"
                   autoFocus
                 />
                 
                 {/* Character Counter */}
                 <div 
-                  className={`absolute bottom-2.5 right-3 text-[11px] font-medium tracking-[0.0055em] font-sans transition-colors ${
-                    isAtLimit ? 'text-amber-400 font-semibold' : 'text-[rgba(235,235,245,0.40)]'
+                  className={`absolute bottom-2.5 right-3 text-[11px] font-normal tabular-nums tracking-[0.0055em] font-sans transition-colors ${
+                    isAtLimit ? 'text-[#FF6961]/70' : 'text-white/25'
                   }`}
                 >
                   {val.length} / {maxLength}
