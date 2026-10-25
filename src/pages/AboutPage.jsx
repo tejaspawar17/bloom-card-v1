@@ -5,24 +5,21 @@ import {
   Sparkle, 
   Heart, 
   ShieldCheck, 
-  CursorClick,
-  EnvelopeSimple,
-  ShareNetwork,
-  Smiley
+  CursorClick
 } from '@phosphor-icons/react';
 import { BloomLogo } from '@/components/ui';
 import CoffeeButton from '@/components/ui/CoffeeButton';
 import Footer from '@/components/Footer';
 
-// Apple Spring Physics for fluid expansion
-const expansionSpring = {
+// Apple Spring Physics for snappy tactile response
+const appleSpring = {
   type: "spring",
-  stiffness: 350,
-  damping: 32,
+  stiffness: 380,
+  damping: 30,
   mass: 0.8
 };
 
-// Interactive Cursor-Tracking Eyes (Framer Easter Egg)
+// Interactive Cursor-Tracking Eyes (Inspired by Framer Easter Egg)
 function TrackingEyes() {
   const eyeLeftRef = useRef(null);
   const eyeRightRef = useRef(null);
@@ -77,98 +74,39 @@ function TrackingEyes() {
   );
 }
 
-// Expanding Step Cards Data
-const EXPANDING_STEPS = [
+// Pixels71-style Expanding Step Cards with rich imagery
+const STEP_CARDS = [
   {
     id: 0,
     step: '01',
     title: 'Pick a Vibe',
     tag: 'Mood-first',
-    shortDesc: 'Apology to milestone birthday.',
-    fullDesc: 'Choose how you actually feel: deep apologies, celebratory milestones, or "I miss you but in a normal way."',
+    desc: 'From heartfelt apologies and milestones to "I miss you but in a normal way."',
     accent: '#86B75A',
-    previewType: 'moods',
+    image: '/assets/bloom/paper_back_clean.png',
+    chip: '🌸 Flower Meaning',
   },
   {
     id: 1,
     step: '02',
     title: 'Slap On Details',
     tag: 'Tactile Craft',
-    shortDesc: 'Foil, textures & duck stickers.',
-    fullDesc: 'Simulate archival pressed paper, metallic Victorian foil, custom Pokémon stats & crooked stickers.',
+    desc: 'Simulate paper grain, Victorian metallic foil, custom stats & crooked stickers.',
     accent: '#CFC531',
-    previewType: 'craft',
+    image: '/assets/bloom/metallic_subject_front.png',
+    chip: '✨ Metallic Foil',
   },
   {
     id: 2,
     step: '03',
     title: 'Ship the Link',
     tag: 'Instant 3D',
-    shortDesc: 'Permanent 60fps 3D keepsake.',
-    fullDesc: 'No login or paywall. Just a permanent link where they can peel stickers, flip the card, and smile.',
+    desc: 'No account wall. Just a permanent 60fps 3D link that actually makes them smile.',
     accent: '#7CE0DC',
-    previewType: 'share',
+    image: '/assets/polaroid-defaults/pokemon_card_back.png',
+    chip: '⚡ Permanent Link',
   },
 ];
-
-// Interactive Visual Preview inside Expanded Card
-function StepCardVisual({ type }) {
-  if (type === 'moods') {
-    return (
-      <div className="w-full h-[120px] rounded-[14px] bg-[#101010] border border-white/[0.06] p-3 flex flex-col justify-center gap-2 overflow-hidden relative">
-        <div className="flex items-center gap-1.5 flex-wrap">
-          <span className="px-2.5 py-1 rounded-full bg-white/[0.06] border border-white/[0.10] text-[11px] font-normal text-white/80">
-            🌸 Sincere Apology
-          </span>
-          <span className="px-2.5 py-1 rounded-full bg-[#86B75A]/20 border border-[#86B75A]/40 text-[11px] font-medium text-[#86B75A]">
-            ✨ Big Milestone
-          </span>
-        </div>
-        <div className="flex items-center gap-1.5">
-          <span className="px-2.5 py-1 rounded-full bg-white/[0.06] border border-white/[0.10] text-[11px] font-normal text-white/70">
-            💌 Just Because
-          </span>
-          <span className="px-2.5 py-1 rounded-full bg-white/[0.04] border border-white/[0.06] text-[11px] font-normal text-white/40">
-            ⚡ Pokémon Battle
-          </span>
-        </div>
-      </div>
-    );
-  }
-
-  if (type === 'craft') {
-    return (
-      <div className="w-full h-[120px] rounded-[14px] bg-[#101010] border border-white/[0.06] p-3 flex items-center justify-around overflow-hidden relative">
-        <motion.div 
-          animate={{ rotate: [-8, -2, -8] }}
-          transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-          className="w-12 h-12 rounded-[12px] bg-[#1C1C1E] border border-white/[0.12] flex items-center justify-center shadow-lg"
-        >
-          <img 
-            src="/assets/bloom/duck.png" 
-            alt="duck sticker" 
-            className="w-9 h-9 object-contain drop-shadow select-none pointer-events-none" 
-          />
-        </motion.div>
-        
-        <div className="flex flex-col gap-1 text-left">
-          <span className="text-[11px] font-mono text-[#CFC531]">PAPER / METALLIC / POKÉMON</span>
-          <span className="text-[12px] text-white/70 font-normal">Physical-digital materials</span>
-        </div>
-      </div>
-    );
-  }
-
-  return (
-    <div className="w-full h-[120px] rounded-[14px] bg-[#101010] border border-white/[0.06] p-3 flex flex-col justify-center items-center gap-2 overflow-hidden relative">
-      <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#181818] border border-white/[0.12] shadow-sm">
-        <span className="w-2 h-2 rounded-full bg-[#34C759] animate-pulse" />
-        <span className="text-[12px] font-mono text-white/80">bloomcard.app/c/x9k2m4</span>
-      </div>
-      <span className="text-[11px] text-white/40 font-normal">Instant 60fps 3D viewer · Zero spam</span>
-    </div>
-  );
-}
 
 export default function AboutPage({ onStartCrafting, onFeedback, onTerms, onPrivacy }) {
   const [activeStep, setActiveStep] = useState(0);
@@ -247,7 +185,7 @@ export default function AboutPage({ onStartCrafting, onFeedback, onTerms, onPriv
 
 
         {/* ============================================================
-            2. EXPANDING STEP CARDS (Inspired by Framer Marketplace)
+            2. PIXELS71-STYLE ELEGANT EXPANDING STEP CARDS
            ============================================================ */}
         <section className="w-full flex flex-col items-center gap-4">
           <div className="flex items-center justify-between w-full px-2">
@@ -260,68 +198,76 @@ export default function AboutPage({ onStartCrafting, onFeedback, onTerms, onPriv
             </span>
           </div>
 
-          {/* Interactive Expanding Flex Row (Desktop) / Stacked (Mobile) */}
-          <div className="w-full flex flex-col sm:flex-row gap-3 min-h-[300px]">
-            {EXPANDING_STEPS.map((step) => {
-              const isExpanded = activeStep === step.id;
+          {/* The High-End Pixels71 Expanding Cards Row (h-[380px] desktop) */}
+          <div className="w-full flex flex-col sm:flex-row gap-3.5 h-auto sm:h-[380px]">
+            {STEP_CARDS.map((card) => {
+              const isExpanded = activeStep === card.id;
 
               return (
                 <motion.div
-                  key={step.id}
+                  key={card.id}
                   layout
-                  transition={expansionSpring}
-                  onMouseEnter={() => setActiveStep(step.id)}
-                  onClick={() => setActiveStep(step.id)}
-                  className={`relative rounded-[22px] bg-[#141414] border transition-colors cursor-pointer select-none overflow-hidden p-5 flex flex-col justify-between ${
+                  transition={appleSpring}
+                  onMouseEnter={() => setActiveStep(card.id)}
+                  onClick={() => setActiveStep(card.id)}
+                  className={`relative rounded-[24px] overflow-hidden cursor-pointer select-none border transition-colors flex flex-col justify-between ${
                     isExpanded 
-                      ? 'sm:flex-[2.6] border-white/[0.16] shadow-[0_20px_45px_rgba(0,0,0,0.7)]' 
-                      : 'sm:flex-[1] border-white/[0.08] hover:border-white/[0.12] bg-[#111111]'
+                      ? 'sm:flex-[3.2] border-white/[0.18] shadow-[0_24px_50px_rgba(0,0,0,0.8)]' 
+                      : 'sm:flex-[1] border-white/[0.08] hover:border-white/[0.14]'
                   }`}
+                  style={{
+                    backgroundColor: '#121212',
+                  }}
                 >
-                  {/* Subtle Corner Accent Gradient */}
-                  <div 
-                    className="absolute top-0 right-0 w-8 h-8 pointer-events-none opacity-60"
-                    style={{
-                      background: `linear-gradient(225deg, ${step.accent} 50%, transparent 50%)`
-                    }}
-                  />
-
-                  {/* Header: Step Number & Tag */}
-                  <div className="flex items-center justify-between gap-2">
-                    <span className="text-[12px] font-mono font-medium text-white/35">
-                      STEP {step.step}
-                    </span>
-                    <span 
-                      className="text-[11px] font-normal px-2 py-0.5 rounded-full bg-white/[0.05] border border-white/[0.08]"
-                      style={{ color: step.accent }}
-                    >
-                      {step.tag}
-                    </span>
+                  {/* Background Imagery with Cinematic Gradient Overlay */}
+                  <div className="absolute inset-0 pointer-events-none overflow-hidden z-0">
+                    <img 
+                      src={card.image} 
+                      alt="" 
+                      className={`w-full h-full object-cover transition-all duration-700 ${
+                        isExpanded 
+                          ? 'opacity-40 scale-100 filter brightness-110' 
+                          : 'opacity-15 scale-110 filter grayscale'
+                      }`}
+                    />
+                    {/* Dark Vignette Gradient to guarantee text contrast */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-[#0E0E0E] via-[#0E0E0E]/70 to-transparent" />
                   </div>
 
-                  {/* Expanded Visual Mockup (Revealed smoothly) */}
-                  <AnimatePresence mode="wait">
-                    {isExpanded && (
-                      <motion.div
-                        key="visual"
-                        initial={{ opacity: 0, scale: 0.95 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        exit={{ opacity: 0, scale: 0.95 }}
-                        transition={{ duration: 0.25 }}
-                        className="my-3 w-full"
-                      >
-                        <StepCardVisual type={step.previewType} />
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
+                  {/* Top Bar: Step Number & Accent Chip */}
+                  <div className="relative z-10 p-5 flex items-center justify-between">
+                    <span 
+                      className="text-[12px] font-mono font-medium px-2.5 py-1 rounded-full bg-black/60 backdrop-blur-md border border-white/[0.10]"
+                      style={{ color: card.accent }}
+                    >
+                      STEP {card.step}
+                    </span>
 
-                  {/* Title & Description Block */}
-                  <div className="flex flex-col gap-1 text-left">
-                    <h3 className="text-white font-medium text-[16.5px] leading-[22px] tracking-[-0.015em]">
-                      {step.title}
+                    <AnimatePresence>
+                      {isExpanded && (
+                        <motion.span
+                          initial={{ opacity: 0, x: 8 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          exit={{ opacity: 0, x: 8 }}
+                          className="text-[11px] font-normal text-white/50 bg-black/60 backdrop-blur-md px-2.5 py-1 rounded-full border border-white/[0.08]"
+                        >
+                          {card.chip}
+                        </motion.span>
+                      )}
+                    </AnimatePresence>
+                  </div>
+
+                  {/* Bottom Bar: Title, Description, and Expansion Reveal */}
+                  <div className="relative z-10 p-5 sm:p-6 flex flex-col gap-1.5 text-left">
+                    <h3 className="text-white font-medium text-[18px] sm:text-[20px] leading-[24px] tracking-[-0.02em]">
+                      {card.title}
                     </h3>
-                    <p className="text-white/50 font-normal text-[13px] leading-[19px]">
-                      {isExpanded ? step.fullDesc : step.shortDesc}
+
+                    {/* Smoothly Revealed Copy */}
+                    <p className={`font-normal text-[13px] sm:text-[13.5px] leading-[20px] transition-all duration-300 ${
+                      isExpanded ? 'text-white/70 max-w-[380px]' : 'text-white/40 line-clamp-1 sm:line-clamp-2'
+                    }`}>
+                      {card.desc}
                     </p>
                   </div>
                 </motion.div>
