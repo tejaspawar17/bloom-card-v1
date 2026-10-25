@@ -239,12 +239,12 @@ export default function FeedbackModal({ onClose }) {
                 </p>
               </div>
 
-              {/* Segmented Control using HeroUI Tabs with Smooth Animated Pill */}
+              {/* Segmented Control matching HeroUI Flat Minimalist Pill */}
               <div className="w-full">
                 <div 
                   role="tablist"
                   aria-label="Feedback Category" 
-                  className="grid grid-cols-3 p-1 bg-[#1A1A1A] rounded-full border border-white/[0.08] relative"
+                  className="grid grid-cols-3 p-1 bg-[#27272A] rounded-full relative"
                 >
                   {CATEGORIES.map((cat) => {
                     const Icon = cat.icon;
@@ -257,17 +257,17 @@ export default function FeedbackModal({ onClose }) {
                         id={`tab-${cat.id}`}
                         aria-selected={isActive}
                         onClick={() => setCategory(cat.id)}
-                        className="relative z-10 flex items-center justify-center gap-1.5 h-[36px] rounded-full text-[13px] font-medium transition-colors cursor-pointer outline-none select-none"
+                        className="relative z-10 flex items-center justify-center gap-1.5 h-[34px] rounded-full text-[13px] font-medium transition-colors cursor-pointer outline-none select-none"
                       >
-                        {/* Apple Motion Sliding Pill Indicator matching HeroUI Tabs */}
+                        {/* HeroUI Flat Segment Indicator - completely flat, NO border, NO shadow */}
                         {isActive && (
                           <motion.div
                             layoutId="activeFeedbackTab"
-                            className="absolute inset-0 rounded-full bg-[#2C2C2E] border border-white/[0.14] shadow-[0_2px_10px_rgba(0,0,0,0.5)] -z-10"
+                            className="absolute inset-0 rounded-full bg-[#3F3F46] -z-10"
                             transition={{
                               type: "spring",
                               stiffness: 500,
-                              damping: 35,
+                              damping: 38,
                               mass: 0.8
                             }}
                           />
@@ -275,9 +275,9 @@ export default function FeedbackModal({ onClose }) {
                         <Icon 
                           size={15} 
                           weight={isActive ? 'duotone' : 'regular'} 
-                          className={`transition-colors ${isActive ? 'text-white' : 'text-white/45'}`} 
+                          className={`transition-colors ${isActive ? 'text-white' : 'text-[#A1A1AA]'}`} 
                         />
-                        <span className={`transition-colors ${isActive ? 'text-white font-semibold' : 'text-white/50 hover:text-white/80'}`}>
+                        <span className={`transition-colors ${isActive ? 'text-white font-medium' : 'text-[#A1A1AA] hover:text-white/80'}`}>
                           {cat.label}
                         </span>
                       </button>
