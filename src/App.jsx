@@ -4,11 +4,14 @@ import { loadSharedCard } from './lib/supabase';
 import Navbar from './components/Navbar';
 import DesignPage from './pages/DesignPage';
 import AboutPage from './pages/AboutPage';
+import FeedbackModal from './components/FeedbackModal';
+import { WindowModal, LiquidGlassButton } from './components/ui';
 
 function AppShell() {
   const { dispatch } = useCard();
   const [activeTab, setActiveTab] = useState('design');
   const [isRecipientMode, setIsRecipientMode] = useState(false);
+  const [globalModal, setGlobalModal] = useState(null);
 
   React.useEffect(() => {
     const syncFromUrl = async () => {
@@ -65,9 +68,56 @@ function AppShell() {
             onSetRecipientMode={setIsRecipientMode} 
           />
         ) : (
-          <AboutPage onStartCrafting={() => { window.scrollTo({ top: 0, behavior: 'smooth' }); handleTabChange('design'); }} />
+          <AboutPage 
+            onStartCrafting={() => { 
+              window.scrollTo({ top: 0, behavior: 'smooth' }); 
+              handleTabChange('design'); 
+            }}
+            onFeedback={() => setGlobalModal('feedback')}
+            onTerms={() => setGlobalModal('terms')}
+            onPrivacy={() => setGlobalModal('privacy')}
+          />
         )}
       </div>
+
+      {/* Global Modals triggered from About Page footer */}
+      {globalModal === 'feedback' && (
+        <FeedbackModal onClose={() => setGlobalModal(null)} />
+      )}
+
+      {globalModal === 'terms' && (
+        <WindowModal
+          isOpen={true}
+          onClose={() => setGlobalModal(null)}
+          title="Terms of Use"
+          footer={
+            <LiquidGlassButton variant="primary" size="sm" onClick={() => setGlobalModal(null)}>
+              Accept & Close
+            </LiquidGlassButton>
+          }
+        >
+          <div className="p-4 text-sm text-neutral-300">
+            By using Bloom Card, you agree to spread joy and positive emotions.
+          </div>
+        </WindowModal>
+      )}
+
+      {globalModal === 'privacy' && (
+        <WindowModal
+          isOpen={true}
+          onClose={() => setGlobalModal(null)}
+          title="Privacy Policy"
+          footer={
+            <LiquidGlassButton variant="primary" size="sm" onClick={() => setGlobalModal(null)}>
+              Close
+            </LiquidGlassButton>
+          }
+        >
+          <div className="p-4 text-sm text-neutral-300">
+            We do not store your personal messages. All card data is local or encoded in the shareable link.
+          </div>
+        </WindowModal>
+      )}
     </div>
   );
 }
