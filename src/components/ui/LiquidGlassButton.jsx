@@ -22,6 +22,7 @@ export default function LiquidGlassButton({
   label = null,
   children = null,
   isDisabled = false,
+  disabled = false,
   isActive = false,
   onClick,
   className = '',
@@ -30,6 +31,7 @@ export default function LiquidGlassButton({
   ...rest
 }) {
   const content = children || label;
+  const isButtonDisabled = Boolean(isDisabled || disabled || rest.disabled);
 
   if (variant === 'primary' || variant === 'ios27') {
     const primarySizeStyles = {
@@ -41,7 +43,7 @@ export default function LiquidGlassButton({
     return (
       <motion.button
         type={type}
-        disabled={isDisabled}
+        disabled={isButtonDisabled}
         onClick={onClick}
         title={title}
         whileTap={{ scale: 0.95 }}
@@ -49,7 +51,7 @@ export default function LiquidGlassButton({
         className={clsx(
           'primary-liquid-glass-button group',
           primarySizeStyles[size] || primarySizeStyles.lg,
-          isDisabled && 'opacity-40 cursor-not-allowed pointer-events-none',
+          isButtonDisabled && 'opacity-40 cursor-not-allowed pointer-events-none',
           className
         )}
         {...rest}
@@ -102,7 +104,7 @@ export default function LiquidGlassButton({
   return (
     <motion.button
       type={type}
-      disabled={isDisabled}
+      disabled={isButtonDisabled}
       onClick={onClick}
       title={title}
       whileTap={{ scale: 0.93 }}

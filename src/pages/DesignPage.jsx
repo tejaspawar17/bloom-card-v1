@@ -6,6 +6,7 @@ import TitleModal from '@/components/TitleModal';
 import MessageModal from '@/components/MessageModal';
 import ShareModal from '@/components/ShareModal';
 import CardRevealPreview from '@/components/cards/CardRevealPreview';
+import FeedbackModal from '@/components/FeedbackModal';
 import Footer from '@/components/Footer';
 import { WindowModal, LiquidGlassButton } from '@/components/ui';
 
@@ -144,37 +145,7 @@ export default function DesignPage({ isRecipientMode = false, onSetRecipientMode
       )}
 
       {modal === 'feedback' && (
-        <WindowModal
-          isOpen={true}
-          onClose={() => setModal(null)}
-          title="We love feedback! 💬"
-          footer={
-            <>
-              <LiquidGlassButton variant="text" size="sm" onClick={() => setModal(null)}>
-                Close
-              </LiquidGlassButton>
-              <LiquidGlassButton 
-                variant="primary" 
-                size="sm" 
-                onClick={() => {
-                  alert('Thank you for your feedback! 🌸');
-                  setModal(null);
-                }}
-              >
-                Submit Feedback
-              </LiquidGlassButton>
-            </>
-          }
-        >
-          <p className="text-xs text-neutral-400">
-            Bloom Card is crafted to help you convey raw, honest, or festive feelings. Have ideas for more flowers, moods, or card skins?
-          </p>
-          <textarea 
-            rows={3} 
-            placeholder="Your thoughts..." 
-            className="w-full bg-black/60 border border-white/20 rounded-xl p-3 text-xs text-white outline-none focus:border-blue-400 resize-none"
-          />
-        </WindowModal>
+        <FeedbackModal onClose={() => setModal(null)} />
       )}
     </div>
   );
