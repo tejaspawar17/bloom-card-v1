@@ -2,13 +2,22 @@ import React, { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { 
   ArrowRight, 
-  CursorClick
+  CursorClick,
+  Sparkle
 } from '@phosphor-icons/react';
-import { BloomLogo, ExpandingStepCards } from '@/components/ui';
+import { BloomLogo } from '@/components/ui';
 import CoffeeButton from '@/components/ui/CoffeeButton';
 import Footer from '@/components/Footer';
 
-// Interactive Cursor-Tracking Eyes (Inspired by Framer Easter Egg)
+// Apple Spring Physics for snappy, tactile, organic motion
+const appleSpring = {
+  type: "spring",
+  stiffness: 380,
+  damping: 28,
+  mass: 0.8
+};
+
+// Interactive Cursor-Tracking Eyes (Subtle Apple/Framer Delight)
 function TrackingEyes() {
   const eyeLeftRef = useRef(null);
   const eyeRightRef = useRef(null);
@@ -22,7 +31,7 @@ function TrackingEyes() {
       const eyeCenterY = rect.top + rect.height / 2;
 
       const angle = Math.atan2(e.clientY - eyeCenterY, e.clientX - eyeCenterX);
-      const distance = Math.min(5, Math.hypot(e.clientX - eyeCenterX, e.clientY - eyeCenterY) / 28);
+      const distance = Math.min(4.5, Math.hypot(e.clientX - eyeCenterX, e.clientY - eyeCenterY) / 32);
 
       setPupilPos({
         x: Math.cos(angle) * distance,
@@ -35,14 +44,14 @@ function TrackingEyes() {
   }, []);
 
   return (
-    <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#161616] border border-white/[0.08] shadow-inner select-none">
+    <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#161616] border border-white/[0.08] shadow-inner select-none">
       {/* Left Eye */}
       <div 
         ref={eyeLeftRef}
-        className="w-5 h-5 rounded-full bg-white flex items-center justify-center relative shadow-sm overflow-hidden"
+        className="w-4 h-4 rounded-full bg-white flex items-center justify-center relative shadow-sm overflow-hidden"
       >
         <motion.div 
-          className="w-2 h-2 rounded-full bg-[#0E0E0E]"
+          className="w-1.5 h-1.5 rounded-full bg-[#0E0E0E]"
           animate={{ x: pupilPos.x, y: pupilPos.y }}
           transition={{ type: "spring", stiffness: 700, damping: 40 }}
         />
@@ -51,10 +60,10 @@ function TrackingEyes() {
       {/* Right Eye */}
       <div 
         ref={eyeRightRef}
-        className="w-5 h-5 rounded-full bg-white flex items-center justify-center relative shadow-sm overflow-hidden"
+        className="w-4 h-4 rounded-full bg-white flex items-center justify-center relative shadow-sm overflow-hidden"
       >
         <motion.div 
-          className="w-2 h-2 rounded-full bg-[#0E0E0E]"
+          className="w-1.5 h-1.5 rounded-full bg-[#0E0E0E]"
           animate={{ x: pupilPos.x, y: pupilPos.y }}
           transition={{ type: "spring", stiffness: 700, damping: 40 }}
         />
@@ -63,132 +72,229 @@ function TrackingEyes() {
   );
 }
 
-// Pixels71 Expanding Step Cards Data
-const STEP_CARDS = [
+// 3 Tactile Stationery Cards (Designed with Apple HIG & Craftsmanship)
+const HOW_IT_WORKS_STEPS = [
   {
-    number: '01',
+    num: '01',
     title: 'Pick a Vibe',
     tag: 'Mood-first',
-    description: 'From heartfelt apologies and milestones to "I miss you but in a normal way." Pick a flower, metal, or monster.',
+    desc: 'From heartfelt apologies and milestones to "I miss you but in a normal way." Pick a flower, metal, or monster.',
+    rotate: -1.6,
     accent: '#86B75A',
-    image: '/assets/bloom/paper_back_clean.png',
-    chip: '🌸 Flower Meaning',
+    previewBadge: '🌸 Meaning',
+    cardImage: '/assets/bloom/paper_back_clean.png',
   },
   {
-    number: '02',
+    num: '02',
     title: 'Slap On Details',
     tag: 'Tactile Craft',
-    description: 'Simulate paper grain, Victorian metallic foil, custom stats & crooked stickers placed at questionable angles.',
+    desc: 'Simulate paper grain, Victorian metallic foil, custom stats & crooked stickers placed at questionable angles.',
+    rotate: 1.2,
     accent: '#CFC531',
-    image: '/assets/bloom/metallic_subject_front.png',
-    chip: '✨ Metallic Foil',
+    previewBadge: '✨ Foil Bevels',
+    cardImage: '/assets/bloom/metallic_subject_front.png',
   },
   {
-    number: '03',
+    num: '03',
     title: 'Ship the Link',
     tag: 'Instant 3D',
-    description: 'No account wall. Just a permanent 60fps 3D link that flips, tilts, and actually makes someone feel remembered.',
+    desc: 'No account wall. Just a permanent 60fps 3D link that flips, tilts, and actually makes someone feel remembered.',
+    rotate: -1.2,
     accent: '#7CE0DC',
-    image: '/assets/polaroid-defaults/pokemon_card_back.png',
-    chip: '⚡ Permanent Link',
+    previewBadge: '⚡ 60fps 3D',
+    cardImage: '/assets/polaroid-defaults/pokemon_card_back.png',
   },
 ];
 
 export default function AboutPage({ onStartCrafting, onFeedback, onTerms, onPrivacy }) {
+  const [hoveredCard, setHoveredCard] = useState(null);
+
   return (
     <div className="relative w-full min-h-screen flex flex-col items-center justify-between select-none font-sans overflow-hidden">
       
       {/* Blueprint Grid Background */}
       <div 
         aria-hidden="true" 
-        className="pointer-events-none fixed inset-0 opacity-[0.035] -z-20"
+        className="pointer-events-none fixed inset-0 opacity-[0.03] -z-20"
         style={{
           backgroundImage: `
             linear-gradient(to right, #FFFFFF 1px, transparent 1px),
             linear-gradient(to bottom, #FFFFFF 1px, transparent 1px)
           `,
-          backgroundSize: '40px 40px'
+          backgroundSize: '48px 48px'
         }}
       />
 
       {/* Atmospheric Ambient Emerald Glow */}
       <div 
         aria-hidden="true" 
-        className="pointer-events-none fixed top-12 left-1/2 -translate-x-1/2 w-[800px] h-[380px] bg-[radial-gradient(ellipse,rgba(134,183,90,0.18)_0%,rgba(0,136,255,0.08)_50%,transparent_75%)] blur-[100px] -z-10" 
+        className="pointer-events-none fixed top-10 left-1/2 -translate-x-1/2 w-[840px] h-[400px] bg-[radial-gradient(ellipse,rgba(134,183,90,0.16)_0%,rgba(0,136,255,0.06)_50%,transparent_75%)] blur-[110px] -z-10" 
       />
 
-      {/* Main Narrative Column */}
-      <main className="w-full max-w-[760px] px-5 sm:px-8 pt-12 sm:pt-16 pb-20 flex flex-col items-center gap-14 sm:gap-16 relative z-10">
+      {/* Main Narrative Column (Apple HIG 8pt Spacing Scale) */}
+      <main className="w-full max-w-[760px] px-5 sm:px-8 pt-14 sm:pt-20 pb-24 flex flex-col items-center gap-16 sm:gap-20 relative z-10">
 
         {/* ============================================================
-            1. HERO SECTION: Brand Mark + Apple Display Typography
+            1. HERO SECTION: Brand Mark + Strict Apple Display Typography
            ============================================================ */}
-        <div className="flex flex-col items-center text-center gap-6 relative">
+        <section className="flex flex-col items-center text-center gap-6 relative max-w-[620px]">
           
           {/* Logo with Exact Navbar Aura Glow */}
           <div className="relative py-1">
             <BloomLogo size="lg" version="Ver. 1.1" />
           </div>
 
-          {/* Interactive Mouse Tracking Eyes */}
+          {/* Interactive Mouse Tracking Eyes Tag */}
           <motion.div 
-            initial={{ scale: 0 }}
-            animate={{ scale: 1 }}
-            transition={{ delay: 0.15, type: "spring", stiffness: 500 }}
+            initial={{ opacity: 0, y: 6 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1, duration: 0.4 }}
             className="flex items-center gap-2"
           >
             <TrackingEyes />
-            <span className="text-[12px] text-white/35 font-normal tracking-tight">watching you craft</span>
+            <span className="text-[12px] text-[#86868B] font-normal tracking-tight">watching you craft</span>
           </motion.div>
 
-          {/* Apple-style Display Typography: Regular (400) Weight throughout with tight tracking */}
-          <div className="flex flex-col gap-3 max-w-[600px]">
-            <h1 className="text-white font-normal text-[36px] sm:text-[46px] md:text-[50px] leading-[1.1] tracking-[-0.04em]">
+          {/* Apple Display Headline: 44px/48px, leading 1.12, tracking -0.035em, font-normal 400 */}
+          <div className="flex flex-col gap-4">
+            <h1 className="text-white font-normal text-[38px] sm:text-[46px] md:text-[48px] leading-[1.12] tracking-[-0.035em]">
               I make greeting cards that people{' '}
               <span className="font-serif italic font-normal text-transparent bg-clip-text bg-gradient-to-r from-[#86B75A] via-[#CFC531] to-[#7CE0DC]">
                 actually keep.
               </span>
             </h1>
 
-            <p className="text-white/55 font-normal text-[15px] sm:text-[16px] leading-[25px] tracking-[-0.015em] max-w-[480px] mx-auto">
+            {/* Apple Secondary Body: 16px, leading 26px (relaxed 1.62x ratio), tracking -0.012em */}
+            <p className="text-[#A1A1A6] font-normal text-[15px] sm:text-[16px] leading-[26px] tracking-[-0.012em] max-w-[480px] mx-auto">
               No drugstore greeting card aisles. No rhyming poems. Just 60fps tactile cards and stickers placed at questionable angles.
             </p>
           </div>
 
-          {/* Floating Pill CTA */}
+          {/* Apple Liquid Glass CTA Pill */}
           <motion.button
-            whileHover={{ scale: 1.05, y: -2 }}
-            whileTap={{ scale: 0.95 }}
+            whileHover={{ scale: 1.04, y: -2 }}
+            whileTap={{ scale: 0.96 }}
             onClick={onStartCrafting}
-            className="relative px-5 py-2.5 rounded-full bg-[#181818] border border-white/[0.14] text-white font-normal text-[13.5px] shadow-[0_12px_28px_rgba(0,0,0,0.6)] cursor-pointer flex items-center gap-2 transition-all mt-1 outline-none"
+            className="relative px-5 py-2.5 rounded-full bg-[#181818] hover:bg-[#1E1E1E] border border-white/[0.14] hover:border-white/[0.24] text-white font-medium text-[14px] shadow-[0_12px_28px_rgba(0,0,0,0.6)] cursor-pointer flex items-center gap-2 transition-all mt-2 outline-none hig-focus"
           >
             <span>Start a card</span>
-            <ArrowRight size={14} className="text-white/60" />
+            <ArrowRight size={14} className="text-[#A1A1A6]" />
           </motion.button>
-        </div>
+        </section>
 
 
         {/* ============================================================
-            2. PIXELS71-STYLE ELEGANT EXPANDING STEP CARDS
+            2. CLASSY TACTILE CARDS: "How It Works"
+            Designed like physical stationery cards resting on dark felt
            ============================================================ */}
-        <section className="w-full flex flex-col items-center gap-4">
-          <div className="flex items-center justify-between w-full px-2">
-            <span className="text-white/40 text-[12px] font-normal tracking-wide uppercase">
+        <section className="w-full flex flex-col gap-4">
+          
+          {/* Section Eyebrow with Apple HIG Typography */}
+          <div className="flex items-center justify-between w-full px-1">
+            <span className="text-[#86868B] text-[11px] font-medium tracking-[0.08em] uppercase">
               How it works
             </span>
-            <span className="text-white/30 text-[11px] font-normal flex items-center gap-1">
-              <CursorClick size={13} />
-              hover to expand
+            <span className="text-[#86868B] text-[11px] font-normal flex items-center gap-1.5">
+              <CursorClick size={12} />
+              hover to inspect
             </span>
           </div>
 
-          {/* Exact Pixels71 Expanding Step Cards Component */}
-          <ExpandingStepCards 
-            steps={STEP_CARDS} 
-            defaultActive={0} 
-            cardHeight={390}
-            resetOnLeave={false}
-          />
+          {/* 3 Balanced Stationery Cards (Micro-rotated, Spring Hover) */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 w-full">
+            {HOW_IT_WORKS_STEPS.map((step, idx) => {
+              const isHovered = hoveredCard === idx;
+
+              return (
+                <motion.div
+                  key={step.num}
+                  tabIndex={0}
+                  role="region"
+                  aria-label={`Step ${step.num}: ${step.title}`}
+                  onMouseEnter={() => setHoveredCard(idx)}
+                  onMouseLeave={() => setHoveredCard(null)}
+                  onFocus={() => setHoveredCard(idx)}
+                  onBlur={() => setHoveredCard(null)}
+                  animate={{
+                    rotate: isHovered ? 0 : step.rotate,
+                    y: isHovered ? -8 : 0,
+                    scale: isHovered ? 1.02 : 1,
+                  }}
+                  transition={appleSpring}
+                  className={`relative rounded-[22px] bg-[#131313] border p-6 flex flex-col justify-between gap-6 cursor-default select-none overflow-hidden transition-colors duration-300 outline-none hig-focus ${
+                    isHovered 
+                      ? 'border-white/[0.22] shadow-[0_24px_50px_rgba(0,0,0,0.85)]' 
+                      : 'border-white/[0.08] shadow-[0_12px_28px_rgba(0,0,0,0.5)]'
+                  }`}
+                  style={{
+                    minHeight: '270px',
+                  }}
+                >
+                  {/* Subtle Inner Glass Specular Highlight */}
+                  <div 
+                    aria-hidden="true"
+                    className="absolute inset-0 pointer-events-none rounded-[22px]"
+                    style={{
+                      boxShadow: 'inset 0 1px 1px 0 rgba(255, 255, 255, 0.08)',
+                    }}
+                  />
+
+                  {/* Faint Background Material Watermark */}
+                  <div className="absolute -bottom-8 -right-8 w-32 h-32 pointer-events-none opacity-[0.06] overflow-hidden rounded-full">
+                    <img 
+                      src={step.cardImage} 
+                      alt="" 
+                      className="w-full h-full object-cover filter contrast-125"
+                    />
+                  </div>
+
+                  {/* Top Bar: Step Number + Accent Tag */}
+                  <div className="relative z-10 flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      {/* Jewel Accent Dot */}
+                      <span 
+                        className="w-2 h-2 rounded-full shadow-sm"
+                        style={{ backgroundColor: step.accent }}
+                      />
+                      <span className="font-sans font-medium text-[13px] text-white tracking-tight">
+                        {step.num}
+                      </span>
+                    </div>
+
+                    {/* Micro Pill Badge */}
+                    <span className="text-[11px] font-normal text-[#86868B] px-2 py-0.5 rounded-full bg-white/[0.04] border border-white/[0.06]">
+                      {step.tag}
+                    </span>
+                  </div>
+
+                  {/* Content Area: Apple Typographic Scale */}
+                  <div className="relative z-10 flex flex-col gap-2 text-left">
+                    <h3 className="text-white font-medium text-[18px] sm:text-[19px] leading-[24px] tracking-[-0.02em]">
+                      {step.title}
+                    </h3>
+
+                    <p className="text-[#A1A1A6] font-normal text-[13.5px] sm:text-[14px] leading-[22px] tracking-[-0.01em]">
+                      {step.desc}
+                    </p>
+                  </div>
+
+                  {/* Card Bottom Indicator Bar */}
+                  <div className="relative z-10 pt-2 border-t border-white/[0.05] flex items-center justify-between">
+                    <span className="text-[11px] font-normal text-[#86868B]">
+                      {step.previewBadge}
+                    </span>
+                    <motion.div
+                      animate={{ opacity: isHovered ? 1 : 0, x: isHovered ? 0 : -4 }}
+                      transition={{ duration: 0.2 }}
+                      className="flex items-center text-[#86868B]"
+                    >
+                      <Sparkle size={12} style={{ color: step.accent }} />
+                    </motion.div>
+                  </div>
+                </motion.div>
+              );
+            })}
+          </div>
         </section>
 
 
@@ -199,18 +305,18 @@ export default function AboutPage({ onStartCrafting, onFeedback, onTerms, onPriv
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.15 }}
-          className="w-full rounded-[24px] bg-[#0E0E0E] border border-white/[0.10] overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.7)]"
+          className="w-full rounded-[24px] bg-[#0E0E0E] border border-white/[0.10] overflow-hidden shadow-[0_24px_60px_rgba(0,0,0,0.75)]"
         >
           {/* Apple macOS Style Window Header Bar */}
-          <div className="h-[48px] px-5 flex items-center justify-between bg-[#1A1A1A] border-b border-white/[0.08] select-none">
+          <div className="h-[46px] px-5 flex items-center justify-between bg-[#181818] border-b border-white/[0.08] select-none">
             {/* Apple Window Stoplights */}
             <div className="flex items-center gap-2">
-              <div className="w-3 h-3 rounded-full bg-[#FF5F56] border border-[#E0443E]/50" />
-              <div className="w-3 h-3 rounded-full bg-[#FFBD2E] border border-[#DEA123]/50" />
-              <div className="w-3 h-3 rounded-full bg-[#27C93F] border border-[#1AAB29]/50" />
+              <div className="w-3 h-3 rounded-full bg-[#FF5F56] border border-[#E0443E]/50 shadow-sm" />
+              <div className="w-3 h-3 rounded-full bg-[#FFBD2E] border border-[#DEA123]/50 shadow-sm" />
+              <div className="w-3 h-3 rounded-full bg-[#27C93F] border border-[#1AAB29]/50 shadow-sm" />
             </div>
 
-            <span className="text-white/60 font-normal text-[12.5px] tracking-tight">
+            <span className="text-[#A1A1A6] font-medium text-[12.5px] tracking-tight">
               About the Creator
             </span>
 
@@ -219,7 +325,7 @@ export default function AboutPage({ onStartCrafting, onFeedback, onTerms, onPriv
           </div>
 
           {/* Window Body Area */}
-          <div className="p-6 sm:p-8 flex flex-col gap-5 text-left">
+          <div className="p-6 sm:p-8 flex flex-col gap-6 text-left">
             <div className="flex items-center gap-4">
               {/* Rubber Duck Avatar */}
               <div className="w-13 h-13 rounded-[16px] bg-[#161616] border border-white/[0.08] flex items-center justify-center shrink-0 shadow-inner">
@@ -234,16 +340,16 @@ export default function AboutPage({ onStartCrafting, onFeedback, onTerms, onPriv
                 <span className="text-white font-medium text-[16px] tracking-tight">
                   One human. Zero committees.
                 </span>
-                <span className="text-white/40 font-normal text-[12.5px]">
+                <span className="text-[#86868B] font-normal text-[12.5px]">
                   (Not my actual face. The duck has higher self-esteem.)
                 </span>
               </div>
             </div>
 
-            {/* Short Honest Story */}
-            <div className="flex flex-col gap-2.5 text-white/65 font-normal text-[14px] sm:text-[14.5px] leading-[23px] pt-1">
+            {/* Short Honest Story: Apple Body scale 14.5px, 24px leading */}
+            <div className="flex flex-col gap-3 text-[#A1A1A6] font-normal text-[14px] sm:text-[14.5px] leading-[24px]">
               <p>
-                Hi. I built Bloom because getting a dry <span className="text-white/90 font-normal text-[13px] bg-white/[0.06] px-1.5 py-0.5 rounded">&ldquo;hbd 🎂&rdquo;</span> text hurts my soul. 
+                Hi. I built Bloom because getting a dry <span className="text-white font-medium text-[13px] bg-white/[0.06] px-1.5 py-0.5 rounded">&ldquo;hbd 🎂&rdquo;</span> text hurts my soul. 
                 People deserve something tactile that feels like it took more than two seconds of effort.
               </p>
               <p>
@@ -253,8 +359,8 @@ export default function AboutPage({ onStartCrafting, onFeedback, onTerms, onPriv
             </div>
 
             {/* Action Bar: Buy Coffee */}
-            <div className="pt-3 border-t border-white/[0.08] flex items-center justify-between">
-              <span className="text-white/45 font-normal text-[12.5px]">
+            <div className="pt-4 border-t border-white/[0.08] flex items-center justify-between">
+              <span className="text-[#86868B] font-normal text-[13px]">
                 Enjoying Bloom?
               </span>
               <CoffeeButton />
