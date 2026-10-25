@@ -75,8 +75,8 @@ const HOW_IT_WORKS_CARDS = [
     title: 'Pick a Vibe',
     desc: 'Deep apologies, milestone birthdays, or "I miss you but in a normal way."',
     rotate: -2.2,
-    pushpin: '#FF453A', // Apple Coral/Red
-    accent: '#86B75A',  // Spring Olive
+    pushpin: '#86B75A', // Spring Olive (single matching accent color)
+    accent: '#86B75A',
   },
   {
     num: '02',
@@ -84,8 +84,8 @@ const HOW_IT_WORKS_CARDS = [
     title: 'Slap On Details',
     desc: 'Paper textures, metallic Victorian foil, custom stats & crooked stickers.',
     rotate: 1.8,
-    pushpin: '#FF9F0A', // Apple Amber/Gold
-    accent: '#CFC531',  // Warm Sunlight
+    pushpin: '#CFC531', // Warm Sunlight (single matching accent color)
+    accent: '#CFC531',
   },
   {
     num: '03',
@@ -93,8 +93,8 @@ const HOW_IT_WORKS_CARDS = [
     title: 'Ship the Link',
     desc: 'No account wall. Just a permanent 60fps 3D link that actually makes them smile.',
     rotate: -1.4,
-    pushpin: '#0A84FF', // Apple Electric Blue
-    accent: '#7CE0DC',  // Mint Cyan
+    pushpin: '#7CE0DC', // Mint Cyan (single matching accent color)
+    accent: '#7CE0DC',
   },
 ];
 
