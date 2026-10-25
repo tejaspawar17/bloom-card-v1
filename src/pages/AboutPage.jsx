@@ -1,25 +1,28 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { 
   ArrowRight, 
   Sparkle, 
   Heart, 
   ShieldCheck, 
-  CursorClick
+  CursorClick,
+  EnvelopeSimple,
+  ShareNetwork,
+  Smiley
 } from '@phosphor-icons/react';
 import { BloomLogo } from '@/components/ui';
 import CoffeeButton from '@/components/ui/CoffeeButton';
 import Footer from '@/components/Footer';
 
-// Apple Spring Physics for snappy tactile response
-const appleSpring = {
+// Apple Spring Physics for fluid expansion
+const expansionSpring = {
   type: "spring",
-  stiffness: 420,
-  damping: 28,
+  stiffness: 350,
+  damping: 32,
   mass: 0.8
 };
 
-// Interactive Cursor-Tracking Eyes (Inspired by Framer Easter Egg)
+// Interactive Cursor-Tracking Eyes (Framer Easter Egg)
 function TrackingEyes() {
   const eyeLeftRef = useRef(null);
   const eyeRightRef = useRef(null);
@@ -74,36 +77,101 @@ function TrackingEyes() {
   );
 }
 
-// 3 Fan Cards: HeroUI Surface Card tokens + Apple HIG geometry + subtle corner tag
-const HOW_IT_WORKS_CARDS = [
+// Expanding Step Cards Data
+const EXPANDING_STEPS = [
   {
-    num: '01',
+    id: 0,
+    step: '01',
     title: 'Pick a Vibe',
     tag: 'Mood-first',
-    desc: 'Apologies, milestone birthdays, or "I miss you but in a normal way."',
-    rotate: -2.5,
+    shortDesc: 'Apology to milestone birthday.',
+    fullDesc: 'Choose how you actually feel: deep apologies, celebratory milestones, or "I miss you but in a normal way."',
     accent: '#86B75A',
+    previewType: 'moods',
   },
   {
-    num: '02',
+    id: 1,
+    step: '02',
     title: 'Slap On Details',
-    tag: 'Crafted',
-    desc: 'Paper textures, metallic foil bevels, custom stats & crooked stickers.',
-    rotate: 2,
+    tag: 'Tactile Craft',
+    shortDesc: 'Foil, textures & duck stickers.',
+    fullDesc: 'Simulate archival pressed paper, metallic Victorian foil, custom Pokémon stats & crooked stickers.',
     accent: '#CFC531',
+    previewType: 'craft',
   },
   {
-    num: '03',
+    id: 2,
+    step: '03',
     title: 'Ship the Link',
     tag: 'Instant 3D',
-    desc: 'No account wall. Just a permanent 60fps 3D link that actually makes them smile.',
-    rotate: -1.5,
+    shortDesc: 'Permanent 60fps 3D keepsake.',
+    fullDesc: 'No login or paywall. Just a permanent link where they can peel stickers, flip the card, and smile.',
     accent: '#7CE0DC',
+    previewType: 'share',
   },
 ];
 
+// Interactive Visual Preview inside Expanded Card
+function StepCardVisual({ type }) {
+  if (type === 'moods') {
+    return (
+      <div className="w-full h-[120px] rounded-[14px] bg-[#101010] border border-white/[0.06] p-3 flex flex-col justify-center gap-2 overflow-hidden relative">
+        <div className="flex items-center gap-1.5 flex-wrap">
+          <span className="px-2.5 py-1 rounded-full bg-white/[0.06] border border-white/[0.10] text-[11px] font-normal text-white/80">
+            🌸 Sincere Apology
+          </span>
+          <span className="px-2.5 py-1 rounded-full bg-[#86B75A]/20 border border-[#86B75A]/40 text-[11px] font-medium text-[#86B75A]">
+            ✨ Big Milestone
+          </span>
+        </div>
+        <div className="flex items-center gap-1.5">
+          <span className="px-2.5 py-1 rounded-full bg-white/[0.06] border border-white/[0.10] text-[11px] font-normal text-white/70">
+            💌 Just Because
+          </span>
+          <span className="px-2.5 py-1 rounded-full bg-white/[0.04] border border-white/[0.06] text-[11px] font-normal text-white/40">
+            ⚡ Pokémon Battle
+          </span>
+        </div>
+      </div>
+    );
+  }
+
+  if (type === 'craft') {
+    return (
+      <div className="w-full h-[120px] rounded-[14px] bg-[#101010] border border-white/[0.06] p-3 flex items-center justify-around overflow-hidden relative">
+        <motion.div 
+          animate={{ rotate: [-8, -2, -8] }}
+          transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+          className="w-12 h-12 rounded-[12px] bg-[#1C1C1E] border border-white/[0.12] flex items-center justify-center shadow-lg"
+        >
+          <img 
+            src="/assets/bloom/duck.png" 
+            alt="duck sticker" 
+            className="w-9 h-9 object-contain drop-shadow select-none pointer-events-none" 
+          />
+        </motion.div>
+        
+        <div className="flex flex-col gap-1 text-left">
+          <span className="text-[11px] font-mono text-[#CFC531]">PAPER / METALLIC / POKÉMON</span>
+          <span className="text-[12px] text-white/70 font-normal">Physical-digital materials</span>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="w-full h-[120px] rounded-[14px] bg-[#101010] border border-white/[0.06] p-3 flex flex-col justify-center items-center gap-2 overflow-hidden relative">
+      <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#181818] border border-white/[0.12] shadow-sm">
+        <span className="w-2 h-2 rounded-full bg-[#34C759] animate-pulse" />
+        <span className="text-[12px] font-mono text-white/80">bloomcard.app/c/x9k2m4</span>
+      </div>
+      <span className="text-[11px] text-white/40 font-normal">Instant 60fps 3D viewer · Zero spam</span>
+    </div>
+  );
+}
+
 export default function AboutPage({ onStartCrafting, onFeedback, onTerms, onPrivacy }) {
-  const [activeCard, setActiveCard] = useState(null);
+  const [activeStep, setActiveStep] = useState(0);
 
   return (
     <div className="relative w-full min-h-screen flex flex-col items-center justify-between select-none font-sans overflow-hidden">
@@ -128,7 +196,7 @@ export default function AboutPage({ onStartCrafting, onFeedback, onTerms, onPriv
       />
 
       {/* Main Narrative Column */}
-      <main className="w-full max-w-[740px] px-5 sm:px-8 pt-12 sm:pt-16 pb-20 flex flex-col items-center gap-14 sm:gap-16 relative z-10">
+      <main className="w-full max-w-[760px] px-5 sm:px-8 pt-12 sm:pt-16 pb-20 flex flex-col items-center gap-14 sm:gap-16 relative z-10">
 
         {/* ============================================================
             1. HERO SECTION: Brand Mark + Apple Display Typography
@@ -179,7 +247,7 @@ export default function AboutPage({ onStartCrafting, onFeedback, onTerms, onPriv
 
 
         {/* ============================================================
-            2. TILTED CARD FAN: "How It Works" in HeroUI Card System
+            2. EXPANDING STEP CARDS (Inspired by Framer Marketplace)
            ============================================================ */}
         <section className="w-full flex flex-col items-center gap-4">
           <div className="flex items-center justify-between w-full px-2">
@@ -188,55 +256,72 @@ export default function AboutPage({ onStartCrafting, onFeedback, onTerms, onPriv
             </span>
             <span className="text-white/30 text-[11px] font-normal flex items-center gap-1">
               <CursorClick size={13} />
-              hover or tap cards
+              hover to expand
             </span>
           </div>
 
-          {/* 3 HeroUI Surface Cards with Apple spring tilt */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-3.5 w-full pt-2">
-            {HOW_IT_WORKS_CARDS.map((card, i) => {
-              const isHovered = activeCard === i;
+          {/* Interactive Expanding Flex Row (Desktop) / Stacked (Mobile) */}
+          <div className="w-full flex flex-col sm:flex-row gap-3 min-h-[300px]">
+            {EXPANDING_STEPS.map((step) => {
+              const isExpanded = activeStep === step.id;
+
               return (
                 <motion.div
-                  key={card.num}
-                  onMouseEnter={() => setActiveCard(i)}
-                  onMouseLeave={() => setActiveCard(null)}
-                  whileHover={{ y: -8, rotate: 0, scale: 1.02 }}
-                  animate={{ 
-                    rotate: isHovered ? 0 : card.rotate,
-                    y: isHovered ? -8 : 0 
-                  }}
-                  transition={appleSpring}
-                  className="relative rounded-[20px] bg-[#141414] border border-white/[0.10] p-5 sm:p-6 flex flex-col justify-between gap-5 shadow-[0_16px_36px_rgba(0,0,0,0.7)] cursor-default select-none overflow-hidden"
+                  key={step.id}
+                  layout
+                  transition={expansionSpring}
+                  onMouseEnter={() => setActiveStep(step.id)}
+                  onClick={() => setActiveStep(step.id)}
+                  className={`relative rounded-[22px] bg-[#141414] border transition-colors cursor-pointer select-none overflow-hidden p-5 flex flex-col justify-between ${
+                    isExpanded 
+                      ? 'sm:flex-[2.6] border-white/[0.16] shadow-[0_20px_45px_rgba(0,0,0,0.7)]' 
+                      : 'sm:flex-[1] border-white/[0.08] hover:border-white/[0.12] bg-[#111111]'
+                  }`}
                 >
-                  {/* Subtle Corner Color Accent */}
+                  {/* Subtle Corner Accent Gradient */}
                   <div 
-                    className="absolute top-0 right-0 w-8 h-8 pointer-events-none opacity-80"
+                    className="absolute top-0 right-0 w-8 h-8 pointer-events-none opacity-60"
                     style={{
-                      background: `linear-gradient(225deg, ${card.accent} 50%, transparent 50%)`
+                      background: `linear-gradient(225deg, ${step.accent} 50%, transparent 50%)`
                     }}
                   />
 
-                  {/* Top Step Pill */}
-                  <div className="flex items-center justify-between">
-                    <span 
-                      className="text-[11px] font-normal px-2 py-0.5 rounded-full bg-white/[0.06] border border-white/[0.08]"
-                      style={{ color: card.accent }}
-                    >
-                      {card.tag}
+                  {/* Header: Step Number & Tag */}
+                  <div className="flex items-center justify-between gap-2">
+                    <span className="text-[12px] font-mono font-medium text-white/35">
+                      STEP {step.step}
                     </span>
-                    <span className="text-[11px] text-white/35 font-normal">
-                      STEP {card.num}
+                    <span 
+                      className="text-[11px] font-normal px-2 py-0.5 rounded-full bg-white/[0.05] border border-white/[0.08]"
+                      style={{ color: step.accent }}
+                    >
+                      {step.tag}
                     </span>
                   </div>
 
-                  {/* Body Content */}
-                  <div className="flex flex-col gap-1.5 text-left">
-                    <h3 className="text-white font-medium text-[16px] leading-[22px] tracking-[-0.015em]">
-                      {card.title}
+                  {/* Expanded Visual Mockup (Revealed smoothly) */}
+                  <AnimatePresence mode="wait">
+                    {isExpanded && (
+                      <motion.div
+                        key="visual"
+                        initial={{ opacity: 0, scale: 0.95 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        exit={{ opacity: 0, scale: 0.95 }}
+                        transition={{ duration: 0.25 }}
+                        className="my-3 w-full"
+                      >
+                        <StepCardVisual type={step.previewType} />
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+
+                  {/* Title & Description Block */}
+                  <div className="flex flex-col gap-1 text-left">
+                    <h3 className="text-white font-medium text-[16.5px] leading-[22px] tracking-[-0.015em]">
+                      {step.title}
                     </h3>
                     <p className="text-white/50 font-normal text-[13px] leading-[19px]">
-                      {card.desc}
+                      {isExpanded ? step.fullDesc : step.shortDesc}
                     </p>
                   </div>
                 </motion.div>
