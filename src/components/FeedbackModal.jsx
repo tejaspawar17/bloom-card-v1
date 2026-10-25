@@ -239,39 +239,52 @@ export default function FeedbackModal({ onClose }) {
                 </p>
               </div>
 
-              {/* Segmented Control using HeroUI Tabs with Pill Indicator */}
-              <SharedElementTransition>
-                <Tabs
-                  selectedKey={category}
-                  onSelectionChange={(key) => setCategory(String(key))}
-                  className="w-full"
+              {/* Segmented Control using HeroUI Tabs with Smooth Animated Pill */}
+              <div className="w-full">
+                <div 
+                  role="tablist"
+                  aria-label="Feedback Category" 
+                  className="grid grid-cols-3 p-1 bg-[#1A1A1A] rounded-full border border-white/[0.08] relative"
                 >
-                  <TabList 
-                    aria-label="Feedback Category" 
-                    className="relative flex items-center p-1 bg-[#1A1A1A] rounded-full border border-white/[0.08]"
-                  >
-                    {CATEGORIES.map((cat) => {
-                      const Icon = cat.icon;
-                      const isActive = category === cat.id;
-                      return (
-                        <Tab
-                          key={cat.id}
-                          id={cat.id}
-                          className="relative z-10 flex-1 flex items-center justify-center gap-1.5 h-[34px] rounded-full text-[13px] font-medium transition-colors cursor-pointer outline-none select-none text-white/50 data-[selected]:text-white hover:text-white/80"
-                        >
-                          <Icon 
-                            size={15} 
-                            weight={isActive ? 'duotone' : 'regular'} 
-                            className={`transition-colors ${isActive ? 'text-white' : 'text-white/45'}`} 
+                  {CATEGORIES.map((cat) => {
+                    const Icon = cat.icon;
+                    const isActive = category === cat.id;
+                    return (
+                      <button
+                        type="button"
+                        role="tab"
+                        key={cat.id}
+                        id={`tab-${cat.id}`}
+                        aria-selected={isActive}
+                        onClick={() => setCategory(cat.id)}
+                        className="relative z-10 flex items-center justify-center gap-1.5 h-[36px] rounded-full text-[13px] font-medium transition-colors cursor-pointer outline-none select-none"
+                      >
+                        {/* Apple Motion Sliding Pill Indicator matching HeroUI Tabs */}
+                        {isActive && (
+                          <motion.div
+                            layoutId="activeFeedbackTab"
+                            className="absolute inset-0 rounded-full bg-[#2C2C2E] border border-white/[0.14] shadow-[0_2px_10px_rgba(0,0,0,0.5)] -z-10"
+                            transition={{
+                              type: "spring",
+                              stiffness: 500,
+                              damping: 35,
+                              mass: 0.8
+                            }}
                           />
-                          <span>{cat.label}</span>
-                        </Tab>
-                      );
-                    })}
-                    <TabIndicator className="absolute inset-y-1 rounded-full bg-[#2C2C2E] shadow-[0_2px_8px_rgba(0,0,0,0.5)] border border-white/[0.12] transition-all duration-200" />
-                  </TabList>
-                </Tabs>
-              </SharedElementTransition>
+                        )}
+                        <Icon 
+                          size={15} 
+                          weight={isActive ? 'duotone' : 'regular'} 
+                          className={`transition-colors ${isActive ? 'text-white' : 'text-white/45'}`} 
+                        />
+                        <span className={`transition-colors ${isActive ? 'text-white font-semibold' : 'text-white/50 hover:text-white/80'}`}>
+                          {cat.label}
+                        </span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
 
               {/* Recessed Textarea with Integrated Counter */}
               <div className="relative rounded-[14px] bg-[#161616] border border-white/[0.10] focus-within:border-[#0055D4]/70 focus-within:ring-1 focus-within:ring-[#0055D4]/30 transition-all">
@@ -296,24 +309,30 @@ export default function FeedbackModal({ onClose }) {
                 </div>
               </div>
 
-              {/* Email Input (Optional) with 3D Microsoft Fluent Envelope Emoji */}
+              {/* Email Input (Optional) */}
               <div className="flex flex-col gap-1.5">
                 <label className="text-[12.5px] font-medium text-white/80 flex items-center gap-1.5">
-                  <img 
-                    src="/assets/bloom/envelope.png" 
-                    alt="envelope" 
-                    className="w-[18px] h-[18px] object-contain select-none pointer-events-none drop-shadow-sm" 
-                  />
                   <span>Your email</span>
                   <span className="text-white/35 font-normal text-[11px]">(optional)</span>
                 </label>
-                <input
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="So I can reply (or send you a virtual flower 🌸)"
-                  className="w-full bg-[#161616] border border-white/[0.10] focus:border-[#0055D4]/70 focus:ring-1 focus:ring-[#0055D4]/30 rounded-[14px] h-[42px] px-3.5 text-[13.5px] text-white placeholder-white/25 outline-none transition-all font-sans"
-                />
+                <div className="relative flex items-center">
+                  <input
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="So I can reply (or send you a virtual note)"
+                    className="w-full bg-[#161616] border border-white/[0.10] focus:border-[#0055D4]/70 focus:ring-1 focus:ring-[#0055D4]/30 rounded-[14px] h-[42px] pl-3.5 pr-10 text-[13.5px] text-white placeholder-white/25 outline-none transition-all font-sans"
+                  />
+                  {!email && (
+                    <div className="absolute right-3.5 flex items-center pointer-events-none opacity-45">
+                      <img 
+                        src="/assets/bloom/envelope.png" 
+                        alt="envelope" 
+                        className="w-[18px] h-[18px] object-contain drop-shadow-sm select-none" 
+                      />
+                    </div>
+                  )}
+                </div>
               </div>
 
               {/* Action Buttons: No dividing line, Clear Pill + Clean Text Send Button */}
