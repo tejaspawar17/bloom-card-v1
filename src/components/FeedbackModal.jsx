@@ -221,7 +221,7 @@ export default function FeedbackModal({ onClose }) {
           />
         </div>
 
-        {/* Modal Body */}
+        {/* Modal Body: Aligned with official HeroUI p-6 (24px) container scale */}
         <AnimatePresence mode="wait">
           {!isSubmitted ? (
             <motion.form 
@@ -230,16 +230,14 @@ export default function FeedbackModal({ onClose }) {
               initial={{ opacity: 0, y: 6 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -6 }}
-              className="p-5 pt-4 pb-5 flex flex-col gap-4 bg-[#0E0E0E]"
+              className="p-6 flex flex-col gap-4 bg-[#0E0E0E]"
             >
-              {/* Tight, Clean Subtitle */}
-              <div>
-                <p className="text-white/50 text-[13px] leading-[18px] font-sans font-normal">
-                  Bugs, sticker ideas, or confessions. Goes straight to me.
-                </p>
-              </div>
+              {/* Clean Subtitle */}
+              <p className="text-white/50 text-[13px] leading-[18px] font-sans font-normal">
+                Bugs, sticker ideas, or confessions. Goes straight to me.
+              </p>
 
-              {/* Segmented Control: Perfectly Harmonized with Modal's Neutral Obsidian Palette */}
+              {/* Segmented Control: HeroUI scale p-1 track, gap-1.5 label */}
               <div className="w-full">
                 <div 
                   role="tablist"
@@ -286,7 +284,7 @@ export default function FeedbackModal({ onClose }) {
                 </div>
               </div>
 
-              {/* Recessed Textarea with Integrated Counter (no aggressive initial autofocus) */}
+              {/* Recessed Textarea with Integrated Counter: HeroUI p-3.5 input scale */}
               <div className="relative rounded-[14px] bg-[#161616] border border-white/[0.10] focus-within:border-[#0055D4]/70 focus-within:ring-1 focus-within:ring-[#0055D4]/30 transition-all">
                 <textarea
                   rows={4}
@@ -294,7 +292,6 @@ export default function FeedbackModal({ onClose }) {
                   onChange={(e) => setMessage(e.target.value)}
                   placeholder={activeCategory.placeholder}
                   maxLength={MAX_CHARS}
-                  required
                   className="w-full bg-transparent px-3.5 pt-3 pb-8 text-[13.5px] leading-[20px] text-white placeholder-white/25 outline-none resize-none font-sans"
                 />
                 
@@ -334,9 +331,9 @@ export default function FeedbackModal({ onClose }) {
                 </div>
               </div>
 
-              {/* Action Buttons: No dividing line, Clear Pill + Clean Text Send Button */}
-              <div className="flex items-center gap-3 w-full justify-end mt-1 pt-1">
-                {/* Clear Button (matching Title / Message modal) */}
+              {/* Modal Footer Actions: Official HeroUI mt-5 (20px) and gap-3 (12px) */}
+              <div className="flex items-center gap-3 w-full justify-end mt-2 pt-1 font-sans">
+                {/* Clear Button */}
                 <button
                   type="button"
                   onClick={handleReset}
@@ -345,11 +342,11 @@ export default function FeedbackModal({ onClose }) {
                   Clear
                 </button>
 
-                {/* Primary Send Button: Text-only, no icon */}
+                {/* Primary Send Button */}
                 <div className="relative">
                   <ConfettiBurst triggerKey={confettiKey} />
                   <LiquidGlassButton
-                    type="submit"
+                    type="button"
                     variant="primary"
                     size="md"
                     onClick={handleSubmit}
