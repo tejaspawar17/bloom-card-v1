@@ -362,66 +362,66 @@ export default function FeedbackModal({ onClose }) {
               </div>
             </motion.form>
           ) : (
-            /* Funny Success Confirmation Screen with Rubber Duck Decal */
+            /* Funny Success Confirmation Screen matching Ready to Share / ShareModal architecture */
             <motion.div
               key="success"
-              initial={{ opacity: 0, scale: 0.96 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.96 }}
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -8 }}
               transition={{ duration: 0.2 }}
-              className="p-6 pt-6 pb-7 flex flex-col items-center text-center bg-[#0E0E0E]"
+              className="p-6 pt-6 pb-7 flex flex-col items-center text-center bg-[#0E0E0E] font-sans"
             >
-              {/* Rubber Duck Sticker Hero */}
+              {/* Rubber Duck Sticker Hero: Scaled to match Caution Badge volume (72x72) */}
               <motion.div 
                 initial={{ scale: 0, rotate: -15 }}
                 animate={{ scale: 1, rotate: 0 }}
                 transition={{ type: "spring", stiffness: 480, damping: 20 }}
-                className="mb-3.5 flex items-center justify-center select-none"
+                className="mb-3 w-16 h-16 flex items-center justify-center select-none"
               >
                 <img 
                   src="/assets/bloom/duck.png" 
                   alt="rubber duck sticker" 
-                  className="w-[52px] h-[52px] object-contain drop-shadow-md pointer-events-none" 
+                  className="w-[68px] h-[68px] object-contain drop-shadow-lg pointer-events-none" 
                 />
               </motion.div>
 
-              {/* Dynamic Witty Headline & Subtitle */}
+              {/* Dynamic Witty Headline & Subtitle matching Point of No Return type scale */}
               {category === 'bug' ? (
                 <>
-                  <h3 className="text-white font-bold text-[18px] leading-[23px] tracking-[-0.02em] font-sans">
+                  <h3 className="text-white font-bold text-[19px] leading-[24px] tracking-[-0.02em] font-sans">
                     Bug Caught! 🐛
                   </h3>
-                  <p className="mt-2 text-white/50 text-[13px] leading-[19px] max-w-[340px] font-sans font-normal">
+                  <p className="mt-2 text-white/45 text-[12.5px] leading-[19px] max-w-[340px] font-sans font-normal">
                     I am already staring at the code in mild existential panic. Thank you for catching it before the whole card combusted.
                   </p>
                 </>
               ) : category === 'sticker' ? (
                 <>
-                  <h3 className="text-white font-bold text-[18px] leading-[23px] tracking-[-0.02em] font-sans">
+                  <h3 className="text-white font-bold text-[19px] leading-[24px] tracking-[-0.02em] font-sans">
                     Added to the Sticker Vault! ✨
                   </h3>
-                  <p className="mt-2 text-white/50 text-[13px] leading-[19px] max-w-[340px] font-sans font-normal">
+                  <p className="mt-2 text-white/45 text-[12.5px] leading-[19px] max-w-[340px] font-sans font-normal">
                     If this sticker is as unhinged as I think it is, expect to see it in the next update.
                   </p>
                 </>
               ) : (
                 <>
-                  <h3 className="text-white font-bold text-[18px] leading-[23px] tracking-[-0.02em] font-sans">
+                  <h3 className="text-white font-bold text-[19px] leading-[24px] tracking-[-0.02em] font-sans">
                     Delivered to My Inbox! 💌
                   </h3>
-                  <p className="mt-2 text-white/50 text-[13px] leading-[19px] max-w-[340px] font-sans font-normal">
+                  <p className="mt-2 text-white/45 text-[12.5px] leading-[19px] max-w-[340px] font-sans font-normal">
                     A real human is reading this and either smiling like an idiot or taking furious notes. You're the best.
                   </p>
                 </>
               )}
 
-              {/* Single Done Button */}
-              <div className="mt-6 w-full max-w-[180px]">
+              {/* Actions Group: Figma 24px breathing space, balanced wide pill */}
+              <div className="flex items-center justify-center w-full mt-6 font-sans">
                 <LiquidGlassButton
                   variant="primary"
                   size="md"
                   onClick={onClose}
-                  className="w-full font-sans text-[14px]"
+                  className="w-full max-w-[280px] font-sans text-[14px]"
                 >
                   Back to Crafting
                 </LiquidGlassButton>
