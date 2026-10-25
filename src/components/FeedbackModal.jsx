@@ -239,12 +239,12 @@ export default function FeedbackModal({ onClose }) {
                 </p>
               </div>
 
-              {/* Segmented Control: Visible Grounded Track with Flat Sliding Pill */}
+              {/* Segmented Control: Perfectly Harmonized with Modal's Neutral Obsidian Palette */}
               <div className="w-full">
                 <div 
                   role="tablist"
                   aria-label="Feedback Category" 
-                  className="grid grid-cols-3 p-1 bg-[#1C1C1E] border border-white/[0.08] rounded-full relative"
+                  className="grid grid-cols-3 p-1 bg-[#161616] border border-white/[0.08] rounded-full relative"
                 >
                   {CATEGORIES.map((cat) => {
                     const Icon = cat.icon;
@@ -259,11 +259,11 @@ export default function FeedbackModal({ onClose }) {
                         onClick={() => setCategory(cat.id)}
                         className="relative z-10 flex items-center justify-center gap-1.5 h-[34px] rounded-full text-[13px] font-medium transition-colors cursor-pointer outline-none select-none"
                       >
-                        {/* Flat Active Pill: clean flat elevated tone */}
+                        {/* Pure Neutral Active Pill matching modal surface hierarchy */}
                         {isActive && (
                           <motion.div
                             layoutId="activeFeedbackTab"
-                            className="absolute inset-0 rounded-full bg-[#2F2F32] -z-10"
+                            className="absolute inset-0 rounded-full bg-[#242424] -z-10"
                             transition={{
                               type: "spring",
                               stiffness: 500,
