@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Design System Component Library
  * Extracted directly from Figma file: Bloom Card V1
  * Pages: "Design Components" (#649:11027) & "Design System" (#753:10726)
@@ -51,3 +51,4 @@ export { default as CardSubjectBox } from './CardSubjectBox';
 export { default as CardMessageBox } from './CardMessageBox';
 
 export { default as TertiaryLiquidGlassButton } from './TertiaryLiquidGlassButton';
+export { default as ExpandingStepCards } from './ExpandingStepCards';
