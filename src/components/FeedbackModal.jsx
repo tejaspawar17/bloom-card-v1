@@ -239,12 +239,12 @@ export default function FeedbackModal({ onClose }) {
                 </p>
               </div>
 
-              {/* Segmented Control matching HeroUI Flat Minimalist Pill */}
+              {/* Segmented Control using Bloom's Figma Design Palette */}
               <div className="w-full">
                 <div 
                   role="tablist"
                   aria-label="Feedback Category" 
-                  className="grid grid-cols-3 p-1 bg-[#27272A] rounded-full relative"
+                  className="grid grid-cols-3 p-1 bg-[#181818] rounded-full border border-white/[0.08] relative"
                 >
                   {CATEGORIES.map((cat) => {
                     const Icon = cat.icon;
@@ -259,11 +259,11 @@ export default function FeedbackModal({ onClose }) {
                         onClick={() => setCategory(cat.id)}
                         className="relative z-10 flex items-center justify-center gap-1.5 h-[34px] rounded-full text-[13px] font-medium transition-colors cursor-pointer outline-none select-none"
                       >
-                        {/* HeroUI Flat Segment Indicator - completely flat, NO border, NO shadow */}
+                        {/* Bloom Active Pill: uses dark liquid glass fill (#2C2C2C / 70,70,70) with subtle hairline edge */}
                         {isActive && (
                           <motion.div
                             layoutId="activeFeedbackTab"
-                            className="absolute inset-0 rounded-full bg-[#3F3F46] -z-10"
+                            className="absolute inset-0 rounded-full bg-[#2A2A2A] border border-white/[0.12] shadow-[inset_0_1px_1px_rgba(255,255,255,0.12)] -z-10"
                             transition={{
                               type: "spring",
                               stiffness: 500,
@@ -275,9 +275,9 @@ export default function FeedbackModal({ onClose }) {
                         <Icon 
                           size={15} 
                           weight={isActive ? 'duotone' : 'regular'} 
-                          className={`transition-colors ${isActive ? 'text-white' : 'text-[#A1A1AA]'}`} 
+                          className={`transition-colors ${isActive ? 'text-white' : 'text-white/45'}`} 
                         />
-                        <span className={`transition-colors ${isActive ? 'text-white font-medium' : 'text-[#A1A1AA] hover:text-white/80'}`}>
+                        <span className={`transition-colors ${isActive ? 'text-white font-medium' : 'text-white/45 hover:text-white/80'}`}>
                           {cat.label}
                         </span>
                       </button>
