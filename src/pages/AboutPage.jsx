@@ -2,18 +2,9 @@ import React, { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { 
   ArrowRight, 
-  CursorClick,
-  Sparkle
+  CursorClick
 } from '@phosphor-icons/react';
-import { 
-  Card, 
-  CardHeader, 
-  CardTitle, 
-  CardDescription, 
-  CardContent, 
-  CardFooter,
-  Chip 
-} from '@heroui/react';
+import { Card } from '@heroui/react';
 import { BloomLogo } from '@/components/ui';
 import CoffeeButton from '@/components/ui/CoffeeButton';
 import Footer from '@/components/Footer';
@@ -81,37 +72,34 @@ function TrackingEyes() {
   );
 }
 
-// 3 Tactile Stationery Cards (Designed with HeroUI Card System & Apple Typography)
-const HOW_IT_WORKS_STEPS = [
+// 3 Tactile Stationery Fan Cards (Elevated Creatiie / Apple HIG standard)
+const HOW_IT_WORKS_CARDS = [
   {
     num: '01',
+    tag: 'MOOD-FIRST',
     title: 'Pick a Vibe',
-    tag: 'Mood-first',
-    desc: 'From heartfelt apologies and milestones to "I miss you but in a normal way." Pick a flower, metal, or monster.',
-    rotate: -1.6,
-    accent: '#86B75A',
-    previewBadge: '🌸 Flower Meaning',
-    cardImage: '/assets/bloom/paper_back_clean.png',
+    desc: 'Deep apologies, milestone birthdays, or "I miss you but in a normal way."',
+    rotate: -2.2,
+    pushpin: '#FF453A', // Apple Coral/Red
+    accent: '#86B75A',  // Spring Olive
   },
   {
     num: '02',
+    tag: 'CRAFTED',
     title: 'Slap On Details',
-    tag: 'Tactile Craft',
-    desc: 'Simulate paper grain, Victorian metallic foil, custom stats & crooked stickers placed at questionable angles.',
-    rotate: 1.2,
-    accent: '#CFC531',
-    previewBadge: '✨ Foil Bevels',
-    cardImage: '/assets/bloom/metallic_subject_front.png',
+    desc: 'Paper textures, metallic Victorian foil, custom stats & crooked stickers.',
+    rotate: 1.8,
+    pushpin: '#FF9F0A', // Apple Amber/Gold
+    accent: '#CFC531',  // Warm Sunlight
   },
   {
     num: '03',
+    tag: 'ZERO FRICTION',
     title: 'Ship the Link',
-    tag: 'Instant 3D',
-    desc: 'No account wall. Just a permanent 60fps 3D link that flips, tilts, and actually makes someone feel remembered.',
-    rotate: -1.2,
-    accent: '#7CE0DC',
-    previewBadge: '⚡ 60fps 3D',
-    cardImage: '/assets/polaroid-defaults/pokemon_card_back.png',
+    desc: 'No account wall. Just a permanent 60fps 3D link that actually makes them smile.',
+    rotate: -1.4,
+    pushpin: '#0A84FF', // Apple Electric Blue
+    accent: '#7CE0DC',  // Mint Cyan
   },
 ];
 
@@ -193,8 +181,8 @@ export default function AboutPage({ onStartCrafting, onFeedback, onTerms, onPriv
 
 
         {/* ============================================================
-            2. HERO UI COMPONENT CARD SYSTEM: "How It Works"
-            Engineered with @heroui/react Card, CardHeader, CardContent, CardFooter & Chip
+            2. TACTILE STATIONERY CARDS: "How It Works"
+            Restored to the user-favorite Creatiie/Desk aesthetic, elevated with HeroUI Card surface
            ============================================================ */}
         <section className="w-full flex flex-col gap-4">
           
@@ -205,27 +193,27 @@ export default function AboutPage({ onStartCrafting, onFeedback, onTerms, onPriv
             </span>
             <span className="text-[#86868B] text-[11px] font-normal flex items-center gap-1.5">
               <CursorClick size={12} />
-              hover to inspect
+              hover or tap cards
             </span>
           </div>
 
-          {/* 3 HeroUI Surface Cards with Apple spring tilt */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 w-full">
-            {HOW_IT_WORKS_STEPS.map((step, idx) => {
+          {/* 3 Tilted Stationery Cards */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4.5 sm:gap-4 w-full pt-1">
+            {HOW_IT_WORKS_CARDS.map((card, idx) => {
               const isHovered = hoveredCard === idx;
 
               return (
                 <motion.div
-                  key={step.num}
+                  key={card.num}
                   tabIndex={0}
                   role="region"
-                  aria-label={`Step ${step.num}: ${step.title}`}
+                  aria-label={`Step ${card.num}: ${card.title}`}
                   onMouseEnter={() => setHoveredCard(idx)}
                   onMouseLeave={() => setHoveredCard(null)}
                   onFocus={() => setHoveredCard(idx)}
                   onBlur={() => setHoveredCard(null)}
                   animate={{
-                    rotate: isHovered ? 0 : step.rotate,
+                    rotate: isHovered ? 0 : card.rotate,
                     y: isHovered ? -8 : 0,
                     scale: isHovered ? 1.02 : 1,
                   }}
@@ -233,84 +221,64 @@ export default function AboutPage({ onStartCrafting, onFeedback, onTerms, onPriv
                   className="outline-none"
                 >
                   <Card
-                    className={`group relative rounded-[24px] bg-[#141414]/90 backdrop-blur-xl border transition-all duration-300 overflow-hidden flex flex-col justify-between ${
+                    className={`relative rounded-[22px] bg-[#141414] border p-6 flex flex-col justify-between gap-6 cursor-default select-none overflow-hidden transition-colors duration-300 ${
                       isHovered 
                         ? 'border-white/[0.22] shadow-[0_24px_50px_rgba(0,0,0,0.85)]' 
-                        : 'border-white/[0.08] shadow-[0_12px_28px_rgba(0,0,0,0.5)]'
+                        : 'border-white/[0.08] shadow-[0_16px_36px_rgba(0,0,0,0.6)]'
                     }`}
-                    style={{ minHeight: '380px' }}
+                    style={{
+                      minHeight: '230px',
+                    }}
                   >
-                    {/* Inner Specular Bevel Highlight */}
+                    {/* Inner Specular Highlight */}
                     <div 
                       aria-hidden="true"
-                      className="absolute inset-0 pointer-events-none rounded-[24px]"
+                      className="absolute inset-0 pointer-events-none rounded-[22px]"
                       style={{
                         boxShadow: 'inset 0 1px 1px 0 rgba(255, 255, 255, 0.08)',
                       }}
                     />
 
-                    {/* HeroUI CardHeader: Step Indicator + Tag */}
-                    <CardHeader className="flex items-center justify-between p-5 pb-2">
-                      <div className="flex items-center gap-2">
-                        <Chip
-                          size="sm"
-                          variant="flat"
-                          className="bg-white/[0.06] border border-white/[0.10] px-2.5 py-1 text-white font-medium text-[12.5px] tracking-tight flex items-center gap-1.5"
-                        >
-                          <span 
-                            className="w-1.5 h-1.5 rounded-full inline-block mr-1 shadow-sm"
-                            style={{ backgroundColor: step.accent }}
-                          />
-                          {step.num}
-                        </Chip>
-                      </div>
+                    {/* Decorative Corner Ribbon Triangle */}
+                    <div 
+                      className="absolute top-0 right-0 w-9 h-9 pointer-events-none opacity-85"
+                      style={{
+                        background: `linear-gradient(225deg, ${card.accent} 50%, transparent 50%)`
+                      }}
+                    />
 
-                      <Chip
-                        size="sm"
-                        variant="bordered"
-                        className="text-[#86868B] border-white/[0.08] text-[11px] font-normal"
-                      >
-                        {step.tag}
-                      </Chip>
-                    </CardHeader>
-
-                    {/* HeroUI CardContent: Visual Showcase Box + Title + Description */}
-                    <CardContent className="px-5 py-2 flex flex-col gap-3">
-                      {/* Featured Visual Media Container (The HeroUI card showcase signature) */}
-                      <div className="w-full h-[140px] rounded-[16px] overflow-hidden relative border border-white/[0.08] bg-[#0A0A0A] group-hover:border-white/[0.18] transition-colors">
-                        <img 
-                          src={step.cardImage} 
-                          alt={step.title}
-                          className="w-full h-full object-cover filter brightness-[0.9] contrast-[1.05] group-hover:scale-105 group-hover:brightness-100 transition-all duration-500 select-none"
-                        />
-                        {/* Cinematic Vignette */}
-                        <div className="absolute inset-0 bg-gradient-to-t from-[#141414] via-[#141414]/30 to-transparent opacity-70" />
-                      </div>
-
-                      <div className="flex flex-col gap-1.5 pt-1 text-left">
-                        <CardTitle className="text-white font-medium text-[19px] sm:text-[20px] leading-snug tracking-[-0.02em]">
-                          {step.title}
-                        </CardTitle>
-
-                        <CardDescription className="text-[#A1A1A6] font-normal text-[13.5px] sm:text-[14px] leading-[22px] tracking-[-0.01em]">
-                          {step.desc}
-                        </CardDescription>
-                      </div>
-                    </CardContent>
-
-                    {/* HeroUI CardFooter: Action/Feature Pill */}
-                    <CardFooter className="p-5 pt-3 border-t border-white/[0.06] flex items-center justify-between">
-                      <span className="text-[12px] font-normal text-[#86868B] flex items-center gap-1.5">
-                        {step.previewBadge}
+                    {/* Top Pushpin Dot + Step Pill */}
+                    <div className="flex items-center justify-between relative z-10">
+                      {/* Tactile Pushpin with 3D Specular Highlight */}
+                      <div 
+                        className="w-3 h-3 rounded-full shadow-[0_2px_5px_rgba(0,0,0,0.7)] border border-white/50"
+                        style={{ backgroundColor: card.pushpin }}
+                      />
+                      <span className="font-sans font-medium text-[11px] text-white/35 tracking-wider pr-4">
+                        STEP {card.num}
                       </span>
-                      <motion.div
-                        animate={{ opacity: isHovered ? 1 : 0.4, scale: isHovered ? 1.1 : 1 }}
-                        transition={{ duration: 0.2 }}
-                        className="flex items-center text-[#86868B]"
+                    </div>
+
+                    {/* Middle Content Area */}
+                    <div className="flex flex-col gap-2 text-left relative z-10">
+                      {/* Eyebrow Tag */}
+                      <span 
+                        className="font-sans font-semibold text-[11px] tracking-[0.06em] uppercase"
+                        style={{ color: card.accent }}
                       >
-                        <Sparkle size={13} style={{ color: step.accent }} />
-                      </motion.div>
-                    </CardFooter>
+                        {card.tag}
+                      </span>
+
+                      {/* Card Title */}
+                      <h3 className="text-white font-medium text-[20px] sm:text-[21px] leading-[26px] tracking-[-0.02em]">
+                        {card.title}
+                      </h3>
+
+                      {/* Honest, Punchy Copy */}
+                      <p className="text-[#A1A1A6] font-normal text-[13.5px] sm:text-[14px] leading-[22px] tracking-[-0.01em]">
+                        {card.desc}
+                      </p>
+                    </div>
                   </Card>
                 </motion.div>
               );
