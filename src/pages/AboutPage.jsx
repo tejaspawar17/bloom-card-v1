@@ -1,280 +1,431 @@
-import React from 'react';
-import { motion } from 'framer-motion';
-import { ArrowRight, Sparkle, Heart, Bug, ShieldCheck, Code } from '@phosphor-icons/react';
+import React, { useState, useEffect, useRef } from 'react';
+import { motion, useMotionValue, useSpring } from 'framer-motion';
+import { 
+  ArrowRight, 
+  Sparkle, 
+  Heart, 
+  Coffee, 
+  ChatCircleDots,
+  ShieldCheck, 
+  CursorClick, 
+  Minus, 
+  Square, 
+  X,
+  Question
+} from '@phosphor-icons/react';
 import { BloomLogo } from '@/components/ui';
 import LiquidGlassButton from '@/components/ui/LiquidGlassButton';
 import CoffeeButton from '@/components/ui/CoffeeButton';
 import Footer from '@/components/Footer';
 
-// Apple HIG spring transition
+// Apple Spring Physics for snappy tactile feel
 const appleSpring = {
-  type: 'spring',
-  stiffness: 380,
-  damping: 30,
-  mass: 0.8,
+  type: "spring",
+  stiffness: 420,
+  damping: 28,
+  mass: 0.8
 };
 
-const fadeUp = (delay = 0) => ({
-  initial: { opacity: 0, y: 16 },
-  animate: { opacity: 1, y: 0 },
-  transition: { duration: 0.5, delay, ease: [0.16, 1, 0.3, 1] },
-});
+// Interactive Cursor-Tracking Eyes (Inspired by creatiie.framer.website)
+function TrackingEyes() {
+  const eyeLeftRef = useRef(null);
+  const eyeRightRef = useRef(null);
+  const [pupilPos, setPupilPos] = useState({ x: 0, y: 0 });
 
-const HOW_IT_WORKS = [
+  useEffect(() => {
+    const handleMouseMove = (e) => {
+      if (!eyeLeftRef.current) return;
+      const rect = eyeLeftRef.current.getBoundingClientRect();
+      const eyeCenterX = rect.left + rect.width / 2;
+      const eyeCenterY = rect.top + rect.height / 2;
+
+      const angle = Math.atan2(e.clientY - eyeCenterY, e.clientX - eyeCenterX);
+      const distance = Math.min(6, Math.hypot(e.clientX - eyeCenterX, e.clientY - eyeCenterY) / 25);
+
+      setPupilPos({
+        x: Math.cos(angle) * distance,
+        y: Math.sin(angle) * distance,
+      });
+    };
+
+    window.addEventListener('mousemove', handleMouseMove);
+    return () => window.removeEventListener('mousemove', handleMouseMove);
+  }, []);
+
+  return (
+    <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#141414] border border-white/[0.08] shadow-inner select-none">
+      {/* Left Eye */}
+      <div 
+        ref={eyeLeftRef}
+        className="w-6 h-6 rounded-full bg-white flex items-center justify-center relative shadow-sm overflow-hidden"
+      >
+        <motion.div 
+          className="w-2.5 h-2.5 rounded-full bg-[#0E0E0E]"
+          animate={{ x: pupilPos.x, y: pupilPos.y }}
+          transition={{ type: "spring", stiffness: 700, damping: 40 }}
+        />
+      </div>
+
+      {/* Right Eye */}
+      <div 
+        ref={eyeRightRef}
+        className="w-6 h-6 rounded-full bg-white flex items-center justify-center relative shadow-sm overflow-hidden"
+      >
+        <motion.div 
+          className="w-2.5 h-2.5 rounded-full bg-[#0E0E0E]"
+          animate={{ x: pupilPos.x, y: pupilPos.y }}
+          transition={{ type: "spring", stiffness: 700, damping: 40 }}
+        />
+      </div>
+    </div>
+  );
+}
+
+// 3 Fan Cards (Favorite "How It Works" section, framed like the Framer website cards)
+const HOW_IT_WORKS_CARDS = [
   {
-    step: '01',
-    title: 'Pick a mood, not a greeting card aisle cliché',
-    desc: 'From heartfelt confessions and sincere apologies to chaotic celebrations or "I miss you but in a normal way."',
+    num: '01',
+    title: 'Pick a Vibe',
     tag: 'Mood-first',
+    desc: 'Deep apologies, milestone birthdays, or "I miss you but in a normal way."',
+    rotate: -3,
+    pushpin: '#FF3B30', // red pushpin
+    accent: '#86B75A',
   },
   {
-    step: '02',
-    title: 'Customize the physical-digital canvas',
-    desc: 'Write nostalgic notes, choose tactile paper, metallic foils, or collector Pokémon layouts, and slap on stickers at questionable angles.',
-    tag: 'Crafted details',
+    num: '02',
+    title: 'Slap On Details',
+    tag: 'Crafted',
+    desc: 'Paper textures, metallic Victorian foil, custom Pokémon stats & crooked stickers.',
+    rotate: 2,
+    pushpin: '#FF9500', // amber pushpin
+    accent: '#CFC531',
   },
   {
-    step: '03',
-    title: 'Share an interactive 3D keepsake link',
-    desc: 'No account wall. No ads. It opens instantly in a 60fps 3D viewer where they can flip, inspect, and save it forever.',
-    tag: 'Instant link',
-  },
-];
-
-const QUESTIONS = [
-  {
-    q: 'Is Bloom genuinely free?',
-    a: 'Yes. There are no paywalls, hidden subscriptions, or watermarks. I built this for the joy of building it.',
-  },
-  {
-    q: 'Why no accounts or sign-up screens?',
-    a: 'Because nobody wants to remember a password just to send a card to their friend. You craft it, hit share, and you are done.',
-  },
-  {
-    q: 'Will there be bugs?',
-    a: 'Almost certainly. If a sticker behaves like an unhinged squirrel, click Send Feedback in the footer and I’ll fix it.',
+    num: '03',
+    title: 'Ship the Link',
+    tag: 'Zero Friction',
+    desc: 'No account wall. Just a permanent 60fps 3D link that actually makes them smile.',
+    rotate: -1.5,
+    pushpin: '#0088FF', // blue pushpin
+    accent: '#7CE0DC',
   },
 ];
 
 export default function AboutPage({ onStartCrafting, onFeedback, onTerms, onPrivacy }) {
+  const [activeCard, setActiveCard] = useState(null);
+  const [isWindowClosed, setIsWindowClosed] = useState(false);
+
   return (
-    <div className="w-full flex flex-col items-center select-none font-sans">
-      {/* Main Content Column: Max-w-[680px], HeroUI 4px/8px rhythm */}
-      <main className="w-full max-w-[680px] px-5 sm:px-6 pt-12 sm:pt-16 pb-20 flex flex-col gap-12 sm:gap-14">
-        
+    <div className="relative w-full min-h-screen flex flex-col items-center justify-between select-none font-sans overflow-hidden">
+      
+      {/* 1. BLUEPRINT GRID BACKGROUND (matching creatiie.framer.website) */}
+      <div 
+        aria-hidden="true" 
+        className="pointer-events-none fixed inset-0 opacity-[0.035] -z-20"
+        style={{
+          backgroundImage: `
+            linear-gradient(to right, #FFFFFF 1px, transparent 1px),
+            linear-gradient(to bottom, #FFFFFF 1px, transparent 1px)
+          `,
+          backgroundSize: '40px 40px'
+        }}
+      />
+
+      {/* Atmospheric Ambient Emerald Glow */}
+      <div 
+        aria-hidden="true" 
+        className="pointer-events-none fixed top-12 left-1/2 -translate-x-1/2 w-[800px] h-[380px] bg-[radial-gradient(ellipse,rgba(134,183,90,0.18)_0%,rgba(0,136,255,0.08)_50%,transparent_75%)] blur-[100px] -z-10" 
+      />
+
+      {/* Main Narrative Column */}
+      <main className="w-full max-w-[760px] px-5 sm:px-8 pt-12 sm:pt-16 pb-16 flex flex-col items-center gap-14 sm:gap-18 relative z-10">
+
         {/* ============================================================
-            1. HERO SECTION: Brand Mark + Apple Display Typography
+            HERO SECTION: Logo + Apple Regular Weight Editorial Typography
            ============================================================ */}
-        <motion.section 
-          {...fadeUp(0)} 
-          className="flex flex-col items-center text-center gap-6"
-        >
-          {/* Logo with Exact Navbar Glow & Instrument Serif Typography */}
-          <div className="relative py-2">
+        <div className="flex flex-col items-center text-center gap-6 relative">
+          
+          {/* Logo with Exact Navbar Aura Glow */}
+          <div className="relative py-1">
             <BloomLogo size="lg" version="Ver. 1.1" />
           </div>
 
-          {/* Headline using Apple-style tight tracking & balanced weights */}
-          <div className="flex flex-col gap-3 max-w-[540px]">
-            <h1 className="text-white font-extrabold text-[32px] sm:text-[40px] leading-[1.12] tracking-[-0.035em]">
-              Crafted for moments when a plain text message feels{' '}
-              <span className="text-white/40 font-normal">mildly disrespectful.</span>
+          {/* Interactive Mouse Tracking Eyes (Framer Easter Egg) */}
+          <motion.div 
+            initial={{ scale: 0 }}
+            animate={{ scale: 1 }}
+            transition={{ delay: 0.2, type: "spring", stiffness: 500 }}
+            className="flex items-center gap-2"
+          >
+            <TrackingEyes />
+            <span className="text-[12px] font-mono text-white/35">watching you craft</span>
+          </motion.div>
+
+          {/* Apple-style Display Typography: Regular (400) Weight with tight tracking */}
+          <div className="flex flex-col gap-3 max-w-[620px]">
+            <h1 className="text-white font-normal text-[36px] sm:text-[46px] md:text-[50px] leading-[1.1] tracking-[-0.04em]">
+              We make greeting cards that people{' '}
+              <span className="font-serif italic font-normal text-transparent bg-clip-text bg-gradient-to-r from-[#86B75A] via-[#CFC531] to-[#7CE0DC]">
+                actually keep.
+              </span>
             </h1>
-            <p className="text-white/60 font-normal text-[15px] sm:text-[16px] leading-[25px] tracking-[-0.01em]">
-              Bloom makes interactive, mood-driven digital keepsakes. 
-              Because greeting card aisles are corporate and typing &ldquo;hbd&rdquo; looks like an unpaid parking ticket.
+
+            <p className="text-white/55 font-normal text-[15px] sm:text-[16.5px] leading-[26px] tracking-[-0.015em] max-w-[500px] mx-auto">
+              No drugstore greeting card aisles. No rhyming poems. Just 60fps tactile cards and stickers placed at questionable angles.
             </p>
           </div>
 
-          {/* Trust Pills / Designer Badges (HeroUI pill tokens) */}
-          <div className="flex flex-wrap items-center justify-center gap-2 pt-1">
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#161616] border border-white/[0.08] text-[12px] font-medium text-white/70">
-              <ShieldCheck size={14} className="text-[#34C759]" weight="fill" />
-              100% Free & Open
-            </span>
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#161616] border border-white/[0.08] text-[12px] font-medium text-white/70">
-              <Sparkle size={14} className="text-[#0088FF]" weight="fill" />
-              60fps Liquid Glass
-            </span>
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#161616] border border-white/[0.08] text-[12px] font-medium text-white/70">
-              <Heart size={14} className="text-[#FF375F]" weight="fill" />
-              Zero Sign-Up Required
-            </span>
-          </div>
-        </motion.section>
+          {/* Floating Sticky Pushpin CTA (Framer Website Style) */}
+          <motion.button
+            whileHover={{ scale: 1.05, rotate: 0 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={onStartCrafting}
+            className="relative px-5 py-2.5 rounded-full bg-[#181818] border border-white/[0.14] text-white font-medium text-[13.5px] shadow-[0_12px_30px_rgba(0,0,0,0.6)] cursor-pointer flex items-center gap-2 rotate-[-2deg] active:scale-95 transition-all mt-1"
+          >
+            {/* Red Pushpin Decal */}
+            <div className="w-2.5 h-2.5 rounded-full bg-[#FF3B30] shadow-[0_2px_4px_rgba(255,59,48,0.6)] border border-white/40 shrink-0" />
+            <span>Start a card</span>
+            <ArrowRight size={14} weight="bold" className="text-white/60" />
+          </motion.button>
+        </div>
+
 
         {/* ============================================================
-            2. WHAT IT DOES: HeroUI Structured Card with Sub-surface Hierarchy
+            TILTED CARD FAN: "How It Works" in Creatiie / Framer Layout
            ============================================================ */}
-        <motion.section 
-          {...fadeUp(0.1)} 
-          className="rounded-[24px] bg-[#0E0E0E] border border-white/[0.10] overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.6)]"
-        >
-          {/* Header Bar matching TitleModal & ShareModal */}
-          <div className="h-[54px] px-6 flex items-center justify-between bg-[#1F1F1F] border-b border-white/[0.08]">
-            <h2 className="text-white/90 font-semibold text-[15px] tracking-[-0.02em]">
-              How it works
-            </h2>
-            <span className="text-white/35 font-mono text-[11px] uppercase tracking-wider">
-              3 simple steps
+        <section className="w-full flex flex-col items-center gap-4">
+          <div className="flex items-center justify-between w-full px-2">
+            <span className="text-white/40 text-[12px] font-mono tracking-wider uppercase">
+              // HOW_IT_WORKS
+            </span>
+            <span className="text-white/30 text-[11px] font-mono flex items-center gap-1">
+              <CursorClick size={13} />
+              hover or tap cards
             </span>
           </div>
 
-          {/* Step Rows: HeroUI 16px/24px spacing */}
-          <div className="p-6 sm:p-7 flex flex-col gap-5">
-            {HOW_IT_WORKS.map((item, idx) => (
-              <div 
-                key={item.step} 
-                className="flex items-start gap-4 pb-5 border-b border-white/[0.06] last:border-b-0 last:pb-0"
-              >
-                <div className="w-8 h-8 rounded-full bg-[#1A1A1A] border border-white/[0.10] flex items-center justify-center text-[12px] font-mono font-bold text-white/80 shrink-0 mt-0.5">
-                  {item.step}
-                </div>
-                <div className="flex flex-col gap-1.5 flex-1">
-                  <div className="flex items-center justify-between gap-2">
-                    <h3 className="text-white font-semibold text-[14.5px] leading-[20px] tracking-[-0.015em]">
-                      {item.title}
-                    </h3>
-                    <span className="text-[11px] font-medium text-white/35 bg-white/[0.04] px-2 py-0.5 rounded-full border border-white/[0.06] shrink-0">
-                      {item.tag}
+          {/* 3 Tilted Index Cards */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-3.5 w-full pt-2">
+            {HOW_IT_WORKS_CARDS.map((card, i) => {
+              const isHovered = activeCard === i;
+              return (
+                <motion.div
+                  key={card.num}
+                  onMouseEnter={() => setActiveCard(i)}
+                  onMouseLeave={() => setActiveCard(null)}
+                  whileHover={{ y: -8, rotate: 0, scale: 1.03 }}
+                  animate={{ 
+                    rotate: isHovered ? 0 : card.rotate,
+                    y: isHovered ? -8 : 0 
+                  }}
+                  transition={appleSpring}
+                  className="relative rounded-[20px] bg-[#141414] border border-white/[0.10] p-5 sm:p-6 flex flex-col justify-between gap-6 shadow-[0_16px_36px_rgba(0,0,0,0.7)] cursor-default select-none overflow-hidden"
+                >
+                  {/* Decorative Corner Color Triangle (from Creatiie screenshot) */}
+                  <div 
+                    className="absolute top-0 right-0 w-8 h-8 pointer-events-none opacity-80"
+                    style={{
+                      background: `linear-gradient(225deg, ${card.accent} 50%, transparent 50%)`
+                    }}
+                  />
+
+                  {/* Top Pushpin */}
+                  <div className="flex items-center justify-between">
+                    <div 
+                      className="w-3 h-3 rounded-full shadow-[0_2px_5px_rgba(0,0,0,0.5)] border border-white/50"
+                      style={{ backgroundColor: card.pushpin }}
+                    />
+                    <span className="font-mono text-[11px] text-white/35 font-bold">
+                      STEP {card.num}
                     </span>
                   </div>
-                  <p className="text-white/55 font-normal text-[13.5px] leading-[21px]">
-                    {item.desc}
-                  </p>
+
+                  {/* Body Content */}
+                  <div className="flex flex-col gap-1.5 text-left">
+                    <div className="text-[11px] font-mono uppercase tracking-wider" style={{ color: card.accent }}>
+                      {card.tag}
+                    </div>
+                    <h3 className="text-white font-semibold text-[17px] leading-[22px] tracking-[-0.02em]">
+                      {card.title}
+                    </h3>
+                    <p className="text-white/55 font-normal text-[13px] leading-[19px] mt-1">
+                      {card.desc}
+                    </p>
+                  </div>
+                </motion.div>
+              );
+            })}
+          </div>
+        </section>
+
+
+        {/* ============================================================
+            WINDOWS XP SYSTEM DIALOG: "System Properties: Human.exe"
+            Blends vintage XP window chrome with Bloom dark liquid glass
+           ============================================================ */}
+        {!isWindowClosed && (
+          <motion.section 
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="w-full rounded-[20px] bg-[#0E0E0E] border border-white/[0.12] overflow-hidden shadow-[0_24px_50px_rgba(0,0,0,0.8)]"
+          >
+            {/* Windows XP-Inspired Header Bar (In Bloom Dark Obsidian Glass) */}
+            <div className="h-[44px] px-4 flex items-center justify-between bg-[#1B1B1B] border-b border-white/[0.08] select-none">
+              <div className="flex items-center gap-2">
+                {/* XP Blue System Square Icon */}
+                <div className="w-4 h-4 rounded-[4px] bg-[#0088FF] flex items-center justify-center text-[10px] font-bold text-white shadow-inner">
+                  B
+                </div>
+                <span className="text-white/85 font-mono text-[12px] font-medium tracking-tight">
+                  bloom_creator.exe — System Properties
+                </span>
+              </div>
+
+              {/* XP Window Buttons (Minimize, Maximize, Close) */}
+              <div className="flex items-center gap-1.5">
+                <button 
+                  type="button"
+                  aria-label="Minimize"
+                  className="w-6 h-6 rounded-[5px] bg-[#2A2A2A] hover:bg-[#353535] text-white/60 hover:text-white flex items-center justify-center transition-colors cursor-pointer"
+                >
+                  <Minus size={11} weight="bold" />
+                </button>
+                <button 
+                  type="button"
+                  aria-label="Maximize"
+                  className="w-6 h-6 rounded-[5px] bg-[#2A2A2A] hover:bg-[#353535] text-white/60 hover:text-white flex items-center justify-center transition-colors cursor-pointer"
+                >
+                  <Square size={10} weight="bold" />
+                </button>
+                <button 
+                  type="button"
+                  aria-label="Close"
+                  onClick={() => setIsWindowClosed(true)}
+                  className="w-6 h-6 rounded-[5px] bg-[#C42B1C] hover:bg-[#E81123] text-white flex items-center justify-center transition-colors cursor-pointer"
+                >
+                  <X size={12} weight="bold" />
+                </button>
+              </div>
+            </div>
+
+            {/* XP Dialog Content Area */}
+            <div className="p-6 sm:p-7 flex flex-col gap-4 text-left">
+              <div className="flex items-start gap-4">
+                {/* Draggable Rubber Duck Decal */}
+                <motion.div 
+                  drag
+                  dragConstraints={{ left: -10, right: 10, top: -10, bottom: 10 }}
+                  whileHover={{ scale: 1.1, rotate: 10 }}
+                  whileDrag={{ scale: 1.15, cursor: "grabbing" }}
+                  className="w-14 h-14 rounded-[14px] bg-[#161616] border border-white/[0.08] flex items-center justify-center shrink-0 cursor-grab shadow-inner select-none"
+                  title="Drag me!"
+                >
+                  <img 
+                    src="/assets/bloom/duck.png" 
+                    alt="duck" 
+                    className="w-10 h-10 object-contain pointer-events-none drop-shadow-sm select-none" 
+                  />
+                </motion.div>
+
+                <div className="flex flex-col gap-1">
+                  <span className="text-white font-medium text-[15px] tracking-tight">
+                    One human. Zero committees.
+                  </span>
+                  <span className="text-white/40 text-[12px] font-mono">
+                    STATUS: obsessed_with_shadows_and_60fps
+                  </span>
                 </div>
               </div>
-            ))}
-          </div>
-        </motion.section>
 
-        {/* ============================================================
-            3. ABOUT THE CREATOR: Awkward, Honest, & Handcrafted
-           ============================================================ */}
-        <motion.section 
-          {...fadeUp(0.18)} 
-          className="rounded-[24px] bg-[#0E0E0E] border border-white/[0.10] overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.6)]"
-        >
-          {/* Header Bar */}
-          <div className="h-[54px] px-6 flex items-center justify-between bg-[#1F1F1F] border-b border-white/[0.08]">
-            <h2 className="text-white/90 font-semibold text-[15px] tracking-[-0.02em]">
-              The human behind the screen
-            </h2>
-            <span className="text-white/35 font-mono text-[11px] uppercase tracking-wider">
-              Solo project
-            </span>
-          </div>
-
-          <div className="p-6 sm:p-7 flex flex-col gap-5">
-            {/* Mascot Decal Header */}
-            <div className="flex items-center gap-3.5">
-              <div className="w-12 h-12 rounded-[16px] bg-[#161616] border border-white/[0.08] flex items-center justify-center shrink-0">
-                <img 
-                  src="/assets/bloom/duck.png" 
-                  alt="rubber duck" 
-                  className="w-8 h-8 object-contain pointer-events-none drop-shadow-sm select-none" 
-                />
+              {/* Awkward, Short Honest Story */}
+              <div className="flex flex-col gap-2.5 text-white/65 font-normal text-[14px] leading-[22px] pt-1">
+                <p>
+                  Hi. I built Bloom because getting a dry <span className="text-white/90 font-mono text-[13px] bg-white/[0.06] px-1.5 py-0.5 rounded">&ldquo;hbd 🎂&rdquo;</span> text hurts my soul. 
+                  People deserve something tactile that feels like it took more than two seconds of effort.
+                </p>
+                <p>
+                  I spent an embarrassing amount of time simulating real paper grain, foil bevels, and drawing silly stickers. 
+                  Bloom is completely free and has no accounts to remember.
+                </p>
               </div>
-              <div className="flex flex-col">
-                <span className="text-white font-medium text-[14px]">
-                  Independent Designer & Developer
-                </span>
-                <span className="text-white/40 text-[12px]">
-                  (Not my actual face. The duck has higher self-esteem.)
-                </span>
+
+              {/* Action Strip: Buy Coffee + Send Feedback */}
+              <div className="pt-3 border-t border-white/[0.08] flex flex-wrap items-center justify-between gap-3">
+                <div className="flex items-center gap-2">
+                  <CoffeeButton />
+                </div>
+                
+                <button
+                  type="button"
+                  onClick={onFeedback}
+                  className="text-white/50 hover:text-white text-[12.5px] font-sans flex items-center gap-1.5 transition-colors cursor-pointer outline-none"
+                >
+                  <ChatCircleDots size={15} className="text-[#0088FF]" />
+                  <span>Send direct feedback</span>
+                </button>
               </div>
             </div>
+          </motion.section>
+        )}
 
-            {/* Awkward Honest Story */}
-            <div className="flex flex-col gap-3 text-white/65 font-normal text-[14px] sm:text-[14.5px] leading-[23px]">
-              <p>
-                Hi. I’m just one person who got annoyed by how sterile and transactional modern communication has become.
-                Everyone sends disposable reactions, heart taps, or generic group chat birthday texts.
-              </p>
-              <p>
-                So I spent months obsessing over tactile materials—simulating real pressed paper fibers, 
-                Victorian foil bevels, and interactive liquid glass shaders that actually react to light. 
-                I probably spent three full days deciding whether the rubber duck sticker was rotated 6 degrees or 8 degrees.
-              </p>
-              <p>
-                Bloom is completely non-commercial. If this little project helped you make someone smile today, that is genuinely the entire reward.
-              </p>
-            </div>
-
-            {/* Coffee Support Recessed Surface */}
-            <div className="mt-2 p-4 rounded-[16px] bg-[#161616] border border-white/[0.08] flex flex-col sm:flex-row items-center justify-between gap-4">
-              <div className="flex flex-col text-center sm:text-left">
-                <span className="text-white font-medium text-[13.5px]">
-                  Enjoying Bloom?
-                </span>
-                <span className="text-white/45 text-[12px] leading-[17px]">
-                  You can buy me a coffee to fuel the late-night pixel pushing.
-                </span>
-              </div>
-              <div className="shrink-0">
-                <CoffeeButton />
-              </div>
-            </div>
-          </div>
-        </motion.section>
 
         {/* ============================================================
-            4. FREQUENTLY ASKED QUESTIONS (HeroUI Recessed Cards)
+            FLOATING TACTILE DOCK (Creatiie / Mac / XP Hybrid Dock)
            ============================================================ */}
-        <motion.section {...fadeUp(0.24)} className="flex flex-col gap-3">
-          <div className="px-1">
-            <h2 className="text-white/80 font-semibold text-[15px] tracking-[-0.02em]">
-              Honest answers to obvious questions
-            </h2>
+        <section className="flex flex-col items-center gap-3">
+          <div className="px-3 py-2 rounded-[22px] bg-[#161616]/90 backdrop-blur-xl border border-white/[0.12] shadow-[0_16px_40px_rgba(0,0,0,0.8)] flex items-center gap-2">
+            
+            {/* Dock Item 1: Craft */}
+            <button
+              type="button"
+              onClick={onStartCrafting}
+              title="Start Crafting"
+              className="w-11 h-11 rounded-[16px] bg-[#222222] hover:bg-[#2C2C2E] border border-white/[0.08] flex items-center justify-center text-xl transition-transform hover:scale-110 active:scale-95 cursor-pointer"
+            >
+              🌸
+            </button>
+
+            {/* Dock Item 2: Duck */}
+            <button
+              type="button"
+              onClick={() => alert("Quack! You found the duck.")}
+              title="Duck Decal"
+              className="w-11 h-11 rounded-[16px] bg-[#222222] hover:bg-[#2C2C2E] border border-white/[0.08] flex items-center justify-center text-xl transition-transform hover:scale-110 active:scale-95 cursor-pointer"
+            >
+              🦆
+            </button>
+
+            {/* Dock Item 3: Coffee */}
+            <a
+              href="https://buymeacoffee.com/sujay1"
+              target="_blank"
+              rel="noopener noreferrer"
+              title="Buy Me a Coffee"
+              className="w-11 h-11 rounded-[16px] bg-[#222222] hover:bg-[#2C2C2E] border border-white/[0.08] flex items-center justify-center text-xl transition-transform hover:scale-110 active:scale-95 cursor-pointer"
+            >
+              ☕
+            </a>
+
+            {/* Dock Item 4: Feedback */}
+            <button
+              type="button"
+              onClick={onFeedback}
+              title="Give Feedback"
+              className="w-11 h-11 rounded-[16px] bg-[#0088FF] hover:bg-[#0077EE] border border-white/[0.20] flex items-center justify-center text-white shadow-[0_0_12px_rgba(0,136,255,0.4)] transition-transform hover:scale-110 active:scale-95 cursor-pointer"
+            >
+              <ChatCircleDots size={20} weight="fill" />
+            </button>
           </div>
 
-          <div className="flex flex-col gap-2.5">
-            {QUESTIONS.map((item) => (
-              <div 
-                key={item.q}
-                className="rounded-[16px] bg-[#121212] border border-white/[0.06] p-4 sm:p-5 flex flex-col gap-1.5 hover:border-white/[0.12] transition-colors"
-              >
-                <span className="text-white font-medium text-[14px] tracking-[-0.01em]">
-                  {item.q}
-                </span>
-                <span className="text-white/50 font-normal text-[13px] leading-[20px]">
-                  {item.a}
-                </span>
-              </div>
-            ))}
-          </div>
-        </motion.section>
-
-        {/* ============================================================
-            5. BOTTOM CTA: High-Contrast Calm Action Block
-           ============================================================ */}
-        <motion.section 
-          {...fadeUp(0.3)} 
-          className="flex flex-col items-center text-center gap-5 pt-4 pb-2"
-        >
-          <div className="flex flex-col gap-1.5">
-            <p className="text-white font-semibold text-[16px] tracking-[-0.02em]">
-              Okay, that’s enough reading.
-            </p>
-            <p className="text-white/45 text-[13px]">
-              Someone out there probably deserves a really nice card right now.
-            </p>
-          </div>
-
-          <LiquidGlassButton
-            variant="primary"
-            size="md"
-            onClick={onStartCrafting}
-            className="px-7 font-sans text-[14px] font-medium"
-          >
-            <span>Start Crafting Card</span>
-            <ArrowRight size={16} weight="bold" />
-          </LiquidGlassButton>
-        </motion.section>
+          <span className="text-[11px] font-mono text-white/30">
+            tactile desktop v1.1
+          </span>
+        </section>
 
       </main>
 
-      {/* Embedded Global Footer */}
+      {/* Global Footer */}
       <Footer 
         onFeedback={onFeedback} 
         onTerms={onTerms} 
