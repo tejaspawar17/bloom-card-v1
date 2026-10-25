@@ -239,12 +239,12 @@ export default function FeedbackModal({ onClose }) {
                 </p>
               </div>
 
-              {/* Segmented Control using Bloom's Figma Design Palette */}
+              {/* Segmented Control: Flat Minimalist Pill from Bloom Palette (zero border, zero shadow) */}
               <div className="w-full">
                 <div 
                   role="tablist"
                   aria-label="Feedback Category" 
-                  className="grid grid-cols-3 p-1 bg-[#181818] rounded-full border border-white/[0.08] relative"
+                  className="grid grid-cols-3 p-1 bg-[#161616] rounded-full relative"
                 >
                   {CATEGORIES.map((cat) => {
                     const Icon = cat.icon;
@@ -259,11 +259,11 @@ export default function FeedbackModal({ onClose }) {
                         onClick={() => setCategory(cat.id)}
                         className="relative z-10 flex items-center justify-center gap-1.5 h-[34px] rounded-full text-[13px] font-medium transition-colors cursor-pointer outline-none select-none"
                       >
-                        {/* Bloom Active Pill: uses dark liquid glass fill (#2C2C2C / 70,70,70) with subtle hairline edge */}
+                        {/* Pure Flat Active Pill: zero border, zero shadow, zero gradient */}
                         {isActive && (
                           <motion.div
                             layoutId="activeFeedbackTab"
-                            className="absolute inset-0 rounded-full bg-[#2A2A2A] border border-white/[0.12] shadow-[inset_0_1px_1px_rgba(255,255,255,0.12)] -z-10"
+                            className="absolute inset-0 rounded-full bg-[#2A2A2A] -z-10"
                             transition={{
                               type: "spring",
                               stiffness: 500,
