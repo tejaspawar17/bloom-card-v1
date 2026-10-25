@@ -5,6 +5,15 @@ import {
   CursorClick,
   Sparkle
 } from '@phosphor-icons/react';
+import { 
+  Card, 
+  CardHeader, 
+  CardTitle, 
+  CardDescription, 
+  CardContent, 
+  CardFooter,
+  Chip 
+} from '@heroui/react';
 import { BloomLogo } from '@/components/ui';
 import CoffeeButton from '@/components/ui/CoffeeButton';
 import Footer from '@/components/Footer';
@@ -72,7 +81,7 @@ function TrackingEyes() {
   );
 }
 
-// 3 Tactile Stationery Cards (Designed with Apple HIG & Craftsmanship)
+// 3 Tactile Stationery Cards (Designed with HeroUI Card System & Apple Typography)
 const HOW_IT_WORKS_STEPS = [
   {
     num: '01',
@@ -81,7 +90,7 @@ const HOW_IT_WORKS_STEPS = [
     desc: 'From heartfelt apologies and milestones to "I miss you but in a normal way." Pick a flower, metal, or monster.',
     rotate: -1.6,
     accent: '#86B75A',
-    previewBadge: '🌸 Meaning',
+    previewBadge: '🌸 Flower Meaning',
     cardImage: '/assets/bloom/paper_back_clean.png',
   },
   {
@@ -184,8 +193,8 @@ export default function AboutPage({ onStartCrafting, onFeedback, onTerms, onPriv
 
 
         {/* ============================================================
-            2. CLASSY TACTILE CARDS: "How It Works"
-            Designed like physical stationery cards resting on dark felt
+            2. HERO UI COMPONENT CARD SYSTEM: "How It Works"
+            Engineered with @heroui/react Card, CardHeader, CardContent, CardFooter & Chip
            ============================================================ */}
         <section className="w-full flex flex-col gap-4">
           
@@ -200,7 +209,7 @@ export default function AboutPage({ onStartCrafting, onFeedback, onTerms, onPriv
             </span>
           </div>
 
-          {/* 3 Balanced Stationery Cards (Micro-rotated, Spring Hover) */}
+          {/* 3 HeroUI Surface Cards with Apple spring tilt */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 w-full">
             {HOW_IT_WORKS_STEPS.map((step, idx) => {
               const isHovered = hoveredCard === idx;
@@ -221,76 +230,88 @@ export default function AboutPage({ onStartCrafting, onFeedback, onTerms, onPriv
                     scale: isHovered ? 1.02 : 1,
                   }}
                   transition={appleSpring}
-                  className={`relative rounded-[22px] bg-[#131313] border p-6 flex flex-col justify-between gap-6 cursor-default select-none overflow-hidden transition-colors duration-300 outline-none hig-focus ${
-                    isHovered 
-                      ? 'border-white/[0.22] shadow-[0_24px_50px_rgba(0,0,0,0.85)]' 
-                      : 'border-white/[0.08] shadow-[0_12px_28px_rgba(0,0,0,0.5)]'
-                  }`}
-                  style={{
-                    minHeight: '270px',
-                  }}
+                  className="outline-none"
                 >
-                  {/* Subtle Inner Glass Specular Highlight */}
-                  <div 
-                    aria-hidden="true"
-                    className="absolute inset-0 pointer-events-none rounded-[22px]"
-                    style={{
-                      boxShadow: 'inset 0 1px 1px 0 rgba(255, 255, 255, 0.08)',
-                    }}
-                  />
-
-                  {/* Faint Background Material Watermark */}
-                  <div className="absolute -bottom-8 -right-8 w-32 h-32 pointer-events-none opacity-[0.06] overflow-hidden rounded-full">
-                    <img 
-                      src={step.cardImage} 
-                      alt="" 
-                      className="w-full h-full object-cover filter contrast-125"
+                  <Card
+                    className={`group relative rounded-[24px] bg-[#141414]/90 backdrop-blur-xl border transition-all duration-300 overflow-hidden flex flex-col justify-between ${
+                      isHovered 
+                        ? 'border-white/[0.22] shadow-[0_24px_50px_rgba(0,0,0,0.85)]' 
+                        : 'border-white/[0.08] shadow-[0_12px_28px_rgba(0,0,0,0.5)]'
+                    }`}
+                    style={{ minHeight: '380px' }}
+                  >
+                    {/* Inner Specular Bevel Highlight */}
+                    <div 
+                      aria-hidden="true"
+                      className="absolute inset-0 pointer-events-none rounded-[24px]"
+                      style={{
+                        boxShadow: 'inset 0 1px 1px 0 rgba(255, 255, 255, 0.08)',
+                      }}
                     />
-                  </div>
 
-                  {/* Top Bar: Step Number + Accent Tag */}
-                  <div className="relative z-10 flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      {/* Jewel Accent Dot */}
-                      <span 
-                        className="w-2 h-2 rounded-full shadow-sm"
-                        style={{ backgroundColor: step.accent }}
-                      />
-                      <span className="font-sans font-medium text-[13px] text-white tracking-tight">
-                        {step.num}
+                    {/* HeroUI CardHeader: Step Indicator + Tag */}
+                    <CardHeader className="flex items-center justify-between p-5 pb-2">
+                      <div className="flex items-center gap-2">
+                        <Chip
+                          size="sm"
+                          variant="flat"
+                          className="bg-white/[0.06] border border-white/[0.10] px-2.5 py-1 text-white font-medium text-[12.5px] tracking-tight flex items-center gap-1.5"
+                        >
+                          <span 
+                            className="w-1.5 h-1.5 rounded-full inline-block mr-1 shadow-sm"
+                            style={{ backgroundColor: step.accent }}
+                          />
+                          {step.num}
+                        </Chip>
+                      </div>
+
+                      <Chip
+                        size="sm"
+                        variant="bordered"
+                        className="text-[#86868B] border-white/[0.08] text-[11px] font-normal"
+                      >
+                        {step.tag}
+                      </Chip>
+                    </CardHeader>
+
+                    {/* HeroUI CardContent: Visual Showcase Box + Title + Description */}
+                    <CardContent className="px-5 py-2 flex flex-col gap-3">
+                      {/* Featured Visual Media Container (The HeroUI card showcase signature) */}
+                      <div className="w-full h-[140px] rounded-[16px] overflow-hidden relative border border-white/[0.08] bg-[#0A0A0A] group-hover:border-white/[0.18] transition-colors">
+                        <img 
+                          src={step.cardImage} 
+                          alt={step.title}
+                          className="w-full h-full object-cover filter brightness-[0.9] contrast-[1.05] group-hover:scale-105 group-hover:brightness-100 transition-all duration-500 select-none"
+                        />
+                        {/* Cinematic Vignette */}
+                        <div className="absolute inset-0 bg-gradient-to-t from-[#141414] via-[#141414]/30 to-transparent opacity-70" />
+                      </div>
+
+                      <div className="flex flex-col gap-1.5 pt-1 text-left">
+                        <CardTitle className="text-white font-medium text-[19px] sm:text-[20px] leading-snug tracking-[-0.02em]">
+                          {step.title}
+                        </CardTitle>
+
+                        <CardDescription className="text-[#A1A1A6] font-normal text-[13.5px] sm:text-[14px] leading-[22px] tracking-[-0.01em]">
+                          {step.desc}
+                        </CardDescription>
+                      </div>
+                    </CardContent>
+
+                    {/* HeroUI CardFooter: Action/Feature Pill */}
+                    <CardFooter className="p-5 pt-3 border-t border-white/[0.06] flex items-center justify-between">
+                      <span className="text-[12px] font-normal text-[#86868B] flex items-center gap-1.5">
+                        {step.previewBadge}
                       </span>
-                    </div>
-
-                    {/* Micro Pill Badge */}
-                    <span className="text-[11px] font-normal text-[#86868B] px-2 py-0.5 rounded-full bg-white/[0.04] border border-white/[0.06]">
-                      {step.tag}
-                    </span>
-                  </div>
-
-                  {/* Content Area: Apple Typographic Scale */}
-                  <div className="relative z-10 flex flex-col gap-2 text-left">
-                    <h3 className="text-white font-medium text-[18px] sm:text-[19px] leading-[24px] tracking-[-0.02em]">
-                      {step.title}
-                    </h3>
-
-                    <p className="text-[#A1A1A6] font-normal text-[13.5px] sm:text-[14px] leading-[22px] tracking-[-0.01em]">
-                      {step.desc}
-                    </p>
-                  </div>
-
-                  {/* Card Bottom Indicator Bar */}
-                  <div className="relative z-10 pt-2 border-t border-white/[0.05] flex items-center justify-between">
-                    <span className="text-[11px] font-normal text-[#86868B]">
-                      {step.previewBadge}
-                    </span>
-                    <motion.div
-                      animate={{ opacity: isHovered ? 1 : 0, x: isHovered ? 0 : -4 }}
-                      transition={{ duration: 0.2 }}
-                      className="flex items-center text-[#86868B]"
-                    >
-                      <Sparkle size={12} style={{ color: step.accent }} />
-                    </motion.div>
-                  </div>
+                      <motion.div
+                        animate={{ opacity: isHovered ? 1 : 0.4, scale: isHovered ? 1.1 : 1 }}
+                        transition={{ duration: 0.2 }}
+                        className="flex items-center text-[#86868B]"
+                      >
+                        <Sparkle size={13} style={{ color: step.accent }} />
+                      </motion.div>
+                    </CardFooter>
+                  </Card>
                 </motion.div>
               );
             })}
