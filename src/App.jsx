@@ -65,7 +65,7 @@ function AppShell() {
             onSetRecipientMode={setIsRecipientMode} 
           />
         ) : (
-          <AboutPage />
+          <AboutPage onStartCrafting={() => { window.scrollTo({ top: 0, behavior: 'smooth' }); handleTabChange('design'); }} />
         )}
       </div>
     </div>
