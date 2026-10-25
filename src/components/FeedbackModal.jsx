@@ -239,12 +239,12 @@ export default function FeedbackModal({ onClose }) {
                 </p>
               </div>
 
-              {/* Segmented Control: Flat Minimalist Pill from Bloom Palette (zero border, zero shadow) */}
+              {/* Segmented Control: Visible Grounded Track with Flat Sliding Pill */}
               <div className="w-full">
                 <div 
                   role="tablist"
                   aria-label="Feedback Category" 
-                  className="grid grid-cols-3 p-1 bg-[#161616] rounded-full relative"
+                  className="grid grid-cols-3 p-1 bg-[#1C1C1E] border border-white/[0.08] rounded-full relative"
                 >
                   {CATEGORIES.map((cat) => {
                     const Icon = cat.icon;
@@ -259,11 +259,11 @@ export default function FeedbackModal({ onClose }) {
                         onClick={() => setCategory(cat.id)}
                         className="relative z-10 flex items-center justify-center gap-1.5 h-[34px] rounded-full text-[13px] font-medium transition-colors cursor-pointer outline-none select-none"
                       >
-                        {/* Pure Flat Active Pill: zero border, zero shadow, zero gradient */}
+                        {/* Flat Active Pill: clean flat elevated tone */}
                         {isActive && (
                           <motion.div
                             layoutId="activeFeedbackTab"
-                            className="absolute inset-0 rounded-full bg-[#2A2A2A] -z-10"
+                            className="absolute inset-0 rounded-full bg-[#2F2F32] -z-10"
                             transition={{
                               type: "spring",
                               stiffness: 500,
@@ -286,7 +286,7 @@ export default function FeedbackModal({ onClose }) {
                 </div>
               </div>
 
-              {/* Recessed Textarea with Integrated Counter */}
+              {/* Recessed Textarea with Integrated Counter (no aggressive initial autofocus) */}
               <div className="relative rounded-[14px] bg-[#161616] border border-white/[0.10] focus-within:border-[#0055D4]/70 focus-within:ring-1 focus-within:ring-[#0055D4]/30 transition-all">
                 <textarea
                   rows={4}
@@ -296,7 +296,6 @@ export default function FeedbackModal({ onClose }) {
                   maxLength={MAX_CHARS}
                   required
                   className="w-full bg-transparent px-3.5 pt-3 pb-8 text-[13.5px] leading-[20px] text-white placeholder-white/25 outline-none resize-none font-sans"
-                  autoFocus
                 />
                 
                 {/* Character Counter recessed in bottom-right corner */}
@@ -309,7 +308,7 @@ export default function FeedbackModal({ onClose }) {
                 </div>
               </div>
 
-              {/* Email Input (Optional) */}
+              {/* Email Input (Optional) with Vibrant 3D Microsoft Fluent Envelope */}
               <div className="flex flex-col gap-1.5">
                 <label className="text-[12.5px] font-medium text-white/80 flex items-center gap-1.5">
                   <span>Your email</span>
@@ -321,14 +320,14 @@ export default function FeedbackModal({ onClose }) {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="So I can reply (or send you a virtual note)"
-                    className="w-full bg-[#161616] border border-white/[0.10] focus:border-[#0055D4]/70 focus:ring-1 focus:ring-[#0055D4]/30 rounded-[14px] h-[42px] pl-3.5 pr-10 text-[13.5px] text-white placeholder-white/25 outline-none transition-all font-sans"
+                    className="w-full bg-[#161616] border border-white/[0.10] focus:border-[#0055D4]/70 focus:ring-1 focus:ring-[#0055D4]/30 rounded-[14px] h-[42px] pl-3.5 pr-11 text-[13.5px] text-white placeholder-white/25 outline-none transition-all font-sans"
                   />
                   {!email && (
-                    <div className="absolute right-3.5 flex items-center pointer-events-none opacity-45">
+                    <div className="absolute right-3.5 flex items-center pointer-events-none">
                       <img 
                         src="/assets/bloom/envelope.png" 
                         alt="envelope" 
-                        className="w-[18px] h-[18px] object-contain drop-shadow-sm select-none" 
+                        className="w-[20px] h-[20px] object-contain drop-shadow-md select-none" 
                       />
                     </div>
                   )}
