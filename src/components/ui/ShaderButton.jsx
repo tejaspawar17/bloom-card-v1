@@ -277,11 +277,19 @@ void main() {
 }
 `;
 
+const SIZE_CONFIGS = {
+  sm: 'px-6 py-2.5 text-[14px]',
+  md: 'px-7 py-3 text-[15px] sm:text-[16px]',
+  lg: 'px-10 py-4 text-[17px]',
+};
+
 export default function ShaderButton({
   children = "Design your card",
   onClick,
   className = "",
   style = {},
+  showArrow = true,
+  size = "lg",
 }) {
   const canvasRef = useRef(null);
 
@@ -428,7 +436,7 @@ export default function ShaderButton({
       initial="initial"
       whileHover="hover"
       onClick={onClick}
-      className={`relative inline-flex items-center justify-center gap-3 px-10 py-4 rounded-full overflow-hidden cursor-pointer select-none border-2 border-white/[0.24] bg-[#0A1202] text-white outline-none hig-focus ${className}`}
+      className={`relative inline-flex items-center justify-center ${showArrow ? 'gap-3' : 'gap-0'} ${SIZE_CONFIGS[size] || SIZE_CONFIGS.lg} rounded-full overflow-hidden cursor-pointer select-none border-2 border-white/[0.24] bg-[#0A1202] text-white outline-none hig-focus ${className}`}
       style={{
         ...style,
       }}
@@ -466,14 +474,16 @@ export default function ShaderButton({
       />
 
       {/* 3. Button Text (Framer Typography: 300 weight, 17px, 0.016em tracking) */}
-      <span className="relative z-10 font-sans font-light text-[17px] leading-[1.6em] tracking-[0.016em] text-white">
+      <span className="relative z-10 font-sans font-light leading-[1.6em] tracking-[0.016em] text-white">
         {children}
       </span>
 
       {/* 4. Simple Side Arrow (Phosphor Icons) */}
-      <div className="relative z-10 flex items-center justify-center text-white">
-        <ArrowRight size={18} weight="regular" />
-      </div>
+      {showArrow && (
+        <div className="relative z-10 flex items-center justify-center text-white">
+          <ArrowRight size={18} weight="regular" />
+        </div>
+      )}
     </motion.button>
   );
 }

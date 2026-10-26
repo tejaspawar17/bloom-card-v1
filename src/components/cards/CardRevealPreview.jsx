@@ -9,6 +9,8 @@ import { PaperCardBack } from './PaperCard';
 import { PaperCardFront } from '@/components/card/modes/PaperCardFront';
 import LiquidGlassButton from '@/components/ui/LiquidGlassButton';
 import LiquidGlassIconButton from '@/components/ui/LiquidGlassIconButton';
+import ShaderButton from '@/components/ui/ShaderButton';
+import AnimatedAILoaderFX from '@/components/ui/AnimatedAILoaderFX';
 
 const SHOWER_PARTICLES = [
   // Top sector
@@ -187,51 +189,29 @@ export default function CardRevealPreview({ onCraftOwn }) {
         </span>
       </div>
 
-      {/* Center 170px Radiant Figma Aura Disk + Tap to Open Button */}
+      {/* Center Radiant AnimatedAILoaderFX Orb + ShaderButton ("Reveal") */}
       <div className="relative z-20 flex flex-col items-center justify-center my-auto">
-        {/* Large 170px Figma Gradient Disk - Deep 32px-38px blur prevents all color banding/stripes */}
-        <motion.div 
-          animate={
-            revealStage === 'charging'
-              ? { scale: 1.45, filter: 'blur(36px) brightness(1.7)' }
-              : { scale: [1, 1.08, 1], filter: ['blur(32px)', 'blur(38px)', 'blur(32px)'] }
-          }
-          transition={
-            revealStage === 'charging'
-              ? { duration: 0.65, ease: 'easeInOut' }
-              : { duration: 3.2, repeat: Infinity, ease: 'easeInOut' }
-          }
-          className="w-[170px] h-[170px] rounded-full absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none opacity-90"
-          style={{
-            background: 'linear-gradient(180deg, #132013 0%, #4F793E 25%, #719D53 50%, #86B75A 65%, #CFC531 81%, #ADD9AD 94%, #7CE0DC 100%)',
-            boxShadow: '0px 40px 40px 10px rgba(40, 40, 40, 0.20)',
-          }}
-        />
+        {/* AnimatedAILoaderFX rotating gradient background orb */}
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none">
+          <AnimatedAILoaderFX 
+            size={195} 
+            isCharging={revealStage === 'charging'} 
+          />
+        </div>
 
-        {/* Tap to Open Pill Button */}
-        <motion.button
+        {/* Tactile Liquid ShaderButton ("Reveal") */}
+        <ShaderButton
           type="button"
+          showArrow={false}
+          size="md"
+          className="shadow-[0_12px_28px_rgba(0,0,0,0.6)] active:scale-95 transition-transform font-medium tracking-tight"
           onClick={(e) => {
             e.stopPropagation();
             handleReveal();
           }}
-          animate={
-            revealStage === 'charging'
-              ? { scale: 0.88, opacity: 0.95 }
-              : { scale: 1, opacity: 1 }
-          }
-          transition={{ duration: 0.2 }}
-          className="h-[46px] px-6 rounded-full text-[15px] leading-[20px] font-medium text-white font-sans cursor-pointer active:scale-95 transition-transform relative z-10 select-none shadow-[0_8px_16px_rgba(0,0,0,0.4)]"
-          style={{
-            background: 'rgba(14, 14, 14, 0.85)',
-            backdropFilter: 'blur(20px)',
-            WebkitBackdropFilter: 'blur(20px)',
-            border: '1px solid rgba(255, 255, 255, 0.16)',
-            boxShadow: '0px 8px 16px 0px rgba(0, 0, 0, 0.35), inset 0px 1px 1px 0px rgba(255, 255, 255, 0.30), inset 0px -1px 1px 0px rgba(0, 0, 0, 0.60)',
-          }}
         >
-          {revealStage === 'charging' ? 'Opening...' : 'Tap to Open'}
-        </motion.button>
+          {revealStage === 'charging' ? 'Opening...' : 'Reveal'}
+        </ShaderButton>
       </div>
 
       {/* Bottom Debossed Limited Edition Stamp */}
