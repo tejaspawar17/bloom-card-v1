@@ -1,47 +1,6 @@
 import React, { useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
-
-// Authentic Framer ArrowSquareRight vector icon
-function ArrowSquareRightIcon({ className = "" }) {
-  return (
-    <svg
-      display="block"
-      role="presentation"
-      viewBox="0 0 24 24"
-      width="22"
-      height="22"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      className={className}
-    >
-      <rect
-        x="3.75"
-        y="3.75"
-        width="16.5"
-        height="16.5"
-        rx="3.5"
-        stroke="currentColor"
-        strokeWidth="1.5"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-      <path
-        d="M8.25 12H15.75"
-        stroke="currentColor"
-        strokeWidth="1.5"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-      <path
-        d="M12.75 9L15.75 12L12.75 15"
-        stroke="currentColor"
-        strokeWidth="1.5"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
-  );
-}
+import { ArrowRight } from '@phosphor-icons/react';
 
 const VERTEX_SHADER = `#version 300 es
 in vec2 position;
@@ -511,9 +470,9 @@ export default function ShaderButton({
         {children}
       </span>
 
-      {/* 4. Framer ArrowSquareRight Icon */}
+      {/* 4. Simple Side Arrow (Phosphor Icons) */}
       <div className="relative z-10 flex items-center justify-center text-white">
-        <ArrowSquareRightIcon />
+        <ArrowRight size={18} weight="regular" />
       </div>
     </motion.button>
   );
