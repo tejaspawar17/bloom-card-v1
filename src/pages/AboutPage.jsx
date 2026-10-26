@@ -5,9 +5,8 @@ import {
   CursorClick
 } from '@phosphor-icons/react';
 import { Card } from '@heroui/react';
-import { BloomLogo } from '@/components/ui';
+import ScatteredKeepsakes from '@/components/ui/ScatteredKeepsakes';
 import ShaderButton from '@/components/ui/ShaderButton';
-import KeepsakeFolder from '@/components/ui/KeepsakeFolder';
 import CoffeeButton from '@/components/ui/CoffeeButton';
 import Footer from '@/components/Footer';
 
@@ -119,11 +118,8 @@ export default function AboutPage({ onStartCrafting, onFeedback, onTerms, onPriv
         }}
       />
 
-      {/* Atmospheric Ambient Emerald Glow (Static, matching Menu Tab aura) */}
-      <div 
-        aria-hidden="true" 
-        className="pointer-events-none fixed top-12 left-1/2 -translate-x-1/2 w-[800px] h-[380px] bg-[radial-gradient(ellipse,rgba(134,183,90,0.18)_0%,rgba(0,136,255,0.08)_50%,transparent_75%)] blur-[100px] -z-10" 
-      />
+      {/* Scattered Ambient Keepsake Folders in Background Margins (Option B) */}
+      <ScatteredKeepsakes />
 
       {/* Main Narrative Column */}
       <main className="w-full max-w-[740px] px-5 sm:px-8 pt-12 sm:pt-16 pb-20 flex flex-col items-center gap-14 sm:gap-16 relative z-10">
@@ -132,11 +128,6 @@ export default function AboutPage({ onStartCrafting, onFeedback, onTerms, onPriv
             1. HERO SECTION: Brand Mark + Exact Apple Display Type Scale & Weights
            ============================================================ */}
         <div className="flex flex-col items-center text-center gap-6 relative max-w-[640px]">
-          
-          {/* Logo with Exact Navbar Aura Glow */}
-          <div className="relative py-1">
-            <BloomLogo size="lg" version="Ver. 1.1" />
-          </div>
 
           {/* Interactive Mouse Tracking Eyes */}
           <motion.div 
@@ -171,11 +162,6 @@ export default function AboutPage({ onStartCrafting, onFeedback, onTerms, onPriv
             </ShaderButton>
           </div>
         </div>
-
-        {/* ============================================================
-            1.5 INTERACTIVE KEEPSAKE FOLDER: Real Premade Cards + Stickers
-           ============================================================ */}
-        <KeepsakeFolder />
 
 
         {/* ============================================================
