@@ -1,6 +1,47 @@
 import React, { useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { ArrowRight } from 'lucide-react';
+
+// Authentic Framer ArrowSquareRight vector icon
+function ArrowSquareRightIcon({ className = "" }) {
+  return (
+    <svg
+      display="block"
+      role="presentation"
+      viewBox="0 0 24 24"
+      width="22"
+      height="22"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      className={className}
+    >
+      <rect
+        x="3.75"
+        y="3.75"
+        width="16.5"
+        height="16.5"
+        rx="3.5"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M8.25 12H15.75"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M12.75 9L15.75 12L12.75 15"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
 
 const VERTEX_SHADER = `#version 300 es
 in vec2 position;
@@ -425,30 +466,22 @@ export default function ShaderButton({
   return (
     <motion.button
       type="button"
-      whileHover="hover"
-      whileTap="tap"
       initial="initial"
+      whileHover="hover"
       onClick={onClick}
-      className={`relative inline-flex items-center justify-center gap-2.5 px-8 py-3.5 rounded-full overflow-hidden cursor-pointer select-none border border-white/[0.24] bg-[#0A1202] text-white transition-all outline-none hig-focus ${className}`}
+      className={`relative inline-flex items-center justify-center gap-3 px-10 py-4 rounded-full overflow-hidden cursor-pointer select-none border-2 border-white/[0.24] bg-[#0A1202] text-white outline-none hig-focus ${className}`}
       style={{
-        boxShadow: '0 8px 30px rgba(0, 0, 0, 0.65)',
         ...style,
       }}
-      variants={{
-        initial: { scale: 1, y: 0 },
-        hover: { scale: 1.03, y: -2 },
-        tap: { scale: 0.97, y: 0 },
-      }}
-      transition={{ type: 'spring', stiffness: 450, damping: 25 }}
     >
-      {/* 1. WebGL Liquid Gradient Shader Canvas */}
+      {/* 1. WebGL Liquid Gradient Shader Canvas (Framer micro-animation: hover dims opacity to 0.4 via 0.4s tween) */}
       <motion.div
-        className="absolute inset-[-2px] pointer-events-none rounded-full overflow-hidden"
+        className="absolute inset-[-2px] pointer-events-none rounded-full overflow-hidden z-0"
         variants={{
-          initial: { opacity: 0.88 },
-          hover: { opacity: 1.0 },
+          initial: { opacity: 1 },
+          hover: { opacity: 0.4 },
         }}
-        transition={{ duration: 0.3 }}
+        transition={{ duration: 0.4, ease: [0.4, 0, 0.6, 1] }}
       >
         <canvas
           ref={canvasRef}
@@ -457,43 +490,31 @@ export default function ShaderButton({
         />
       </motion.div>
 
-      {/* 2. Inset Lime/Emerald Specular Glow */}
+      {/* 2. Inset Specular Border Glow (Framer micro-animation: hover dims opacity to 0.4 via 0.4s tween) */}
       <motion.div
         aria-hidden="true"
-        className="absolute inset-[-1px] pointer-events-none rounded-full"
+        className="absolute inset-[-2px] pointer-events-none rounded-full z-0"
         style={{
-          boxShadow: 'inset 0px 0px 14px 0px rgba(217, 249, 157, 0.55)',
-          mixBlendMode: 'screen',
+          backgroundColor: 'rgba(10, 18, 2, 0.02)',
+          boxShadow: 'inset 0px 0px 16px 0px rgba(217, 249, 157, 0.64)',
+          mixBlendMode: 'hard-light',
         }}
         variants={{
-          initial: { opacity: 0.6 },
-          hover: { opacity: 0.9 },
+          initial: { opacity: 1 },
+          hover: { opacity: 0.4 },
         }}
-        transition={{ duration: 0.3 }}
+        transition={{ duration: 0.4, ease: [0.4, 0, 0.6, 1] }}
       />
 
-      {/* 3. Subtle dark vignette to preserve text contrast */}
-      <div 
-        aria-hidden="true" 
-        className="absolute inset-0 pointer-events-none rounded-full bg-black/20"
-      />
-
-      {/* 4. Button Text */}
-      <span className="relative z-10 font-sans font-normal text-[15.5px] sm:text-[16px] leading-[20px] tracking-[-0.01em] text-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.6)]">
+      {/* 3. Button Text (Framer Typography: 300 weight, 17px, 0.016em tracking) */}
+      <span className="relative z-10 font-sans font-light text-[17px] leading-[1.6em] tracking-[0.016em] text-white">
         {children}
       </span>
 
-      {/* 5. Animated Arrow Icon */}
-      <motion.div
-        className="relative z-10 flex items-center justify-center text-white"
-        variants={{
-          initial: { x: 0 },
-          hover: { x: 3 },
-        }}
-        transition={{ type: 'spring', stiffness: 400, damping: 25 }}
-      >
-        <ArrowRight size={17} strokeWidth={2} />
-      </motion.div>
+      {/* 4. Framer ArrowSquareRight Icon */}
+      <div className="relative z-10 flex items-center justify-center text-white">
+        <ArrowSquareRightIcon />
+      </div>
     </motion.button>
   );
 }
