@@ -118,19 +118,10 @@ export default function AboutPage({ onStartCrafting, onFeedback, onTerms, onPriv
         }}
       />
 
-      {/* Atmospheric Ambient Emerald Glow with Calming Breathing Pulse */}
-      <motion.div 
+      {/* Atmospheric Ambient Emerald Glow (Static, matching Menu Tab aura) */}
+      <div 
         aria-hidden="true" 
-        className="pointer-events-none fixed top-12 left-1/2 -translate-x-1/2 w-[800px] h-[380px] bg-[radial-gradient(ellipse,rgba(134,183,90,0.22)_0%,rgba(0,136,255,0.08)_50%,transparent_75%)] blur-[100px] -z-10"
-        animate={{
-          scale: [1, 1.09, 1],
-          opacity: [0.70, 0.98, 0.70],
-        }}
-        transition={{
-          duration: 4.8,
-          repeat: Infinity,
-          ease: "easeInOut",
-        }}
+        className="pointer-events-none fixed top-12 left-1/2 -translate-x-1/2 w-[800px] h-[380px] bg-[radial-gradient(ellipse,rgba(134,183,90,0.18)_0%,rgba(0,136,255,0.08)_50%,transparent_75%)] blur-[100px] -z-10" 
       />
 
       {/* Main Narrative Column */}
