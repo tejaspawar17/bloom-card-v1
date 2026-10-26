@@ -6,6 +6,7 @@ import {
 } from '@phosphor-icons/react';
 import { Card } from '@heroui/react';
 import { BloomLogo } from '@/components/ui';
+import ShaderButton from '@/components/ui/ShaderButton';
 import CoffeeButton from '@/components/ui/CoffeeButton';
 import Footer from '@/components/Footer';
 
@@ -171,16 +172,12 @@ export default function AboutPage({ onStartCrafting, onFeedback, onTerms, onPriv
             </p>
           </div>
 
-          {/* Floating Pill CTA */}
-          <motion.button
-            whileHover={{ scale: 1.05, y: -2 }}
-            whileTap={{ scale: 0.95 }}
-            onClick={onStartCrafting}
-            className="relative px-5 py-2.5 rounded-full bg-[#181818] border border-white/[0.14] text-white font-normal text-[13.5px] leading-[18px] shadow-[0_12px_28px_rgba(0,0,0,0.6)] cursor-pointer flex items-center gap-2 transition-all mt-1 outline-none hig-focus"
-          >
-            <span>Start a card</span>
-            <ArrowRight size={14} className="text-white/60" />
-          </motion.button>
+          {/* Framer WebGL Liquid Gradient Shader Button */}
+          <div className="mt-1">
+            <ShaderButton onClick={onStartCrafting}>
+              Design your card
+            </ShaderButton>
+          </div>
         </div>
 
 
