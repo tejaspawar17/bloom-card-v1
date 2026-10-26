@@ -44,7 +44,7 @@ function TrackingEyes() {
   }, [rawX, rawY]);
 
   return (
-    <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#161616] border border-white/[0.08] shadow-inner select-none">
+    <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#0E0E0E] border border-white/[0.10] select-none">
       {/* Left Eye */}
       <div 
         ref={eyeLeftRef}
@@ -71,18 +71,18 @@ function TrackingEyes() {
 const HOW_IT_WORKS_CARDS = [
   {
     num: '01',
-    tag: 'MOOD-FIRST',
+    tag: 'CURATED MOODS',
     title: 'Choose the Tone',
-    desc: 'Select from curated moods crafted for real emotions—not dry Hallmark greetings.',
+    desc: 'Skip the generic card aisle. Start with real emotions—from milestone birthdays to candid apologies.',
     rotate: -2.2,
     pushpin: '#86B75A', // Spring Olive (single matching accent color)
     accent: '#86B75A',
   },
   {
     num: '02',
-    tag: 'CRAFTED',
+    tag: 'TACTILE CRAFT',
     title: 'Craft the Details',
-    desc: 'Customize every surface with realistic paper textures, gold foil bevels, and personal notes.',
+    desc: 'Layer realistic paper textures, metallic foil bevels, personal notes, and crooked stickers.',
     rotate: 1.8,
     pushpin: '#CFC531', // Warm Sunlight (single matching accent color)
     accent: '#CFC531',
@@ -91,7 +91,7 @@ const HOW_IT_WORKS_CARDS = [
     num: '03',
     tag: 'ZERO FRICTION',
     title: 'Share in Seconds',
-    desc: 'Zero sign-up required. Generates an interactive 3D link that opens instantly on any phone.',
+    desc: 'No accounts, no downloads. Your recipient gets a permanent 3D link that opens instantly on any phone.',
     rotate: -1.4,
     pushpin: '#7CE0DC', // Mint Cyan (single matching accent color)
     accent: '#7CE0DC',
@@ -120,13 +120,13 @@ export default function AboutPage({ onStartCrafting, onFeedback, onTerms, onPriv
       {/* Atmospheric Ambient Emerald Glow with Calming Breathing Pulse */}
       <motion.div 
         aria-hidden="true" 
-        className="pointer-events-none fixed top-12 left-1/2 -translate-x-1/2 w-[800px] h-[380px] bg-[radial-gradient(ellipse,rgba(134,183,90,0.20)_0%,rgba(0,136,255,0.08)_50%,transparent_75%)] blur-[100px] -z-10"
+        className="pointer-events-none fixed top-12 left-1/2 -translate-x-1/2 w-[800px] h-[380px] bg-[radial-gradient(ellipse,rgba(134,183,90,0.22)_0%,rgba(0,136,255,0.08)_50%,transparent_75%)] blur-[100px] -z-10"
         animate={{
-          scale: [1, 1.08, 1],
-          opacity: [0.75, 1, 0.75],
+          scale: [1, 1.09, 1],
+          opacity: [0.70, 0.98, 0.70],
         }}
         transition={{
-          duration: 7.5,
+          duration: 4.8,
           repeat: Infinity,
           ease: "easeInOut",
         }}
@@ -226,8 +226,8 @@ export default function AboutPage({ onStartCrafting, onFeedback, onTerms, onPriv
                   <Card
                     className={`relative rounded-[22px] bg-[#0E0E0E] border p-6 flex flex-col justify-between gap-6 cursor-default select-none overflow-hidden transition-colors duration-300 ${
                       isHovered 
-                        ? 'border-white/[0.22] shadow-[0_24px_50px_rgba(0,0,0,0.85)]' 
-                        : 'border-white/[0.08] shadow-[0_16px_36px_rgba(0,0,0,0.6)]'
+                        ? 'border-white/[0.22]' 
+                        : 'border-white/[0.10]'
                     }`}
                     style={{
                       minHeight: '230px',
@@ -236,15 +236,6 @@ export default function AboutPage({ onStartCrafting, onFeedback, onTerms, onPriv
                       WebkitBackfaceVisibility: 'hidden',
                     }}
                   >
-                    {/* Inner Specular Highlight */}
-                    <div 
-                      aria-hidden="true"
-                      className="absolute inset-0 pointer-events-none rounded-[22px]"
-                      style={{
-                        boxShadow: 'inset 0 1px 1px 0 rgba(255, 255, 255, 0.08)',
-                      }}
-                    />
-
                     {/* Decorative Corner Ribbon Triangle (Vector Anti-Aliased) */}
                     <svg 
                       aria-hidden="true"
@@ -257,9 +248,9 @@ export default function AboutPage({ onStartCrafting, onFeedback, onTerms, onPriv
 
                     {/* Top Pushpin Dot + Step Pill */}
                     <div className="flex items-center justify-between relative z-10">
-                      {/* Tactile Pushpin with 3D Specular Highlight */}
+                      {/* Tactile Pushpin Dot */}
                       <div 
-                        className="w-3 h-3 rounded-full shadow-[0_2px_5px_rgba(0,0,0,0.7)] border border-white/50"
+                        className="w-3 h-3 rounded-full border border-white/40"
                         style={{ backgroundColor: card.pushpin }}
                       />
                       <span className="font-sans font-semibold text-[11px] leading-[13px] text-white/35 tracking-wider pr-4">
