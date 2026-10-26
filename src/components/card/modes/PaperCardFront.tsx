@@ -4,7 +4,10 @@ import { FlowerInfoPill } from '@/components/card/FlowerInfoPill';
 import { DraggableSticker } from '@/components/card/DraggableSticker';
 import { useCard } from '@/context/CardContext';
 
-export function PaperCardFront({ state, flower, onOpenEditTitle, isPreview = false }: any) {
+export function PaperCardFront({ state: propState, flower: propFlower, onOpenEditTitle, isPreview = false }: any) {
+  const cardContext = useCard();
+  const state = propState || cardContext?.state;
+  const flower = propFlower || cardContext?.flower;
   const selectedFlower = flower || { name: 'Blue Hydrangea', image: '/assets/flower-illustrations/hydrangea.png' };
 
   return (

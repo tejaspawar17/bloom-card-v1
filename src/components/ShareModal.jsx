@@ -6,6 +6,11 @@ import { useCard } from '@/context/CardContext';
 import { saveSharedCard } from '@/lib/supabase';
 import LiquidGlassIconButton from '@/components/ui/LiquidGlassIconButton';
 import LiquidGlassButton from '@/components/ui/LiquidGlassButton';
+import { PokemonCardFront, PokemonCardBack } from './cards/PokemonCard';
+import { MetallicCardFront, MetallicCardBack } from './cards/MetallicCard';
+import { PaperCardBack } from './cards/PaperCard';
+import { PaperCardFront } from '@/components/card/modes/PaperCardFront';
+import { generateKeychainPdf } from '@/lib/generateCardPdf';
 
 // Exact spring physics matching TitleModal and MessageModal
 const springTransition = {
@@ -206,8 +211,11 @@ const PREFLIGHT_STEPS = [
 ];
 
 export default function ShareModal({ onClose, onOpenRecipientPreview }) {
-  const { state, dispatch } = useCard();
-  const [step, setStep] = useState('choice'); // 'choice' | 'sealing' | 'success'
+  const { state, dispatch, flower } = useCard();
+  const [step, setStep] = useState('choice');
+  const [isGeneratingPdf, setIsGeneratingPdf] = useState(false);
+  const frontRef = React.useRef(null);
+  const backRef = React.useRef(null); // 'choice' | 'sealing' | 'success'
   const [preflightIndex, setPreflightIndex] = useState(0);
   const [copied, setCopied] = useState(false);
   const [copyConfettiKey, setCopyConfettiKey] = useState(0);
@@ -257,11 +265,23 @@ export default function ShareModal({ onClose, onOpenRecipientPreview }) {
     }
   };
 
-  const handleDownloadPDF = () => {
+  const handleDownloadPDF = async () => {
+    if (isGeneratingPdf) return;
+    setIsGeneratingPdf(true);
     setPdfConfettiKey(prev => prev + 1);
-    setTimeout(() => {
-      alert("Generating print-ready PDF keepsake with card textures...");
-    }, 180);
+
+    try {
+      await generateKeychainPdf({
+        frontElement: frontRef.current,
+        backElement: backRef.current,
+        cardTitle: state.subject || state.title || 'bloom-keychain-keepsake',
+      });
+    } catch (err) {
+      console.error('Failed to generate keychain PDF:', err);
+      alert('Could not generate PDF keepsake. Please try again.');
+    } finally {
+      setIsGeneratingPdf(false);
+    }
   };
 
   if (typeof document === 'undefined') return null;
@@ -340,7 +360,7 @@ export default function ShareModal({ onClose, onOpenRecipientPreview }) {
                       onClick={handleDownloadPDF}
                       className="dark-liquid-glass-pill w-full h-[44px] px-5 text-[14px] leading-[20px] font-medium text-white flex items-center justify-center font-sans active:scale-[0.96] transition-transform cursor-pointer"
                     >
-                      <span>Download PDF</span>
+                      <span>{isGeneratingPdf ? 'Creating PDF...' : 'Download PDF'}</span>
                     </button>
                   </div>
 
@@ -470,6 +490,38 @@ export default function ShareModal({ onClose, onOpenRecipientPreview }) {
             )}
           </AnimatePresence>
         </motion.div>
+      </div>
+    {/* Offscreen 688x960 300+ DPI Render Canvas for Keychain PDF Capture */}
+      <div 
+        aria-hidden="true"
+        className="fixed -left-[9999px] top-0 pointer-events-none opacity-100 flex gap-10"
+        style={{ zIndex: -100 }}
+      >
+        <div 
+          ref={frontRef} 
+          style={{ width: '688px', height: '960px', position: 'relative', overflow: 'hidden' }}
+        >
+          {state.cardType === 'pokemon' ? (
+            <PokemonCardFront isPreview={true} />
+          ) : state.cardType === 'metallic' ? (
+            <MetallicCardFront isPreview={true} />
+          ) : (
+            <PaperCardFront state={state} flower={flower} isPreview={true} />
+          )}
+        </div>
+
+        <div 
+          ref={backRef} 
+          style={{ width: '688px', height: '960px', position: 'relative', overflow: 'hidden' }}
+        >
+          {state.cardType === 'pokemon' ? (
+            <PokemonCardBack isPreview={true} />
+          ) : state.cardType === 'metallic' ? (
+            <MetallicCardBack isPreview={true} />
+          ) : (
+            <PaperCardBack isPreview={true} />
+          )}
+        </div>
       </div>
     </AnimatePresence>,
     document.body
