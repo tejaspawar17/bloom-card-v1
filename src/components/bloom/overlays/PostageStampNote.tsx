@@ -31,7 +31,7 @@ export function PostageStampNote({
     >
       <div className="w-full h-full flex flex-col items-center justify-center relative -translate-y-[0.4cqw]">
         <div 
-          className="w-[90%] text-center text-[clamp(16px,6.4cqw,24px)] leading-[clamp(26px,10.5cqw,40px)] font-['Homemade_Apple',cursive] text-[#FF0000]"
+          className="w-[90%] text-center text-[clamp(17.5px,7.1cqw,27px)] leading-[clamp(27px,11.2cqw,43px)] font-['Homemade_Apple',cursive] text-[#FF0000]"
         >
           <span className="whitespace-pre-wrap">{message}</span>
         </div>
