@@ -7,6 +7,7 @@ import {
 import { Card } from '@heroui/react';
 import { BloomLogo } from '@/components/ui';
 import ShaderButton from '@/components/ui/ShaderButton';
+import KeepsakeFolder from '@/components/ui/KeepsakeFolder';
 import CoffeeButton from '@/components/ui/CoffeeButton';
 import Footer from '@/components/Footer';
 
@@ -170,6 +171,11 @@ export default function AboutPage({ onStartCrafting, onFeedback, onTerms, onPriv
             </ShaderButton>
           </div>
         </div>
+
+        {/* ============================================================
+            1.5 INTERACTIVE KEEPSAKE FOLDER: Real Premade Cards + Stickers
+           ============================================================ */}
+        <KeepsakeFolder />
 
 
         {/* ============================================================
