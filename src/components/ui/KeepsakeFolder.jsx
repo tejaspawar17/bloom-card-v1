@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Cards, Sparkle } from '@phosphor-icons/react';
+import { motion } from 'framer-motion';
+import { Cards } from '@phosphor-icons/react';
 
 const PREMADE_CARDS = [
   {
