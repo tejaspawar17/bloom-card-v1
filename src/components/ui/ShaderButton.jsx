@@ -436,7 +436,7 @@ export default function ShaderButton({
       initial="initial"
       whileHover="hover"
       onClick={onClick}
-      className={`relative inline-flex items-center justify-center ${showArrow ? 'gap-3' : 'gap-0'} ${SIZE_CONFIGS[size] || SIZE_CONFIGS.lg} rounded-full overflow-hidden cursor-pointer select-none border-2 border-white/[0.24] bg-[#0A1202] text-white outline-none hig-focus ${className}`}
+      className={`relative inline-flex items-center justify-center ${showArrow ? 'gap-3' : 'gap-0'} ${SIZE_CONFIGS[size] || SIZE_CONFIGS.lg} rounded-full overflow-hidden cursor-pointer select-none bg-[#0A1202] text-white outline-none hig-focus ${className}`}
       style={{
         ...style,
       }}

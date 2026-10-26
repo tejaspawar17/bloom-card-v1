@@ -9,7 +9,7 @@ import React, { useMemo } from 'react';
  */
 export default function AnimatedAILoaderFX({
   size = 200,
-  animationDuration = 2.5,
+  animationDuration = 6.5,
   // Bloom gradient palette
   colorLight = "#ffffff",
   colorMid = "#86B75A",
