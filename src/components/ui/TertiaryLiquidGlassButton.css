@@ -16,12 +16,19 @@
   /* Solid flat Figma purple (Component 1202:10398 Tint #CB30E0) */
   background-color: #CB30E0;
 
-  /* Coffee-button specular liquid glass surface */
-  border: 1px solid rgba(255, 255, 255, 0.14);
+  /* Spherical Liquid Glass circular surface */
+  border: 1px solid rgba(255, 255, 255, 0.16);
   box-shadow:
-    inset 0 1px 0.5px 0 rgba(255, 255, 255, 0.32),
-    inset 0 -1px 0.5px 0 rgba(255, 255, 255, 0.12),
-    0 3px 10px 0 rgba(0, 0, 0, 0.35);
+    /* 1. Curved upper dome glare (broad soft light wrapping top hemisphere) */
+    inset 0 16px 14px -14px rgba(255, 255, 255, 0.60),
+    /* 2. Razor-thin apex light glint at top rim */
+    inset 0 1px 0.5px 0 rgba(255, 255, 255, 0.55),
+    /* 3. 360-degree all-around glass bevel lip */
+    inset 0 0 1.5px 0.5px rgba(255, 255, 255, 0.22),
+    /* 4. Deep bottom glass refraction (dark curves under the sphere) */
+    inset 0 -12px 10px -10px rgba(0, 0, 0, 0.35),
+    /* 5. Ambient grounding drop shadow */
+    0 4px 12px 0 rgba(0, 0, 0, 0.30);
 
   transition:
     background-color 140ms ease,
@@ -90,19 +97,23 @@
 
 .tertiary-liquid-glass-button:hover {
   background-color: #B824CC;
-  border-color: rgba(255, 255, 255, 0.22);
+  border-color: rgba(255, 255, 255, 0.25);
   box-shadow:
-    inset 0 1px 0.5px 0 rgba(255, 255, 255, 0.42),
-    inset 0 -1px 0.5px 0 rgba(255, 255, 255, 0.16),
-    0 5px 14px 0 rgba(0, 0, 0, 0.40);
+    inset 0 18px 16px -14px rgba(255, 255, 255, 0.75),
+    inset 0 1px 0.5px 0 rgba(255, 255, 255, 0.70),
+    inset 0 0 2px 0.5px rgba(255, 255, 255, 0.30),
+    inset 0 -12px 10px -10px rgba(0, 0, 0, 0.38),
+    0 6px 16px 0 rgba(0, 0, 0, 0.38);
 }
 
 .tertiary-liquid-glass-button:active {
   background-color: #A31EB6;
   transform: scale(0.94);
   box-shadow:
-    inset 0 1px 0.5px 0 rgba(255, 255, 255, 0.20),
-    inset 0 -1px 0.5px 0 rgba(255, 255, 255, 0.10),
+    inset 0 12px 10px -10px rgba(255, 255, 255, 0.40),
+    inset 0 1px 0.5px 0 rgba(255, 255, 255, 0.35),
+    inset 0 0 1px 0.5px rgba(255, 255, 255, 0.15),
+    inset 0 -8px 6px -8px rgba(0, 0, 0, 0.25),
     0 2px 6px 0 rgba(0, 0, 0, 0.25);
 }
 
