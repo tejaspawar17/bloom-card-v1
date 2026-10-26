@@ -72,8 +72,8 @@ const HOW_IT_WORKS_CARDS = [
   {
     num: '01',
     tag: 'MOOD-FIRST',
-    title: 'Pick a Vibe',
-    desc: 'Deep apologies, milestone birthdays, or "I miss you but in a normal way."',
+    title: 'Choose the Tone',
+    desc: 'Select from curated moods crafted for real emotions—not dry Hallmark greetings.',
     rotate: -2.2,
     pushpin: '#86B75A', // Spring Olive (single matching accent color)
     accent: '#86B75A',
@@ -81,8 +81,8 @@ const HOW_IT_WORKS_CARDS = [
   {
     num: '02',
     tag: 'CRAFTED',
-    title: 'Slap On Details',
-    desc: 'Paper textures, metallic Victorian foil, custom stats & crooked stickers.',
+    title: 'Craft the Details',
+    desc: 'Customize every surface with realistic paper textures, gold foil bevels, and personal notes.',
     rotate: 1.8,
     pushpin: '#CFC531', // Warm Sunlight (single matching accent color)
     accent: '#CFC531',
@@ -90,8 +90,8 @@ const HOW_IT_WORKS_CARDS = [
   {
     num: '03',
     tag: 'ZERO FRICTION',
-    title: 'Ship the Link',
-    desc: 'No account wall. Just a permanent 60fps 3D link that actually makes them smile.',
+    title: 'Share in Seconds',
+    desc: 'Zero sign-up required. Generates an interactive 3D link that opens instantly on any phone.',
     rotate: -1.4,
     pushpin: '#7CE0DC', // Mint Cyan (single matching accent color)
     accent: '#7CE0DC',
@@ -117,10 +117,19 @@ export default function AboutPage({ onStartCrafting, onFeedback, onTerms, onPriv
         }}
       />
 
-      {/* Atmospheric Ambient Emerald Glow */}
-      <div 
+      {/* Atmospheric Ambient Emerald Glow with Calming Breathing Pulse */}
+      <motion.div 
         aria-hidden="true" 
-        className="pointer-events-none fixed top-12 left-1/2 -translate-x-1/2 w-[800px] h-[380px] bg-[radial-gradient(ellipse,rgba(134,183,90,0.18)_0%,rgba(0,136,255,0.08)_50%,transparent_75%)] blur-[100px] -z-10" 
+        className="pointer-events-none fixed top-12 left-1/2 -translate-x-1/2 w-[800px] h-[380px] bg-[radial-gradient(ellipse,rgba(134,183,90,0.20)_0%,rgba(0,136,255,0.08)_50%,transparent_75%)] blur-[100px] -z-10"
+        animate={{
+          scale: [1, 1.08, 1],
+          opacity: [0.75, 1, 0.75],
+        }}
+        transition={{
+          duration: 7.5,
+          repeat: Infinity,
+          ease: "easeInOut",
+        }}
       />
 
       {/* Main Narrative Column */}
@@ -215,13 +224,16 @@ export default function AboutPage({ onStartCrafting, onFeedback, onTerms, onPriv
                   className="outline-none"
                 >
                   <Card
-                    className={`relative rounded-[22px] bg-[#141414] border p-6 flex flex-col justify-between gap-6 cursor-default select-none overflow-hidden transition-colors duration-300 ${
+                    className={`relative rounded-[22px] bg-[#0E0E0E] border p-6 flex flex-col justify-between gap-6 cursor-default select-none overflow-hidden transition-colors duration-300 ${
                       isHovered 
                         ? 'border-white/[0.22] shadow-[0_24px_50px_rgba(0,0,0,0.85)]' 
                         : 'border-white/[0.08] shadow-[0_16px_36px_rgba(0,0,0,0.6)]'
                     }`}
                     style={{
                       minHeight: '230px',
+                      outline: '1px solid transparent',
+                      backfaceVisibility: 'hidden',
+                      WebkitBackfaceVisibility: 'hidden',
                     }}
                   >
                     {/* Inner Specular Highlight */}
@@ -233,13 +245,15 @@ export default function AboutPage({ onStartCrafting, onFeedback, onTerms, onPriv
                       }}
                     />
 
-                    {/* Decorative Corner Ribbon Triangle */}
-                    <div 
-                      className="absolute top-0 right-0 w-9 h-9 pointer-events-none opacity-85"
-                      style={{
-                        background: `linear-gradient(225deg, ${card.accent} 50%, transparent 50%)`
-                      }}
-                    />
+                    {/* Decorative Corner Ribbon Triangle (Vector Anti-Aliased) */}
+                    <svg 
+                      aria-hidden="true"
+                      viewBox="0 0 36 36"
+                      className="absolute top-0 right-0 w-9 h-9 pointer-events-none"
+                      shapeRendering="geometricPrecision"
+                    >
+                      <path d="M0 0 L36 0 L36 36 Z" fill={card.accent} fillOpacity="0.85" />
+                    </svg>
 
                     {/* Top Pushpin Dot + Step Pill */}
                     <div className="flex items-center justify-between relative z-10">
@@ -268,8 +282,8 @@ export default function AboutPage({ onStartCrafting, onFeedback, onTerms, onPriv
                         {card.title}
                       </h3>
 
-                      {/* Card Body Copy (Apple HIG Body: 14px, line-height 20px, tracking -0.01em, font-normal 400) */}
-                      <p className="text-white/50 font-normal text-[13.5px] sm:text-[14px] leading-[20px] tracking-[-0.01em]">
+                      {/* Card Body Copy (Apple HIG Footnote: 12.5px - 13px, line-height 18px, tracking -0.01em, font-normal 400) */}
+                      <p className="text-white/50 font-normal text-[12.5px] sm:text-[13px] leading-[18px] sm:leading-[19px] tracking-[-0.01em]">
                         {card.desc}
                       </p>
                     </div>
