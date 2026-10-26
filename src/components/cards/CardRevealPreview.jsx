@@ -317,7 +317,7 @@ export default function CardRevealPreview({ onCraftOwn }) {
                   state.cardType === 'paper' ? 'rounded-none' : 'rounded-[20px]'
                 }`}
                 style={{
-                  boxShadow: '0 0 50px rgba(124, 224, 220, 0.75), inset 0 0 25px rgba(124, 224, 220, 0.4)',
+                  boxShadow: '0 0 50px rgba(134, 183, 90, 0.8), inset 0 0 25px rgba(163, 230, 53, 0.5)',
                 }}
               />
             )}
@@ -435,7 +435,7 @@ export default function CardRevealPreview({ onCraftOwn }) {
                       rotateX: 0,
                       x: [-2, 2, -4, 4, -8, 8, -6, 6, -3, 3, 0],
                       rotateZ: [-1, 1, -2, 2, -1.5, 1.5, 0],
-                      boxShadow: '0 0 50px 6px rgba(124, 224, 220, 0.5), 0 0 80px 15px rgba(79, 121, 62, 0.35)',
+                      boxShadow: '0 0 50px 8px rgba(134, 183, 90, 0.65), 0 0 90px 20px rgba(163, 230, 53, 0.40), 0 0 120px 30px rgba(79, 121, 62, 0.30)',
                     }
                   : revealStage === 'slamming'
                   ? {
