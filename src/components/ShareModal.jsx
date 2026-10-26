@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Check, Warning } from '@phosphor-icons/react';
 import { useCard } from '@/context/CardContext';
@@ -263,7 +264,9 @@ export default function ShareModal({ onClose, onOpenRecipientPreview }) {
     }, 180);
   };
 
-  return (
+  if (typeof document === 'undefined') return null;
+
+  return createPortal(
     <AnimatePresence>
       <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
         {/* Backdrop matching TitleModal & MessageModal */}
@@ -291,8 +294,8 @@ export default function ShareModal({ onClose, onOpenRecipientPreview }) {
         >
           {/* Header Bar matching Figma Tablet Surface [466x60] */}
           <div className="flex items-center justify-between h-[60px] pl-5 pr-3 bg-[#1F1F1F] border-b border-white/[0.08]">
-            <h2 className="text-white/85 font-semibold text-[17px] leading-[22px] tracking-[-0.02em] font-sans">
-              {step === 'choice' ? 'Ready to Share' : step === 'sealing' ? 'Pre-Flight Sealing' : 'Share with Others'}
+            <h2 className="text-[rgba(255,255,255,0.85)] font-medium text-[17px] leading-[22px] tracking-[-0.02em] font-sans">
+              {step === 'choice' ? 'Seal & Send' : step === 'sealing' ? 'Sealing Your Bloom' : 'Share Your Card'}
             </h2>
 
             {/* Cancel Button (Destructive Liquid Glass Icon Button) */}
@@ -324,7 +327,7 @@ export default function ShareModal({ onClose, onOpenRecipientPreview }) {
                   Point of No Return
                 </h3>
                 
-                <p className="mt-2 text-white/45 text-[12.5px] leading-[19px] max-w-[340px] font-sans font-normal">
+                <p className="mt-2 text-[#999999] text-[12.5px] leading-[19px] max-w-[340px] font-sans font-normal">
                   Your card is ready. Ship it out before you accidentally talk yourself out of being this wholesome.
                 </p>
 
@@ -415,7 +418,7 @@ export default function ShareModal({ onClose, onOpenRecipientPreview }) {
                   Hot & Fresh Out the Oven
                 </h3>
                 
-                <p className="mt-2 text-white/45 text-[12.5px] leading-[19px] max-w-[340px] font-sans font-normal">
+                <p className="mt-2 text-[#999999] text-[12.5px] leading-[19px] max-w-[340px] font-sans font-normal">
                   Send this interactive 3D link to your human. Zero spam, 100% emotional damage (the good kind).
                 </p>
 
@@ -427,7 +430,7 @@ export default function ShareModal({ onClose, onOpenRecipientPreview }) {
                       type="text"
                       readOnly
                       value={shareUrl}
-                      className="bg-transparent text-white/70 text-[12.5px] font-sans tracking-tight w-full outline-none select-all truncate"
+                      className="bg-transparent text-[#E5E5EA] text-[12.5px] font-sans tracking-tight w-full outline-none select-all truncate"
                     />
                   </div>
 
@@ -458,7 +461,7 @@ export default function ShareModal({ onClose, onOpenRecipientPreview }) {
                   <button
                     type="button"
                     onClick={onOpenRecipientPreview}
-                    className="dark-liquid-glass-pill w-full h-[40px] px-5 text-[13.5px] leading-[20px] font-medium text-white/80 hover:text-white flex items-center justify-center font-sans cursor-pointer active:scale-[0.98] transition-transform"
+                    className="dark-liquid-glass-pill w-full h-[40px] px-5 text-[13.5px] leading-[20px] font-medium text-[#FFFFFF] hover:text-[#FFFFFF] flex items-center justify-center font-sans cursor-pointer active:scale-[0.98] transition-transform"
                   >
                     <span>Sneak a Peek as Recipient</span>
                   </button>
@@ -468,6 +471,7 @@ export default function ShareModal({ onClose, onOpenRecipientPreview }) {
           </AnimatePresence>
         </motion.div>
       </div>
-    </AnimatePresence>
+    </AnimatePresence>,
+    document.body
   );
 }

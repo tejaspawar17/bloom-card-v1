@@ -2,9 +2,11 @@ import React, { useState, useEffect, useRef } from 'react';
 import { motion, useMotionValue, useSpring } from 'framer-motion';
 import { 
   ArrowRight, 
-  CursorClick
+  CursorClick,
+  Smiley,
+  PenNib,
+  Link,
 } from '@phosphor-icons/react';
-import { Card } from '@heroui/react';
 import ScatteredKeepsakes from '@/components/ui/ScatteredKeepsakes';
 import ShaderButton from '@/components/ui/ShaderButton';
 import CoffeeButton from '@/components/ui/CoffeeButton';
@@ -68,7 +70,7 @@ function TrackingEyes() {
   );
 }
 
-// 3 Tactile Stationery Fan Cards
+// 3 Tactile Stationery Fan Cards (Figma Accent Tokens & Regular Phosphor Icons)
 const HOW_IT_WORKS_CARDS = [
   {
     num: '01',
@@ -76,8 +78,8 @@ const HOW_IT_WORKS_CARDS = [
     title: 'Choose the Tone',
     desc: 'Curated moods for real moments, from birthdays to apologies.',
     rotate: -2.2,
-    pushpin: '#86B75A', // Spring Olive (single matching accent color)
-    accent: '#86B75A',
+    accent: '#86B75A', // Bloom Signature Green
+    Icon: Smiley,
   },
   {
     num: '02',
@@ -85,8 +87,8 @@ const HOW_IT_WORKS_CARDS = [
     title: 'Craft the Details',
     desc: 'Add tactile paper textures, gold foil, and personal notes.',
     rotate: 1.8,
-    pushpin: '#CFC531', // Warm Sunlight (single matching accent color)
-    accent: '#CFC531',
+    accent: '#CFC531', // Golden Chartreuse
+    Icon: PenNib,
   },
   {
     num: '03',
@@ -94,8 +96,8 @@ const HOW_IT_WORKS_CARDS = [
     title: 'Share in Seconds',
     desc: 'Send a permanent 3D link that opens instantly on any phone.',
     rotate: -1.4,
-    pushpin: '#7CE0DC', // Mint Cyan (single matching accent color)
-    accent: '#7CE0DC',
+    accent: '#7CE0DC', // Luminous Aquamarine Cyan
+    Icon: Link,
   },
 ];
 
@@ -105,29 +107,17 @@ export default function AboutPage({ onStartCrafting, onFeedback, onTerms, onPriv
   return (
     <div className="relative w-full min-h-screen flex flex-col items-center justify-between select-none font-sans overflow-hidden">
       
-      {/* Blueprint Grid Background */}
-      <div 
-        aria-hidden="true" 
-        className="pointer-events-none fixed inset-0 opacity-[0.035] -z-20"
-        style={{
-          backgroundImage: `
-            linear-gradient(to right, #FFFFFF 1px, transparent 1px),
-            linear-gradient(to bottom, #FFFFFF 1px, transparent 1px)
-          `,
-          backgroundSize: '40px 40px'
-        }}
-      />
-
+      
       {/* Scattered Ambient Keepsake Folders in Background Margins (Option B) */}
       <ScatteredKeepsakes />
 
       {/* Main Narrative Column */}
-      <main className="w-full max-w-[740px] px-5 sm:px-8 pt-12 sm:pt-16 pb-20 flex flex-col items-center gap-14 sm:gap-16 relative z-10">
+      <main className="w-full max-w-[740px] px-5 sm:px-8 pt-2 sm:pt-4 pb-24 sm:pb-28 flex flex-col items-center relative z-10">
 
         {/* ============================================================
             1. HERO SECTION: Brand Mark + Exact Apple Display Type Scale & Weights
            ============================================================ */}
-        <div className="flex flex-col items-center text-center gap-6 relative max-w-[640px]">
+        <div className="min-h-[calc(100vh-100px)] w-full flex flex-col items-center justify-center text-center gap-6 relative max-w-[640px] -mt-6 sm:-mt-8">
 
           {/* Interactive Mouse Tracking Eyes */}
           <motion.div 
@@ -137,21 +127,29 @@ export default function AboutPage({ onStartCrafting, onFeedback, onTerms, onPriv
             className="flex items-center gap-2"
           >
             <TrackingEyes />
-            <span className="text-[12px] leading-[16px] text-white/35 font-normal tracking-tight">watching you craft</span>
+            <span className="text-[12px] leading-[16px] text-[#727272] font-normal tracking-tight">watching you craft</span>
           </motion.div>
 
           {/* Apple HIG Large Title: 44px / 48px, line-height 52px, tracking -0.035em, font-normal 400 */}
           <div className="flex flex-col gap-3">
             <h1 className="text-white font-normal text-[38px] sm:text-[46px] md:text-[48px] leading-[1.12] sm:leading-[52px] tracking-[-0.035em]">
-              I make greeting cards that people{' '}
-              <span className="font-serif italic font-normal text-transparent bg-clip-text bg-gradient-to-r from-[#86B75A] via-[#CFC531] to-[#7CE0DC]">
+              Bloom makes greeting cards that people{' '}
+              <span 
+                className="italic font-thin text-white"
+                style={{
+                  fontFamily: "'Instrument Serif', Georgia, serif",
+                  fontWeight: 100,
+                  fontStyle: 'italic',
+                  fontSynthesis: 'none',
+                }}
+              >
                 actually keep.
               </span>
             </h1>
 
             {/* Apple HIG Body: 16px, line-height 24px, tracking -0.015em, font-normal 400 */}
-            <p className="text-white/55 font-normal text-[15px] sm:text-[16px] leading-[24px] tracking-[-0.015em] max-w-[480px] mx-auto">
-              No drugstore greeting card aisles. No rhyming poems. Just 60fps tactile cards and stickers placed at questionable angles.
+            <p className="text-[#999999] font-normal text-[15px] sm:text-[16px] leading-[24px] tracking-[-0.015em] max-w-[480px] mx-auto">
+              An interactive digital stationery studio for moments that deserve more than a text. Craft 60fps textured paper, foil light glints, and stickers placed at questionable angles.
             </p>
           </div>
 
@@ -167,14 +165,14 @@ export default function AboutPage({ onStartCrafting, onFeedback, onTerms, onPriv
         {/* ============================================================
             2. TACTILE STATIONERY FAN CARDS: "How It Works"
            ============================================================ */}
-        <section className="w-full flex flex-col gap-4">
+        <section aria-label="How it works" className="w-full flex flex-col gap-4 mt-10 sm:mt-14">
           
           {/* Section Eyebrow (Apple HIG Caption 2: 11px, line-height 13px, tracking 0.08em uppercase, font-normal 400) */}
           <div className="flex items-center justify-between w-full px-1">
-            <span className="text-white/40 text-[11px] leading-[13px] font-normal tracking-[0.08em] uppercase">
+            <span className="text-[#727272] text-[11px] leading-[13px] font-normal tracking-[0.08em] uppercase">
               How it works
             </span>
-            <span className="text-white/30 text-[11px] leading-[13px] font-normal flex items-center gap-1.5">
+            <span className="text-[#727272] text-[11px] leading-[13px] font-normal flex items-center gap-1.5">
               <CursorClick size={12} />
               hover or tap cards
             </span>
@@ -203,37 +201,21 @@ export default function AboutPage({ onStartCrafting, onFeedback, onTerms, onPriv
                   transition={appleSpring}
                   className="outline-none"
                 >
-                  <Card
-                    className={`relative rounded-[22px] bg-[#0E0E0E] border p-6 flex flex-col justify-between gap-6 cursor-default select-none overflow-hidden transition-colors duration-300 ${
+                  <div
+                    className={`relative rounded-[20px] bg-[#0E0E0E] p-6 flex flex-col justify-between gap-6 cursor-default select-none transition-all duration-300 border ${
                       isHovered 
-                        ? 'border-white/[0.22]' 
-                        : 'border-white/[0.10]'
+                        ? 'border-white/[0.24] shadow-[0_12px_40px_rgba(0,0,0,0.7)]' 
+                        : 'border-white/[0.12] shadow-[0_8px_30px_rgba(0,0,0,0.5)]'
                     }`}
                     style={{
                       minHeight: '230px',
-                      outline: '1px solid transparent',
-                      backfaceVisibility: 'hidden',
-                      WebkitBackfaceVisibility: 'hidden',
                     }}
                   >
-                    {/* Decorative Corner Ribbon Triangle (Vector Anti-Aliased) */}
-                    <svg 
-                      aria-hidden="true"
-                      viewBox="0 0 36 36"
-                      className="absolute top-0 right-0 w-9 h-9 pointer-events-none"
-                      shapeRendering="geometricPrecision"
-                    >
-                      <path d="M0 0 L36 0 L36 36 Z" fill={card.accent} fillOpacity="0.85" />
-                    </svg>
-
-                    {/* Top Pushpin Dot + Step Pill */}
+                    {/* Top: Phosphor Icon + Step Pill */}
                     <div className="flex items-center justify-between relative z-10">
-                      {/* Tactile Pushpin Dot */}
-                      <div 
-                        className="w-3 h-3 rounded-full border border-white/40"
-                        style={{ backgroundColor: card.pushpin }}
-                      />
-                      <span className="font-sans font-normal text-[11px] leading-[13px] text-white/35 tracking-wider pr-4">
+                      {/* Regular naked Phosphor Icon in Figma accent color */}
+                      <card.Icon size={20} weight="regular" style={{ color: card.accent }} />
+                      <span className="font-sans font-normal text-[11px] leading-[13px] text-[#727272] tracking-wider">
                         STEP {card.num}
                       </span>
                     </div>
@@ -253,12 +235,12 @@ export default function AboutPage({ onStartCrafting, onFeedback, onTerms, onPriv
                         {card.title}
                       </h3>
 
-                      {/* Card Body Copy (Apple HIG Footnote: 12.5px - 13px, line-height 18px, tracking -0.01em, font-normal 400) */}
-                      <p className="text-white/50 font-normal text-[12.5px] sm:text-[13px] leading-[18px] sm:leading-[19px] tracking-[-0.01em]">
+                      {/* Card Body Copy (Exact Figma Token: Vibrant Secondary #999999, 12px, font-normal 400) */}
+                      <p className="font-normal text-[12px] leading-[17px] tracking-[-0.01em] text-[#999999]">
                         {card.desc}
                       </p>
                     </div>
-                  </Card>
+                  </div>
                 </motion.div>
               );
             })}
@@ -273,7 +255,7 @@ export default function AboutPage({ onStartCrafting, onFeedback, onTerms, onPriv
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.15 }}
-          className="w-full rounded-[24px] bg-[#0E0E0E] border border-white/[0.10] overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.7)]"
+          className="w-full rounded-[24px] bg-[#0E0E0E] border border-white/[0.10] overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.7)] mt-20 sm:mt-24 mb-4"
         >
           {/* Apple macOS Style Window Header Bar */}
           <div className="h-[48px] px-5 flex items-center justify-between bg-[#1A1A1A] border-b border-white/[0.08] select-none">
@@ -285,7 +267,7 @@ export default function AboutPage({ onStartCrafting, onFeedback, onTerms, onPriv
             </div>
 
             {/* Window Title (Apple HIG Subheadline: 12.5px, line-height 16px, font-medium 500) */}
-            <span className="text-white/60 font-medium text-[12.5px] leading-[16px] tracking-tight">
+            <span className="text-[#999999] font-medium text-[12.5px] leading-[16px] tracking-tight">
               About the Creator
             </span>
 
@@ -311,16 +293,16 @@ export default function AboutPage({ onStartCrafting, onFeedback, onTerms, onPriv
                   One human. Zero committees.
                 </span>
                 {/* Caption: 12.5px, line-height 16px, font-normal 400 */}
-                <span className="text-white/40 font-normal text-[12.5px] leading-[16px]">
+                <span className="text-[#727272] font-normal text-[12.5px] leading-[16px]">
                   (Not my actual face. The duck has higher self-esteem.)
                 </span>
               </div>
             </div>
 
             {/* Story Paragraphs: 14px, line-height 22px, font-normal 400 */}
-            <div className="flex flex-col gap-2.5 text-white/65 font-normal text-[14px] sm:text-[14.5px] leading-[22px] pt-1">
+            <div className="flex flex-col gap-2.5 text-[#E5E5EA] font-normal text-[14px] sm:text-[14.5px] leading-[22px] pt-1">
               <p>
-                Hi. I built Bloom because getting a dry <span className="text-white/90 font-medium text-[13px] bg-white/[0.06] px-1.5 py-0.5 rounded">&ldquo;hbd 🎂&rdquo;</span> text hurts my soul. 
+                Hi. I built Bloom because getting a dry <span className="text-[#FFFFFF] font-medium text-[13px] bg-white/[0.06] px-1.5 py-0.5 rounded">&ldquo;hbd 🎂&rdquo;</span> text hurts my soul. 
                 People deserve something tactile that feels like it took more than two seconds of effort.
               </p>
               <p>
@@ -331,7 +313,7 @@ export default function AboutPage({ onStartCrafting, onFeedback, onTerms, onPriv
 
             {/* Action Bar: Buy Coffee */}
             <div className="pt-3 border-t border-white/[0.08] flex items-center justify-between">
-              <span className="text-white/45 font-normal text-[12.5px] leading-[18px]">
+              <span className="text-[#999999] font-normal text-[12.5px] leading-[18px]">
                 Enjoying Bloom?
               </span>
               <CoffeeButton />

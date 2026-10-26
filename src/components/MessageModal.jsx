@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useCard } from '@/context/CardContext';
 import { X } from '@phosphor-icons/react';
@@ -85,7 +86,9 @@ export default function MessageModal({ onClose }) {
     }
   })();
 
-  return (
+  if (typeof document === 'undefined') return null;
+
+  return createPortal(
     <AnimatePresence>
       <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
         {/* Backdrop */}
@@ -113,8 +116,8 @@ export default function MessageModal({ onClose }) {
           {/* Header Bar matching Figma Tablet Surface */}
           {/* Title Background Band matching Figma [466x60] */}
           <div className="flex items-center justify-between h-[60px] pl-5 pr-3 bg-[#1F1F1F] border-b border-white/[0.08]">
-            <h2 className="text-white/85 font-semibold text-[17px] leading-[22px] tracking-[-0.02em] font-sans">
-              {isTrainer ? 'Trainer Details' : 'With love or Something'}
+            <h2 className="text-[rgba(255,255,255,0.85)] font-medium text-[17px] leading-[22px] tracking-[-0.02em] font-sans">
+              {isTrainer ? 'Trainer Details' : 'Your Personal Note'}
             </h2>
             
             {/* Cancel Button (Destructive Icon Button) centered vertically 5px from edges */}
@@ -151,7 +154,7 @@ export default function MessageModal({ onClose }) {
                       className="w-full bg-transparent px-4 py-3 text-[15px] leading-[20px] text-white placeholder-[#727272] outline-none font-sans pr-16"
                       autoFocus
                     />
-                    <div className={`absolute right-3.5 top-1/2 -translate-y-1/2 text-[11px] font-normal tabular-nums font-sans ${trainerName.length >= 15 ? 'text-[#FF6961]/70' : 'text-white/25'}`}>
+                    <div className={`absolute right-3.5 top-1/2 -translate-y-1/2 text-[11px] font-normal tabular-nums font-sans ${trainerName.length >= 15 ? 'text-[#FF6961]/70' : 'text-[#727272]'}`}>
                       {trainerName.length} / 15
                     </div>
                   </div>
@@ -177,7 +180,7 @@ export default function MessageModal({ onClose }) {
                       rows={3}
                       className="w-full bg-transparent px-4 pt-3.5 pb-7 text-[15px] leading-[22px] text-white placeholder-[#727272] outline-none resize-none font-sans h-[96px]"
                     />
-                    <div className={`absolute bottom-2.5 right-3 text-[11px] font-normal tabular-nums font-sans ${trainerBio.length >= 80 ? 'text-[#FF6961]/70' : 'text-white/25'}`}>
+                    <div className={`absolute bottom-2.5 right-3 text-[11px] font-normal tabular-nums font-sans ${trainerBio.length >= 80 ? 'text-[#FF6961]/70' : 'text-[#727272]'}`}>
                       {trainerBio.length} / 80
                     </div>
                   </div>
@@ -206,7 +209,7 @@ export default function MessageModal({ onClose }) {
                       className="w-full bg-transparent px-4 py-3 text-[15px] leading-[20px] text-white placeholder-[#727272] outline-none font-sans pr-16"
                       autoFocus
                     />
-                    <div className={`absolute right-3.5 top-1/2 -translate-y-1/2 text-[11px] font-normal tabular-nums font-sans ${to.length >= 15 ? 'text-[#FF6961]/70' : 'text-white/25'}`}>
+                    <div className={`absolute right-3.5 top-1/2 -translate-y-1/2 text-[11px] font-normal tabular-nums font-sans ${to.length >= 15 ? 'text-[#FF6961]/70' : 'text-[#727272]'}`}>
                       {to.length} / 15
                     </div>
                   </div>
@@ -232,7 +235,7 @@ export default function MessageModal({ onClose }) {
                       maxLength={15}
                       className="w-full bg-transparent px-4 py-3 text-[15px] leading-[20px] text-white placeholder-[#727272] outline-none font-sans pr-16"
                     />
-                    <div className={`absolute right-3.5 top-1/2 -translate-y-1/2 text-[11px] font-normal tabular-nums font-sans ${from.length >= 15 ? 'text-[#FF6961]/70' : 'text-white/25'}`}>
+                    <div className={`absolute right-3.5 top-1/2 -translate-y-1/2 text-[11px] font-normal tabular-nums font-sans ${from.length >= 15 ? 'text-[#FF6961]/70' : 'text-[#727272]'}`}>
                       {from.length} / 15
                     </div>
                   </div>
@@ -258,7 +261,7 @@ export default function MessageModal({ onClose }) {
                       maxLength={194}
                       className="w-full h-[140px] bg-transparent px-4 pt-3.5 pb-8 text-[15px] leading-[22px] text-white placeholder-[#727272] outline-none resize-none font-sans"
                     />
-                    <div className={`absolute bottom-2.5 right-3 text-[11px] font-normal tabular-nums font-sans ${message.length >= 194 ? 'text-[#FF6961]/70' : 'text-white/25'}`}>
+                    <div className={`absolute bottom-2.5 right-3 text-[11px] font-normal tabular-nums font-sans ${message.length >= 194 ? 'text-[#FF6961]/70' : 'text-[#727272]'}`}>
                       {message.length} / 194
                     </div>
                   </div>
@@ -289,6 +292,7 @@ export default function MessageModal({ onClose }) {
           </form>
         </motion.div>
       </div>
-    </AnimatePresence>
+    </AnimatePresence>,
+    document.body
   );
 }

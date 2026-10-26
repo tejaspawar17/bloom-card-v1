@@ -81,7 +81,7 @@ export default function WindowSelectBackImage() {
 
   return (
     <WindowPanel 
-      title="Upload / Select Image for the Back"
+      title="Back Cover Artwork"
       bodyClassName="pt-[13px] px-[15px] pb-[15px] xl:pt-[15px] xl:px-[17px] xl:pb-[17px] 2xl:pt-[16px] 2xl:px-[18px] 2xl:pb-[18px]"
     >
       <input 
@@ -95,7 +95,7 @@ export default function WindowSelectBackImage() {
       <div 
         className="w-[268px] xl:w-[305px] 2xl:w-[328px] px-[3px] mx-auto flex flex-row justify-between items-start"
         role="radiogroup"
-        aria-label="Upload or Select Image for the Back"
+        aria-label="Back Cover Artwork"
       >
         {items.map((item) => {
           const isSelected = selected === item.id;
@@ -141,7 +141,7 @@ export default function WindowSelectBackImage() {
                   'relative mt-[2.5px] xl:mt-[3px] text-[10px] leading-[12px] xl:text-[10.5px] xl:leading-[12.5px] 2xl:text-[11px] 2xl:leading-[13px] tracking-[0.0055em] truncate w-[54px] xl:w-[61px] 2xl:w-[66px] text-center transition-colors duration-200 z-10 font-sans',
                   isSelected
                     ? 'text-white font-medium'
-                    : 'text-[rgba(229,229,234,0.70)] font-normal group-hover:text-white/85'
+                    : 'text-[rgba(229,229,234,0.70)] font-normal group-hover:text-[rgba(255,255,255,0.85)]'
                 )}
               >
                 {item.label}

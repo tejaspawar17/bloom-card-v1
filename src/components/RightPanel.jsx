@@ -78,7 +78,7 @@ export default function RightPanel({ className = '' }) {
         {/* 2. Choose Mood (Emoji Selector) matching Figma #1140:2166 */}
         <div className="h-fit">
           <WindowPanel
-            title="What do you want to emote"
+            title="Stamp an Emotion"
             bodyClassName="pt-[13px] px-[15px] pb-[15px] xl:pt-[15px] xl:px-[17px] xl:pb-[17px] 2xl:pt-[16px] 2xl:px-[18px] 2xl:pb-[18px]"
           >
             <div className="flex flex-col gap-[5px] xl:gap-[6px] w-[268px] xl:w-[305px] 2xl:w-[328px] mx-auto">
@@ -159,7 +159,7 @@ export default function RightPanel({ className = '' }) {
         {/* 3. Decorate with Stickers — Matching Figma #1155:14884 (padding 16px 4px 18px 18px, Grid 328x146) */}
         <div className="h-fit">
           <WindowPanel 
-            title="Decorate with Stickers" 
+            title="Add Stickers" 
             bodyClassName="pt-[13px] pr-[4px] pb-[15px] pl-[15px] xl:pt-[15px] xl:pr-[4px] xl:pb-[17px] xl:pl-[17px] 2xl:pt-[16px] 2xl:pr-[4px] 2xl:pb-[18px] 2xl:pl-[18px] overflow-hidden"
           >
             <div ref={stickerContainerRef} className="relative w-full h-[min(115px,calc(100dvh-455px))] xl:h-[min(131px,calc(100dvh-580px))] 2xl:h-[min(144px,calc(100dvh-610px))]">
@@ -224,7 +224,7 @@ export default function RightPanel({ className = '' }) {
                           {/* Label (Figma: Inter Regular 10, y:72, w:66) */}
                           <div className="relative mt-1 z-10 w-[54px] xl:w-[61px] 2xl:w-[66px] text-center">
                             <span
-                              className="text-[10px] xl:text-[11px] 2xl:text-[12px] leading-[12px] font-normal text-white/90 truncate block text-center"
+                              className={cn('text-[10px] xl:text-[11px] 2xl:text-[12px] leading-[12px] font-normal truncate block text-center transition-colors duration-200', isSelected ? 'text-[#FFFFFF] font-medium' : 'text-[rgba(229,229,234,0.70)] group-hover:text-[rgba(255,255,255,0.85)]')}
                               title={sticker.name}
                             >
                               {shortName}

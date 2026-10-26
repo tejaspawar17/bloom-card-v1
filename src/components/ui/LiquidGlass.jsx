@@ -84,7 +84,7 @@ export function LiquidGlassButton({
   ...rest
 }) {
   const activeClass = "border-[2.5px] border-[#3898FF] shadow-[0_0_16px_rgba(56,152,255,0.65),inset_0_2px_4px_rgba(255,255,255,0.85),inset_0_-3px_6px_rgba(29,78,216,0.6)] after:absolute after:top-[2px] after:left-[6px] after:right-[6px] after:h-[40%] after:rounded-full after:bg-gradient-to-b after:from-white/55 after:to-transparent after:pointer-events-none";
-  const inactiveClass = "bg-black/45 hover:bg-white/10 border border-white/10 text-white/80";
+  const inactiveClass = "bg-black/45 hover:bg-white/10 border border-white/10 text-[#FFFFFF]";
 
   return (
     <button

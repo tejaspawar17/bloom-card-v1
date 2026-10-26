@@ -67,7 +67,7 @@ export default function Navbar({ activeTab = 'design', onTabChange }) {
       <nav role="tablist" aria-label="Navigation Tabs" className="relative flex flex-row items-center justify-center gap-[10px] w-full">
         
         {/* Menu Divider Line (exactly the width of the layout) */}
-        <div className="absolute top-1/2 left-0 w-full h-[4px] -translate-y-1/2 z-0">
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 w-full max-w-[1440px] px-3 xl:px-8 h-[4px] -translate-y-1/2 z-0 pointer-events-none">
           <div className="w-full h-full rounded-[24px] blur-[8px] pointer-events-none figma-aura-gradient opacity-75"></div>
         </div>
 

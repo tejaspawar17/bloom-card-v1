@@ -89,7 +89,7 @@ export default function BloomLogo({
           <span className={clsx('font-serif italic tracking-[-0.05em] text-white leading-none', s.brand)}>
             Bloom
           </span>
-          <span className={clsx('font-sans tracking-[-0.05em] text-white/90 leading-none', s.ver)}>
+          <span className={clsx('font-sans tracking-[-0.05em] text-[#FFFFFF] leading-none', s.ver)}>
             {version}
           </span>
         </div>

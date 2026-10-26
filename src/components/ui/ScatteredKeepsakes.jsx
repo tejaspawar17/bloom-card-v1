@@ -1,56 +1,188 @@
 import React from 'react';
+import { motion, useScroll, useTransform, useSpring, useVelocity } from 'framer-motion';
 import KeepsakeFolder from './KeepsakeFolder';
 
 /**
- * ScatteredKeepsakes Component (Option B: Ambient Layered Margins with Safe Clipping)
- * Scatters 3 distinct Keepsake folders throughout the background at different scroll depths.
- * On desktop: Flanks the central narrative column in wide gutters.
- * On mobile: Tucks along the margins with safe clipping without causing horizontal scrollbars or blocking text.
+ * Ambient Celestial Star Particle
+ * Glowing emerald-mint gradient starlight with soft atmospheric blur matching Bloom's cosmic brand aura.
+ */
+function CosmicStar({
+  top,
+  left,
+  right,
+  size = 5,
+  blur = 2,
+  parallaxSpeed = -150,
+  progress,
+  twinkleDuration = 3.5,
+  delay = 0,
+}) {
+  const y = useTransform(progress, [0, 1], [0, parallaxSpeed]);
+
+  return (
+    <motion.div
+      style={{
+        top,
+        left,
+        right,
+        width: size,
+        height: size,
+        y,
+        background: 'radial-gradient(circle, #86B75A 0%, #7CE0DC 60%, rgba(134, 183, 90, 0.2) 100%)',
+        boxShadow: '0 0 10px rgba(134, 183, 90, 0.9), 0 0 20px rgba(124, 224, 220, 0.5)',
+        filter: `blur(${blur}px)`,
+      }}
+      animate={{
+        opacity: [0.35, 1, 0.35],
+        scale: [0.85, 1.4, 0.85],
+      }}
+      transition={{
+        duration: twinkleDuration,
+        repeat: Infinity,
+        ease: 'easeInOut',
+        delay,
+      }}
+      className="absolute rounded-full pointer-events-none"
+    />
+  );
+}
+
+/**
+ * ScatteredKeepsakes Component (Zero-G Cosmic Parallax & 4-Folder Balanced Constellation)
+ * 
+ * Features:
+ * 1. 4-Folder Balanced Orbit (eliminates empty space in Fold 1):
+ *    - Folder 1 (Hero Left): January 2026, scale={0.64}, top-[240px], -10°
+ *    - Folder 2 (Hero Right): Spring 2026, scale={0.48}, top-[340px], +12° (flanking CTA)
+ *    - Folder 3 (How It Works Right): Summer 2026, scale={0.52}, top-[890px], -8°
+ *    - Folder 4 (Creator Left): Autumn 2026, scale={0.38}, top-[1330px], +7° (clears footer)
+ * 
+ * 2. Unified 100% Opacity on all folders (crisp frosted glass, scale depth preserved).
+ * 3. Bloom Green Gradient Starlight with Dreamy Bokeh Blur (1.5px – 2.4px).
+ * 4. Multi-plane Scroll Parallax & Inertial Velocity Micro-tilt.
  */
 export default function ScatteredKeepsakes() {
+  const { scrollY, scrollYProgress } = useScroll();
+
+  // Smooth springs for buttery 60fps cosmic inertia
+  const smoothProgress = useSpring(scrollYProgress, {
+    stiffness: 90,
+    damping: 24,
+    mass: 0.8,
+  });
+
+  const scrollVelocity = useVelocity(scrollY);
+  const smoothVelocity = useSpring(scrollVelocity, {
+    stiffness: 180,
+    damping: 32,
+  });
+
+  // Parallax Y drift for each focal plane
+  const yForeground = useTransform(smoothProgress, [0, 1], [0, -135]);
+  const yMidground = useTransform(smoothProgress, [0, 1], [0, -78]);
+  const yDeepSpace = useTransform(smoothProgress, [0, 1], [0, -38]);
+
+  // Inertial momentum micro-tilt on scroll velocity (subtle floating torque)
+  const velocityTilt1 = useTransform(smoothVelocity, [-1200, 0, 1200], [4.5, 0, -4.5]);
+  const velocityTilt2 = useTransform(smoothVelocity, [-1200, 0, 1200], [-5.0, 0, 5.0]);
+  const velocityTilt3 = useTransform(smoothVelocity, [-1200, 0, 1200], [3.5, 0, -3.5]);
+  const velocityTilt4 = useTransform(smoothVelocity, [-1200, 0, 1200], [-4.0, 0, 4.0]);
+
   return (
     <div 
       aria-hidden="true" 
-      className="absolute inset-0 w-full h-full pointer-events-none overflow-hidden z-0 select-none"
+      className="absolute inset-0 w-full h-full pointer-events-none overflow-hidden z-20 select-none"
     >
-      {/* Folder 01: Upper Left Margin (Hero & CTA depth) */}
-      <div className="absolute top-[140px] left-[-32px] sm:left-[2%] md:left-[3%] lg:left-[5%] xl:left-[9%] 2xl:left-[14%] pointer-events-auto">
+      {/* ============================================================
+          BLOOM BRAND GREEN GRADIENT STARDUST (Soft Bokeh Blur)
+          ============================================================ */}
+      <CosmicStar top="120px" left="6%" size={5} blur={1.8} parallaxSpeed={-180} progress={smoothProgress} delay={0.2} />
+      <CosmicStar top="260px" right="6%" size={4} blur={1.5} parallaxSpeed={-120} progress={smoothProgress} delay={1.1} />
+      <CosmicStar top="540px" left="9%" size={6.5} blur={2.4} parallaxSpeed={-240} progress={smoothProgress} delay={0.7} />
+      <CosmicStar top="820px" right="5%" size={4} blur={1.6} parallaxSpeed={-150} progress={smoothProgress} delay={1.8} />
+      <CosmicStar top="1080px" left="4%" size={5} blur={2.0} parallaxSpeed={-90} progress={smoothProgress} delay={2.3} />
+      <CosmicStar top="1340px" right="11%" size={6} blur={2.2} parallaxSpeed={-200} progress={smoothProgress} delay={0.5} />
+      <CosmicStar top="1560px" left="8%" size={4.5} blur={1.8} parallaxSpeed={-140} progress={smoothProgress} delay={1.4} />
+
+      {/* ============================================================
+          1. FOLDER 1 (Hero Left): January 2026 (scale: 0.64)
+          ============================================================ */}
+      <motion.div 
+        style={{
+          y: yForeground,
+          rotate: velocityTilt1,
+        }}
+        className="absolute top-[180px] left-3 sm:left-[3%] md:left-[5%] lg:left-[8%] xl:left-[11%] 2xl:left-[14%] pointer-events-auto"
+      >
         <KeepsakeFolder
-          label="ARCHIVE 01"
+          folderTitle="January"
+          folderBody="2026"
+          scale={0.64}
+          opacity={1.0}
+          defaultRotation={-10}
+          floatDelay={0}
+        />
+      </motion.div>
+
+      {/* ============================================================
+          2. FOLDER 2 (Hero Right — Balances Fold 1): Spring 2026 (scale: 0.48)
+          ============================================================ */}
+      <motion.div 
+        style={{
+          y: yMidground,
+          rotate: velocityTilt2,
+        }}
+        className="absolute top-[340px] right-3 sm:right-[3%] md:right-[5%] lg:right-[8%] xl:right-[11%] 2xl:right-[14%] pointer-events-auto"
+      >
+        <KeepsakeFolder
+          folderTitle="Spring"
+          folderBody="2026"
+          scale={0.48}
+          opacity={1.0}
+          defaultRotation={12}
+          floatDelay={1.8}
+        />
+      </motion.div>
+
+      {/* ============================================================
+          3. FOLDER 3 (How It Works Right): Summer 2026 (scale: 0.52)
+          ============================================================ */}
+      <motion.div 
+        style={{
+          y: yMidground,
+          rotate: velocityTilt3,
+        }}
+        className="absolute top-[890px] right-3 sm:right-[3%] md:right-[5%] lg:right-[8%] xl:right-[11%] 2xl:right-[14%] pointer-events-auto"
+      >
+        <KeepsakeFolder
+          folderTitle="Summer"
+          folderBody="2026"
+          scale={0.52}
+          opacity={1.0}
           defaultRotation={-8}
-          cards={[
-            { id: '1a', title: 'Card 01', note: 'Placeholder', color: '#86B75A' },
-            { id: '1b', title: 'Card 02', note: 'Placeholder', color: '#CFC531' },
-            { id: '1c', title: 'Card 03', note: 'Placeholder', color: '#7CE0DC' },
-          ]}
+          floatDelay={0.9}
         />
-      </div>
+      </motion.div>
 
-      {/* Folder 02: Mid Right Margin (How It Works depth) */}
-      <div className="absolute top-[520px] right-[-34px] sm:right-[2%] md:right-[3%] lg:right-[5%] xl:right-[9%] 2xl:right-[14%] pointer-events-auto">
+      {/* ============================================================
+          4. FOLDER 4 (Creator Left): Autumn 2026 (scale: 0.38)
+          ============================================================ */}
+      <motion.div 
+        style={{
+          y: yDeepSpace,
+          rotate: velocityTilt4,
+        }}
+        className="absolute top-[1330px] left-3 sm:left-[3%] md:left-[5%] lg:left-[8%] xl:left-[11%] 2xl:left-[14%] pointer-events-auto"
+      >
         <KeepsakeFolder
-          label="ARCHIVE 02"
+          folderTitle="Autumn"
+          folderBody="2026"
+          scale={0.38}
+          opacity={1.0}
           defaultRotation={7}
-          cards={[
-            { id: '2a', title: 'Card 04', note: 'Placeholder', color: '#CFC531' },
-            { id: '2b', title: 'Card 05', note: 'Placeholder', color: '#86B75A' },
-            { id: '2c', title: 'Card 06', note: 'Placeholder', color: '#7CE0DC' },
-          ]}
+          floatDelay={2.5}
         />
-      </div>
-
-      {/* Folder 03: Lower Left Margin (About Creator depth) */}
-      <div className="absolute top-[960px] left-[-28px] sm:left-[2%] md:left-[3%] lg:left-[5%] xl:left-[9%] 2xl:left-[14%] pointer-events-auto">
-        <KeepsakeFolder
-          label="ARCHIVE 03"
-          defaultRotation={-5}
-          cards={[
-            { id: '3a', title: 'Card 07', note: 'Placeholder', color: '#7CE0DC' },
-            { id: '3b', title: 'Card 08', note: 'Placeholder', color: '#86B75A' },
-            { id: '3c', title: 'Card 09', note: 'Placeholder', color: '#CFC531' },
-          ]}
-        />
-      </div>
+      </motion.div>
     </div>
   );
 }

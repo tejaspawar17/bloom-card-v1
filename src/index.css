@@ -1,4 +1,5 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Homemade+Apple&family=Vampiro+One&family=Caveat:wght@400;700&family=Syne+Tactile&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500;600;700&family=Homemade+Apple&family=Vampiro+One&family=Caveat:wght@400;700&family=Syne+Tactile&display=swap');
+@import url('https://api.fontshare.com/v2/css?f[]=clash-display@500&display=swap');
 @theme {
   --breakpoint-2xl: 112.5rem;
   --color-obsidian: #070908;

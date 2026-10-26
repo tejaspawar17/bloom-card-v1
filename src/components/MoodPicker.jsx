@@ -21,10 +21,10 @@ export default function MoodPicker() {
           }}
         />
         <div className="relative px-5 py-4">
-          <h3 className="text-white/85 font-semibold text-base leading-tight">
+          <h3 className="text-[#FFFFFF] font-semibold text-base leading-tight">
             Select Occasion
           </h3>
-          <p className="text-white/40 text-xs mt-0.5">
+          <p className="text-[#999999] text-xs mt-0.5">
             Pick a mood to generate your card
           </p>
         </div>
@@ -48,12 +48,12 @@ export default function MoodPicker() {
                 <span
                   className={clsx(
                     'text-sm font-medium leading-tight',
-                    isSelected ? 'text-white' : 'text-white/80'
+                    isSelected ? 'text-[#FFFFFF]' : 'text-[#E5E5EA]'
                   )}
                 >
                   {mood.label}
                 </span>
-                <span className="text-white/40 text-xs">{mood.description}</span>
+                <span className="text-[#999999] text-xs">{mood.description}</span>
               </div>
               {isSelected && (
                 <span className="ml-auto text-blue-400 text-xs font-semibold">

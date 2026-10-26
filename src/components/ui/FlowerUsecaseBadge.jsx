@@ -12,7 +12,7 @@ export default function FlowerUsecaseBadge({
   return (
     <div
       className={clsx(
-        'flower-liquid-pill px-4 py-1.5 rounded-full text-xs font-medium text-white/95 text-center truncate select-none shadow-md',
+        'flower-liquid-pill px-4 py-1.5 rounded-full text-xs font-medium text-[#FFFFFF] text-center truncate select-none shadow-md',
         className
       )}
       title={text}

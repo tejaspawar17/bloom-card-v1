@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useCard } from '@/context/CardContext';
 import { X } from '@phosphor-icons/react';
@@ -71,7 +72,9 @@ export default function TitleModal({ onClose }) {
   const maxLength = 25;
   const isAtLimit = val.length >= maxLength;
 
-  return (
+  if (typeof document === 'undefined') return null;
+
+  return createPortal(
     <AnimatePresence>
       <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
         {/* Backdrop */}
@@ -180,6 +183,7 @@ export default function TitleModal({ onClose }) {
           </form>
         </motion.div>
       </div>
-    </AnimatePresence>
+    </AnimatePresence>,
+    document.body
   );
 }

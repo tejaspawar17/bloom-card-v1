@@ -104,7 +104,7 @@ export default function ExpandingStepCards({
                 </span>
 
                 {step.tag && (
-                  <span className="text-[12px] font-sans font-normal text-white/40 hidden sm:inline-block">
+                  <span className="text-[12px] font-sans font-normal text-[#727272] hidden sm:inline-block">
                     • {step.tag}
                   </span>
                 )}
@@ -118,7 +118,7 @@ export default function ExpandingStepCards({
                     animate={{ opacity: 1, scale: 1, x: 0 }}
                     exit={{ opacity: 0, scale: 0.9, x: 6 }}
                     transition={{ duration: 0.2 }}
-                    className="font-sans font-normal text-[11.5px] text-white/70 bg-black/50 backdrop-blur-md px-3 py-1 rounded-full border border-white/[0.10] shadow-sm select-none"
+                    className="font-sans font-normal text-[11.5px] text-[#E5E5EA] bg-black/50 backdrop-blur-md px-3 py-1 rounded-full border border-white/[0.10] shadow-sm select-none"
                   >
                     {step.chip}
                   </motion.span>
@@ -146,7 +146,7 @@ export default function ExpandingStepCards({
                     }}
                     className="overflow-hidden"
                   >
-                    <p className="text-white/65 font-sans font-normal text-[13.5px] sm:text-[14px] leading-[22px] tracking-[-0.01em] max-w-[420px] pt-1">
+                    <p className="text-[#E5E5EA] font-sans font-normal text-[13.5px] sm:text-[14px] leading-[22px] tracking-[-0.01em] max-w-[420px] pt-1">
                       {step.description}
                     </p>
                   </motion.div>

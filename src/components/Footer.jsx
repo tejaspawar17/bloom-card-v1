@@ -34,7 +34,7 @@ export default function Footer({ onFeedback, onTerms, onPrivacy }) {
         </div>
 
         {/* Legal Links (Flush on bottom baseline matching Coffee Button) */}
-        <nav aria-label="Legal Links" className="flex items-center gap-2.5 text-[11px] text-white/35 font-sans font-normal mt-4 pb-3">
+        <nav aria-label="Legal Links" className="flex items-center gap-2.5 text-[11px] text-[#727272] font-sans font-normal mt-4 pb-3">
           <button onClick={onTerms} className="hover:text-white transition-colors cursor-pointer outline-none">
             Terms of Use
           </button>
@@ -52,7 +52,7 @@ export default function Footer({ onFeedback, onTerms, onPrivacy }) {
           target="_blank"
           rel="noopener noreferrer"
           aria-label="Instagram"
-          className="liquid-glass-icon-button text-white/80 hover:text-white"
+          className="liquid-glass-icon-button text-[#FFFFFF] hover:text-[#FFFFFF]"
         >
           <span className="liquid-glass-icon-button__glass">
             <InstagramLogo size={30} />
@@ -62,7 +62,7 @@ export default function Footer({ onFeedback, onTerms, onPrivacy }) {
         <button 
           type="button"
           onClick={onFeedback} 
-          className="dark-liquid-glass-pill h-[50px] px-6 text-white/90 hover:text-white text-[16px] xl:text-[17px] leading-[22px] font-medium cursor-pointer"
+          className="dark-liquid-glass-pill h-[50px] px-6 text-[#FFFFFF] hover:text-[#FFFFFF] text-[16px] xl:text-[17px] leading-[22px] font-medium cursor-pointer"
         >
           Feedback
         </button>
@@ -70,7 +70,7 @@ export default function Footer({ onFeedback, onTerms, onPrivacy }) {
         <a 
           href="mailto:hello@bloomcard.app" 
           aria-label="Email"
-          className="liquid-glass-icon-button text-white/80 hover:text-white"
+          className="liquid-glass-icon-button text-[#FFFFFF] hover:text-[#FFFFFF]"
         >
           <span className="liquid-glass-icon-button__glass">
             <EnvelopeSimple size={30} />

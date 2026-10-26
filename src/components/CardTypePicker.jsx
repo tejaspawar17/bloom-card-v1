@@ -21,8 +21,8 @@ export default function CardTypePicker() {
           }}
         />
         <div className="relative px-5 py-4">
-          <h3 className="text-white/85 font-semibold text-base">Card Style</h3>
-          <p className="text-white/40 text-xs mt-0.5">
+          <h3 className="text-[#FFFFFF] font-semibold text-base">Card Style</h3>
+          <p className="text-[#999999] text-xs mt-0.5">
             Choose how your card looks
           </p>
         </div>
@@ -47,7 +47,7 @@ export default function CardTypePicker() {
               <span
                 className={clsx(
                   'text-sm font-medium',
-                  isActive ? 'text-white' : 'text-white/50'
+                  isActive ? 'text-[#FFFFFF]' : 'text-[#999999]'
                 )}
               >
                 {type.label}

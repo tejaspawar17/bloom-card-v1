@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { CardProvider, useCard } from './context/CardContext';
 import { loadSharedCard } from './lib/supabase';
 import Navbar from './components/Navbar';
@@ -6,6 +7,30 @@ import DesignPage from './pages/DesignPage';
 import AboutPage from './pages/AboutPage';
 import FeedbackModal from './components/FeedbackModal';
 import { WindowModal, LiquidGlassButton } from './components/ui';
+
+// Atmospheric page transition: pure optical opacity + blur dissolve (no scale, x, or y to eliminate lateral/vertical drift)
+const pageVariants = {
+  initial: {
+    opacity: 0,
+    filter: 'blur(10px)',
+  },
+  animate: {
+    opacity: 1,
+    filter: 'blur(0px)',
+    transition: {
+      opacity: { duration: 0.46, ease: [0.22, 1, 0.36, 1] },
+      filter: { duration: 0.54, ease: [0.16, 1, 0.3, 1] },
+    },
+  },
+  exit: {
+    opacity: 0,
+    filter: 'blur(8px)',
+    transition: {
+      opacity: { duration: 0.22, ease: [0.36, 0, 0.66, 0] },
+      filter: { duration: 0.22, ease: [0.36, 0, 0.66, 0] },
+    },
+  },
+};
 
 function AppShell() {
   const { dispatch } = useCard();
@@ -57,27 +82,44 @@ function AppShell() {
 
   return (
     <div className="relative min-h-screen overflow-y-auto overflow-x-hidden flex flex-col justify-between bg-black text-white selection:bg-blue-600 selection:text-white">
+      {/* Persistent Subtle Blueprint Grid spanning both Design and About pages, starting from top of screen */}
+      <div 
+        aria-hidden="true" 
+        className="pointer-events-none fixed inset-0 opacity-[0.035] bg-[linear-gradient(to_right,#ffffff_1px,transparent_1px),linear-gradient(to_bottom,#ffffff_1px,transparent_1px)] bg-[size:32px_32px] z-0" 
+      />
+
       {/* Top Navbar matching Figma Menu Section */}
       <Navbar activeTab={isRecipientMode ? null : activeTab} onTabChange={handleTabChange} />
 
-      {/* Tab View */}
+      {/* Tab View with Atmospheric Optical Transition */}
       <div className="relative z-10 flex-1 flex flex-col min-h-0">
-        {activeTab === 'design' ? (
-          <DesignPage 
-            isRecipientMode={isRecipientMode} 
-            onSetRecipientMode={setIsRecipientMode} 
-          />
-        ) : (
-          <AboutPage 
-            onStartCrafting={() => { 
-              window.scrollTo({ top: 0, behavior: 'smooth' }); 
-              handleTabChange('design'); 
-            }}
-            onFeedback={() => setGlobalModal('feedback')}
-            onTerms={() => setGlobalModal('terms')}
-            onPrivacy={() => setGlobalModal('privacy')}
-          />
-        )}
+        <AnimatePresence mode="wait" initial={false} onExitComplete={() => window.scrollTo(0, 0)}>
+          <motion.div
+            key={activeTab}
+            variants={pageVariants}
+            initial="initial"
+            animate="animate"
+            exit="exit"
+            className="w-full flex-1 flex flex-col min-h-0"
+          >
+            {activeTab === 'design' ? (
+              <DesignPage 
+                isRecipientMode={isRecipientMode} 
+                onSetRecipientMode={setIsRecipientMode} 
+              />
+            ) : (
+              <AboutPage 
+                onStartCrafting={() => { 
+                  window.scrollTo({ top: 0, behavior: 'smooth' }); 
+                  handleTabChange('design'); 
+                }}
+                onFeedback={() => setGlobalModal('feedback')}
+                onTerms={() => setGlobalModal('terms')}
+                onPrivacy={() => setGlobalModal('privacy')}
+              />
+            )}
+          </motion.div>
+        </AnimatePresence>
       </div>
 
       {/* Global Modals triggered from About Page footer */}

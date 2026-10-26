@@ -26,7 +26,7 @@ export default function LeftPanel() {
   // 4 columns * 2 rows = 8 items max fit without scrolling
   const hasOverflow = listData.length > 8;
 
-  const listTitle = isPokemonMode ? 'Select Pokemon for the Card' : 'Select Flower for the Card';
+  const listTitle = isPokemonMode ? 'Pick Your Pokémon' : 'Pick Your Bloom';
   const selectedItemId = isPokemonMode ? state.selectedPokemon : state.selectedFlower;
   const setActionType = isPokemonMode ? 'SET_SELECTED_POKEMON' : 'SET_SELECTED_FLOWER';
 
@@ -141,7 +141,7 @@ export default function LeftPanel() {
                           'relative mt-[2.5px] xl:mt-[3px] text-[10px] leading-[12px] xl:text-[10.5px] xl:leading-[12.5px] 2xl:text-[11px] 2xl:leading-[13px] tracking-[0.0055em] truncate w-[54px] xl:w-[61px] 2xl:w-[66px] text-center transition-colors duration-200 z-10 font-sans',
                           isSelected
                             ? 'text-white font-medium'
-                            : 'text-[rgba(229,229,234,0.70)] font-normal group-hover:text-white/85'
+                            : 'text-[rgba(229,229,234,0.70)] font-normal group-hover:text-[rgba(255,255,255,0.85)]'
                         )}
                         title={item.name}
                       >
@@ -215,7 +215,7 @@ export default function LeftPanel() {
                             'relative mt-[2.5px] xl:mt-[3px] text-[10px] leading-[12px] xl:text-[10.5px] xl:leading-[12.5px] 2xl:text-[11px] 2xl:leading-[13px] tracking-[0.0055em] truncate w-[54px] xl:w-[61px] 2xl:w-[66px] text-center transition-colors duration-200 z-10 font-sans',
                             isSelected
                               ? 'text-white font-medium'
-                              : 'text-[rgba(229,229,234,0.70)] font-normal group-hover:text-white/85'
+                              : 'text-[rgba(229,229,234,0.70)] font-normal group-hover:text-[rgba(255,255,255,0.85)]'
                           )}
                           title={item.name}
                         >

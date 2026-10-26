@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Bug, Sticker, ChatTeardropDots } from '@phosphor-icons/react';
 import { Tabs, Tab, TabList, TabListContainer, TabIndicator } from '@heroui/react';
@@ -182,7 +183,9 @@ export default function FeedbackModal({ onClose }) {
     }, 280);
   };
 
-  return (
+  if (typeof document === 'undefined') return null;
+
+  return createPortal(
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       {/* Backdrop matching ShareModal */}
       <motion.div
@@ -209,7 +212,7 @@ export default function FeedbackModal({ onClose }) {
       >
         {/* Header Bar matching Figma Tablet Surface [466x60] */}
         <div className="flex items-center justify-between h-[60px] pl-5 pr-3 bg-[#1F1F1F] border-b border-white/[0.08]">
-          <h2 className="text-white/85 font-semibold text-[17px] leading-[22px] tracking-[-0.02em] font-sans">
+          <h2 className="text-[rgba(255,255,255,0.85)] font-medium text-[17px] leading-[22px] tracking-[-0.02em] font-sans">
             {isSubmitted ? 'Feedback Sent' : 'Send Feedback'}
           </h2>
 
@@ -233,7 +236,7 @@ export default function FeedbackModal({ onClose }) {
               className="p-6 flex flex-col gap-4 bg-[#0E0E0E]"
             >
               {/* Clean Subtitle */}
-              <p className="text-white/50 text-[13px] leading-[18px] font-sans font-normal">
+              <p className="text-[#999999] text-[13px] leading-[18px] font-sans font-normal">
                 Bugs, sticker ideas, or confessions. Goes straight to me.
               </p>
 
@@ -273,9 +276,9 @@ export default function FeedbackModal({ onClose }) {
                         <Icon 
                           size={15} 
                           weight={isActive ? 'duotone' : 'regular'} 
-                          className={`transition-colors ${isActive ? 'text-white' : 'text-white/45'}`} 
+                          className={`transition-colors ${isActive ? 'text-[#FFFFFF]' : 'text-[#999999]'}`} 
                         />
-                        <span className={`transition-colors ${isActive ? 'text-white font-medium' : 'text-white/45 hover:text-white/80'}`}>
+                        <span className={`transition-colors ${isActive ? 'text-[#FFFFFF] font-medium' : 'text-[#999999] hover:text-[#FFFFFF]'}`}>
                           {cat.label}
                         </span>
                       </button>
@@ -298,7 +301,7 @@ export default function FeedbackModal({ onClose }) {
                 {/* Character Counter recessed in bottom-right corner */}
                 <div 
                   className={`absolute bottom-2.5 right-3 text-[11px] font-normal tabular-nums font-sans transition-colors ${
-                    isAtLimit ? 'text-[#FF6961]/80' : 'text-white/30'
+                    isAtLimit ? 'text-[#FF6961]' : 'text-[#727272]'
                   }`}
                 >
                   {message.length} / {MAX_CHARS}
@@ -307,9 +310,9 @@ export default function FeedbackModal({ onClose }) {
 
               {/* Email Input (Optional) with Vibrant 3D Microsoft Fluent Envelope */}
               <div className="flex flex-col gap-1.5">
-                <label className="text-[12.5px] font-medium text-white/80 flex items-center gap-1.5">
+                <label className="text-[12.5px] font-medium text-[#E5E5EA] flex items-center gap-1.5">
                   <span>Your email</span>
-                  <span className="text-white/35 font-normal text-[11px]">(optional)</span>
+                  <span className="text-[#727272] font-normal text-[11px]">(optional)</span>
                 </label>
                 <div className="relative flex items-center">
                   <input
@@ -388,7 +391,7 @@ export default function FeedbackModal({ onClose }) {
                   <h3 className="text-white font-bold text-[19px] leading-[24px] tracking-[-0.02em] font-sans">
                     Bug Caught! 🐛
                   </h3>
-                  <p className="mt-2 text-white/45 text-[12.5px] leading-[19px] max-w-[340px] font-sans font-normal">
+                  <p className="mt-2 text-[#999999] text-[12.5px] leading-[19px] max-w-[340px] font-sans font-normal">
                     I am already staring at the code in mild existential panic. Thank you for catching it before the whole card combusted.
                   </p>
                 </>
@@ -397,7 +400,7 @@ export default function FeedbackModal({ onClose }) {
                   <h3 className="text-white font-bold text-[19px] leading-[24px] tracking-[-0.02em] font-sans">
                     Added to the Sticker Vault! ✨
                   </h3>
-                  <p className="mt-2 text-white/45 text-[12.5px] leading-[19px] max-w-[340px] font-sans font-normal">
+                  <p className="mt-2 text-[#999999] text-[12.5px] leading-[19px] max-w-[340px] font-sans font-normal">
                     If this sticker is as unhinged as I think it is, expect to see it in the next update.
                   </p>
                 </>
@@ -406,7 +409,7 @@ export default function FeedbackModal({ onClose }) {
                   <h3 className="text-white font-bold text-[19px] leading-[24px] tracking-[-0.02em] font-sans">
                     Delivered to My Inbox! 💌
                   </h3>
-                  <p className="mt-2 text-white/45 text-[12.5px] leading-[19px] max-w-[340px] font-sans font-normal">
+                  <p className="mt-2 text-[#999999] text-[12.5px] leading-[19px] max-w-[340px] font-sans font-normal">
                     A real human is reading this and either smiling like an idiot or taking furious notes. You're the best.
                   </p>
                 </>
@@ -427,6 +430,7 @@ export default function FeedbackModal({ onClose }) {
           )}
         </AnimatePresence>
       </motion.div>
-    </div>
+    </div>,
+    document.body
   );
 }
