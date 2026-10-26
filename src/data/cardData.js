@@ -16,11 +16,11 @@ export const OCCASIONS = [
 ];
 
 export const POKEMON_CARDS = [
-  { id: 'gengar', name: 'FU Gengar', image: '/pokemon/003-003-gengar.png' },
-  { id: 'squirtle', name: 'FU Squirtle', image: '/pokemon/001-003-squirtle.png' },
-  { id: 'opposites', name: 'Opposites...', image: '/pokemon/001-002-opposites-attract.png' },
-  { id: 'oshawott', name: 'Oshawott', image: '/pokemon/001-002-oshawott.png' },
-  { id: 'psyduck', name: 'Psyduck', image: '/pokemon/001-002-psyduck.png' },
+  { id: 'gengar', name: 'FU Gengar', image: '/pokemon/003-003-gengar.png', thumb: '/pokemon/icons/gengar-thumb.png' },
+  { id: 'squirtle', name: 'FU Squirtle', image: '/pokemon/001-003-squirtle.png', thumb: '/pokemon/icons/squirtle-thumb.png' },
+  { id: 'opposites', name: 'Opposites...', image: '/pokemon/001-002-opposites-attract.png', thumb: '/pokemon/icons/opposites-thumb.png' },
+  { id: 'oshawott', name: 'Oshawott', image: '/pokemon/001-002-oshawott.png', thumb: '/pokemon/icons/oshawott-thumb.png' },
+  { id: 'psyduck', name: 'Psyduck', image: '/pokemon/001-002-psyduck.png', thumb: '/pokemon/icons/psyduck-thumb.png' },
 ];
 
 export const BACK_IMAGES = [
@@ -93,4 +93,3 @@ export const DEFAULT_STATE = {
   stickerPos: { x: 30, y: 160 },
   stickers: [],
 };
-
