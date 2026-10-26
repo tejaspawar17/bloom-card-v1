@@ -295,7 +295,7 @@ export default function CardRevealPreview({ onCraftOwn }) {
   );
 
   return (
-    <div className="flex-1 w-full max-w-[1600px] mx-auto px-4 sm:px-6 flex flex-col items-center justify-start select-none pt-2 sm:pt-3 pb-3 z-10 relative">
+    <div className="w-full max-w-[1600px] mx-auto px-4 sm:px-6 min-h-[calc(100dvh-64px)] flex flex-col items-center justify-center select-none py-4 sm:py-5 z-10 relative">
       {/* 3D Card Stage */}
       <div 
         className="relative flex flex-col items-center justify-center"
@@ -555,7 +555,7 @@ export default function CardRevealPreview({ onCraftOwn }) {
             y: 0
           }}
           transition={{ duration: 0.35 }}
-          className="flex items-center justify-center mt-2 sm:mt-2.5 z-20"
+          className="flex items-center justify-center mt-3.5 sm:mt-4 z-20"
         >
           <LiquidGlassButton
             variant="primary"
