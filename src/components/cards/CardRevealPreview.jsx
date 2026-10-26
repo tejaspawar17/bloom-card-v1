@@ -191,27 +191,23 @@ export default function CardRevealPreview({ onCraftOwn }) {
 
       {/* Center Radiant AnimatedAILoaderFX Orb + ShaderButton ("Reveal") */}
       <div className="relative z-20 flex flex-col items-center justify-center my-auto">
-        {/* AnimatedAILoaderFX rotating gradient background orb */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none">
-          <AnimatedAILoaderFX 
-            size={195} 
-            isCharging={revealStage === 'charging'} 
-          />
-        </div>
-
-        {/* Tactile Liquid ShaderButton ("Reveal") */}
-        <ShaderButton
-          type="button"
-          showArrow={false}
-          size="md"
-          className="shadow-[0_12px_28px_rgba(0,0,0,0.6)] active:scale-95 transition-transform font-medium tracking-tight"
-          onClick={(e) => {
-            e.stopPropagation();
-            handleReveal();
-          }}
+        <AnimatedAILoaderFX 
+          size={210} 
+          animationDuration={revealStage === 'charging' ? 0.8 : 2.4}
         >
-          {revealStage === 'charging' ? 'Opening...' : 'Reveal'}
-        </ShaderButton>
+          <ShaderButton
+            type="button"
+            showArrow={false}
+            size="md"
+            className="shadow-[0_12px_28px_rgba(0,0,0,0.6)] active:scale-95 transition-transform font-medium tracking-tight z-10"
+            onClick={(e) => {
+              e.stopPropagation();
+              handleReveal();
+            }}
+          >
+            {revealStage === 'charging' ? 'Opening...' : 'Reveal'}
+          </ShaderButton>
+        </AnimatedAILoaderFX>
       </div>
 
       {/* Bottom Debossed Limited Edition Stamp */}

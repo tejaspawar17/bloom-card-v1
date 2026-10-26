@@ -279,7 +279,7 @@ void main() {
 
 const SIZE_CONFIGS = {
   sm: 'px-6 py-2.5 text-[14px]',
-  md: 'px-7 py-3 text-[15px] sm:text-[16px]',
+  md: 'px-8 py-3.5 text-[16px]',
   lg: 'px-10 py-4 text-[17px]',
 };
 
@@ -376,7 +376,7 @@ export default function ShaderButton({
     gl.uniform1i(uColorsLength, 4);
     gl.uniform1f(uSeed, 32.0);
     gl.uniform1f(uSpeed, 1.6);
-    gl.uniform1f(uScale, 0.4);
+    gl.uniform1f(uScale, 0.6);
     gl.uniform1f(uTurbAmp, 0.6);
     gl.uniform1f(uTurbFreq, 0.1);
     gl.uniform1f(uTurbIter, 4.0);
@@ -384,7 +384,7 @@ export default function ShaderButton({
     gl.uniform1f(uContrast, 1.1);
     gl.uniform1f(uExposure, 1.1);
     gl.uniform1f(uSaturation, 1.0);
-    gl.uniform1f(uDither, 0.2);
+    gl.uniform1f(uDither, 0.08);
     gl.uniform1f(uDitherMode, 1.0);
     gl.uniform1f(uLoop, 0.0);
     gl.uniform1f(uDistBias, 0.0);
@@ -463,8 +463,8 @@ export default function ShaderButton({
         className="absolute inset-[-2px] pointer-events-none rounded-full z-0"
         style={{
           backgroundColor: 'rgba(10, 18, 2, 0.02)',
-          boxShadow: 'inset 0px 0px 16px 0px rgba(217, 249, 157, 0.64)',
-          mixBlendMode: 'hard-light',
+          boxShadow: 'inset 0px 0px 14px 0px rgba(217, 249, 157, 0.42)',
+          mixBlendMode: 'screen',
         }}
         variants={{
           initial: { opacity: 1 },
