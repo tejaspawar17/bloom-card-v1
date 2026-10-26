@@ -73,7 +73,7 @@ const HOW_IT_WORKS_CARDS = [
     num: '01',
     tag: 'CURATED MOODS',
     title: 'Choose the Tone',
-    desc: 'Skip the generic card aisle. Start with real emotions—from milestone birthdays to candid apologies.',
+    desc: 'Curated moods for real moments, from birthdays to apologies.',
     rotate: -2.2,
     pushpin: '#86B75A', // Spring Olive (single matching accent color)
     accent: '#86B75A',
@@ -82,7 +82,7 @@ const HOW_IT_WORKS_CARDS = [
     num: '02',
     tag: 'TACTILE CRAFT',
     title: 'Craft the Details',
-    desc: 'Layer realistic paper textures, metallic foil bevels, personal notes, and crooked stickers.',
+    desc: 'Add tactile paper textures, gold foil, and personal notes.',
     rotate: 1.8,
     pushpin: '#CFC531', // Warm Sunlight (single matching accent color)
     accent: '#CFC531',
@@ -91,7 +91,7 @@ const HOW_IT_WORKS_CARDS = [
     num: '03',
     tag: 'ZERO FRICTION',
     title: 'Share in Seconds',
-    desc: 'No accounts, no downloads. Your recipient gets a permanent 3D link that opens instantly on any phone.',
+    desc: 'Send a permanent 3D link that opens instantly on any phone.',
     rotate: -1.4,
     pushpin: '#7CE0DC', // Mint Cyan (single matching accent color)
     accent: '#7CE0DC',
@@ -189,9 +189,9 @@ export default function AboutPage({ onStartCrafting, onFeedback, onTerms, onPriv
            ============================================================ */}
         <section className="w-full flex flex-col gap-4">
           
-          {/* Section Eyebrow (Apple HIG Caption 2: 11px, line-height 13px, tracking 0.08em uppercase, font-semibold 600) */}
+          {/* Section Eyebrow (Apple HIG Caption 2: 11px, line-height 13px, tracking 0.08em uppercase, font-normal 400) */}
           <div className="flex items-center justify-between w-full px-1">
-            <span className="text-white/40 text-[11px] leading-[13px] font-semibold tracking-[0.08em] uppercase">
+            <span className="text-white/40 text-[11px] leading-[13px] font-normal tracking-[0.08em] uppercase">
               How it works
             </span>
             <span className="text-white/30 text-[11px] leading-[13px] font-normal flex items-center gap-1.5">
@@ -253,23 +253,23 @@ export default function AboutPage({ onStartCrafting, onFeedback, onTerms, onPriv
                         className="w-3 h-3 rounded-full border border-white/40"
                         style={{ backgroundColor: card.pushpin }}
                       />
-                      <span className="font-sans font-semibold text-[11px] leading-[13px] text-white/35 tracking-wider pr-4">
+                      <span className="font-sans font-normal text-[11px] leading-[13px] text-white/35 tracking-wider pr-4">
                         STEP {card.num}
                       </span>
                     </div>
 
                     {/* Middle Content Area */}
                     <div className="flex flex-col gap-2 text-left relative z-10">
-                      {/* Eyebrow Tag (Apple HIG Caption 2: 11px, line-height 13px, tracking 0.06em, font-semibold 600) */}
+                      {/* Eyebrow Tag (Apple HIG Caption 2: 11px, line-height 13px, tracking 0.06em, font-normal 400) */}
                       <span 
-                        className="font-sans font-semibold text-[11px] leading-[13px] tracking-[0.06em] uppercase"
+                        className="font-sans font-normal text-[11px] leading-[13px] tracking-[0.06em] uppercase"
                         style={{ color: card.accent }}
                       >
                         {card.tag}
                       </span>
 
-                      {/* Card Title (Apple HIG Title 3: 20px, line-height 25px, tracking -0.017em, font-semibold 600) */}
-                      <h3 className="text-white font-semibold text-[19px] sm:text-[20px] leading-[25px] tracking-[-0.017em]">
+                      {/* Card Title (Apple HIG Title 3: 20px, line-height 25px, tracking -0.017em, font-normal 400) */}
+                      <h3 className="text-white font-normal text-[19px] sm:text-[20px] leading-[25px] tracking-[-0.017em]">
                         {card.title}
                       </h3>
 
