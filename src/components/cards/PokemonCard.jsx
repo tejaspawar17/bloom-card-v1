@@ -65,7 +65,8 @@ export function PokemonCardBack({ onOpenEditMessage, isPreview = false }) {
 
         <EmojiStamp emoji={state.stampEmoji} className="top-[14.1%] left-[38.3%] z-30" />
 
-        {/* Silver Metallic Frame Container */}
+        {/* Silver Metallic Frame Container (Hidden when 'None' is selected on Trainer Card) */}
+        {state.selectedBackImage !== 'none' && (
         <div className="absolute top-[27.92%] left-1/2 -translate-x-1/2 w-[88.08%] h-[68.33%] z-20 shadow-[0.5cqw_0.5cqw_0.2cqw_rgba(0,0,0,0.4)] rounded-[4.6cqw]">
           
           {/* User Photo (z-0, bottom) */}
@@ -108,6 +109,7 @@ export function PokemonCardBack({ onOpenEditMessage, isPreview = false }) {
           {/* Reflection / Glare Layer (z-30, on top of frame and photo) */}
           <img src="/assets/pokemon-back/trainer-card-textures.png" alt="Card Textures" className="absolute inset-0 w-full h-full object-contain pointer-events-none z-20 opacity-70 mix-blend-hard-light" />
         </div>
+        )}
 
         {state?.stickers?.filter(s => s.side === 'back').map(sticker => ( <DraggableSticker key={sticker.id} stickerData={sticker} /> ))}
       </div>
