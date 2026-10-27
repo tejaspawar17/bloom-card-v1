@@ -1,5 +1,6 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { cn } from '@/lib/utils';
 
 interface EmojiStampProps {
   emoji?: string;
@@ -10,7 +11,7 @@ export function EmojiStamp({ emoji, className = '' }: EmojiStampProps) {
   if (!emoji) return null;
 
   return (
-    <div className={`absolute z-20 flex items-center justify-center w-[clamp(56px,21cqw,86px)] h-[clamp(56px,21cqw,86px)] select-none aspect-square ${className}`}>
+    <div className={cn("absolute z-20 flex items-center justify-center w-[clamp(62px,23.1cqw,95px)] h-[clamp(62px,23.1cqw,95px)] select-none aspect-square", className)}>
       
       {/* Layer 1: Wider 16-Point Royal Blue Starburst with Stroke */}
       <div className="absolute z-10 flex items-center justify-center w-[88%] h-[88%]">

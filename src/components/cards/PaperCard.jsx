@@ -45,7 +45,7 @@ export function PaperCardBack({ onOpenEditMessage, isPreview = false }) {
         {state.selectedBackImage && state.selectedBackImage !== 'none' && backImageSrc && (
           <PolaroidFrame imageSrc={backImageSrc} />
         )}
-        <EmojiStamp emoji={state.stampEmoji} className="left-[42%] top-[clamp(118px,38.4cqw,146px)]" />
+        <EmojiStamp emoji={state.stampEmoji} className="inset-x-0 mx-auto top-[clamp(118px,38.4cqw,146px)]" />
       </div>      
       
       
