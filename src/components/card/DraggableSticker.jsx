@@ -193,61 +193,67 @@ export function DraggableSticker({ stickerData }) {
             )}
 
             {/* Check Button (Confirm) — Top-Center */}
-            <motion.button 
+            <motion.div
               key="check-handle"
-              type="button"
-              aria-label="Confirm sticker placement"
-              initial={{ scale: 0, opacity: 0 }}
+              initial={{ scale: 0.85, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0, opacity: 0 }}
-              transition={{ type: "spring", stiffness: 500, damping: 25 }}
-              whileHover={{ scale: 1.12 }}
-              whileTap={{ scale: 0.88 }}
-              onClick={(e) => {
-                e.stopPropagation();
-                setIsEditingSticker(false);
-              }}
-              className="absolute top-1.5 left-1/2 -translate-x-1/2 w-7 h-7 rounded-full bg-[#0088FF] text-white flex items-center justify-center shadow-[0_2px_8px_rgba(0,136,255,0.4)] border border-white/40 cursor-pointer z-40 outline-none flex-shrink-0"
+              exit={{ scale: 0.85, opacity: 0 }}
+              transition={{ duration: 0.15, ease: "easeOut" }}
+              className="absolute top-1.5 inset-x-0 mx-auto w-7 h-7 z-40 flex items-center justify-center pointer-events-auto"
             >
-              <Check size={14} weight="bold" />
-            </motion.button>
+              <button 
+                type="button"
+                aria-label="Confirm sticker placement"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setIsEditingSticker(false);
+                }}
+                className="w-full h-full rounded-full bg-[#0088FF] text-white flex items-center justify-center shadow-[0_2px_8px_rgba(0,136,255,0.4)] border border-white/40 cursor-pointer outline-none transition-transform duration-100 ease-out hover:scale-105 active:scale-95 flex-shrink-0"
+              >
+                <Check size={14} weight="bold" className="block shrink-0 pointer-events-none" />
+              </button>
+            </motion.div>
 
             {/* Delete Button (X) — Top-Right */}
-            <motion.button 
+            <motion.div
               key="delete-handle"
-              type="button"
-              aria-label="Delete sticker"
-              initial={{ scale: 0, opacity: 0 }}
+              initial={{ scale: 0.85, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0, opacity: 0 }}
-              transition={{ type: "spring", stiffness: 500, damping: 25 }}
-              whileHover={{ scale: 1.12 }}
-              whileTap={{ scale: 0.88 }}
-              onClick={(e) => {
-                e.stopPropagation();
-                dispatch({ type: 'REMOVE_STICKER', payload: stickerData.id });
-              }}
-              className="absolute top-1.5 right-1.5 w-7 h-7 rounded-full bg-red-600/95 text-white flex items-center justify-center shadow-[0_2px_8px_rgba(220,38,38,0.4)] border border-white/40 cursor-pointer z-40 outline-none hover:bg-red-500 flex-shrink-0"
+              exit={{ scale: 0.85, opacity: 0 }}
+              transition={{ duration: 0.15, ease: "easeOut" }}
+              className="absolute top-1.5 right-1.5 w-7 h-7 z-40 flex items-center justify-center pointer-events-auto"
             >
-              <X size={14} weight="bold" />
-            </motion.button>
+              <button 
+                type="button"
+                aria-label="Delete sticker"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  dispatch({ type: 'REMOVE_STICKER', payload: stickerData.id });
+                }}
+                className="w-full h-full rounded-full bg-red-600/95 text-white flex items-center justify-center shadow-[0_2px_8px_rgba(220,38,38,0.4)] border border-white/40 cursor-pointer outline-none hover:bg-red-500 transition-transform duration-100 ease-out hover:scale-105 active:scale-95 flex-shrink-0"
+              >
+                <X size={14} weight="bold" className="block shrink-0 pointer-events-none" />
+              </button>
+            </motion.div>
 
             {/* Rotation Handle — Bottom-Center */}
-            <motion.button 
+            <motion.div
               key="rotate-handle"
-              type="button"
-              aria-label="Rotate sticker"
-              initial={{ scale: 0, opacity: 0 }}
+              initial={{ scale: 0.85, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0, opacity: 0 }}
-              transition={{ type: "spring", stiffness: 500, damping: 25 }}
-              whileHover={{ scale: 1.12 }}
-              whileTap={{ scale: 0.88 }}
-              onPointerDown={startRotation}
-              className="absolute bottom-1.5 left-1/2 -translate-x-1/2 w-7 h-7 rounded-full bg-[#1A1A1A]/95 text-white flex items-center justify-center shadow-[0_2px_8px_rgba(0,0,0,0.5)] border border-white/40 cursor-grab active:cursor-grabbing z-40 outline-none hover:bg-neutral-800 flex-shrink-0"
+              exit={{ scale: 0.85, opacity: 0 }}
+              transition={{ duration: 0.15, ease: "easeOut" }}
+              className="absolute bottom-1.5 inset-x-0 mx-auto w-7 h-7 z-40 flex items-center justify-center pointer-events-auto"
             >
-              <ArrowsClockwise size={14} weight="bold" />
-            </motion.button>
+              <button 
+                type="button"
+                aria-label="Rotate sticker"
+                onPointerDown={startRotation}
+                className="w-full h-full rounded-full bg-[#1A1A1A]/95 text-white flex items-center justify-center shadow-[0_2px_8px_rgba(0,0,0,0.5)] border border-white/40 cursor-grab active:cursor-grabbing outline-none hover:bg-neutral-800 transition-transform duration-100 ease-out hover:scale-105 active:scale-95 flex-shrink-0"
+              >
+                <ArrowsClockwise size={14} weight="bold" className="block shrink-0 pointer-events-none" />
+              </button>
+            </motion.div>
           </>
         )}
       </AnimatePresence>
