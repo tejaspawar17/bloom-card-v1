@@ -176,6 +176,20 @@ export default function FeedbackModal({ onClose }) {
       console.info('Feedback logged locally:', { category, message, email });
     });
 
+    // Background email alert via Vercel serverless Resend function
+    fetch('/api/feedback', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        category,
+        message: message.trim(),
+        email: email.trim() || null,
+        created_at: new Date().toISOString()
+      })
+    }).catch((err) => {
+      console.warn('Feedback notification dispatch skipped or failed:', err);
+    });
+
     // Instant, smooth transition into celebration screen
     setTimeout(() => {
       setIsSubmitting(false);
