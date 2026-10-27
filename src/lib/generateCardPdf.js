@@ -280,21 +280,35 @@ export async function generateKeychainPdf({
   );
 
   // -------------------------------------------------------------
-  // 7. FOOTER NOTE
+  // 7. FOOTER NOTE & CLICKABLE WEB APP LINK
   // -------------------------------------------------------------
-  pdf.setDrawColor(240, 240, 240);
-  pdf.setLineWidth(0.15);
-  pdf.line(startX, pageHeight - 20, startX + totalCardsW, pageHeight - 20);
+  const footerDividerY = pageHeight - 22; // 275mm
+  pdf.setDrawColor(228, 228, 231); // #e4e4e7
+  pdf.setLineWidth(0.18);
+  pdf.line(startX, footerDividerY, startX + totalCardsW, footerDividerY);
 
+  const appUrl = (typeof window !== 'undefined' && window.location?.origin) 
+    ? window.location.origin 
+    : 'https://bloomcard.app';
+
+  // Left studio colophon
   pdf.setFont('helvetica', 'normal');
-  pdf.setFontSize(6.5);
+  pdf.setFontSize(6.8);
   pdf.setTextColor(161, 161, 170); // #a1a1aa
-  pdf.text(
-    'Bloom Card Keepsake Studio  •  bloomcard.app  •  Handcrafted digital keepsake',
-    pageWidth / 2,
-    pageHeight - 15,
-    { align: 'center' }
-  );
+  pdf.text('Bloom Keepsake Studio  •  Handcrafted Digital Keepsake', startX, footerDividerY + 6.5);
+
+  // Right clickable studio link
+  const linkLabel = 'Create your own card at bloomcard.app  ->';
+  pdf.setFont('helvetica', 'bold');
+  pdf.setFontSize(6.8);
+  pdf.setTextColor(37, 99, 235); // #2563eb (refined modern link blue)
+  const linkW = pdf.getTextWidth(linkLabel);
+  const linkX = startX + totalCardsW - linkW;
+  const linkY = footerDividerY + 6.5;
+
+  pdf.textWithLink(linkLabel, linkX, linkY, { url: appUrl });
+  // Add a clickable target bounding box covering the link for mobile & desktop touch/mouse targets
+  pdf.link(linkX - 1, linkY - 3.5, linkW + 2, 5, { url: appUrl });
 
   // 8. Save & trigger download
   const sanitizedTitle = cardTitle.toLowerCase().replace(/[^a-z0-9_-]/g, '-');
