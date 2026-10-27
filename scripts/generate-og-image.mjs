@@ -142,15 +142,19 @@ async function run() {
       captureBeyondViewport: false,
     });
 
-    const buffer = Buffer.from(screenshotResult.data, 'base64');
-    writeFileSync(OUTPUT_PATH, buffer);
+    const rawBuffer = Buffer.from(screenshotResult.data, 'base64');
+    
+    // Optimize for WhatsApp, Facebook, iMessage, Twitter (<300 KB limit)
+    console.log('[OG-Image] Optimizing for social media scrapers (WhatsApp/Twitter)...');
+    await sharp(rawBuffer)
+      .resize(1200, 630)
+      .png({ quality: 80, compressionLevel: 9 })
+      .toFile(OUTPUT_PATH);
 
-    console.log(`[OG-Image] Saved ${buffer.length} bytes to ${OUTPUT_PATH}`);
-
-    // Verify with Sharp
     const metadata = await sharp(OUTPUT_PATH).metadata();
+    const stat = (await import('node:fs')).statSync(OUTPUT_PATH);
     console.log(
-      `[OG-Image] Verification Success: ${metadata.width}x${metadata.height}px, ${metadata.format.toUpperCase()}, ${(buffer.length / 1024).toFixed(1)} KB`
+      `[OG-Image] Verification Success: ${metadata.width}x${metadata.height}px, ${metadata.format.toUpperCase()}, ${(stat.size / 1024).toFixed(1)} KB`
     );
 
     ws.close();
