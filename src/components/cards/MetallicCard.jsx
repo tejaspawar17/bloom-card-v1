@@ -68,12 +68,12 @@ export function MetallicCardBack({ onOpenEditMessage, isPreview = false }) {
 
       <FlowerInfoPill variant="back" />
 
-      {state.selectedBackImage && state.selectedBackImage !== 'none' && (
-        <div className="absolute inset-0 pointer-events-none translate-y-[clamp(10px,2.8%,15px)] z-10">
+      <div className="absolute inset-0 pointer-events-none translate-y-[clamp(10px,2.8%,15px)] z-10">
+        {state.selectedBackImage && state.selectedBackImage !== 'none' && backImageSrc && (
           <PolaroidFrame imageSrc={backImageSrc} />
-          <EmojiStamp emoji={state.stampEmoji} className="left-[42%] top-[clamp(118px,38.4cqw,146px)]" />
-        </div>
-      )}
+        )}
+        <EmojiStamp emoji={state.stampEmoji} className="left-[42%] top-[clamp(118px,38.4cqw,146px)]" />
+      </div>
 
       {/* Labels added as real text for crisp rendering */}
       <div className="absolute z-30 top-[54.5%] left-[17%] font-['Instrument_Serif',serif] text-[4.44cqw] leading-[5.33cqw] antialiased text-[#141413] font-normal tracking-wide" style={{ WebkitTextStroke: '0.2px currentColor' }}>To:</div>

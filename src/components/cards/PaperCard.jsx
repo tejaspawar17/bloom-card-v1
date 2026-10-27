@@ -41,12 +41,12 @@ export function PaperCardBack({ onOpenEditMessage, isPreview = false }) {
         className="absolute inset-0 w-full h-full object-cover pointer-events-none"
       />
 
-      {state.selectedBackImage && state.selectedBackImage !== 'none' && (
-        <div className="absolute inset-0 pointer-events-none translate-y-[clamp(10px,2.8%,15px)] z-10">
+      <div className="absolute inset-0 pointer-events-none translate-y-[clamp(10px,2.8%,15px)] z-10">
+        {state.selectedBackImage && state.selectedBackImage !== 'none' && backImageSrc && (
           <PolaroidFrame imageSrc={backImageSrc} />
-          <EmojiStamp emoji={state.stampEmoji} className="left-[42%] top-[clamp(118px,38.4cqw,146px)]" />
-        </div>
-      )}      
+        )}
+        <EmojiStamp emoji={state.stampEmoji} className="left-[42%] top-[clamp(118px,38.4cqw,146px)]" />
+      </div>      
       
       
         {/* Labels added as real text for crisp rendering */}
