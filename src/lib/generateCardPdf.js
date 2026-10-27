@@ -161,31 +161,35 @@ export async function generateKeychainPdf({
   // -------------------------------------------------------------
   // 4. PRECISION CROP MARKS (Cutting Ticks for Trimming)
   // -------------------------------------------------------------
-  const drawCropMarks = (x, y, w, h) => {
+  const drawCropMarks = (x, y, w, h, isLeftCard, isRightCard) => {
     pdf.setDrawColor(161, 161, 170); // #a1a1aa
     pdf.setLineWidth(0.18);
-    const tick = 4.5; // 4.5mm tick mark
+    const outerTick = 4.5; // 4.5mm outer tick mark
+    const innerTick = 2.0; // 2.0mm inner tick mark so marks never collide in the 12mm gap
     const offset = 2.0; // 2mm offset from card edge
 
+    const leftTickLen = isLeftCard ? outerTick : innerTick;
+    const rightTickLen = isRightCard ? outerTick : innerTick;
+
     // Top-left
-    pdf.line(x - offset - tick, y, x - offset, y);
-    pdf.line(x, y - offset - tick, x, y - offset);
+    pdf.line(x - offset - leftTickLen, y, x - offset, y);
+    pdf.line(x, y - offset - outerTick, x, y - offset);
 
     // Top-right
-    pdf.line(x + w + offset, y, x + w + offset + tick, y);
-    pdf.line(x + w, y - offset - tick, x + w, y - offset);
+    pdf.line(x + w + offset, y, x + w + offset + rightTickLen, y);
+    pdf.line(x + w, y - offset - outerTick, x + w, y - offset);
 
     // Bottom-left
-    pdf.line(x - offset - tick, y + h, x - offset, y + h);
-    pdf.line(x, y + h + offset, x, y + h + offset + tick);
+    pdf.line(x - offset - leftTickLen, y + h, x - offset, y + h);
+    pdf.line(x, y + h + offset, x, y + h + offset + outerTick);
 
     // Bottom-right
-    pdf.line(x + w + offset, y + h, x + w + offset + tick, y + h);
-    pdf.line(x + w, y + h + offset, x + w, y + h + offset + tick);
+    pdf.line(x + w + offset, y + h, x + w + offset + rightTickLen, y + h);
+    pdf.line(x + w, y + h + offset, x + w, y + h + offset + outerTick);
   };
 
-  drawCropMarks(frontX, startY, cardW, cardH);
-  drawCropMarks(backX, startY, cardW, cardH);
+  drawCropMarks(frontX, startY, cardW, cardH, true, false);
+  drawCropMarks(backX, startY, cardW, cardH, false, true);
 
   // Faint Center Folding / Separation Guide
   const centerGuideX = frontX + cardW + gap / 2; // 105mm

@@ -11,7 +11,7 @@ export function MetallicCardFront({ onOpenEditTitle, isPreview = false }) {
   const { state, flower } = useCard();
 
   return (
-    <div className={`relative w-full h-full aspect-[688/960] ${isPreview ? 'rounded-none' : 'rounded-[12px]'} overflow-hidden shadow-2xl select-none bg-transparent @container`} style={{ containerType: "inline-size" }}>
+    <div className={`relative w-full h-full aspect-[688/960] rounded-[16px] overflow-hidden shadow-2xl select-none bg-transparent @container`} style={{ containerType: "inline-size" }}>
       {/* Background artwork */}
       <img
         src={flower?.image || '/assets/flower-illustrations/flower_1.png'}
@@ -59,7 +59,7 @@ export function MetallicCardBack({ onOpenEditMessage, isPreview = false }) {
   const backImageSrc = getBackImageSrc();
 
   return (
-    <div className={`relative w-full h-full aspect-[688/960] ${isPreview ? 'rounded-none border-none bg-[#c8c5c0]' : 'rounded-[16px] border border-[#95a0a6]/60 bg-black'} overflow-hidden shadow-2xl select-none @container`} style={{ containerType: "inline-size" }}>
+    <div className={`relative w-full h-full aspect-[688/960] rounded-[16px] ${isPreview ? 'border-none' : 'border border-[#95a0a6]/60'} overflow-hidden shadow-2xl select-none bg-transparent @container`} style={{ containerType: "inline-size" }}>
       <img
         src="/assets/bloom/metallic_back.png"
         alt="Metallic Card Back"
