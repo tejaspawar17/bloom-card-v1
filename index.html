@@ -6,7 +6,29 @@
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="apple-touch-icon" href="/favicon-192.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Bloom - Custom Mood Greeting & Pokémon Cards</title>
+
+    <!-- Primary Meta Tags -->
+    <title>Bloom — Custom Mood Greeting & Pokémon Cards</title>
+    <meta name="title" content="Bloom — Custom Mood Greeting & Pokémon Cards" />
+    <meta name="description" content="Craft bespoke collectible 3D holographic cards, vinyl sleeves, and cassette keepsakes from any Spotify track or mood." />
+
+    <!-- Open Graph / Facebook / LinkedIn / WhatsApp -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://bloomcard.app/" />
+    <meta property="og:title" content="Bloom — Custom Mood Greeting & Pokémon Cards" />
+    <meta property="og:description" content="Craft bespoke collectible 3D holographic cards, vinyl sleeves, and cassette keepsakes from any Spotify track or mood." />
+    <meta property="og:image" content="https://bloomcard.app/og-image.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Bloom Card Studio interactive 3D card preview" />
+
+    <!-- Twitter / X -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:url" content="https://bloomcard.app/" />
+    <meta name="twitter:title" content="Bloom — Custom Mood Greeting & Pokémon Cards" />
+    <meta name="twitter:description" content="Craft bespoke collectible 3D holographic cards, vinyl sleeves, and cassette keepsakes from any Spotify track or mood." />
+    <meta name="twitter:image" content="https://bloomcard.app/og-image.png" />
+
     <!-- Google Fonts: Instrument Serif, Instrument Sans, Inter, Source Serif 4, Syne Tactile, Vampiro One -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -18,7 +40,7 @@
       <div id="app-preloader" style="position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;background-color:#070908;z-index:99999;user-select:none;">
         <script>
           try {
-            if (sessionStorage.getItem('bloom_has_loaded') === 'true') {
+            if (sessionStorage.getItem('bloom_has_loaded') === 'true' || window.location.search.indexOf('og=1') !== -1) {
               document.getElementById('app-preloader').style.display = 'none';
             }
           } catch(e) {}

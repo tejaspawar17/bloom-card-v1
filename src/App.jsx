@@ -59,9 +59,12 @@ const loaderVariants = {
 function AppShell() {
   const { dispatch } = useCard();
   
-  // Only show the preloader on first session visit; reloads bypass immediately (0ms delay)
+  // Only show the preloader on first session visit; reloads and ?og=1 bypass immediately (0ms delay)
   const [isAppLoading, setIsAppLoading] = useState(() => {
     try {
+      if (typeof window !== 'undefined' && window.location.search.includes('og=1')) {
+        return false;
+      }
       return sessionStorage.getItem('bloom_has_loaded') !== 'true';
     } catch {
       return false;
@@ -107,6 +110,13 @@ function AppShell() {
     let isMounted = true;
 
     const initApp = async () => {
+      // If ?og=1 is present, skip wait immediately
+      if (typeof window !== 'undefined' && window.location.search.includes('og=1')) {
+        await syncFromUrl();
+        if (isMounted) setIsAppLoading(false);
+        return;
+      }
+
       // If already loaded in this session, immediately sync without artificial wait
       if (sessionStorage.getItem('bloom_has_loaded') === 'true') {
         await syncFromUrl();
@@ -196,7 +206,7 @@ function AppShell() {
           exit="exit"
           className="fixed inset-0 z-[99999] flex flex-col items-center justify-center bg-[#070908] select-none"
         >
-          <AnimatedAILoaderFX />
+          <AnimatedAILoaderFX palette="framer" />
         </motion.div>
       ) : (
         /* Full App Content: Enters seamlessly using existing Bloom optical blur transition */
@@ -231,7 +241,7 @@ function AppShell() {
                 <Suspense
                   fallback={
                     <div className="w-full flex-1 flex items-center justify-center min-h-[60vh]">
-                      <AnimatedAILoaderFX size={140} />
+                      <AnimatedAILoaderFX palette="framer" size={140} />
                     </div>
                   }
                 >

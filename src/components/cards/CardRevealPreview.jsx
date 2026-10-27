@@ -191,7 +191,8 @@ export default function CardRevealPreview({ onCraftOwn }) {
 
       {/* Center Radiant AnimatedAILoaderFX Orb + ShaderButton ("Reveal") */}
       <div className="relative z-20 flex flex-col items-center justify-center my-auto">
-        <AnimatedAILoaderFX 
+        <AnimatedAILoaderFX
+          palette="bloom"
           size={210} 
           animationDuration={revealStage === 'charging' ? 1.2 : 6.5}
         >
@@ -570,3 +571,4 @@ export default function CardRevealPreview({ onCraftOwn }) {
     </div>
   );
 }
+

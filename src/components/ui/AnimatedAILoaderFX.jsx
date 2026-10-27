@@ -1,17 +1,40 @@
 import React, { useMemo } from 'react';
 
 /**
+ * Gradient Palettes for AnimatedAILoaderFX
+ * - framer: Exact Framer Marketplace purple/violet palette (used for site preloader)
+ * - bloom: Bespoke Bloom emerald/forest/solar-gold palette (used for Card Reveal)
+ */
+export const LOADER_PALETTES = {
+  framer: {
+    colorLight: "#ffffff",
+    colorMid: "#ad5fff",
+    colorDark: "#471eec",
+    colorMidAlt: "#d60a47",
+    colorDarkAlt: "#311e80",
+  },
+  bloom: {
+    colorLight: "#ffffff",
+    colorMid: "#86B75A",
+    colorDark: "#132013",
+    colorMidAlt: "#CFC531",
+    colorDarkAlt: "#4F793E",
+  },
+};
+
+/**
  * AnimatedAILoaderFX
  * Exact component from Framer Marketplace:
  * https://framer.com/m/AnimatedAILoaderFX-ScAzDC.js@qaIw0VNDi8FmQK9IacAM
  * 
  * Features:
- * - Rotating dual-phase gradient box-shadow orb
+ * - Dual-phase rotating gradient box-shadow orb with switchable palettes ('framer' | 'bloom')
  * - Staggered letter-by-letter wave animation on "Generating"
  * - Supports custom children override (e.g. Reveal button)
  */
 export default function AnimatedAILoaderFX(props) {
   const {
+    palette = "framer",
     text = "Generating",
     size = 180,
     font = {
@@ -22,16 +45,17 @@ export default function AnimatedAILoaderFX(props) {
     textColor = "#ffffff",
     animationDuration = 2,
     letterDelay = 0.1,
-    // Exact Framer default gradient colors
-    colorLight = "#ffffff",
-    colorMid = "#ad5fff",
-    colorDark = "#471eec",
-    colorMidAlt = "#d60a47",
-    colorDarkAlt = "#311e80",
     children,
     className = "",
     style = {},
   } = props;
+
+  const activePalette = LOADER_PALETTES[palette] || LOADER_PALETTES.framer;
+  const colorLight = props.colorLight || activePalette.colorLight;
+  const colorMid = props.colorMid || activePalette.colorMid;
+  const colorDark = props.colorDark || activePalette.colorDark;
+  const colorMidAlt = props.colorMidAlt || activePalette.colorMidAlt;
+  const colorDarkAlt = props.colorDarkAlt || activePalette.colorDarkAlt;
 
   const letters = useMemo(() => (text ? text.split("") : []), [text]);
   const keyframeId = useMemo(
