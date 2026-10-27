@@ -480,7 +480,19 @@ export default function ShareModal({ onClose, onOpenRecipientPreview }) {
                 <div className="w-full max-w-[400px] mt-3 font-sans">
                   <button
                     type="button"
-                    onClick={onOpenRecipientPreview}
+                    onClick={() => {
+                      if (!state.date || !state.time) {
+                        const now = new Date();
+                        dispatch({
+                          type: 'SET_TIMESTAMP',
+                          payload: {
+                            date: state.date || now.toLocaleDateString("en-US", { day: "numeric", month: "short", year: "numeric" }),
+                            time: state.time || now.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit", hour12: true })
+                          }
+                        });
+                      }
+                      onOpenRecipientPreview?.();
+                    }}
                     className="dark-liquid-glass-pill w-full h-[40px] px-5 text-[13.5px] leading-[20px] font-medium text-[#FFFFFF] hover:text-[#FFFFFF] flex items-center justify-center font-sans cursor-pointer active:scale-[0.98] transition-transform"
                   >
                     <span>Sneak a Peek as Recipient</span>

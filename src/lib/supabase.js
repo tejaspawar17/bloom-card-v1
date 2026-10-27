@@ -60,8 +60,14 @@ export async function saveSharedCard(state) {
   const id = generateShortId(8);
   const permanentBackImage = await resolveBackImageForShare(state.selectedBackImage);
 
+  const now = new Date();
+  const dateFormatted = now.toLocaleDateString("en-US", { day: "numeric", month: "short", year: "numeric" });
+  const timeFormatted = now.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit", hour12: true });
+
   const payloadState = {
     ...state,
+    date: state.date || dateFormatted,
+    time: state.time || timeFormatted,
     selectedBackImage: permanentBackImage,
     activeSide: 'front',
   };

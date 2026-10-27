@@ -16,12 +16,25 @@ export function PaperCardBack({ onOpenEditMessage, isPreview = false }) {
   const [isEditing, setIsEditing] = useState(false);
 
   useEffect(() => {
-    const now = new Date();
-    const dateFormatted = now.toLocaleDateString("en-US", { day: "numeric", month: "short", year: "numeric" });
-    const timeFormatted = now.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit", hour12: true });
-    setCurrentDate(dateFormatted);
-    setCurrentTime(timeFormatted);
-  }, []);
+    const updateDateTime = () => {
+      const now = new Date();
+      const dateFormatted = now.toLocaleDateString("en-US", { day: "numeric", month: "short", year: "numeric" });
+      const timeFormatted = now.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit", hour12: true });
+      setCurrentDate(dateFormatted);
+      setCurrentTime(timeFormatted);
+    };
+
+    updateDateTime();
+
+    // If this card has a frozen timestamp from being shared or saved, keep it locked
+    if (state.date && state.time) {
+      return;
+    }
+
+    // Check every 10 seconds to catch minute and date rollover accurately without lag
+    const timer = setInterval(updateDateTime, 10000);
+    return () => clearInterval(timer);
+  }, [state.date, state.time]);
 
   const getBackImageSrc = () => {
     if (state.selectedBackImage === 'none') return null;

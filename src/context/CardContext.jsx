@@ -68,6 +68,8 @@ function cardReducer(state, action) {
     case 'SET_PLACED_STICKER':
       // Toggle off if already placed, otherwise place it
       return { ...state, placedSticker: state.placedSticker === action.payload ? null : action.payload };
+    case 'SET_TIMESTAMP':
+      return { ...state, date: action.payload.date, time: action.payload.time };
     case 'HYDRATE_CARD':
       return { ...state, ...action.payload, activeSide: 'front' };
     default:
