@@ -1,9 +1,27 @@
 import React from 'react';
 import { InstagramLogo, EnvelopeSimple } from '@phosphor-icons/react';
+import { toast } from '@heroui/react';
 import '@/components/ui/LiquidGlassIconButton.css';
 import CoffeeButton from '@/components/ui/CoffeeButton';
 
 export default function Footer({ onFeedback, onTerms, onPrivacy }) {
+  const handleCopyEmail = async () => {
+    const email = 'pawartejas517@gmail.com';
+    try {
+      await navigator.clipboard.writeText(email);
+    } catch {
+      const textArea = document.createElement('textarea');
+      textArea.value = email;
+      document.body.appendChild(textArea);
+      textArea.select();
+      document.execCommand('copy');
+      document.body.removeChild(textArea);
+    }
+    toast.success('Email copied to clipboard!', {
+      description: email,
+      timeout: 3000,
+    });
+  };
   return (
     <footer 
       role="contentinfo" 
@@ -48,7 +66,7 @@ export default function Footer({ onFeedback, onTerms, onPrivacy }) {
       {/* 2. Center Section - Action Trio (Instagram, Feedback, Email) Bottom-Aligned */}
       <div className="flex items-center gap-3 shrink-0 self-center md:self-end pb-0.5">
         <a 
-          href="https://instagram.com" 
+          href="https://www.instagram.com/teja_vu._.archive?obrf=OGI4N3BkNGlyMnIz&utm_source=qr" 
           target="_blank"
           rel="noopener noreferrer"
           aria-label="Instagram"
@@ -67,15 +85,16 @@ export default function Footer({ onFeedback, onTerms, onPrivacy }) {
           Feedback
         </button>
 
-        <a 
-          href="mailto:hello@bloomcard.app" 
-          aria-label="Email"
-          className="liquid-glass-icon-button text-[#FFFFFF] hover:text-[#FFFFFF]"
+        <button 
+          type="button"
+          onClick={handleCopyEmail}
+          aria-label="Copy Email"
+          className="liquid-glass-icon-button text-[#FFFFFF] hover:text-[#FFFFFF] cursor-pointer outline-none"
         >
           <span className="liquid-glass-icon-button__glass">
             <EnvelopeSimple size={30} />
           </span>
-        </a>
+        </button>
       </div>
 
       {/* 3. Right Section - Buy Me a Coffee (Exact Height & Baseline Match) */}
