@@ -83,90 +83,90 @@ export default function LeftPanel() {
         bodyClassName="pt-[13px] pr-[4px] pb-[15px] pl-[15px] xl:pt-[15px] xl:pr-[4px] xl:pb-[17px] xl:pl-[17px] 2xl:pt-[16px] 2xl:pr-[4px] 2xl:pb-[18px] 2xl:pl-[18px] overflow-hidden"
       >
         <div ref={containerRef} className="relative w-full h-[min(186px,calc(100dvh-410px))] xl:h-[min(229px,calc(100dvh-482px))] 2xl:h-[min(246px,calc(100dvh-510px))]">
-          {isPokemonMode ? (
-            /* Pokemon Mode: 5 cards in a static 2-row grid */
-            <AnimatePresence mode="wait">
-              <motion.div
-                key="pokemon"
-                initial={{ opacity: 0, scale: 0.98 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.98 }}
-                transition={{ duration: 0.18, ease: "easeOut" }}
-                className="w-[268px] xl:w-[305px] 2xl:w-[328px] px-[3px] grid grid-cols-[repeat(4,54px)] xl:grid-cols-[repeat(4,61px)] 2xl:grid-cols-[repeat(4,66px)] justify-between gap-y-[12px] xl:gap-y-[13px] 2xl:gap-y-[14px]"
-                role="radiogroup"
-                aria-label={listTitle}
-              >
-                {listData.map((item) => {
-                  const isSelected = selectedItemId === item.id;
-                  const shortName =
-                    item.name.length > 10
-                      ? item.name.substring(0, 9) + '...'
-                      : item.name;
+          {/* Persistent ScrollArea: hides scrollbar automatically in Pokemon mode (no overflow) */}
+          <ScrollArea
+            className="h-full w-full"
+            viewportClassName="w-full rounded-[10px] xl:rounded-[11px] 2xl:rounded-[12px] overflow-hidden"
+            viewportStyle={scrollMaskImage ? { maskImage: scrollMaskImage, WebkitMaskImage: scrollMaskImage } : undefined}
+            hideScrollbar={!hasOverflow}
+          >
+            {/* Unified AnimatePresence coordinating Apple-grade optical crossfade between Flower and Pokemon grids */}
+            <AnimatePresence mode="wait" initial={false}>
+              {isPokemonMode ? (
+                /* Pokemon Mode: 5 cards in a static 2-row grid */
+                <motion.div
+                  key="pokemon"
+                  initial={{ opacity: 0, filter: 'blur(5px)', y: 4 }}
+                  animate={{ opacity: 1, filter: 'blur(0px)', y: 0 }}
+                  exit={{ opacity: 0, filter: 'blur(4px)', y: -3 }}
+                  transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
+                  className="w-[268px] xl:w-[305px] 2xl:w-[328px] px-[3px] grid grid-cols-[repeat(4,54px)] xl:grid-cols-[repeat(4,61px)] 2xl:grid-cols-[repeat(4,66px)] justify-between gap-y-[12px] xl:gap-y-[13px] 2xl:gap-y-[14px]"
+                  role="radiogroup"
+                  aria-label={listTitle}
+                >
+                  {listData.map((item) => {
+                    const isSelected = selectedItemId === item.id;
+                    const shortName =
+                      item.name.length > 10
+                        ? item.name.substring(0, 9) + '...'
+                        : item.name;
 
-                  return (
-                    <button
-                      key={item.id}
-                      type="button"
-                      role="radio"
-                      aria-checked={isSelected}
-                      onClick={() => dispatch({ type: setActionType, payload: item.id })}
-                      className="relative flex flex-col items-center cursor-pointer group outline-none active:scale-[0.96] transition-transform duration-150 ease-out w-[54px] h-[74px] xl:w-[61px] xl:h-[84px] 2xl:w-[66px] 2xl:h-[90px] font-sans"
-                      style={{ WebkitTapHighlightColor: 'transparent' }}
-                    >
-                      {/* Selection BG (Figma: 72x90, x:-3, r:15, #0088FF, hover rgba(153,153,153,0.15)) */}
-                      <div
-                        className={cn(
-                          'absolute top-0 -left-[2.5px] xl:-left-[3px] w-[59px] h-[74px] xl:w-[67px] xl:h-[84px] 2xl:w-[72px] 2xl:h-[90px] rounded-[13px] xl:rounded-[14px] 2xl:rounded-[15px] transition-colors duration-200 pointer-events-none',
-                          isSelected
-                            ? 'bg-[#0088FF]'
-                            : 'bg-transparent group-hover:bg-[rgba(153,153,153,0.15)]'
-                        )}
-                      />
-
-                      {/* Image Thumbnail (Figma: 66x66, y:3, r:12) */}
-                      <div className="relative mt-[2.5px] xl:mt-[3px] w-[54px] h-[54px] xl:w-[61px] xl:h-[61px] 2xl:w-[66px] 2xl:h-[66px] rounded-[10px] xl:rounded-[11px] 2xl:rounded-[12px] overflow-hidden bg-black/40 z-10">
-                        <img
-                          src={item.thumb || item.image}
-                          alt=""
-                          className="w-full h-full object-cover"
-                          aria-hidden="true"
-                          loading="lazy"
-                          decoding="async"
-                        />
-                      </div>
-
-                      {/* Label (Figma: Inter 400 11/13, y:72, rgba(229,229,234,0.70)) */}
-                      <span
-                        className={cn(
-                          'relative mt-[2.5px] xl:mt-[3px] text-[10px] leading-[12px] xl:text-[10.5px] xl:leading-[12.5px] 2xl:text-[11px] 2xl:leading-[13px] tracking-[0.0055em] truncate w-[54px] xl:w-[61px] 2xl:w-[66px] text-center transition-colors duration-200 z-10 font-sans',
-                          isSelected
-                            ? 'text-white font-medium'
-                            : 'text-[rgba(229,229,234,0.70)] font-normal group-hover:text-[rgba(255,255,255,0.85)]'
-                        )}
-                        title={item.name}
+                    return (
+                      <button
+                        key={item.id}
+                        type="button"
+                        role="radio"
+                        aria-checked={isSelected}
+                        onClick={() => dispatch({ type: setActionType, payload: item.id })}
+                        className="relative flex flex-col items-center cursor-pointer group outline-none active:scale-[0.96] transition-transform duration-150 ease-out w-[54px] h-[74px] xl:w-[61px] xl:h-[84px] 2xl:w-[66px] 2xl:h-[90px] font-sans"
+                        style={{ WebkitTapHighlightColor: 'transparent' }}
                       >
-                        {shortName}
-                      </span>
-                    </button>
-                  );
-                })}
-              </motion.div>
-            </AnimatePresence>
-          ) : (
-            /* Flower Mode: ScrollArea with Apple CSS maskImage edge fade & dedicated right scrollbar */
-            <ScrollArea
-              className="h-full w-full"
-              viewportClassName="w-full rounded-[10px] xl:rounded-[11px] 2xl:rounded-[12px] overflow-hidden"
-              viewportStyle={scrollMaskImage ? { maskImage: scrollMaskImage, WebkitMaskImage: scrollMaskImage } : undefined}
-              hideScrollbar={!hasOverflow}
-            >
-              <AnimatePresence mode="wait">
+                        {/* Selection BG (Figma: 72x90, x:-3, r:15, #0088FF, hover rgba(153,153,153,0.15)) */}
+                        <div
+                          className={cn(
+                            'absolute top-0 -left-[2.5px] xl:-left-[3px] w-[59px] h-[74px] xl:w-[67px] xl:h-[84px] 2xl:w-[72px] 2xl:h-[90px] rounded-[13px] xl:rounded-[14px] 2xl:rounded-[15px] transition-colors duration-200 pointer-events-none',
+                            isSelected
+                              ? 'bg-[#0088FF]'
+                              : 'bg-transparent group-hover:bg-[rgba(153,153,153,0.15)]'
+                          )}
+                        />
+
+                        {/* Image Thumbnail (Figma: 66x66, y:3, r:12) */}
+                        <div className="relative mt-[2.5px] xl:mt-[3px] w-[54px] h-[54px] xl:w-[61px] xl:h-[61px] 2xl:w-[66px] 2xl:h-[66px] rounded-[10px] xl:rounded-[11px] 2xl:rounded-[12px] overflow-hidden bg-black/40 z-10">
+                          <img
+                            src={item.thumb || item.image}
+                            alt=""
+                            className="w-full h-full object-cover"
+                            aria-hidden="true"
+                            loading="lazy"
+                            decoding="async"
+                          />
+                        </div>
+
+                        {/* Label (Figma: Inter 400 11/13, y:72, rgba(229,229,234,0.70)) */}
+                        <span
+                          className={cn(
+                            'relative mt-[2.5px] xl:mt-[3px] text-[10px] leading-[12px] xl:text-[10.5px] xl:leading-[12.5px] 2xl:text-[11px] 2xl:leading-[13px] tracking-[0.0055em] truncate w-[54px] xl:w-[61px] 2xl:w-[66px] text-center transition-colors duration-200 z-10 font-sans',
+                            isSelected
+                              ? 'text-white font-medium'
+                              : 'text-[rgba(229,229,234,0.70)] font-normal group-hover:text-[rgba(255,255,255,0.85)]'
+                          )}
+                          title={item.name}
+                        >
+                          {shortName}
+                        </span>
+                      </button>
+                    );
+                  })}
+                </motion.div>
+              ) : (
+                /* Flower Mode: ScrollArea with Apple CSS maskImage edge fade & dedicated right scrollbar */
                 <motion.div
                   key="flower"
-                  initial={{ opacity: 0, scale: 0.98 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 0.98 }}
-                  transition={{ duration: 0.18, ease: "easeOut" }}
+                  initial={{ opacity: 0, filter: 'blur(5px)', y: 4 }}
+                  animate={{ opacity: 1, filter: 'blur(0px)', y: 0 }}
+                  exit={{ opacity: 0, filter: 'blur(4px)', y: -3 }}
+                  transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
                   className="w-[268px] xl:w-[305px] 2xl:w-[328px] px-[3px] pb-3 grid grid-cols-[repeat(4,54px)] xl:grid-cols-[repeat(4,61px)] 2xl:grid-cols-[repeat(4,66px)] justify-between gap-y-[12px] xl:gap-y-[13px] 2xl:gap-y-[14px]"
                   role="radiogroup"
                   aria-label={listTitle}
@@ -225,9 +225,9 @@ export default function LeftPanel() {
                     );
                   })}
                 </motion.div>
-              </AnimatePresence>
-            </ScrollArea>
-          )}
+              )}
+            </AnimatePresence>
+          </ScrollArea>
         </div>
       </WindowPanel>
     </FigmaWindow>

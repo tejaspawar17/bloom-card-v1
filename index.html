@@ -7,14 +7,32 @@
     <link rel="apple-touch-icon" href="/favicon-192.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Bloom - Custom Mood Greeting & Pokémon Cards</title>
-    <!-- Google Fonts: Instrument Serif, Instrument Sans, Inter -->
+    <!-- Google Fonts: Instrument Serif, Instrument Sans, Inter, Source Serif 4, Syne Tactile, Vampiro One -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400..700;1,400..700&family=Instrument+Serif:ital@0;1&family=Inter:wght@300;400;500;600;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;1,8..60,400&family=Syne+Tactile&family=Vampiro+One&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif&display=swap" rel="stylesheet" />
   </head>
   <body class="bg-[#070908] text-white selection:bg-blue-500 selection:text-white">
-    <div id="root"></div>
+    <div id="root">
+      <!-- 0ms Zero-Latency Inline Fallback Splash: AnimatedAILoaderFX with centered Generating... -->
+      <div id="app-preloader" style="position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;background-color:#070908;z-index:99999;user-select:none;">
+        <div style="position:relative;display:flex;align-items:center;justify-content:center;width:160px;height:160px;border-radius:50%;">
+          <style>
+            @keyframes bloom-preload-rot {
+              0% { transform: rotate(90deg); box-shadow: 0 10px 20px 0 #ffffff inset, 0 20px 30px 0 #86B75A inset, 0 60px 60px 0 #132013 inset; }
+              50% { transform: rotate(270deg); box-shadow: 0 10px 20px 0 #ffffff inset, 0 20px 10px 0 #CFC531 inset, 0 40px 60px 0 #4F793E inset; }
+              100% { transform: rotate(450deg); box-shadow: 0 10px 20px 0 #ffffff inset, 0 20px 30px 0 #86B75A inset, 0 60px 60px 0 #132013 inset; }
+            }
+            @keyframes bloom-text-pulse {
+              0%, 100% { opacity: 0.9; }
+              50% { opacity: 0.4; }
+            }
+          </style>
+          <div style="position:absolute;top:0;left:0;width:100%;height:100%;border-radius:50%;animation:bloom-preload-rot 6.5s linear infinite;pointer-events:none;"></div>
+          <span style="position:relative;z-index:1;font-family:system-ui,-apple-system,sans-serif;font-size:11.5px;font-weight:500;letter-spacing:0.24em;text-transform:uppercase;color:rgba(255,255,255,0.9);text-shadow:0 0 14px rgba(134,183,90,0.65),0 1px 2px rgba(0,0,0,0.8);animation:bloom-text-pulse 2s ease-in-out infinite;">Generating...</span>
+        </div>
+      </div>
+    </div>
     <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>

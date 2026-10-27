@@ -10,7 +10,6 @@ import { PokemonCardFront, PokemonCardBack } from './cards/PokemonCard';
 import { MetallicCardFront, MetallicCardBack } from './cards/MetallicCard';
 import { PaperCardBack } from './cards/PaperCard';
 import { PaperCardFront } from '@/components/card/modes/PaperCardFront';
-import { generateKeychainPdf } from '@/lib/generateCardPdf';
 import { showToast } from '@/components/ui/AppleToast';
 
 // Exact spring physics matching TitleModal and MessageModal
@@ -286,6 +285,7 @@ export default function ShareModal({ onClose, onOpenRecipientPreview }) {
     await new Promise((r) => setTimeout(r, 80));
 
     try {
+      const { generateKeychainPdf } = await import('@/lib/generateCardPdf');
       await generateKeychainPdf({
         frontElement: frontRef.current,
         backElement: backRef.current,

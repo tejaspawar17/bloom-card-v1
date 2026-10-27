@@ -5,7 +5,8 @@ import React, { useMemo } from 'react';
  * Exact component from Framer Marketplace (by DiverseKit)
  * https://www.framer.com/marketplace/components/animatedailoaderfx/
  * 
- * Text removed as requested, with support for children / Reveal button.
+ * Supports centered loading text (e.g., "Generating...") matching the Framer reference,
+ * or custom children (e.g., Reveal button).
  */
 export default function AnimatedAILoaderFX({
   size = 200,
@@ -16,6 +17,8 @@ export default function AnimatedAILoaderFX({
   colorDark = "#132013",
   colorMidAlt = "#CFC531",
   colorDarkAlt = "#4F793E",
+  text,
+  textClassName = "",
   children,
   className = "",
   style = {},
@@ -81,7 +84,16 @@ export default function AnimatedAILoaderFX({
     <div style={wrapperStyle} className={className}>
       <style>{keyframes}</style>
       <div style={loaderStyle} />
-      {children}
+      {children || (text && (
+        <span
+          className={`relative z-10 font-sans text-[11px] xl:text-[12px] font-medium tracking-[0.24em] text-white/90 uppercase animate-pulse select-none text-center ${textClassName}`}
+          style={{
+            textShadow: '0 0 14px rgba(134, 183, 90, 0.65), 0 1px 2px rgba(0, 0, 0, 0.8)',
+          }}
+        >
+          {text}
+        </span>
+      ))}
     </div>
   );
 }
