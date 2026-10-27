@@ -11,6 +11,7 @@ import { MetallicCardFront, MetallicCardBack } from './cards/MetallicCard';
 import { PaperCardBack } from './cards/PaperCard';
 import { PaperCardFront } from '@/components/card/modes/PaperCardFront';
 import { generateKeychainPdf } from '@/lib/generateCardPdf';
+import { showToast } from '@/components/ui/AppleToast';
 
 // Exact spring physics matching TitleModal and MessageModal
 const springTransition = {
@@ -278,7 +279,11 @@ export default function ShareModal({ onClose, onOpenRecipientPreview }) {
       });
     } catch (err) {
       console.error('Failed to generate keychain PDF:', err);
-      alert('Could not generate PDF keepsake. Please try again.');
+      showToast({
+        title: 'Could not generate PDF keepsake',
+        description: 'Please try again or check browser permissions.',
+        duration: 3500,
+      });
     } finally {
       setIsGeneratingPdf(false);
     }

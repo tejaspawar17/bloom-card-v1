@@ -27,20 +27,39 @@ export async function generateKeychainPdf({
     }
   }
 
-  // 1. Capture Front and Back DOM nodes at 3x pixel density (~970 DPI at 54mm keychain scale)
+  // 1. Capture Front and Back DOM nodes at high pixel density (~800+ DPI at 54mm keychain scale)
+  // Note: cacheBust must be false so blob: and data: memory URLs are never corrupted with query params.
+  // skipFonts: true prevents cross-origin stylesheet errors (e.g. Brave Shields blocking Google Fonts).
   const imageCaptureOptions = {
-    pixelRatio: 3,
-    quality: 1.0,
-    cacheBust: true,
-    skipFonts: false,
+    pixelRatio: 2.5,
+    quality: 0.98,
+    cacheBust: false,
+    skipFonts: true,
+    fontEmbedCSS: '',
+    includeQueryParams: false,
+    onImageErrorHandler: (err) => {
+      console.warn('PDF image capture warning:', err);
+    },
     style: {
       transform: 'none',
       borderRadius: '0px', // Crisp square edges for accurate guillotine cutting
     },
   };
 
-  const frontDataUrl = await toPng(frontElement, imageCaptureOptions);
-  const backDataUrl = await toPng(backElement, imageCaptureOptions);
+  const captureCard = async (element) => {
+    try {
+      return await toPng(element, imageCaptureOptions);
+    } catch (err) {
+      console.warn('Initial PDF capture attempt encountered an issue, retrying with fallback...', err);
+      return await toPng(element, {
+        ...imageCaptureOptions,
+        pixelRatio: 2,
+      });
+    }
+  };
+
+  const frontDataUrl = await captureCard(frontElement);
+  const backDataUrl = await captureCard(backElement);
 
   // 2. Create A4 Document (210mm x 297mm)
   const pdf = new jsPDF({
