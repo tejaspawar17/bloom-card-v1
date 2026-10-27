@@ -31,7 +31,7 @@ export function PokemonCardFront({ onOpenEditTitle, isPreview = false }) {
               {/* Inner Red Border Box */}
               <div className="w-full h-full border-[1.2cqw] border-[#FF0000] rounded-[3cqw] px-[2cqw] flex flex-col justify-center items-center overflow-hidden">
                 <p className="font-['Vampiro_One'] text-[6.39cqw] text-center text-black leading-[1.1] whitespace-pre-line tracking-[-0.01em] line-clamp-2 max-w-full overflow-hidden">
-                  {state.subject || 'FUCKK YOU!!\nMicheal'}
+                  {state.subject ?? ''}
                 </p>
               </div>
             </div>

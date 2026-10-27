@@ -99,7 +99,7 @@ export default function CardSubjectBox({
                   overflow: 'hidden'
                 }}
               >
-              {subject || 'I am really sorry!!!'}
+              {subject ?? ''}
             </span>
           )}
         </div>
@@ -165,7 +165,7 @@ export default function CardSubjectBox({
                 className="w-full h-full bg-transparent border-none outline-none text-center resize-none"
               />
             ) : (
-              <span className="whitespace-pre-wrap">{subject || 'Happy Birthday!! Aayush'}</span>
+              <span className="whitespace-pre-wrap">{subject ?? ''}</span>
             )}
           </div>
         </div>
@@ -209,7 +209,7 @@ export default function CardSubjectBox({
         />
       ) : (
         <p className="text-sm font-bold text-neutral-900 leading-snug line-clamp-3 whitespace-pre-wrap">
-          {subject || 'Click to add subject'}
+          {subject ?? ''}
         </p>
       )}
     </div>

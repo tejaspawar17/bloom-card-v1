@@ -24,7 +24,7 @@ export function MetallicSubjectBox({ subject, onEdit }: { subject: string, onEdi
           />
         ) : (
           <span style={{ fontFamily: "var(--font-serif)", fontStyle: "italic", fontWeight: 400, fontSize: "22px", lineHeight: "26px", color: "#FF0000" }}>
-            {subject || "I am really sorry!!!"}
+            {subject ?? ''}
           </span>
         )}
       </div>

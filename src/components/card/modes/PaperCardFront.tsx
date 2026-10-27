@@ -26,7 +26,7 @@ export function PaperCardFront({ state: propState, flower: propFlower, onOpenEdi
         {/* Bottom Stamp Overlay (Figma: y=300 inside 456px inner image -> 18px from bottom of flower image, minus 6px built-in PNG shadow margin = 12px) */}
         <div className="absolute bottom-[7px] xl:bottom-[10px] inset-x-0 flex justify-center z-20">
           <PostageStampNote 
-            message={state?.subject || 'Happy Birthday!!'} 
+            message={state?.subject ?? ''} 
             recipient={state?.to || 'Aayush'} 
             onEdit={onOpenEditTitle} 
             isPreview={isPreview}

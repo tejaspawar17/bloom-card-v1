@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import TertiaryLiquidGlassButton from "@/components/ui/TertiaryLiquidGlassButton";
 
 export function PostageStampNote({ 
-  message = "Happy Birthday!!", 
+  message = "", 
   onEdit,
   isPreview = false
 }: { 
