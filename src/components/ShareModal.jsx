@@ -585,7 +585,7 @@ export default function ShareModal({ onClose, onOpenRecipientPreview }) {
       >
         <div 
           ref={frontRef} 
-          style={{ width: '350px', height: '488px', position: 'relative', overflow: 'hidden' }}
+          style={{ width: '350px', height: '488px', position: 'relative', overflow: 'hidden', borderRadius: state.cardType === 'pokemon' ? '16px' : '0px', backgroundColor: 'transparent' }}
         >
           {state.cardType === 'pokemon' ? (
             <PokemonCardFront isPreview={true} />
@@ -598,7 +598,7 @@ export default function ShareModal({ onClose, onOpenRecipientPreview }) {
 
         <div 
           ref={backRef} 
-          style={{ width: '350px', height: '488px', position: 'relative', overflow: 'hidden' }}
+          style={{ width: '350px', height: '488px', position: 'relative', overflow: 'hidden', borderRadius: state.cardType === 'pokemon' ? '16px' : '0px', backgroundColor: 'transparent' }}
         >
           {state.cardType === 'pokemon' ? (
             <PokemonCardBack isPreview={true} />

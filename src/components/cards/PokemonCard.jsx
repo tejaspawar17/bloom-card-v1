@@ -10,7 +10,7 @@ export function PokemonCardFront({ onOpenEditTitle, isPreview = false }) {
   const { state, pokemonCard } = useCard();
 
   return (
-    <div className={`relative w-full h-full aspect-[688/960] ${isPreview ? 'rounded-none border-none' : 'rounded-[16px] border border-[#95a0a6]/60'} overflow-hidden shadow-2xl select-none bg-black @container`} style={{ containerType: "inline-size" }}>
+    <div className={`relative w-full h-full aspect-[688/960] rounded-[16px] ${isPreview ? 'border-none' : 'border border-[#95a0a6]/60'} overflow-hidden shadow-2xl select-none bg-transparent @container`} style={{ containerType: "inline-size" }}>
       {/* Real Pokemon Card Image from Reference (Squirtle with sunglasses) */}
       <img
         src={pokemonCard?.image || '/pokemon/001-003-squirtle.png'}
@@ -56,7 +56,7 @@ export function PokemonCardBack({ onOpenEditMessage, isPreview = false }) {
 
   if (state.pokemonSubtype === 'trainer') {
     return (
-      <div className={`relative w-full h-full aspect-[688/960] ${isPreview ? 'rounded-none' : 'rounded-[16px]'} overflow-hidden shadow-2xl select-none bg-black @container`} style={{ containerType: "inline-size" }}>
+      <div className={`relative w-full h-full aspect-[688/960] rounded-[16px] overflow-hidden shadow-2xl select-none bg-transparent @container`} style={{ containerType: "inline-size" }}>
         <img
           src="/assets/pokemon-back/base-card-back.png"
           alt="Pokemon Card Back"
@@ -118,7 +118,7 @@ export function PokemonCardBack({ onOpenEditMessage, isPreview = false }) {
 
   // Base Pokemon Card Back
   return (
-    <div className={`relative w-full h-full aspect-[688/960] ${isPreview ? 'rounded-none' : 'rounded-[16px]'} overflow-hidden shadow-2xl select-none bg-black @container`} style={{ containerType: "inline-size" }}>
+    <div className={`relative w-full h-full aspect-[688/960] rounded-[16px] overflow-hidden shadow-2xl select-none bg-transparent @container`} style={{ containerType: "inline-size" }}>
       <img
         src="/assets/pokemon-back/base-card-back.png"
         alt="Pokemon Card Back"
@@ -162,7 +162,7 @@ export function PokemonCardBack({ onOpenEditMessage, isPreview = false }) {
           <div className="w-full h-full border-[3px] border-[#FF0000] rounded-[12px] bg-white flex flex-col overflow-hidden relative">
             {/* Header */}
             <div className="w-full h-[17.9%] bg-[#FF0000] flex items-center justify-center shrink-0">
-              <span className="font-sans font-semibold text-[5.23cqw] text-white tracking-wide">HELLO, I wanna say...</span>
+              <span className="font-sans font-semibold text-[4.4cqw] text-white tracking-wide whitespace-nowrap">HELLO, I wanna say...</span>
             </div>
 
             {/* Content Body */}

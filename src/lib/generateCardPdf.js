@@ -2,8 +2,8 @@ import { toPng } from 'html-to-image';
 import { jsPDF } from 'jspdf';
 
 /**
- * Generates a print-ready 300+ DPI PDF for local print shops
- * Configured specifically for a 54mm x 86mm Keychain Card Keepsake.
+ * Generates an elevated, gallery-grade 300+ DPI PDF for printing keychain keepsakes.
+ * Configured specifically for standard 54mm x 75.35mm aspect-accurate keychain cards.
  *
  * @param {HTMLElement} frontElement - DOM node of the front card face
  * @param {HTMLElement} backElement - DOM node of the back card face
@@ -18,7 +18,7 @@ export async function generateKeychainPdf({
     throw new Error('Front and Back elements are required to generate PDF');
   }
 
-  // Ensure all webfonts (Homemade Apple, Syne Tactile, Instrument Serif, etc.) are 100% loaded
+  // Ensure all webfonts (Homemade Apple, Syne Tactile, Instrument Serif, Vampiro One, etc.) are 100% loaded
   if (typeof document !== 'undefined' && document.fonts) {
     try {
       await document.fonts.ready;
@@ -28,8 +28,10 @@ export async function generateKeychainPdf({
   }
 
   // 1. Capture Front and Back DOM nodes at high pixel density (~800+ DPI at 54mm keychain scale)
-  // Note: cacheBust must be false so blob: and data: memory URLs are never corrupted with query params.
-  // skipFonts: true prevents cross-origin stylesheet errors (e.g. Brave Shields blocking Google Fonts).
+  // cacheBust is set to false so blob: and data: URLs are never corrupted with query params.
+  // skipFonts is set to true to isolate cross-origin Google Fonts stylesheets from ad/tracker blockers.
+  // Note: We deliberately do NOT force borderRadius: '0px' here so that cards with native corner radii
+  // (e.g. Pokemon cards) preserve their authentic rounded corners with clean alpha transparency.
   const imageCaptureOptions = {
     pixelRatio: 2.5,
     quality: 0.98,
@@ -42,7 +44,7 @@ export async function generateKeychainPdf({
     },
     style: {
       transform: 'none',
-      borderRadius: '0px', // Crisp square edges for accurate guillotine cutting
+      backgroundColor: 'transparent',
     },
   };
 
@@ -74,60 +76,96 @@ export async function generateKeychainPdf({
   // Keychain card physical dimensions (Standard ID / mini-card format: 54mm x 75.35mm aspect-matched)
   const cardW = 54;
   const cardH = 75.35;
-  const gap = 8; // Gap between front and back cards
-  const totalCardsW = cardW * 2 + gap;
+  const gap = 12; // 12mm generous breathing gap between front and back cards
+  const totalCardsW = cardW * 2 + gap; // 120mm
 
   // Center horizontally on page
-  const startX = (pageWidth - totalCardsW) / 2; // ~47mm
-  const startY = 85; // Upper-mid page
+  const startX = (pageWidth - totalCardsW) / 2; // 45mm
+  const startY = 92; // Vertically balanced placement
 
-  const frontX = startX;
-  const backX = startX + cardW + gap;
+  const frontX = startX; // 45mm
+  const backX = startX + cardW + gap; // 111mm
 
   // -------------------------------------------------------------
-  // HEADER & PRINT SHOP INSTRUCTIONS
+  // 1. EDITORIAL HEADER & BRANDING
   // -------------------------------------------------------------
   pdf.setFont('helvetica', 'bold');
-  pdf.setFontSize(16);
-  pdf.setTextColor(20, 20, 20);
-  pdf.text('Bloom Keepsake — Keychain Edition', pageWidth / 2, 32, { align: 'center' });
+  pdf.setFontSize(7.5);
+  pdf.setTextColor(113, 113, 122); // #71717a
+  pdf.text('BLOOM KEEPSAKE STUDIO  •  PRINT EDITION', pageWidth / 2, 28, { align: 'center' });
+
+  pdf.setFont('helvetica', 'bold');
+  pdf.setFontSize(19);
+  pdf.setTextColor(24, 24, 27); // #18181b
+  pdf.text('Keychain Keepsake Card', pageWidth / 2, 37, { align: 'center' });
 
   pdf.setFont('helvetica', 'normal');
-  pdf.setFontSize(9);
-  pdf.setTextColor(110, 110, 110);
+  pdf.setFontSize(8.5);
+  pdf.setTextColor(113, 113, 122); // #71717a
   pdf.text(
-    'Print on 250–300gsm heavy cardstock or photo paper at 100% scale (Do NOT "Fit to Page").',
+    'Double-Sided 54 × 75.4 mm Keepsake  •  100% Actual Scale Print Guide',
     pageWidth / 2,
-    40,
-    { align: 'center' }
-  );
-  pdf.text(
-    'Cut along crop marks, fold/glue back-to-back, laminate, and punch hole at dotted guide for keychain ring.',
-    pageWidth / 2,
-    45,
+    44,
     { align: 'center' }
   );
 
-  // 50mm Calibration Ruler Check (ensures print shop operator printed at true 100% scale)
-  const rulerX = (pageWidth - 50) / 2;
-  const rulerY = 56;
-  pdf.setDrawColor(180, 180, 180);
-  pdf.setLineWidth(0.3);
-  pdf.line(rulerX, rulerY, rulerX + 50, rulerY);
-  pdf.line(rulerX, rulerY - 1.5, rulerX, rulerY + 1.5);
-  pdf.line(rulerX + 50, rulerY - 1.5, rulerX + 50, rulerY + 1.5);
-  pdf.setFontSize(7);
-  pdf.setTextColor(140, 140, 140);
-  pdf.text('50 mm calibration ruler (must measure exactly 5 cm when printed)', pageWidth / 2, rulerY + 4, { align: 'center' });
+  // Subtle Header Divider
+  pdf.setDrawColor(228, 228, 231); // #e4e4e7
+  pdf.setLineWidth(0.2);
+  pdf.line(startX - 5, 50, startX + totalCardsW + 5, 50);
 
   // -------------------------------------------------------------
-  // DRAW CROP MARKS (Cutting ticks for print shop cutter)
+  // 2. 50MM CALIBRATION SCALE (Precision Ruler Check)
+  // -------------------------------------------------------------
+  const rulerW = 50;
+  const rulerX = (pageWidth - rulerW) / 2; // 80mm
+  const rulerY = 60;
+
+  pdf.setDrawColor(161, 161, 170); // #a1a1aa
+  pdf.setLineWidth(0.25);
+  pdf.line(rulerX, rulerY, rulerX + rulerW, rulerY); // Baseline
+  pdf.line(rulerX, rulerY - 2.2, rulerX, rulerY + 2.2); // 0mm tick
+  pdf.line(rulerX + rulerW, rulerY - 2.2, rulerX + rulerW, rulerY + 2.2); // 50mm tick
+  pdf.line(rulerX + rulerW / 2, rulerY - 1.5, rulerX + rulerW / 2, rulerY + 1.5); // 25mm tick
+
+  // Sub-division 10mm ticks
+  for (let mm = 10; mm < 50; mm += 10) {
+    if (mm !== 25) {
+      pdf.line(rulerX + mm, rulerY - 1.0, rulerX + mm, rulerY + 1.0);
+    }
+  }
+
+  pdf.setFont('helvetica', 'normal');
+  pdf.setFontSize(6.5);
+  pdf.setTextColor(140, 140, 140);
+  pdf.text('0 mm', rulerX, rulerY + 4, { align: 'center' });
+  pdf.text('25 mm', rulerX + 25, rulerY + 4, { align: 'center' });
+  pdf.text('50 mm', rulerX + 50, rulerY + 4, { align: 'center' });
+
+  pdf.text(
+    'Calibration Scale: Measure with physical ruler before trimming. Confirm print scale is set to "100% Actual Size" (Do not "Fit to Page").',
+    pageWidth / 2,
+    rulerY + 8.5,
+    { align: 'center' }
+  );
+
+  // -------------------------------------------------------------
+  // 3. CARD LABELS (Above Cards)
+  // -------------------------------------------------------------
+  pdf.setFont('helvetica', 'bold');
+  pdf.setFontSize(7.5);
+  pdf.setTextColor(82, 82, 91); // #52525b
+  pdf.text('SIDE A  •  FRONT COVER', frontX + cardW / 2, startY - 4.5, { align: 'center' });
+  pdf.text('SIDE B  •  BACK LETTER', backX + cardW / 2, startY - 4.5, { align: 'center' });
+
+  // -------------------------------------------------------------
+  // 4. PRECISION CROP MARKS (Cutting Ticks for Trimming)
   // -------------------------------------------------------------
   const drawCropMarks = (x, y, w, h) => {
-    pdf.setDrawColor(160, 160, 160);
-    pdf.setLineWidth(0.2);
-    const tick = 4; // 4mm tick mark
-    const offset = 1.5; // Offset from card edge
+    pdf.setDrawColor(161, 161, 170); // #a1a1aa
+    pdf.setLineWidth(0.18);
+    const tick = 4.5; // 4.5mm tick mark
+    const offset = 2.0; // 2mm offset from card edge
 
     // Top-left
     pdf.line(x - offset - tick, y, x - offset, y);
@@ -149,72 +187,112 @@ export async function generateKeychainPdf({
   drawCropMarks(frontX, startY, cardW, cardH);
   drawCropMarks(backX, startY, cardW, cardH);
 
-  // Labels above cards
-  pdf.setFont('helvetica', 'bold');
-  pdf.setFontSize(8);
-  pdf.setTextColor(80, 80, 80);
-  pdf.text('FRONT COVER', frontX + cardW / 2, startY - 4, { align: 'center' });
-  pdf.text('BACK LETTER', backX + cardW / 2, startY - 4, { align: 'center' });
+  // Faint Center Folding / Separation Guide
+  const centerGuideX = frontX + cardW + gap / 2; // 105mm
+  pdf.setDrawColor(212, 212, 216); // #d4d4d8
+  pdf.setLineWidth(0.15);
+  pdf.setLineDashPattern([1.2, 2.0], 0);
+  pdf.line(centerGuideX, startY - 2, centerGuideX, startY + cardH + 2);
+  pdf.setLineDashPattern([], 0); // Reset dash
+
+  pdf.setFont('helvetica', 'normal');
+  pdf.setFontSize(5.5);
+  pdf.setTextColor(161, 161, 170);
+  pdf.text('FOLD / CUT', centerGuideX, startY - 4.5, { align: 'center' });
 
   // -------------------------------------------------------------
-  // EMBED HIGH-RES CARD IMAGES (300+ DPI)
+  // 5. EMBED HIGH-RES CARD IMAGES (300+ DPI)
   // -------------------------------------------------------------
   pdf.addImage(frontDataUrl, 'PNG', frontX, startY, cardW, cardH);
   pdf.addImage(backDataUrl, 'PNG', backX, startY, cardW, cardH);
 
   // -------------------------------------------------------------
-  // DOTTED KEYCHAIN HOLE PUNCH GUIDE (Safe 4mm target)
-  // Positioned so that when cards are glued back-to-back, the holes align!
-  // Front: Top-Left (x: 5.5mm, y: 5.5mm)
-  // Back:  Top-Right (x: 54 - 5.5mm = 48.5mm, y: 5.5mm)
+  // 6. MODERN 3-STEP ASSEMBLY GUIDE (Clean Editorial Columns)
   // -------------------------------------------------------------
-  const holeRadius = 2.0; // 4mm diameter hole
-  const marginFromEdge = 5.5;
+  const guideY = startY + cardH + 16; // ~183mm
 
-  const frontHoleX = frontX + marginFromEdge;
-  const frontHoleY = startY + marginFromEdge;
-
-  const backHoleX = backX + cardW - marginFromEdge;
-  const backHoleY = startY + marginFromEdge;
-
-  const drawHoleGuide = (hx, hy) => {
-    // Outer white halo to stand out on dark cards
-    pdf.setDrawColor(255, 255, 255);
-    pdf.setLineWidth(0.4);
-    pdf.setLineDashPattern([0.8, 0.8], 0);
-    pdf.circle(hx, hy, holeRadius);
-
-    // Inner contrasting dark dashed ring
-    pdf.setDrawColor(40, 40, 40);
-    pdf.setLineWidth(0.2);
-    pdf.setLineDashPattern([0.6, 0.6], 0);
-    pdf.circle(hx, hy, holeRadius);
-
-    // Tiny center punch target dot
-    pdf.setFillColor(60, 60, 60);
-    pdf.circle(hx, hy, 0.25, 'F');
-
-    // Reset dash pattern
-    pdf.setLineDashPattern([], 0);
-  };
-
-  drawHoleGuide(frontHoleX, frontHoleY);
-  drawHoleGuide(backHoleX, backHoleY);
-
-  // Hole guide hint text below cards
-  pdf.setFont('helvetica', 'normal');
+  pdf.setFont('helvetica', 'bold');
   pdf.setFontSize(7.5);
-  pdf.setTextColor(130, 130, 130);
-  pdf.text('Dotted circles mark the 4mm keychain hole punch guide (aligns back-to-back)', pageWidth / 2, startY + cardH + 12, { align: 'center' });
+  pdf.setTextColor(113, 113, 122); // #71717a
+  pdf.text('ASSEMBLY INSTRUCTIONS', pageWidth / 2, guideY, { align: 'center' });
 
-  // -------------------------------------------------------------
-  // FOOTER NOTE
-  // -------------------------------------------------------------
+  pdf.setDrawColor(228, 228, 231); // #e4e4e7
+  pdf.setLineWidth(0.18);
+  pdf.line(startX, guideY + 4, startX + totalCardsW, guideY + 4);
+
+  // 3 Columns evenly spaced across 120mm
+  const colW = 36;
+  const col1X = startX; // 45mm
+  const col2X = startX + 42; // 87mm
+  const col3X = startX + 84; // 129mm
+  const colTextY = guideY + 11;
+
+  // Step 1: Print
+  pdf.setFont('helvetica', 'bold');
+  pdf.setFontSize(8);
+  pdf.setTextColor(24, 24, 27);
+  pdf.text('01 / PRINT', col1X, colTextY);
+
+  pdf.setFont('helvetica', 'normal');
   pdf.setFontSize(7);
-  pdf.setTextColor(160, 160, 160);
-  pdf.text('Created with Bloom Card // bloomcard.app', pageWidth / 2, pageHeight - 16, { align: 'center' });
+  pdf.setTextColor(113, 113, 122);
+  pdf.text(
+    'Print on 250–300 gsm heavy cardstock or photo paper. Set printer scaling to 100% (Actual Size).',
+    col1X,
+    colTextY + 4.5,
+    { maxWidth: colW }
+  );
 
-  // 3. Save & trigger download
+  // Step 2: Trim
+  pdf.setFont('helvetica', 'bold');
+  pdf.setFontSize(8);
+  pdf.setTextColor(24, 24, 27);
+  pdf.text('02 / TRIM', col2X, colTextY);
+
+  pdf.setFont('helvetica', 'normal');
+  pdf.setFontSize(7);
+  pdf.setTextColor(113, 113, 122);
+  pdf.text(
+    'Use a craft knife or scissors along the crop marks. Trim corners to follow the card silhouette.',
+    col2X,
+    colTextY + 4.5,
+    { maxWidth: colW }
+  );
+
+  // Step 3: Assemble
+  pdf.setFont('helvetica', 'bold');
+  pdf.setFontSize(8);
+  pdf.setTextColor(24, 24, 27);
+  pdf.text('03 / ASSEMBLE', col3X, colTextY);
+
+  pdf.setFont('helvetica', 'normal');
+  pdf.setFontSize(7);
+  pdf.setTextColor(113, 113, 122);
+  pdf.text(
+    'Affix front and back together with double-sided tape, or slide into your acrylic keychain blank.',
+    col3X,
+    colTextY + 4.5,
+    { maxWidth: colW }
+  );
+
+  // -------------------------------------------------------------
+  // 7. FOOTER NOTE
+  // -------------------------------------------------------------
+  pdf.setDrawColor(240, 240, 240);
+  pdf.setLineWidth(0.15);
+  pdf.line(startX, pageHeight - 20, startX + totalCardsW, pageHeight - 20);
+
+  pdf.setFont('helvetica', 'normal');
+  pdf.setFontSize(6.5);
+  pdf.setTextColor(161, 161, 170); // #a1a1aa
+  pdf.text(
+    'Bloom Card Keepsake Studio  •  bloomcard.app  •  Handcrafted digital keepsake',
+    pageWidth / 2,
+    pageHeight - 15,
+    { align: 'center' }
+  );
+
+  // 8. Save & trigger download
   const sanitizedTitle = cardTitle.toLowerCase().replace(/[^a-z0-9_-]/g, '-');
   pdf.save(`${sanitizedTitle}-keychain-print.pdf`);
 }
