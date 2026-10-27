@@ -20,7 +20,7 @@
     "clsx": "^2.1.1",
     "cn": "^0.4.0",
     "framer-motion": "^13.5.0",
-    "heic2any": "^0.0.4",
+    "heic-to": "^1.6.6",
     "html-to-image": "^1.11.13",
     "jspdf": "^4.2.1",
     "lucide-react": "^1.49.0",

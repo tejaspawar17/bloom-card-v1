@@ -5,16 +5,24 @@ import { cn } from '@/lib/utils';
 import { UploadSimple, Prohibit, CircleNotch } from '@phosphor-icons/react';
 import { showToast } from '@/components/ui/AppleToast';
 
-function isHeicFile(file) {
+async function isHeicFile(file) {
   if (!file) return false;
   const name = (file.name || '').toLowerCase();
   const type = (file.type || '').toLowerCase();
-  return (
+  if (
     name.endsWith('.heic') ||
     name.endsWith('.heif') ||
     type === 'image/heic' ||
     type === 'image/heif'
-  );
+  ) {
+    return true;
+  }
+  try {
+    const { isHeic } = await import('heic-to');
+    return await isHeic(file);
+  } catch {
+    return false;
+  }
 }
 
 const defaultImage = "/assets/polaroid-defaults/image1.png";
@@ -49,17 +57,15 @@ export default function WindowSelectBackImage() {
 
     let targetFile = file;
 
-    if (isHeicFile(file)) {
+    if (await isHeicFile(file)) {
       setIsConverting(true);
       try {
-        const heic2anyModule = await import('heic2any');
-        const heic2any = heic2anyModule.default || heic2anyModule;
-        const converted = await heic2any({
+        const { heicTo } = await import('heic-to');
+        const convertedBlob = await heicTo({
           blob: file,
-          toType: 'image/jpeg',
-          quality: 0.88,
+          type: 'image/jpeg',
+          quality: 0.9,
         });
-        const convertedBlob = Array.isArray(converted) ? converted[0] : converted;
         const cleanName = (file.name || 'photo').replace(/\.[^/.]+$/, '') + '.jpg';
         targetFile = new File([convertedBlob], cleanName, { type: 'image/jpeg' });
         showToast({
