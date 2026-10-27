@@ -36,9 +36,38 @@ const pageVariants = {
   },
 };
 
+// Loader transition: razor-sharp from frame 0 (no entry blur glitch), soft optical dissolve on exit
+const loaderVariants = {
+  initial: {
+    opacity: 1,
+    filter: 'blur(0px)',
+  },
+  animate: {
+    opacity: 1,
+    filter: 'blur(0px)',
+  },
+  exit: {
+    opacity: 0,
+    filter: 'blur(6px)',
+    transition: {
+      opacity: { duration: 0.32, ease: [0.36, 0, 0.66, 0] },
+      filter: { duration: 0.32, ease: [0.36, 0, 0.66, 0] },
+    },
+  },
+};
+
 function AppShell() {
   const { dispatch } = useCard();
-  const [isAppLoading, setIsAppLoading] = useState(true);
+  
+  // Only show the preloader on first session visit; reloads bypass immediately (0ms delay)
+  const [isAppLoading, setIsAppLoading] = useState(() => {
+    try {
+      return sessionStorage.getItem('bloom_has_loaded') !== 'true';
+    } catch {
+      return false;
+    }
+  });
+
   const [activeTab, setActiveTab] = useState('design');
   const [isRecipientMode, setIsRecipientMode] = useState(false);
   const [globalModal, setGlobalModal] = useState(null);
@@ -78,22 +107,48 @@ function AppShell() {
     let isMounted = true;
 
     const initApp = async () => {
-      const startTime = Date.now();
-      await syncFromUrl();
-
-      // Wait for fonts to initialize
-      if (document.fonts?.ready) {
-        try {
-          await document.fonts.ready;
-        } catch (_) {}
+      // If already loaded in this session, immediately sync without artificial wait
+      if (sessionStorage.getItem('bloom_has_loaded') === 'true') {
+        await syncFromUrl();
+        if (isMounted) setIsAppLoading(false);
+        return;
       }
 
-      // Smooth threshold to prevent awkward jitter on fast cached loads
+      const startTime = Date.now();
+
+      // Parallel pre-warming: fonts, initial card artwork, and URL sync
+      const criticalImages = [
+        '/assets/flower-illustrations/white_tulip.png',
+        '/assets/flower-illustrations/sunflower.png',
+        '/assets/cards/pokemon-frame.png',
+        '/assets/bloom/sample-cards/sample-card-1.png',
+      ];
+
+      const preloadImagesPromise = Promise.all(
+        criticalImages.map(
+          (src) =>
+            new Promise((resolve) => {
+              const img = new Image();
+              img.src = src;
+              img.onload = resolve;
+              img.onerror = resolve;
+            })
+        )
+      );
+
+      const fontsPromise = document.fonts?.ready ? document.fonts.ready : Promise.resolve();
+
+      await Promise.all([syncFromUrl(), fontsPromise, preloadImagesPromise]);
+
+      // Complete 1 natural wave cycle across "Generating" (~1600ms)
       const elapsed = Date.now() - startTime;
-      const remaining = Math.max(0, 550 - elapsed);
+      const remaining = Math.max(0, 1600 - elapsed);
 
       setTimeout(() => {
         if (isMounted) {
+          try {
+            sessionStorage.setItem('bloom_has_loaded', 'true');
+          } catch {}
           setIsAppLoading(false);
         }
       }, remaining);
@@ -132,10 +187,10 @@ function AppShell() {
   return (
     <AnimatePresence mode="wait">
       {isAppLoading ? (
-        /* Full-Screen Preloader: Radiant AnimatedAILoaderFX with centered Generating... text */
+        /* Full-Screen Preloader: Exact Framer AnimatedAILoaderFX (crisp from frame 0, zero blur glitch) */
         <motion.div
           key="app-loader"
-          variants={pageVariants}
+          variants={loaderVariants}
           initial="initial"
           animate="animate"
           exit="exit"

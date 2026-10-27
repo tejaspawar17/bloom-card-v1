@@ -14,8 +14,15 @@
   </head>
   <body class="bg-[#070908] text-white selection:bg-blue-500 selection:text-white">
     <div id="root">
-      <!-- 0ms Zero-Latency Inline Fallback Splash: Exact AnimatedAILoaderFX -->
+      <!-- 0ms Zero-Latency Inline Fallback Splash: Exact AnimatedAILoaderFX (Only shown on fresh session) -->
       <div id="app-preloader" style="position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;background-color:#070908;z-index:99999;user-select:none;">
+        <script>
+          try {
+            if (sessionStorage.getItem('bloom_has_loaded') === 'true') {
+              document.getElementById('app-preloader').style.display = 'none';
+            }
+          } catch(e) {}
+        </script>
         <div style="position:relative;display:flex;align-items:center;justify-content:center;width:180px;height:180px;border-radius:50%;font-family:'Inter',sans-serif;font-size:19px;font-weight:300;color:#ffffff;">
           <style>
             @keyframes bloom-preload-rot {
