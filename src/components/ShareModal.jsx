@@ -508,7 +508,7 @@ export default function ShareModal({ onClose, onOpenRecipientPreview }) {
           </AnimatePresence>
         </motion.div>
       </div>
-    {/* Offscreen 688x960 300+ DPI Render Canvas for Keychain PDF Capture */}
+    {/* Offscreen 350x488 Render Canvas for Keychain PDF Capture (Studio-Calibrated Proportions) */}
       <div 
         aria-hidden="true"
         className="fixed -left-[9999px] top-0 pointer-events-none opacity-100 flex gap-10"
@@ -516,7 +516,7 @@ export default function ShareModal({ onClose, onOpenRecipientPreview }) {
       >
         <div 
           ref={frontRef} 
-          style={{ width: '688px', height: '960px', position: 'relative', overflow: 'hidden' }}
+          style={{ width: '350px', height: '488px', position: 'relative', overflow: 'hidden' }}
         >
           {state.cardType === 'pokemon' ? (
             <PokemonCardFront isPreview={true} />
@@ -529,7 +529,7 @@ export default function ShareModal({ onClose, onOpenRecipientPreview }) {
 
         <div 
           ref={backRef} 
-          style={{ width: '688px', height: '960px', position: 'relative', overflow: 'hidden' }}
+          style={{ width: '350px', height: '488px', position: 'relative', overflow: 'hidden' }}
         >
           {state.cardType === 'pokemon' ? (
             <PokemonCardBack isPreview={true} />

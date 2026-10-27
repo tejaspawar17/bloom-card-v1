@@ -10,12 +10,12 @@ export function PokemonCardFront({ onOpenEditTitle, isPreview = false }) {
   const { state, pokemonCard } = useCard();
 
   return (
-    <div className="relative w-full h-full aspect-[688/960] rounded-[16px] overflow-hidden shadow-2xl select-none border border-[#95a0a6]/60 bg-black @container" style={{ containerType: "inline-size" }}>
+    <div className={`relative w-full h-full aspect-[688/960] ${isPreview ? 'rounded-none border-none' : 'rounded-[16px] border border-[#95a0a6]/60'} overflow-hidden shadow-2xl select-none bg-black @container`} style={{ containerType: "inline-size" }}>
       {/* Real Pokemon Card Image from Reference (Squirtle with sunglasses) */}
       <img
         src={pokemonCard?.image || '/pokemon/001-003-squirtle.png'}
         alt={pokemonCard?.name || 'Pokemon Card Front'}
-        className="absolute inset-0 w-full h-full object-contain pointer-events-none"
+        className="absolute inset-0 w-full h-full object-cover pointer-events-none"
       />
 
       {/* Equipped Sticker if selected */}
@@ -56,7 +56,7 @@ export function PokemonCardBack({ onOpenEditMessage, isPreview = false }) {
 
   if (state.pokemonSubtype === 'trainer') {
     return (
-      <div className="relative w-full h-full aspect-[688/960] rounded-[16px] overflow-hidden shadow-2xl select-none bg-black @container" style={{ containerType: "inline-size" }}>
+      <div className={`relative w-full h-full aspect-[688/960] ${isPreview ? 'rounded-none' : 'rounded-[16px]'} overflow-hidden shadow-2xl select-none bg-black @container`} style={{ containerType: "inline-size" }}>
         <img
           src="/assets/pokemon-back/base-card-back.png"
           alt="Pokemon Card Back"
@@ -118,7 +118,7 @@ export function PokemonCardBack({ onOpenEditMessage, isPreview = false }) {
 
   // Base Pokemon Card Back
   return (
-    <div className="relative w-full h-full aspect-[688/960] rounded-[16px] overflow-hidden shadow-2xl select-none bg-black @container" style={{ containerType: "inline-size" }}>
+    <div className={`relative w-full h-full aspect-[688/960] ${isPreview ? 'rounded-none' : 'rounded-[16px]'} overflow-hidden shadow-2xl select-none bg-black @container`} style={{ containerType: "inline-size" }}>
       <img
         src="/assets/pokemon-back/base-card-back.png"
         alt="Pokemon Card Back"
