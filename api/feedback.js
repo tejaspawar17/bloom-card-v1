@@ -1,26 +1,87 @@
+// In-memory sliding-window rate limiter for serverless instance
+// Max 5 submissions per 60-second window per IP
+const rateLimitMap = new Map();
+const RATE_LIMIT_WINDOW_MS = 60 * 1000;
+const MAX_REQUESTS_PER_WINDOW = 5;
+
+function isRateLimited(ip) {
+  const now = Date.now();
+  const timestamps = rateLimitMap.get(ip) || [];
+  const validTimestamps = timestamps.filter(ts => now - ts < RATE_LIMIT_WINDOW_MS);
+
+  if (validTimestamps.length >= MAX_REQUESTS_PER_WINDOW) {
+    rateLimitMap.set(ip, validTimestamps);
+    return true;
+  }
+
+  validTimestamps.push(now);
+  rateLimitMap.set(ip, validTimestamps);
+
+  // Periodic memory cleanup when map grows
+  if (rateLimitMap.size > 1000) {
+    for (const [key, times] of rateLimitMap.entries()) {
+      const active = times.filter(t => now - t < RATE_LIMIT_WINDOW_MS);
+      if (active.length === 0) {
+        rateLimitMap.delete(key);
+      } else {
+        rateLimitMap.set(key, active);
+      }
+    }
+  }
+
+  return false;
+}
+
+function escapeHtml(str) {
+  if (!str) return '';
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
 export default async function handler(req, res) {
   // Only allow POST requests
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
+  // Rate-limiting check based on forwarded client IP
+  const clientIp = (req.headers['x-forwarded-for'] || req.socket?.remoteAddress || 'unknown')
+    .toString()
+    .split(',')[0]
+    .trim();
+
+  if (isRateLimited(clientIp)) {
+    return res.status(429).json({ 
+      error: 'Too many feedback requests. Please wait a minute before trying again.' 
+    });
+  }
+
   try {
     const { category, message, email, created_at } = req.body || {};
 
-    if (!message || !message.trim()) {
+    if (!message || typeof message !== 'string' || !message.trim()) {
       return res.status(400).json({ error: 'Feedback message is required' });
     }
+
+    // Hardened payload boundaries
+    const safeMessage = escapeHtml(message.trim().slice(0, 3000));
+    const safeEmail = email && typeof email === 'string' ? escapeHtml(email.trim().slice(0, 254)) : '';
+    const timestamp = created_at ? escapeHtml(String(created_at).slice(0, 64)) : new Date().toISOString();
 
     const resendApiKey = process.env.RESEND_API_KEY;
     const toEmail = (process.env.NOTIFICATION_EMAIL || 'pawartejas517@gmail.com').trim();
 
-    // Graceful skip if Resend API key is not configured yet
+    // Graceful skip if Resend API key is not configured in environment
     if (!resendApiKey) {
-      console.warn('RESEND_API_KEY not set in environment variables.');
+      console.warn('RESEND_API_KEY not configured in environment variables.');
       return res.status(200).json({
         success: true,
         notification: 'skipped',
-        reason: 'Missing RESEND_API_KEY'
+        reason: 'Missing server configuration'
       });
     }
 
@@ -30,15 +91,13 @@ export default async function handler(req, res) {
       request: 'Feature Request',
       other: 'Other Inquiry'
     };
-    const categoryLabel = categoryLabels[category] || category || 'Feedback';
-
-    const safeMessage = message.trim().replace(/</g, '&lt;').replace(/>/g, '&gt;');
-    const timestamp = created_at || new Date().toISOString();
+    const categoryKey = category && typeof category === 'string' ? category.slice(0, 32) : 'feedback';
+    const categoryLabel = categoryLabels[categoryKey] || 'General Feedback';
 
     const buildPayload = (recipient) => ({
       from: 'Bloom Card <onboarding@resend.dev>',
       to: [recipient],
-      reply_to: email && email.trim() ? email.trim() : undefined,
+      reply_to: safeEmail ? safeEmail : undefined,
       subject: `🌸 [Bloom Feedback] ${categoryLabel}: "${safeMessage.slice(0, 45)}${safeMessage.length > 45 ? '...' : ''}"`,
       html: `
         <!DOCTYPE html>
@@ -63,13 +122,13 @@ export default async function handler(req, res) {
               </div>
 
               <div class="field-label">Sender</div>
-              <div class="field-value">${email && email.trim() ? `<a href="mailto:${email.trim()}" style="color: #64D2FF; text-decoration: none;">${email.trim()}</a>` : 'Anonymous Visitor'}</div>
+              <div class="field-value">${safeEmail ? `<a href="mailto:${safeEmail}" style="color: #64D2FF; text-decoration: none;">${safeEmail}</a>` : 'Anonymous Visitor'}</div>
 
               <div class="field-label">Feedback Message</div>
               <div class="message-box">${safeMessage}</div>
 
               <div class="footer">
-                Received at ${timestamp} • <a href="https://supabase.com/dashboard/project/ssxskxgwmvecfmjhjrfj/editor" style="color: #8E8E93; text-decoration: underline;">View in Supabase</a>
+                Received at ${timestamp} • Bloom Studio Internal Dispatch
               </div>
             </div>
           </body>
@@ -89,9 +148,9 @@ export default async function handler(req, res) {
 
     let data = await response.json();
 
-    // If Resend blocked because onboarding@resend.dev can only send to account owner, fallback to pawartejas517@gmail.com
+    // If Resend onboarding domain restricts delivery, fallback to verified account email
     if (!response.ok && response.status === 403 && targetRecipient !== 'pawartejas517@gmail.com') {
-      console.warn(`Resend restricted recipient ${targetRecipient}. Retrying with account email pawartejas517@gmail.com`);
+      console.warn(`Resend sandbox restriction on recipient ${targetRecipient}. Falling back to account email.`);
       targetRecipient = 'pawartejas517@gmail.com';
       response = await fetch('https://api.resend.com/emails', {
         method: 'POST',
@@ -105,13 +164,15 @@ export default async function handler(req, res) {
     }
 
     if (!response.ok) {
-      console.error('Resend API error:', data);
-      return res.status(response.status).json({ error: data });
+      console.error('Resend API dispatch error:', data);
+      // Mask internal provider error details from client response
+      return res.status(502).json({ error: 'Unable to deliver notification email at this time' });
     }
 
-    return res.status(200).json({ success: true, id: data.id, deliveredTo: targetRecipient });
+    return res.status(200).json({ success: true, id: data.id });
   } catch (error) {
-    console.error('Feedback notification handler failed:', error);
-    return res.status(500).json({ error: error.message || 'Internal server error' });
+    console.error('Feedback notification handler exception:', error);
+    // Never expose stack traces or server internals
+    return res.status(500).json({ error: 'An unexpected server error occurred' });
   }
 }
