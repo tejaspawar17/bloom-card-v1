@@ -52,8 +52,9 @@ export function DraggableSticker({ stickerData }) {
     setLandKey(Date.now());
     const cardWidth = stickerRef.current?.parentElement?.clientWidth || 360;
     const cardHeight = stickerRef.current?.parentElement?.clientHeight || 500;
-    const stickerWidth = stickerRef.current?.offsetWidth || (stickerData.stickerId === "cmiygl" ? 150 : 122);
-    const stickerHeight = stickerRef.current?.offsetHeight || stickerWidth;
+    const isCmiyglSticker = stickerData.stickerId === "cmiygl";
+    const stickerWidth = stickerRef.current?.offsetWidth || (isCmiyglSticker ? 190 : 140);
+    const stickerHeight = stickerRef.current?.offsetHeight || (isCmiyglSticker ? 108 : stickerWidth);
 
     // Clamp position so sticker stays on card and never overlaps the top segmented control
     const clampedX = Math.max(-stickerWidth * 0.4, Math.min(cardWidth - stickerWidth * 0.6, stickerData.x + info.offset.x));
@@ -116,9 +117,20 @@ export function DraggableSticker({ stickerData }) {
   if (!imageUrl) return null;
 
   const isCmiygl = stickerData.stickerId === "cmiygl";
-  const sizeClass = isCmiygl 
-    ? "w-[clamp(120px,42cqw,155px)] h-[clamp(120px,42cqw,155px)]" 
-    : "w-[clamp(98px,34cqw,130px)] h-[clamp(98px,34cqw,130px)]";
+  const isAlbum = ["igor", "blond", "sos", "pink_floyd", "brat"].includes(stickerData.stickerId);
+  const isApples = stickerData.stickerId === "apples";
+
+  let sizeClass = "w-[clamp(118px,40cqw,154px)] h-[clamp(118px,40cqw,154px)]";
+  if (isCmiygl) {
+    // Landscape passport ticket ratio (~1.9:1)
+    sizeClass = "w-[clamp(168px,54cqw,215px)] h-[clamp(96px,31cqw,122px)]";
+  } else if (isAlbum) {
+    // Vinyl sleeve + peeking disc ratio (1.11:1)
+    sizeClass = "w-[clamp(124px,42cqw,162px)] h-[clamp(112px,38cqw,146px)]";
+  } else if (isApples) {
+    // Apples quote badge (prominent hand lettering)
+    sizeClass = "w-[clamp(122px,41cqw,158px)] h-[clamp(126px,42cqw,162px)]";
+  }
 
   return (
     <motion.div 
