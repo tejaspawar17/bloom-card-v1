@@ -6,8 +6,8 @@ import { loadSharedCard } from './lib/supabase';
 import Navbar from './components/Navbar';
 import DesignPage from './pages/DesignPage';
 import AboutPage from './pages/AboutPage';
+import LegalPage from './pages/LegalPage';
 import FeedbackModal from './components/FeedbackModal';
-import { WindowModal, LiquidGlassButton } from './components/ui';
 
 // Atmospheric page transition: pure optical opacity + blur dissolve (no scale, x, or y to eliminate lateral/vertical drift)
 const pageVariants = {
@@ -43,12 +43,21 @@ function AppShell() {
     const syncFromUrl = async () => {
       const params = new URLSearchParams(window.location.search);
       const sharedCardId = params.get('card');
+      const hash = window.location.hash;
       const hasPreview =
-        window.location.hash === '#preview' ||
+        hash === '#preview' ||
         params.get('preview') === 'recipient' ||
         Boolean(sharedCardId);
 
       setIsRecipientMode(hasPreview);
+
+      if (hash === '#terms') {
+        setActiveTab('terms');
+      } else if (hash === '#privacy') {
+        setActiveTab('privacy');
+      } else if (hash === '#about') {
+        setActiveTab('about');
+      }
 
       if (sharedCardId) {
         try {
@@ -73,17 +82,26 @@ function AppShell() {
 
   const handleTabChange = (tab) => {
     setActiveTab(tab);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
     if (tab === 'design') {
       if (window.location.hash === '#preview' || window.location.search.includes('card=')) {
         window.history.replaceState(null, '', window.location.pathname);
+      } else if (window.location.hash) {
+        window.history.replaceState(null, '', window.location.pathname);
       }
       setIsRecipientMode(false);
+    } else if (tab === 'terms') {
+      window.history.replaceState(null, '', '#terms');
+    } else if (tab === 'privacy') {
+      window.history.replaceState(null, '', '#privacy');
+    } else if (tab === 'about') {
+      window.history.replaceState(null, '', '#about');
     }
   };
 
   return (
     <div className="relative min-h-screen overflow-y-auto overflow-x-hidden flex flex-col justify-between bg-black text-white selection:bg-blue-600 selection:text-white">
-      {/* Persistent Subtle Blueprint Grid spanning both Design and About pages, starting from top of screen */}
+      {/* Persistent Subtle Blueprint Grid spanning all pages, starting from top of screen */}
       <div 
         aria-hidden="true" 
         className="pointer-events-none fixed inset-0 opacity-[0.035] bg-[linear-gradient(to_right,#ffffff_1px,transparent_1px),linear-gradient(to_bottom,#ffffff_1px,transparent_1px)] bg-[size:32px_32px] z-0" 
@@ -107,59 +125,39 @@ function AppShell() {
               <DesignPage 
                 isRecipientMode={isRecipientMode} 
                 onSetRecipientMode={setIsRecipientMode} 
+                onNavigateTab={handleTabChange}
+              />
+            ) : activeTab === 'terms' ? (
+              <LegalPage 
+                initialTab="terms"
+                onStartCrafting={() => handleTabChange('design')}
+                onFeedback={() => setGlobalModal('feedback')}
+                onTerms={() => handleTabChange('terms')}
+                onPrivacy={() => handleTabChange('privacy')}
+              />
+            ) : activeTab === 'privacy' ? (
+              <LegalPage 
+                initialTab="privacy"
+                onStartCrafting={() => handleTabChange('design')}
+                onFeedback={() => setGlobalModal('feedback')}
+                onTerms={() => handleTabChange('terms')}
+                onPrivacy={() => handleTabChange('privacy')}
               />
             ) : (
               <AboutPage 
-                onStartCrafting={() => { 
-                  window.scrollTo({ top: 0, behavior: 'smooth' }); 
-                  handleTabChange('design'); 
-                }}
+                onStartCrafting={() => handleTabChange('design')}
                 onFeedback={() => setGlobalModal('feedback')}
-                onTerms={() => setGlobalModal('terms')}
-                onPrivacy={() => setGlobalModal('privacy')}
+                onTerms={() => handleTabChange('terms')}
+                onPrivacy={() => handleTabChange('privacy')}
               />
             )}
           </motion.div>
         </AnimatePresence>
       </div>
 
-      {/* Global Modals triggered from About Page footer */}
+      {/* Global Feedback Modal */}
       {globalModal === 'feedback' && (
         <FeedbackModal onClose={() => setGlobalModal(null)} />
-      )}
-
-      {globalModal === 'terms' && (
-        <WindowModal
-          isOpen={true}
-          onClose={() => setGlobalModal(null)}
-          title="Terms of Use"
-          footer={
-            <LiquidGlassButton variant="primary" size="sm" onClick={() => setGlobalModal(null)}>
-              Accept & Close
-            </LiquidGlassButton>
-          }
-        >
-          <div className="p-4 text-sm text-neutral-300">
-            By using Bloom Card, you agree to spread joy and positive emotions.
-          </div>
-        </WindowModal>
-      )}
-
-      {globalModal === 'privacy' && (
-        <WindowModal
-          isOpen={true}
-          onClose={() => setGlobalModal(null)}
-          title="Privacy Policy"
-          footer={
-            <LiquidGlassButton variant="primary" size="sm" onClick={() => setGlobalModal(null)}>
-              Close
-            </LiquidGlassButton>
-          }
-        >
-          <div className="p-4 text-sm text-neutral-300">
-            We do not store your personal messages. All card data is local or encoded in the shareable link.
-          </div>
-        </WindowModal>
       )}
     </div>
   );

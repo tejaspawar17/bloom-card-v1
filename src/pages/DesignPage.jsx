@@ -9,7 +9,6 @@ import ShareModal from '@/components/ShareModal';
 import CardRevealPreview from '@/components/cards/CardRevealPreview';
 import FeedbackModal from '@/components/FeedbackModal';
 import Footer from '@/components/Footer';
-import { WindowModal, LiquidGlassButton } from '@/components/ui';
 
 // Atmospheric page transition: pure optical opacity + blur dissolve (matching About ↔ Design)
 const pageVariants = {
@@ -35,7 +34,7 @@ const pageVariants = {
   },
 };
 
-export default function DesignPage({ isRecipientMode = false, onSetRecipientMode }) {
+export default function DesignPage({ isRecipientMode = false, onSetRecipientMode, onNavigateTab }) {
   const [modal, setModal] = useState(null);
   const [leftHeight, setLeftHeight] = useState('auto');
   const observerRef = useRef(null);
@@ -131,8 +130,8 @@ export default function DesignPage({ isRecipientMode = false, onSetRecipientMode
       <div className={isRecipientMode ? "mt-8 pb-12 w-full z-10 relative" : "mt-8 xl:mt-24 pt-8 xl:pt-16 pb-12 w-full z-10 relative"}>
         <Footer 
           onFeedback={() => setModal('feedback')} 
-          onTerms={() => setModal('terms')}
-          onPrivacy={() => setModal('privacy')} 
+          onTerms={() => onNavigateTab?.('terms')}
+          onPrivacy={() => onNavigateTab?.('privacy')} 
         />
       </div>
 
@@ -153,40 +152,6 @@ export default function DesignPage({ isRecipientMode = false, onSetRecipientMode
             onSetRecipientMode?.(true);
           }} 
         />
-      )}
-
-      {modal === 'terms' && (
-        <WindowModal
-          isOpen={true}
-          onClose={() => setModal(null)}
-          title="Terms of Use"
-          footer={
-            <LiquidGlassButton variant="primary" size="sm" onClick={() => setModal(null)}>
-              Accept & Close
-            </LiquidGlassButton>
-          }
-        >
-          <div className="p-4 text-sm text-neutral-300">
-            By using Bloom Card, you agree to spread joy and positive emotions.
-          </div>
-        </WindowModal>
-      )}
-
-      {modal === 'privacy' && (
-        <WindowModal
-          isOpen={true}
-          onClose={() => setModal(null)}
-          title="Privacy Policy"
-          footer={
-            <LiquidGlassButton variant="primary" size="sm" onClick={() => setModal(null)}>
-              Close
-            </LiquidGlassButton>
-          }
-        >
-          <div className="p-4 text-sm text-neutral-300">
-            We do not store your personal messages. All card data is local or encoded in the shareable link.
-          </div>
-        </WindowModal>
       )}
 
       {modal === 'feedback' && (
