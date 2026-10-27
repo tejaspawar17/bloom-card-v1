@@ -205,10 +205,16 @@ function PolygonCheckmarkBadge() {
 /**
  * Pre-Flight Scanning Progress Diagnostics
  */
-const PREFLIGHT_STEPS = [
+const LINK_PREFLIGHT_STEPS = [
   "Calibrating 3D holographic foil...",
   "Securing emotional payload...",
   "Sealing virtual envelope..."
+];
+
+const PDF_PREFLIGHT_STEPS = [
+  "Rasterizing 300+ DPI card faces...",
+  "Aligning double-sided punch holes...",
+  "Packaging keychain keepsake PDF..."
 ];
 
 export default function ShareModal({ onClose, onOpenRecipientPreview }) {
@@ -245,7 +251,7 @@ export default function ShareModal({ onClose, onOpenRecipientPreview }) {
     setPreflightIndex(0);
 
     const stepInterval = setInterval(() => {
-      setPreflightIndex((prev) => (prev < PREFLIGHT_STEPS.length - 1 ? prev + 1 : prev));
+      setPreflightIndex((prev) => (prev < LINK_PREFLIGHT_STEPS.length - 1 ? prev + 1 : prev));
     }, 450);
 
     try {
@@ -267,9 +273,17 @@ export default function ShareModal({ onClose, onOpenRecipientPreview }) {
   };
 
   const handleDownloadPDF = async () => {
-    if (isGeneratingPdf) return;
+    if (step === 'packaging' || isGeneratingPdf) return;
     setIsGeneratingPdf(true);
-    setPdfConfettiKey(prev => prev + 1);
+    setStep('packaging');
+    setPreflightIndex(0);
+
+    const stepInterval = setInterval(() => {
+      setPreflightIndex((prev) => (prev < PDF_PREFLIGHT_STEPS.length - 1 ? prev + 1 : prev));
+    }, 450);
+
+    // Give browser brief tick to transition into packaging view smoothly
+    await new Promise((r) => setTimeout(r, 80));
 
     try {
       await generateKeychainPdf({
@@ -277,15 +291,24 @@ export default function ShareModal({ onClose, onOpenRecipientPreview }) {
         backElement: backRef.current,
         cardTitle: state.subject || state.title || 'bloom-keychain-keepsake',
       });
+
+      // Brief pause for tactile visual feedback before showing success
+      setTimeout(() => {
+        clearInterval(stepInterval);
+        setIsGeneratingPdf(false);
+        setStep('pdf-success');
+        setPdfConfettiKey((prev) => prev + 1);
+      }, 1000);
     } catch (err) {
+      clearInterval(stepInterval);
+      setIsGeneratingPdf(false);
+      setStep('choice');
       console.error('Failed to generate keychain PDF:', err);
       showToast({
         title: 'Could not generate PDF keepsake',
         description: 'Please try again or check browser permissions.',
         duration: 3500,
       });
-    } finally {
-      setIsGeneratingPdf(false);
     }
   };
 
@@ -320,7 +343,15 @@ export default function ShareModal({ onClose, onOpenRecipientPreview }) {
           {/* Header Bar matching Figma Tablet Surface [466x60] */}
           <div className="flex items-center justify-between h-[60px] pl-5 pr-3 bg-[#1F1F1F] border-b border-white/[0.08]">
             <h2 className="text-[rgba(255,255,255,0.85)] font-medium text-[17px] leading-[22px] tracking-[-0.02em] font-sans">
-              {step === 'choice' ? 'Seal & Send' : step === 'sealing' ? 'Sealing Your Bloom' : 'Share Your Card'}
+              {step === 'choice'
+              ? 'Seal & Send'
+              : step === 'sealing'
+              ? 'Sealing Your Bloom'
+              : step === 'packaging'
+              ? 'Packaging Print Keepsake'
+              : step === 'pdf-success'
+              ? 'Keepsake Ready'
+              : 'Share Your Card'}
             </h2>
 
             {/* Cancel Button (Destructive Liquid Glass Icon Button) */}
@@ -359,13 +390,12 @@ export default function ShareModal({ onClose, onOpenRecipientPreview }) {
                 {/* Actions Group: Figma 24px breathing space */}
                 <div className="flex items-center gap-3 w-full justify-center mt-6 font-sans">
                   <div className="relative flex-1 max-w-[190px]">
-                    <DramaticButtonConfetti triggerKey={pdfConfettiKey} />
                     <button
                       type="button"
                       onClick={handleDownloadPDF}
                       className="dark-liquid-glass-pill w-full h-[44px] px-5 text-[14px] leading-[20px] font-medium text-white flex items-center justify-center font-sans active:scale-[0.96] transition-transform cursor-pointer"
                     >
-                      <span>{isGeneratingPdf ? 'Creating PDF...' : 'Download PDF'}</span>
+                      <span>{isGeneratingPdf ? 'Packaging...' : 'Download PDF'}</span>
                     </button>
                   </div>
 
@@ -379,10 +409,10 @@ export default function ShareModal({ onClose, onOpenRecipientPreview }) {
                   </LiquidGlassButton>
                 </div>
               </motion.div>
-            ) : step === 'sealing' ? (
-              /* Pre-Flight Inspection & Live Envelope Sealing View */
+            ) : step === 'sealing' || step === 'packaging' ? (
+              /* Pre-Flight Inspection & Live Envelope Sealing / Packaging View */
               <motion.div
-                key="sealing"
+                key={step}
                 initial={{ opacity: 0, scale: 0.96 }}
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.96 }}
@@ -410,18 +440,57 @@ export default function ShareModal({ onClose, onOpenRecipientPreview }) {
 
                 <div className="flex flex-col items-center gap-1.5 font-sans">
                   <h3 className="text-white font-semibold text-[17px] leading-[22px] tracking-[-0.01em] font-sans">
-                    Pre-Flight Inspection
+                    {step === 'packaging' ? 'Packaging Keepsake' : 'Pre-Flight Inspection'}
                   </h3>
                   {/* Unified typeface (Geist / font-sans) throughout */}
                   <motion.p
-                    key={preflightIndex}
+                    key={`${step}-${preflightIndex}`}
                     initial={{ opacity: 0, y: 3 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -3 }}
                     className="text-[#0088FF] text-[13px] font-medium font-sans"
                   >
-                    {PREFLIGHT_STEPS[preflightIndex]}
+                    {step === 'packaging'
+                      ? PDF_PREFLIGHT_STEPS[preflightIndex]
+                      : LINK_PREFLIGHT_STEPS[preflightIndex]}
                   </motion.p>
+                </div>
+              </motion.div>
+            ) : step === 'pdf-success' ? (
+              /* PDF Download Success Celebration View */
+              <motion.div
+                key="pdf-success"
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -8 }}
+                transition={{ duration: 0.2 }}
+                className="p-6 pt-6 pb-7 flex flex-col items-center text-center bg-[#0E0E0E] font-sans"
+              >
+                {/* Hero Decal Badge: Same Starburst & Tick as Share Link */}
+                <div className="mb-3">
+                  <PolygonCheckmarkBadge />
+                </div>
+                
+                {/* Title & Copy Group */}
+                <h3 className="text-white font-bold text-[19px] leading-[24px] tracking-[-0.02em] font-sans">
+                  Keepsake Ready to Print!
+                </h3>
+                
+                <p className="mt-2 text-[#999999] text-[12.5px] leading-[19px] max-w-[340px] font-sans font-normal">
+                  Your 300+ DPI keychain print sheet is in your downloads. Cut along the crop marks, laminate, and attach to your keychain!
+                </p>
+
+                {/* Continue Action Button with Celebration Confetti */}
+                <div className="relative w-full max-w-[340px] mt-6 font-sans">
+                  <DramaticButtonConfetti triggerKey={pdfConfettiKey} />
+                  <LiquidGlassButton
+                    variant="primary"
+                    size="md"
+                    onClick={onClose}
+                    className="w-full h-[44px] font-sans"
+                  >
+                    Continue
+                  </LiquidGlassButton>
                 </div>
               </motion.div>
             ) : (
