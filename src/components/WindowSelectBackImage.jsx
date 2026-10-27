@@ -25,6 +25,74 @@ async function isHeicFile(file) {
   }
 }
 
+async function optimizeImageForPolaroid(fileOrBlob, maxDimension = 1200) {
+  return new Promise((resolve) => {
+    if (!fileOrBlob || typeof window === 'undefined') {
+      resolve(fileOrBlob);
+      return;
+    }
+
+    const img = new Image();
+    const tempUrl = URL.createObjectURL(fileOrBlob);
+
+    img.onload = () => {
+      URL.revokeObjectURL(tempUrl);
+      const width = img.naturalWidth || img.width;
+      const height = img.naturalHeight || img.height;
+
+      // If already within crisp bounds, don't re-encode
+      if (!width || !height || (width <= maxDimension && height <= maxDimension)) {
+        resolve(fileOrBlob);
+        return;
+      }
+
+      let newWidth = width;
+      let newHeight = height;
+
+      if (width > height) {
+        newHeight = Math.round((height * maxDimension) / width);
+        newWidth = maxDimension;
+      } else {
+        newWidth = Math.round((width * maxDimension) / height);
+        newHeight = maxDimension;
+      }
+
+      const canvas = document.createElement('canvas');
+      canvas.width = newWidth;
+      canvas.height = newHeight;
+      const ctx = canvas.getContext('2d');
+      if (!ctx) {
+        resolve(fileOrBlob);
+        return;
+      }
+
+      ctx.imageSmoothingEnabled = true;
+      ctx.imageSmoothingQuality = 'high';
+      ctx.drawImage(img, 0, 0, newWidth, newHeight);
+
+      canvas.toBlob(
+        (blob) => {
+          if (!blob) {
+            resolve(fileOrBlob);
+            return;
+          }
+          const cleanName = (fileOrBlob.name || 'photo').replace(/\.[^/.]+$/, '') + '.jpg';
+          resolve(new File([blob], cleanName, { type: 'image/jpeg' }));
+        },
+        'image/jpeg',
+        0.92
+      );
+    };
+
+    img.onerror = () => {
+      URL.revokeObjectURL(tempUrl);
+      resolve(fileOrBlob);
+    };
+
+    img.src = tempUrl;
+  });
+}
+
 const defaultImage = "/assets/polaroid-defaults/image1.png";
 const alternateImage = "/assets/polaroid-defaults/image2.png";
 
@@ -86,6 +154,10 @@ export default function WindowSelectBackImage() {
         setIsConverting(false);
       }
     }
+
+    // Resample ultra-high-resolution images with high-quality bicubic smoothing
+    // to prevent GPU downsampling aliasing / pixelation on small displays
+    targetFile = await optimizeImageForPolaroid(targetFile, 1200);
 
     if (uploadedUrl && uploadedUrl.startsWith('blob:')) {
       URL.revokeObjectURL(uploadedUrl);
