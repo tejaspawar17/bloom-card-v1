@@ -18,7 +18,7 @@ function cardReducer(state, action) {
       };
     }
     case 'SET_CARD_TYPE':
-      return { ...state, cardType: action.payload, activeSide: 'front' };
+      return { ...state, cardType: action.payload };
     case 'SET_POKEMON_SUBTYPE':
       return { ...state, pokemonSubtype: action.payload };
     case 'SET_ACTIVE_SIDE':

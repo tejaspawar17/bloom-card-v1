@@ -24,14 +24,22 @@ export default function WindowSelectBackImage() {
                    state.selectedBackImage === 'portrait' ? '1' :
                    state.selectedBackImage === 'none' ? 'none' : 'uploaded';
 
+  function ensureBackSide() {
+    if (state.activeSide !== 'back') {
+      dispatch({ type: 'SET_ACTIVE_SIDE', payload: 'back' });
+    }
+  }
+
   function handleUpload(file) {
     if (!file) return;
     const url = URL.createObjectURL(file);
     setUploadedUrl(url);
     dispatch({ type: 'SET_BACK_IMAGE', payload: url });
+    ensureBackSide();
   }
 
   function handleSelect(val) {
+    ensureBackSide();
     if (val === '0') {
       dispatch({ type: 'SET_BACK_IMAGE', payload: 'landscape' });
     } else if (val === '1') {

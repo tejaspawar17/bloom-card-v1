@@ -49,6 +49,9 @@ export default function RightPanel({ className = '' }) {
   const handleEmoteClick = (emoteId) => {
     setActiveStampTrigger(`emote-${emoteId}-${Date.now()}`);
     dispatch({ type: 'SET_STAMP_EMOJI', payload: emoteId });
+    if (state.activeSide !== 'back') {
+      dispatch({ type: 'SET_ACTIVE_SIDE', payload: 'back' });
+    }
   };
 
   const handleStickerClick = (sticker) => {
