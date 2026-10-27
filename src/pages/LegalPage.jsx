@@ -6,25 +6,21 @@ import {
   FileText, 
   CheckCircle, 
   WarningCircle, 
-  EnvelopeSimple, 
-  InstagramLogo, 
   Sparkle, 
   Copy,
-  LockKey,
   HardDrives,
   ShareNetwork,
-  Scales
+  InstagramLogo
 } from '@phosphor-icons/react';
 import ScatteredKeepsakes from '@/components/ui/ScatteredKeepsakes';
 import Footer from '@/components/Footer';
 import { showToast } from '@/components/ui/AppleToast';
+import '@/components/ui/LiquidGlassIconButton.css';
 
-const appleSpring = {
-  type: "spring",
-  stiffness: 380,
-  damping: 28,
-  mass: 0.8
-};
+const TABS = [
+  { id: 'terms', label: 'Terms of Use', icon: FileText },
+  { id: 'privacy', label: 'Privacy Policy', icon: ShieldCheck }
+];
 
 export default function LegalPage({ 
   initialTab = 'terms', 
@@ -72,56 +68,63 @@ export default function LegalPage({
       <ScatteredKeepsakes />
 
       {/* Main Narrative Column */}
-      <main className="w-full max-w-[780px] px-5 sm:px-8 pt-6 sm:pt-10 pb-24 sm:pb-28 flex flex-col items-center relative z-10">
+      <main className="w-full max-w-[760px] px-5 sm:px-8 pt-8 sm:pt-12 pb-24 sm:pb-28 flex flex-col items-center relative z-10">
 
-        {/* Top Floating Controls: Back Pill + Segmented Glass Tab Switcher */}
-        <div className="w-full flex flex-col sm:flex-row items-center justify-between gap-4 mb-8 sm:mb-12">
+        {/* Top Control Bar: Back Button (Feedback pill UI) + Segmented Tab (Form UI) */}
+        <div className="w-full flex items-center justify-between gap-4 mb-6 sm:mb-8">
           
-          {/* Back to Studio Glass Pill */}
+          {/* Back to Studio Button matching Feedback button UI */}
           <button
             type="button"
             onClick={onStartCrafting}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#0E0E0E]/90 border border-white/[0.12] hover:border-white/[0.24] text-[#999999] hover:text-white transition-all text-[12.5px] font-sans active:scale-95 shadow-[0_4px_20px_rgba(0,0,0,0.5)] cursor-pointer backdrop-blur-xl group"
+            className="dark-liquid-glass-pill h-[42px] px-5 text-[14px] font-medium text-white font-sans cursor-pointer active:scale-95 transition-transform flex items-center gap-2"
           >
-            <ArrowLeft size={14} className="group-hover:-translate-x-0.5 transition-transform" />
+            <ArrowLeft size={16} />
             <span>Back to Studio</span>
           </button>
 
-          {/* Liquid Glass Segmented Switcher */}
+          {/* Segmented Control matching Feedback Category Tab from FeedbackModal */}
           <div 
             role="tablist"
-            aria-label="Legal document selection"
-            className="inline-flex items-center p-1 rounded-full bg-[#0E0E0E]/90 border border-white/[0.12] shadow-[0_8px_30px_rgba(0,0,0,0.6)] backdrop-blur-xl"
+            aria-label="Legal Document Selection" 
+            className="flex items-center p-1 bg-[#161616] border border-white/[0.08] rounded-full relative"
           >
-            <button
-              type="button"
-              role="tab"
-              aria-selected={currentTab === 'terms'}
-              onClick={() => handleSwitchTab('terms')}
-              className={`flex items-center gap-1.5 px-4 sm:px-5 py-1.5 rounded-full text-[12.5px] font-medium transition-all cursor-pointer ${
-                currentTab === 'terms'
-                  ? 'bg-white text-black shadow-sm font-semibold'
-                  : 'text-[#999999] hover:text-white'
-              }`}
-            >
-              <FileText size={14} weight={currentTab === 'terms' ? 'bold' : 'regular'} />
-              <span>Terms of Use</span>
-            </button>
-
-            <button
-              type="button"
-              role="tab"
-              aria-selected={currentTab === 'privacy'}
-              onClick={() => handleSwitchTab('privacy')}
-              className={`flex items-center gap-1.5 px-4 sm:px-5 py-1.5 rounded-full text-[12.5px] font-medium transition-all cursor-pointer ${
-                currentTab === 'privacy'
-                  ? 'bg-white text-black shadow-sm font-semibold'
-                  : 'text-[#999999] hover:text-white'
-              }`}
-            >
-              <ShieldCheck size={14} weight={currentTab === 'privacy' ? 'bold' : 'regular'} />
-              <span>Privacy Policy</span>
-            </button>
+            {TABS.map((tab) => {
+              const Icon = tab.icon;
+              const isActive = currentTab === tab.id;
+              return (
+                <button
+                  type="button"
+                  role="tab"
+                  key={tab.id}
+                  id={`tab-${tab.id}`}
+                  aria-selected={isActive}
+                  onClick={() => handleSwitchTab(tab.id)}
+                  className="relative z-10 flex items-center justify-center gap-1.5 h-[34px] px-4 sm:px-5 rounded-full text-[13px] font-medium transition-colors cursor-pointer outline-none select-none"
+                >
+                  {isActive && (
+                    <motion.div
+                      layoutId="activeLegalTab"
+                      className="absolute inset-0 rounded-full bg-[#242424] -z-10"
+                      transition={{
+                        type: "spring",
+                        stiffness: 500,
+                        damping: 38,
+                        mass: 0.8
+                      }}
+                    />
+                  )}
+                  <Icon 
+                    size={15} 
+                    weight={isActive ? 'duotone' : 'regular'} 
+                    className={`transition-colors ${isActive ? 'text-[#FFFFFF]' : 'text-[#999999]'}`} 
+                  />
+                  <span className={`transition-colors ${isActive ? 'text-[#FFFFFF] font-medium' : 'text-[#999999] hover:text-[#FFFFFF]'}`}>
+                    {tab.label}
+                  </span>
+                </button>
+              );
+            })}
           </div>
         </div>
 
@@ -130,51 +133,16 @@ export default function LegalPage({
           {currentTab === 'terms' ? (
             <motion.div
               key="terms"
-              initial={{ opacity: 0, y: 12, filter: 'blur(6px)' }}
+              initial={{ opacity: 0, y: 10, filter: 'blur(4px)' }}
               animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
-              exit={{ opacity: 0, y: -8, filter: 'blur(6px)' }}
-              transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
-              className="w-full flex flex-col items-center"
+              exit={{ opacity: 0, y: -6, filter: 'blur(4px)' }}
+              transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
+              className="w-full"
             >
-              {/* Header Hero Area */}
-              <div className="flex flex-col items-center text-center gap-3.5 mb-10 max-w-[620px]">
-                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#0E0E0E] border border-white/[0.10]">
-                  <Scales size={13} className="text-[#86B75A]" />
-                  <span className="text-[11px] leading-[13px] font-normal tracking-[0.08em] uppercase text-[#86B75A]">
-                    Legal & Ethical Framework
-                  </span>
-                </div>
-
-                <h1 className="text-white font-normal text-[36px] sm:text-[44px] md:text-[48px] leading-[1.12] sm:leading-[52px] tracking-[-0.035em]">
-                  Rules of the craft,{' '}
-                  <span 
-                    className="italic font-thin text-white"
-                    style={{
-                      fontFamily: "'Instrument Serif', Georgia, serif",
-                      fontWeight: 100,
-                      fontStyle: 'italic',
-                      fontSynthesis: 'none',
-                    }}
-                  >
-                    fair play & parody.
-                  </span>
-                </h1>
-
-                <p className="text-[#999999] font-normal text-[14.5px] sm:text-[15.5px] leading-[23px] tracking-[-0.015em]">
-                  An independent, non-commercial stationery studio. Crafted for real human connections, humorous tributes, and inside jokes among friends.
-                </p>
-
-                <div className="flex items-center gap-2 text-[11px] text-[#727272] tracking-wide pt-1">
-                  <span>Last Updated: October 2026</span>
-                  <span>•</span>
-                  <span>Version 1.1 Studio Release</span>
-                </div>
-              </div>
-
               {/* Apple macOS Style Window Frame */}
               <div className="w-full rounded-[24px] bg-[#0E0E0E] border border-white/[0.10] overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.7)] text-left">
                 
-                {/* macOS Stoplights Header Bar */}
+                {/* macOS Stoplights Header Bar with Clean Title */}
                 <div className="h-[48px] px-5 flex items-center justify-between bg-[#1A1A1A] border-b border-white/[0.08] select-none">
                   <div className="flex items-center gap-2">
                     <div className="w-3 h-3 rounded-full bg-[#FF5F56] border border-[#E0443E]/50 shadow-sm" />
@@ -182,31 +150,36 @@ export default function LegalPage({
                     <div className="w-3 h-3 rounded-full bg-[#27C93F] border border-[#1AAB29]/50 shadow-sm" />
                   </div>
 
-                  <span className="text-[#999999] font-medium text-[12px] sm:text-[12.5px] leading-[16px] tracking-tight font-mono">
-                    terms_of_use.md
+                  <span className="text-[#999999] font-medium text-[13px] leading-[16px] tracking-tight">
+                    Terms of Use
                   </span>
 
                   <div className="w-12" aria-hidden="true" />
                 </div>
 
                 {/* Body Content */}
-                <div className="p-6 sm:p-9 flex flex-col gap-8 text-[#E5E5EA] text-[14px] sm:text-[14.5px] leading-[23px]">
+                <div className="p-6 sm:p-9 flex flex-col gap-7 text-[#E5E5EA] text-[14px] sm:text-[14.5px] leading-[23px]">
                   
+                  {/* Clean Timestamp */}
+                  <div className="text-[12px] text-[#727272] tracking-wide -mb-2">
+                    Last Updated: October 2026
+                  </div>
+
                   {/* Section 1 */}
-                  <section className="flex flex-col gap-2.5">
+                  <section className="flex flex-col gap-2">
                     <div className="flex items-center gap-2">
                       <span className="font-mono text-[11px] text-[#86B75A] font-semibold px-2 py-0.5 rounded bg-[#86B75A]/10 border border-[#86B75A]/20">
                         SECTION 01
                       </span>
-                      <h2 className="text-white font-semibold text-[17px] sm:text-[18px] tracking-tight">
+                      <h2 className="text-white font-semibold text-[17px] tracking-tight">
                         Non-Commercial Portfolio & Fan Project Disclaimer
                       </h2>
                     </div>
                     <p className="text-[#A3A3A3]">
-                      Bloom Card (&ldquo;Bloom&rdquo;) is a free, non-commercial personal portfolio and educational creative engineering demonstration project designed and developed independently by <strong className="text-white font-medium">Tejas Pawar</strong>.
+                      Bloom Card (&ldquo;Bloom&rdquo;) is a free, non-commercial personal portfolio and educational creative engineering demonstration project created by <strong className="text-white font-medium">Tejas Pawar</strong>.
                     </p>
                     <p className="text-[#A3A3A3]">
-                      It is not a commercial enterprise, business, or subscription service. No fees, recurring subscriptions, paid feature gating, or in-app purchases are offered on this platform.
+                      It is not a commercial product or business, and no fees, subscriptions, or monetized services are offered on this platform.
                     </p>
                   </section>
 
@@ -218,72 +191,57 @@ export default function LegalPage({
                       <span className="font-mono text-[11px] text-[#CFC531] font-semibold px-2 py-0.5 rounded bg-[#CFC531]/10 border border-[#CFC531]/20">
                         SECTION 02
                       </span>
-                      <h2 className="text-white font-semibold text-[17px] sm:text-[18px] tracking-tight">
-                        Intellectual Property & Transformative Fair Use Parody
+                      <h2 className="text-white font-semibold text-[17px] tracking-tight">
+                        Intellectual Property & Fair Use Parody Notice
                       </h2>
                     </div>
 
-                    <p className="text-[#A3A3A3]">
-                      Bloom Card combines original engineering with transformative visual culture homages:
-                    </p>
-
-                    <div className="grid grid-cols-1 gap-3.5 pt-1">
+                    <div className="grid grid-cols-1 gap-3 pt-0.5">
                       {/* Original UI */}
-                      <div className="p-4 rounded-[16px] bg-white/[0.03] border border-white/[0.08] flex flex-col gap-1.5">
-                        <div className="flex items-center gap-2 text-white font-medium text-[14px]">
-                          <Sparkle size={16} className="text-[#86B75A]" />
-                          <span>Original Interface & Code Architecture</span>
+                      <div className="p-4 rounded-[14px] bg-white/[0.03] border border-white/[0.08] flex flex-col gap-1">
+                        <div className="flex items-center gap-2 text-white font-medium text-[13.5px]">
+                          <Sparkle size={15} className="text-[#86B75A]" />
+                          <span>Original UI & Code Architecture</span>
                         </div>
                         <p className="text-[#999999] text-[13px] leading-[20px]">
-                          The Bloom studio workspace, 3D metallic foil shaders, tactile paper grain synthesis, and interactive envelope reveal sequences are proprietary original creative works (© 2026 Tejas Pawar).
+                          The Bloom studio interface, custom 3D metallic frames, layout architecture, and interactive reveal mechanics are original creative works.
                         </p>
                       </div>
 
                       {/* Pokemon Parody */}
-                      <div className="p-4 rounded-[16px] bg-white/[0.03] border border-white/[0.08] flex flex-col gap-1.5">
-                        <div className="flex items-center gap-2 text-white font-medium text-[14px]">
-                          <span className="text-[13px] font-bold text-[#CFC531]">⚡</span>
+                      <div className="p-4 rounded-[14px] bg-white/[0.03] border border-white/[0.08] flex flex-col gap-1">
+                        <div className="flex items-center gap-2 text-white font-medium text-[13.5px]">
+                          <span className="text-[12px] font-bold text-[#CFC531]">⚡</span>
                           <span>Pokémon TCG Parody Templates</span>
                         </div>
                         <p className="text-[#999999] text-[13px] leading-[20px]">
-                          Pokémon, Pokémon character names (including Psyduck), HP counters, and trading card border layouts are registered trademarks and copyrights of <strong className="text-[#CCCCCC] font-normal">Nintendo, Creatures Inc., and GAME FREAK</strong>. Bloom Card is an unofficial fan parody creator intended solely for transformative, non-commercial creative tribute and playful greetings. Bloom Card is in no way affiliated with, authorized, endorsed, or sponsored by Nintendo or The Pokémon Company.
+                          Pokémon, character names (e.g., Psyduck), and trading card framing are trademarks of Nintendo, Creatures Inc., and GAME FREAK. Bloom Card is an unofficial parody creator and is in no way affiliated with, endorsed, or sponsored by Nintendo or The Pokémon Company.
                         </p>
                       </div>
 
                       {/* Music Stickers */}
-                      <div className="p-4 rounded-[16px] bg-white/[0.03] border border-white/[0.08] flex flex-col gap-1.5">
-                        <div className="flex items-center gap-2 text-white font-medium text-[14px]">
-                          <span className="text-[13px] font-bold text-[#7CE0DC]">💿</span>
-                          <span>Music & Cultural Vinyl Stickers</span>
+                      <div className="p-4 rounded-[14px] bg-white/[0.03] border border-white/[0.08] flex flex-col gap-1">
+                        <div className="flex items-center gap-2 text-white font-medium text-[13.5px]">
+                          <span className="text-[12px] font-bold text-[#7CE0DC]">💿</span>
+                          <span>Music & Cultural Stickers</span>
                         </div>
                         <p className="text-[#999999] text-[13px] leading-[20px]">
-                          Album artwork and cultural sticker homages (such as Tyler, the Creator’s <em>IGOR</em> and <em>CALL ME IF YOU GET LOST</em>, and Frank Ocean’s <em>Blonde</em>) are the intellectual property of their respective recording artists, photographers, and record labels. They are included strictly as transformative, non-commercial cultural homage.
+                          Album art references and cultural stickers (e.g., <em>IGOR</em>, <em>Blond</em>, <em>CMIYGL</em>) are property of their respective recording artists and labels, included strictly as non-commercial homage.
                         </p>
                       </div>
 
                       {/* Microsoft Fluent UI Emojis MIT Notice */}
-                      <div className="p-4 rounded-[16px] bg-white/[0.03] border border-white/[0.08] flex flex-col gap-1.5">
-                        <div className="flex items-center gap-2 text-white font-medium text-[14px]">
-                          <span className="text-[13px] font-bold text-white">🪪</span>
-                          <span>Microsoft 3D Fluent UI Emojis (MIT License)</span>
+                      <div className="p-4 rounded-[14px] bg-white/[0.03] border border-white/[0.08] flex flex-col gap-1.5">
+                        <div className="flex items-center gap-2 text-white font-medium text-[13.5px]">
+                          <span className="text-[12px] font-bold text-white">🪪</span>
+                          <span>3D Emojis & Botanical Art</span>
                         </div>
                         <p className="text-[#999999] text-[13px] leading-[20px]">
-                          3D emoji assets in the studio are sourced from Microsoft's open-source Fluent UI Emoji library under the MIT License:
+                          3D emoji assets are sourced from Microsoft's open-source Fluent UI Emoji library (MIT License). Botanical illustrations are sourced from public domain archives or custom-rendered assets.
                         </p>
-                        <div className="p-2.5 rounded-[10px] bg-black/60 border border-white/[0.06] font-mono text-[11.5px] text-[#A3A3A3] leading-[18px]">
-                          Copyright (c) Microsoft Corporation. Sourced from <code className="text-white">microsoft/fluentui-emoji</code> under the MIT License.
+                        <div className="p-2.5 rounded-[8px] bg-black/60 border border-white/[0.06] font-mono text-[11px] text-[#A3A3A3] leading-[16px]">
+                          Copyright (c) Microsoft Corporation. Sourced under the MIT License.
                         </div>
-                      </div>
-
-                      {/* Botanical archives */}
-                      <div className="p-4 rounded-[16px] bg-white/[0.03] border border-white/[0.08] flex flex-col gap-1.5">
-                        <div className="flex items-center gap-2 text-white font-medium text-[14px]">
-                          <span className="text-[13px] font-bold text-[#86B75A]">🌿</span>
-                          <span>Botanical & Vintage Postage Art</span>
-                        </div>
-                        <p className="text-[#999999] text-[13px] leading-[20px]">
-                          Vintage botanical illustrations, flower engravings, and postal stamp frames are sourced from open public domain archives or custom digital hand-drawn assets.
-                        </p>
                       </div>
                     </div>
                   </section>
@@ -291,31 +249,31 @@ export default function LegalPage({
                   <div className="w-full h-[1px] bg-white/[0.08]" aria-hidden="true" />
 
                   {/* Section 3 */}
-                  <section className="flex flex-col gap-3">
+                  <section className="flex flex-col gap-2.5">
                     <div className="flex items-center gap-2">
                       <span className="font-mono text-[11px] text-[#7CE0DC] font-semibold px-2 py-0.5 rounded bg-[#7CE0DC]/10 border border-[#7CE0DC]/20">
                         SECTION 03
                       </span>
-                      <h2 className="text-white font-semibold text-[17px] sm:text-[18px] tracking-tight">
-                        DMCA & Prompt Copyright Takedown Procedure
+                      <h2 className="text-white font-semibold text-[17px] tracking-tight">
+                        Takedown Requests
                       </h2>
                     </div>
 
                     <p className="text-[#A3A3A3]">
-                      We respect the intellectual property rights of artists, publishers, and creators. If you are a copyright or trademark owner (or authorized representative) and believe any parody asset or cultural reference on Bloom Card infringes upon your rights, please notify us immediately.
+                      If you are a copyright or trademark holder and would like a specific reference asset removed, please contact us directly and it will be taken down promptly:
                     </p>
 
-                    <div className="p-4 rounded-[16px] bg-white/[0.03] border border-white/[0.08] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                    <div className="p-4 rounded-[14px] bg-white/[0.03] border border-white/[0.08] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
                       <div className="flex flex-col gap-0.5">
-                        <span className="text-white font-medium text-[13.5px]">Direct Creator Takedown Inbox</span>
-                        <span className="text-[#999999] text-[12.5px]">Requests are addressed within 48 hours without friction.</span>
+                        <span className="text-white font-medium text-[13px]">Creator Contact Inbox</span>
+                        <span className="text-[#999999] text-[12px]">Direct takedown email: pawartejas517@gmail.com</span>
                       </div>
 
                       <div className="flex items-center gap-2">
                         <button
                           type="button"
                           onClick={handleCopyEmail}
-                          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white text-black font-semibold text-[12px] hover:bg-neutral-200 transition-colors cursor-pointer active:scale-95 shadow-sm"
+                          className="dark-liquid-glass-pill h-[36px] px-3.5 text-[12.5px] font-medium text-white flex items-center gap-1.5 cursor-pointer active:scale-95 transition-transform"
                         >
                           <Copy size={13} />
                           <span>Copy Email</span>
@@ -324,7 +282,7 @@ export default function LegalPage({
                           href="https://www.instagram.com/teja_vu._.archive?obrf=OGI4N3BkNGlyMnIz&utm_source=qr"
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/[0.08] hover:bg-white/[0.14] text-white text-[12px] transition-colors border border-white/[0.10]"
+                          className="dark-liquid-glass-pill h-[36px] px-3.5 text-[12.5px] font-medium text-white flex items-center gap-1.5 cursor-pointer active:scale-95 transition-transform"
                         >
                           <InstagramLogo size={13} />
                           <span>Instagram</span>
@@ -336,61 +294,46 @@ export default function LegalPage({
                   <div className="w-full h-[1px] bg-white/[0.08]" aria-hidden="true" />
 
                   {/* Section 4 */}
-                  <section className="flex flex-col gap-2.5">
+                  <section className="flex flex-col gap-2">
                     <div className="flex items-center gap-2">
                       <span className="font-mono text-[11px] text-[#FFBD2E] font-semibold px-2 py-0.5 rounded bg-[#FFBD2E]/10 border border-[#FFBD2E]/20">
                         SECTION 04
                       </span>
-                      <h2 className="text-white font-semibold text-[17px] sm:text-[18px] tracking-tight">
-                        User-Generated Content & Acceptable Conduct
+                      <h2 className="text-white font-semibold text-[17px] tracking-tight">
+                        User-Generated Content & Conduct
                       </h2>
                     </div>
 
                     <p className="text-[#A3A3A3]">
-                      You retain 100% ownership of your personal messages, custom stats, and uploaded photos. By using Bloom Card, you agree to treat others with basic human dignity:
+                      You retain 100% ownership of the personal photos and custom text you input into Bloom Card. However, by using this studio, you agree <strong className="text-white font-medium">not</strong> to use Bloom Card to generate or distribute:
                     </p>
 
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
-                      <div className="p-3.5 rounded-[14px] bg-[#86B75A]/[0.06] border border-[#86B75A]/20 flex flex-col gap-1">
-                        <div className="flex items-center gap-1.5 text-[#86B75A] font-medium text-[13px]">
-                          <CheckCircle size={15} />
-                          <span>Warmly Encouraged</span>
-                        </div>
-                        <p className="text-[#CCCCCC] text-[12.5px] leading-[19px]">
-                          Heartfelt notes, genuine compliments, celebration cards, inside jokes, and friendly, consensual teasing between friends.
-                        </p>
-                      </div>
+                    <ul className="list-disc list-inside space-y-1 text-[#CCCCCC] text-[13px] pl-1">
+                      <li>Unlawful, defamatory, or non-consensual intimate imagery.</li>
+                      <li>Severe harassment, hate speech, threats, or malicious content.</li>
+                      <li>Content that infringes upon the privacy or legal rights of another individual.</li>
+                    </ul>
 
-                      <div className="p-3.5 rounded-[14px] bg-[#FF5F56]/[0.06] border border-[#FF5F56]/20 flex flex-col gap-1">
-                        <div className="flex items-center gap-1.5 text-[#FF5F56] font-medium text-[13px]">
-                          <WarningCircle size={15} />
-                          <span>Strictly Prohibited</span>
-                        </div>
-                        <p className="text-[#CCCCCC] text-[12.5px] leading-[19px]">
-                          Non-consensual intimate imagery, hate speech, severe harassment, malicious defamation, extortion, or illegal content.
-                        </p>
-                      </div>
-                    </div>
+                    <p className="text-[#86B75A] text-[12.5px] italic pt-0.5">
+                      (Friendly roasting and consensual banter between friends are welcome; genuine abuse is strictly prohibited.)
+                    </p>
                   </section>
 
                   <div className="w-full h-[1px] bg-white/[0.08]" aria-hidden="true" />
 
                   {/* Section 5 */}
-                  <section className="flex flex-col gap-2.5">
+                  <section className="flex flex-col gap-2">
                     <div className="flex items-center gap-2">
                       <span className="font-mono text-[11px] text-[#999999] font-semibold px-2 py-0.5 rounded bg-white/[0.08] border border-white/[0.12]">
                         SECTION 05
                       </span>
-                      <h2 className="text-white font-semibold text-[17px] sm:text-[18px] tracking-tight">
+                      <h2 className="text-white font-semibold text-[17px] tracking-tight">
                         Disclaimer of Warranties (&ldquo;As-Is&rdquo;)
                       </h2>
                     </div>
 
                     <p className="text-[#A3A3A3]">
-                      Bloom Card is provided on an <strong className="text-white font-medium">&ldquo;AS IS&rdquo;</strong> and <strong className="text-white font-medium">&ldquo;AS AVAILABLE&rdquo;</strong> basis without warranties of any kind.
-                    </p>
-                    <p className="text-[#A3A3A3]">
-                      Because cards are stored either client-side in browser state or in lightweight shared link stores, we do not guarantee permanent archival storage of generated cards. We recommend that users take screenshots or screen recordings of cherished cards to preserve them indefinitely.
+                      Bloom Card is provided on an <strong className="text-white font-medium">&ldquo;AS IS&rdquo;</strong> and <strong className="text-white font-medium">&ldquo;AS AVAILABLE&rdquo;</strong> basis without warranties of any kind. Because card data is stored locally or inside shareable URLs, we do not guarantee permanent archiving of shared links or uninterrupted availability of the web application.
                     </p>
                   </section>
 
@@ -400,51 +343,16 @@ export default function LegalPage({
           ) : (
             <motion.div
               key="privacy"
-              initial={{ opacity: 0, y: 12, filter: 'blur(6px)' }}
+              initial={{ opacity: 0, y: 10, filter: 'blur(4px)' }}
               animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
-              exit={{ opacity: 0, y: -8, filter: 'blur(6px)' }}
-              transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
-              className="w-full flex flex-col items-center"
+              exit={{ opacity: 0, y: -6, filter: 'blur(4px)' }}
+              transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
+              className="w-full"
             >
-              {/* Header Hero Area */}
-              <div className="flex flex-col items-center text-center gap-3.5 mb-10 max-w-[620px]">
-                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#0E0E0E] border border-white/[0.10]">
-                  <LockKey size={13} className="text-[#7CE0DC]" />
-                  <span className="text-[11px] leading-[13px] font-normal tracking-[0.08em] uppercase text-[#7CE0DC]">
-                    Zero-Database Privacy Architecture
-                  </span>
-                </div>
-
-                <h1 className="text-white font-normal text-[36px] sm:text-[44px] md:text-[48px] leading-[1.12] sm:leading-[52px] tracking-[-0.035em]">
-                  Your private notes stay{' '}
-                  <span 
-                    className="italic font-thin text-white"
-                    style={{
-                      fontFamily: "'Instrument Serif', Georgia, serif",
-                      fontWeight: 100,
-                      fontStyle: 'italic',
-                      fontSynthesis: 'none',
-                    }}
-                  >
-                    strictly private.
-                  </span>
-                </h1>
-
-                <p className="text-[#999999] font-normal text-[14.5px] sm:text-[15.5px] leading-[23px] tracking-[-0.015em]">
-                  No accounts, no email logins, and zero database harvesting. All card crafting and image processing takes place directly in your browser.
-                </p>
-
-                <div className="flex items-center gap-2 text-[11px] text-[#727272] tracking-wide pt-1">
-                  <span>Last Updated: October 2026</span>
-                  <span>•</span>
-                  <span>Version 1.1 Studio Release</span>
-                </div>
-              </div>
-
               {/* Apple macOS Style Window Frame */}
               <div className="w-full rounded-[24px] bg-[#0E0E0E] border border-white/[0.10] overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.7)] text-left">
                 
-                {/* macOS Stoplights Header Bar */}
+                {/* macOS Stoplights Header Bar with Clean Title */}
                 <div className="h-[48px] px-5 flex items-center justify-between bg-[#1A1A1A] border-b border-white/[0.08] select-none">
                   <div className="flex items-center gap-2">
                     <div className="w-3 h-3 rounded-full bg-[#FF5F56] border border-[#E0443E]/50 shadow-sm" />
@@ -452,31 +360,36 @@ export default function LegalPage({
                     <div className="w-3 h-3 rounded-full bg-[#27C93F] border border-[#1AAB29]/50 shadow-sm" />
                   </div>
 
-                  <span className="text-[#999999] font-medium text-[12px] sm:text-[12.5px] leading-[16px] tracking-tight font-mono">
-                    privacy_policy.md
+                  <span className="text-[#999999] font-medium text-[13px] leading-[16px] tracking-tight">
+                    Privacy Policy
                   </span>
 
                   <div className="w-12" aria-hidden="true" />
                 </div>
 
                 {/* Body Content */}
-                <div className="p-6 sm:p-9 flex flex-col gap-8 text-[#E5E5EA] text-[14px] sm:text-[14.5px] leading-[23px]">
+                <div className="p-6 sm:p-9 flex flex-col gap-7 text-[#E5E5EA] text-[14px] sm:text-[14.5px] leading-[23px]">
                   
+                  {/* Clean Timestamp */}
+                  <div className="text-[12px] text-[#727272] tracking-wide -mb-2">
+                    Last Updated: October 2026
+                  </div>
+
                   {/* Section 1 */}
-                  <section className="flex flex-col gap-2.5">
+                  <section className="flex flex-col gap-2">
                     <div className="flex items-center gap-2">
                       <span className="font-mono text-[11px] text-[#86B75A] font-semibold px-2 py-0.5 rounded bg-[#86B75A]/10 border border-[#86B75A]/20">
                         SECTION 01
                       </span>
-                      <h2 className="text-white font-semibold text-[17px] sm:text-[18px] tracking-tight">
-                        Overview: Zero-Database Philosophy
+                      <h2 className="text-white font-semibold text-[17px] tracking-tight">
+                        Overview (Zero-Database Architecture)
                       </h2>
                     </div>
                     <p className="text-[#A3A3A3]">
-                      Bloom Card (&ldquo;Bloom&rdquo;) is built upon an uncompromising <strong className="text-white font-medium">zero-database, client-side first</strong> architecture. We believe your personal messages, confessions, and inside jokes belong strictly between you and the person receiving your card.
+                      Bloom Card (&ldquo;Bloom&rdquo;) is an interactive digital greeting card studio built as an independent design and creative engineering project. We believe your personal messages and inside jokes belong strictly between you and the person receiving your card.
                     </p>
                     <p className="text-[#A3A3A3]">
-                      We do not require account registration, we do not request your phone number, and we do not maintain a marketing database to read, harvest, or monetize your personal correspondence.
+                      Bloom operates entirely client-side within your web browser and does not maintain a backend database to collect, read, or harvest your personal content.
                     </p>
                   </section>
 
@@ -488,29 +401,29 @@ export default function LegalPage({
                       <span className="font-mono text-[11px] text-[#7CE0DC] font-semibold px-2 py-0.5 rounded bg-[#7CE0DC]/10 border border-[#7CE0DC]/20">
                         SECTION 02
                       </span>
-                      <h2 className="text-white font-semibold text-[17px] sm:text-[18px] tracking-tight">
-                        Local Memory & Custom Photo Handling
+                      <h2 className="text-white font-semibold text-[17px] tracking-tight">
+                        Local Processing & Custom Image Uploads
                       </h2>
                     </div>
 
-                    <div className="grid grid-cols-1 gap-3.5 pt-1">
-                      <div className="p-4 rounded-[16px] bg-white/[0.03] border border-white/[0.08] flex flex-col gap-1.5">
-                        <div className="flex items-center gap-2 text-white font-medium text-[14px]">
-                          <HardDrives size={16} className="text-[#7CE0DC]" />
-                          <span>In-Browser Memory Processing</span>
+                    <div className="grid grid-cols-1 gap-3 pt-0.5">
+                      <div className="p-4 rounded-[14px] bg-white/[0.03] border border-white/[0.08] flex flex-col gap-1">
+                        <div className="flex items-center gap-2 text-white font-medium text-[13.5px]">
+                          <HardDrives size={15} className="text-[#7CE0DC]" />
+                          <span>Text & Customization</span>
                         </div>
                         <p className="text-[#999999] text-[13px] leading-[20px]">
-                          All messages, trainer stats, flower choices, and sticker coordinates are stored and manipulated entirely in your device's browser memory (React state).
+                          All messages, trainer stats, flower selections, and sticker placements are processed locally in your browser's memory.
                         </p>
                       </div>
 
-                      <div className="p-4 rounded-[16px] bg-white/[0.03] border border-white/[0.08] flex flex-col gap-1.5">
-                        <div className="flex items-center gap-2 text-white font-medium text-[14px]">
-                          <ShieldCheck size={16} className="text-[#86B75A]" />
-                          <span>Local Photo Downscaling & Canvas Processing</span>
+                      <div className="p-4 rounded-[14px] bg-white/[0.03] border border-white/[0.08] flex flex-col gap-1">
+                        <div className="flex items-center gap-2 text-white font-medium text-[13.5px]">
+                          <ShieldCheck size={15} className="text-[#86B75A]" />
+                          <span>Uploaded Photos</span>
                         </div>
                         <p className="text-[#999999] text-[13px] leading-[20px]">
-                          When you upload a custom photo for the back of your card or Polaroid frame, the image is processed directly on your device via HTML5 Canvas. Your raw high-resolution camera roll files are never transmitted to any centralized cloud warehouse or analyzed by machine vision models.
+                          When you upload a custom photo for the back of a card, the image file is processed directly inside your device's browser (via local Data URLs / Canvas). Your personal photos are never uploaded to or stored permanently on our servers.
                         </p>
                       </div>
                     </div>
@@ -524,25 +437,22 @@ export default function LegalPage({
                       <span className="font-mono text-[11px] text-[#CFC531] font-semibold px-2 py-0.5 rounded bg-[#CFC531]/10 border border-[#CFC531]/20">
                         SECTION 03
                       </span>
-                      <h2 className="text-white font-semibold text-[17px] sm:text-[18px] tracking-tight">
-                        Shared Card Links & Recipient Mode
+                      <h2 className="text-white font-semibold text-[17px] tracking-tight">
+                        Shared Card Links (&ldquo;/view&rdquo; Route)
                       </h2>
                     </div>
 
                     <p className="text-[#A3A3A3]">
-                      When you generate a shareable link for your card to send to a friend:
+                      When you confirm and generate a shareable link for your card, your card's configuration and text are encoded directly into the URL parameters (such as Base64 URL state) or a private shared record:
                     </p>
 
-                    <div className="p-4 rounded-[16px] bg-white/[0.03] border border-white/[0.08] flex flex-col gap-2">
+                    <div className="p-4 rounded-[14px] bg-white/[0.03] border border-white/[0.08] flex flex-col gap-1.5">
                       <div className="flex items-center gap-2 text-white font-medium text-[13.5px]">
-                        <ShareNetwork size={16} className="text-[#CFC531]" />
-                        <span>Cryptographically Unguessable Short Links</span>
+                        <ShareNetwork size={15} className="text-[#CFC531]" />
+                        <span>Private & Unguessable Direct Links</span>
                       </div>
                       <p className="text-[#999999] text-[13px] leading-[20px]">
-                        Your card configuration (theme, message text, sticker coordinates, and compressed image thumbnail) is serialized into an anonymized cloud record in Supabase with a high-entropy, random identifier.
-                      </p>
-                      <p className="text-[#999999] text-[13px] leading-[20px]">
-                        Anyone in possession of that exact URL can open and view the card in recipient reveal mode. Shared card links are unindexed, unlisted, and private to whoever holds the link. Please share your generated links responsibly.
+                        Anyone who has access to that unique link can view the card and its contents. Because the card data lives inside the link itself or an unlisted record rather than a central database, deleting the link removes access. Please share your generated links responsibly.
                       </p>
                     </div>
                   </section>
@@ -550,26 +460,22 @@ export default function LegalPage({
                   <div className="w-full h-[1px] bg-white/[0.08]" aria-hidden="true" />
 
                   {/* Section 4 */}
-                  <section className="flex flex-col gap-2.5">
+                  <section className="flex flex-col gap-2">
                     <div className="flex items-center gap-2">
                       <span className="font-mono text-[11px] text-[#999999] font-semibold px-2 py-0.5 rounded bg-white/[0.08] border border-white/[0.12]">
                         SECTION 04
                       </span>
-                      <h2 className="text-white font-semibold text-[17px] sm:text-[18px] tracking-tight">
-                        Browser Storage & Anonymized Telemetry
+                      <h2 className="text-white font-semibold text-[17px] tracking-tight">
+                        Analytics & Local Storage
                       </h2>
                     </div>
 
-                    <p className="text-[#A3A3A3]">
-                      Bloom utilizes standard browser capabilities to protect your work and ensure performance:
-                    </p>
-
-                    <ul className="list-disc list-inside space-y-1.5 text-[#A3A3A3] text-[13.5px] pl-1">
+                    <ul className="list-disc list-inside space-y-1.5 text-[#A3A3A3] text-[13px] pl-1">
                       <li>
-                        <strong className="text-white font-medium">Local Storage Drafts:</strong> Bloom preserves your active card design draft in your browser's native <code className="text-[#86B75A] font-mono text-[12px]">localStorage</code> so you don't lose progress if you accidentally refresh or switch tabs. This draft stays solely on your computer or phone.
+                        <strong className="text-white font-medium">Browser Storage:</strong> Bloom may use your browser's native <code className="text-[#86B75A] font-mono text-[11.5px]">localStorage</code> or <code className="text-[#86B75A] font-mono text-[11.5px]">sessionStorage</code> strictly to preserve your active card draft while you design so you do not lose progress on page refresh.
                       </li>
                       <li>
-                        <strong className="text-white font-medium">Hosting Performance Metrics:</strong> Our hosting provider (Vercel) records aggregate, non-personally identifiable telemetry (e.g. page response time, viewport category, WebGL FPS rates) strictly to ensure the 3D shaders render at 60fps. No card text or personal identifiers are ever attached to these logs.
+                        <strong className="text-white font-medium">Anonymized Performance Data:</strong> Our hosting provider (e.g., Vercel) may collect basic, anonymized telemetry (such as page load speed, viewport category, and aggregate visit counts) to ensure the 3D shaders and animations run smoothly. No personally identifiable information (PII) or card text is ever attached to these metrics.
                       </li>
                     </ul>
                   </section>
@@ -582,47 +488,26 @@ export default function LegalPage({
                       <span className="font-mono text-[11px] text-[#86B75A] font-semibold px-2 py-0.5 rounded bg-[#86B75A]/10 border border-[#86B75A]/20">
                         SECTION 05
                       </span>
-                      <h2 className="text-white font-semibold text-[17px] sm:text-[18px] tracking-tight">
-                        In-App Feedback & Creator Communications
+                      <h2 className="text-white font-semibold text-[17px] tracking-tight">
+                        Contact & Inquiries
                       </h2>
                     </div>
 
                     <p className="text-[#A3A3A3]">
-                      When you submit feedback using the in-app Feedback dialog, your message, rating, and optional contact email are stored securely in our feedback database and dispatched directly to the creator's inbox via Resend serverless email functions.
-                    </p>
-                    <p className="text-[#A3A3A3]">
-                      We use your feedback solely to debug issues, fix visual glitches, and improve Bloom. Your email will never be sold, rented, or enrolled in promotional newsletters.
-                    </p>
-                  </section>
-
-                  <div className="w-full h-[1px] bg-white/[0.08]" aria-hidden="true" />
-
-                  {/* Section 6 */}
-                  <section className="flex flex-col gap-3">
-                    <div className="flex items-center gap-2">
-                      <span className="font-mono text-[11px] text-[#7CE0DC] font-semibold px-2 py-0.5 rounded bg-[#7CE0DC]/10 border border-[#7CE0DC]/20">
-                        SECTION 06
-                      </span>
-                      <h2 className="text-white font-semibold text-[17px] sm:text-[18px] tracking-tight">
-                        Contact & Privacy Inquiries
-                      </h2>
-                    </div>
-
-                    <p className="text-[#A3A3A3]">
-                      If you have questions regarding data privacy, wish to request the deletion of a shared card record, or have questions about how Bloom works, please reach out to the creator directly:
+                      If you have any questions regarding privacy, data handling, or this project, please reach out via Instagram at <strong className="text-white font-medium">@teja_vu._.archive</strong> or contact the creator directly:
                     </p>
 
-                    <div className="p-4 rounded-[16px] bg-white/[0.03] border border-white/[0.08] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                    <div className="p-4 rounded-[14px] bg-white/[0.03] border border-white/[0.08] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
                       <div className="flex flex-col gap-0.5">
-                        <span className="text-white font-medium text-[13.5px]">Tejas Pawar — Independent Creator</span>
-                        <span className="text-[#999999] text-[12.5px]">Open to inquiries, bug reports, and privacy questions.</span>
+                        <span className="text-white font-medium text-[13px]">Creator Contact Inbox</span>
+                        <span className="text-[#999999] text-[12px]">Direct email: pawartejas517@gmail.com</span>
                       </div>
 
                       <div className="flex items-center gap-2">
                         <button
                           type="button"
                           onClick={handleCopyEmail}
-                          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white text-black font-semibold text-[12px] hover:bg-neutral-200 transition-colors cursor-pointer active:scale-95 shadow-sm"
+                          className="dark-liquid-glass-pill h-[36px] px-3.5 text-[12.5px] font-medium text-white flex items-center gap-1.5 cursor-pointer active:scale-95 transition-transform"
                         >
                           <Copy size={13} />
                           <span>Copy Email</span>
@@ -631,7 +516,7 @@ export default function LegalPage({
                           href="https://www.instagram.com/teja_vu._.archive?obrf=OGI4N3BkNGlyMnIz&utm_source=qr"
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/[0.08] hover:bg-white/[0.14] text-white text-[12px] transition-colors border border-white/[0.10]"
+                          className="dark-liquid-glass-pill h-[36px] px-3.5 text-[12.5px] font-medium text-white flex items-center gap-1.5 cursor-pointer active:scale-95 transition-transform"
                         >
                           <InstagramLogo size={13} />
                           <span>Instagram</span>
@@ -648,7 +533,7 @@ export default function LegalPage({
 
       </main>
 
-      {/* Global Footer (Already includes Feedback, Terms, Privacy, Instagram, Email, Coffee) */}
+      {/* Global Footer (includes Feedback, Terms, Privacy, Instagram, Email, Coffee) */}
       <Footer 
         onFeedback={onFeedback} 
         onTerms={onTerms} 
