@@ -1,4 +1,4 @@
-import { ToastProvider } from '@heroui/react';
+import AppleToast from '@/components/ui/AppleToast';
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { CardProvider, useCard } from './context/CardContext';
@@ -168,24 +168,7 @@ function AppShell() {
 export default function App() {
   return (
     <CardProvider>
-      <ToastProvider placement="bottom" className="z-50">
-        {(renderProps) => {
-          const content = renderProps?.toast?.content || {};
-          const title = typeof content === 'string' ? content : content.title;
-          const description = typeof content === 'object' ? content.description : null;
-          return (
-            <div className="pointer-events-auto flex items-center gap-3 px-5 py-3 rounded-2xl bg-[#141615]/95 backdrop-blur-2xl border border-white/15 text-white shadow-[0_12px_40px_rgba(0,0,0,0.7)] select-none">
-              <div className="w-2.5 h-2.5 rounded-full bg-[#34C759] shadow-[0_0_10px_#34C759] shrink-0" />
-              <div className="flex flex-col">
-                <span className="text-[13px] font-semibold text-white tracking-tight">{title || 'Copied to clipboard'}</span>
-                {description && (
-                  <span className="text-[11px] text-neutral-400 font-mono tracking-tight">{description}</span>
-                )}
-              </div>
-            </div>
-          );
-        }}
-      </ToastProvider>
+      <AppleToast />
       <AppShell />
     </CardProvider>
   );

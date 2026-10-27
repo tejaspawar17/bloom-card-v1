@@ -1,6 +1,6 @@
 import React from 'react';
 import { InstagramLogo, EnvelopeSimple } from '@phosphor-icons/react';
-import { toast } from '@heroui/react';
+import { showToast } from '@/components/ui/AppleToast';
 import '@/components/ui/LiquidGlassIconButton.css';
 import CoffeeButton from '@/components/ui/CoffeeButton';
 
@@ -17,10 +17,7 @@ export default function Footer({ onFeedback, onTerms, onPrivacy }) {
       document.execCommand('copy');
       document.body.removeChild(textArea);
     }
-    toast.success('Email copied to clipboard!', {
-      description: email,
-      timeout: 3000,
-    });
+    showToast({ title: 'Email copied to clipboard', description: email, duration: 2600 });
   };
   return (
     <footer 
