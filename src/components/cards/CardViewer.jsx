@@ -133,7 +133,7 @@ export default function CardViewer({ onConfirm, onOpenEditTitle, onOpenEditMessa
   return (
     <div className="flex flex-col items-center select-none" role="region" aria-label="Card Studio Viewer">
       {/* 1. Top Switcher: Segmented Control (Glass) */}
-      <div className="mb-1.5 xl:mb-2 flex justify-center">
+      <div className="mb-1.5 xl:mb-2 flex justify-center relative z-30">
         <GlassSegmentedControl 
           value={state.cardType}
           onValueChange={(val) => dispatch({ type: 'SET_CARD_TYPE', payload: val })}

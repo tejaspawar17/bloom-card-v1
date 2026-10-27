@@ -50,11 +50,20 @@ export function DraggableSticker({ stickerData }) {
 
   const handleDragEnd = (event, info) => {
     setLandKey(Date.now());
+    const cardWidth = stickerRef.current?.parentElement?.clientWidth || 360;
+    const cardHeight = stickerRef.current?.parentElement?.clientHeight || 500;
+    const stickerWidth = stickerData.stickerId === "cmiygl" ? 176 : 144;
+    const stickerHeight = stickerWidth;
+
+    // Clamp position so sticker stays on card and never overlaps the top segmented control
+    const clampedX = Math.max(-stickerWidth * 0.4, Math.min(cardWidth - stickerWidth * 0.6, stickerData.x + info.offset.x));
+    const clampedY = Math.max(4, Math.min(cardHeight - stickerHeight * 0.6, stickerData.y + info.offset.y));
+
     dispatch({
       type: 'UPDATE_STICKER_POS',
       payload: { 
         id: stickerData.id, 
-        pos: { x: stickerData.x + info.offset.x, y: stickerData.y + info.offset.y } 
+        pos: { x: clampedX, y: clampedY } 
       }
     });
   };
@@ -155,30 +164,30 @@ export function DraggableSticker({ stickerData }) {
       <AnimatePresence>
         {isEditingSticker && (
           <>
-            {/* Frosted Dashed Bounding Box */}
+            {/* Option A: Inward Frosted Dashed Bounding Box (Never protrudes outside sticker bounds) */}
             <motion.div
               key="bounding-box"
-              initial={{ opacity: 0, scale: 0.95 }}
+              initial={{ opacity: 0, scale: 0.96 }}
               animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.95 }}
+              exit={{ opacity: 0, scale: 0.96 }}
               transition={{ duration: 0.15 }}
-              className="absolute inset-[-8px] rounded-[22px] border-2 border-dashed border-white/40 shadow-[0_0_15px_rgba(255,255,255,0.12)] pointer-events-none z-30"
+              className="absolute inset-0 rounded-[18px] border-2 border-dashed border-white/50 shadow-[0_0_12px_rgba(255,255,255,0.15)] pointer-events-none z-30"
             />
 
-            {/* Live Rotation Degree Readout */}
+            {/* Live Rotation Degree Readout in Center of Sticker */}
             {isRotating && (
               <motion.div
                 key="degree-tooltip"
-                initial={{ opacity: 0, y: 6, scale: 0.9 }}
-                animate={{ opacity: 1, y: 0, scale: 1 }}
-                exit={{ opacity: 0, y: 4, scale: 0.9 }}
-                className="absolute -top-14 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full bg-[#18191C]/95 backdrop-blur-md border border-white/25 text-[11px] font-bold text-white tracking-wider pointer-events-none z-50 shadow-2xl flex items-center gap-1 font-sans"
+                initial={{ opacity: 0, scale: 0.85 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.85 }}
+                className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 px-3 py-1 rounded-full bg-[#18191C]/95 backdrop-blur-md border border-white/25 text-[11px] font-bold text-white tracking-wider pointer-events-none z-50 shadow-2xl flex items-center gap-1 font-sans"
               >
                 <span ref={degreeTextRef}>{Math.round(latestRotationRef.current)}°</span>
               </motion.div>
             )}
 
-            {/* Check Button (Confirm) — Top */}
+            {/* Option A: Check Button (Confirm) — Inset at Top-Left */}
             <motion.button 
               key="check-handle"
               type="button"
@@ -193,29 +202,12 @@ export function DraggableSticker({ stickerData }) {
                 e.stopPropagation();
                 setIsEditingSticker(false);
               }}
-              className="absolute -top-4 left-1/2 -translate-x-1/2 w-8 h-8 rounded-full bg-[#0088FF] text-white flex items-center justify-center shadow-[0_4px_12px_rgba(0,136,255,0.4)] border border-white/40 cursor-pointer z-40 outline-none"
+              className="absolute top-1.5 left-1.5 w-7 h-7 rounded-full bg-[#0088FF] text-white flex items-center justify-center shadow-[0_2px_8px_rgba(0,136,255,0.5)] border border-white/50 cursor-pointer z-40 outline-none"
             >
-              <Check size={16} weight="bold" />
+              <Check size={14} weight="bold" />
             </motion.button>
 
-            {/* Rotation Handle — Bottom */}
-            <motion.button 
-              key="rotate-handle"
-              type="button"
-              aria-label="Rotate sticker"
-              initial={{ scale: 0, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0, opacity: 0 }}
-              transition={{ type: "spring", stiffness: 500, damping: 25 }}
-              whileHover={{ scale: 1.12 }}
-              whileTap={{ scale: 0.88 }}
-              onPointerDown={startRotation}
-              className="absolute -bottom-4 left-1/2 -translate-x-1/2 w-8 h-8 rounded-full bg-[#1A1A1A] text-white flex items-center justify-center shadow-[0_4px_12px_rgba(0,0,0,0.5)] border border-white/20 cursor-grab active:cursor-grabbing z-40 outline-none hover:bg-neutral-800"
-            >
-              <ArrowsClockwise size={16} weight="bold" />
-            </motion.button>
-
-            {/* Delete Button (X) — Top Right */}
+            {/* Option A: Delete Button (X) — Inset at Top-Right */}
             <motion.button 
               key="delete-handle"
               type="button"
@@ -230,9 +222,26 @@ export function DraggableSticker({ stickerData }) {
                 e.stopPropagation();
                 dispatch({ type: 'REMOVE_STICKER', payload: stickerData.id });
               }}
-              className="absolute -top-3 -right-3 w-7 h-7 rounded-full bg-red-600/90 text-white flex items-center justify-center shadow-lg border border-white/30 cursor-pointer z-40 outline-none hover:bg-red-500"
+              className="absolute top-1.5 right-1.5 w-7 h-7 rounded-full bg-red-600/95 text-white flex items-center justify-center shadow-[0_2px_8px_rgba(220,38,38,0.5)] border border-white/50 cursor-pointer z-40 outline-none hover:bg-red-500"
             >
-              <X size={14} weight="bold" />
+              <X size={13} weight="bold" />
+            </motion.button>
+
+            {/* Option A: Rotation Handle — Inset at Bottom-Center */}
+            <motion.button 
+              key="rotate-handle"
+              type="button"
+              aria-label="Rotate sticker"
+              initial={{ scale: 0, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0, opacity: 0 }}
+              transition={{ type: "spring", stiffness: 500, damping: 25 }}
+              whileHover={{ scale: 1.12 }}
+              whileTap={{ scale: 0.88 }}
+              onPointerDown={startRotation}
+              className="absolute bottom-1.5 left-1/2 -translate-x-1/2 w-7 h-7 rounded-full bg-[#1A1A1A]/95 text-white flex items-center justify-center shadow-[0_2px_8px_rgba(0,0,0,0.6)] border border-white/30 cursor-grab active:cursor-grabbing z-40 outline-none hover:bg-neutral-800"
+            >
+              <ArrowsClockwise size={14} weight="bold" />
             </motion.button>
           </>
         )}
