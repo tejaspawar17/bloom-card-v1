@@ -2,29 +2,44 @@ import React, { useMemo } from 'react';
 
 /**
  * AnimatedAILoaderFX
- * Exact component from Framer Marketplace (by DiverseKit)
- * https://www.framer.com/marketplace/components/animatedailoaderfx/
+ * Exact component from Framer Marketplace:
+ * https://framer.com/m/AnimatedAILoaderFX-ScAzDC.js@qaIw0VNDi8FmQK9IacAM
  * 
- * Supports centered loading text (e.g., "Generating...") matching the Framer reference,
- * or custom children (e.g., Reveal button).
+ * Features:
+ * - Rotating dual-phase gradient box-shadow orb
+ * - Staggered letter-by-letter wave animation on "Generating"
+ * - Supports custom children override (e.g. Reveal button)
  */
-export default function AnimatedAILoaderFX({
-  size = 200,
-  animationDuration = 6.5,
-  // Bloom gradient palette
-  colorLight = "#ffffff",
-  colorMid = "#86B75A",
-  colorDark = "#132013",
-  colorMidAlt = "#CFC531",
-  colorDarkAlt = "#4F793E",
-  text,
-  textClassName = "",
-  children,
-  className = "",
-  style = {},
-}) {
+export default function AnimatedAILoaderFX(props) {
+  const {
+    text = "Generating",
+    size = 180,
+    font = {
+      fontFamily: '"Inter", sans-serif',
+      fontSize: 19,
+      fontWeight: 300,
+    },
+    textColor = "#ffffff",
+    animationDuration = 2,
+    letterDelay = 0.1,
+    // Exact Framer default gradient colors
+    colorLight = "#ffffff",
+    colorMid = "#ad5fff",
+    colorDark = "#471eec",
+    colorMidAlt = "#d60a47",
+    colorDarkAlt = "#311e80",
+    children,
+    className = "",
+    style = {},
+  } = props;
+
+  const letters = useMemo(() => (text ? text.split("") : []), [text]);
   const keyframeId = useMemo(
     () => `loader-rotate-${Math.random().toString(36).substr(2, 9)}`,
+    []
+  );
+  const letterKeyframeId = useMemo(
+    () => `letter-anim-${Math.random().toString(36).substr(2, 9)}`,
     []
   );
 
@@ -52,6 +67,20 @@ export default function AnimatedAILoaderFX({
           0 60px 60px 0 ${colorDark} inset;
       }
     }
+    @keyframes ${letterKeyframeId} {
+      0%, 100% {
+        opacity: 0.4;
+        transform: translateY(0);
+      }
+      20% {
+        opacity: 1;
+        transform: scale(1.15);
+      }
+      40% {
+        opacity: 0.7;
+        transform: translateY(0);
+      }
+    }
   `;
 
   const wrapperStyle = {
@@ -61,6 +90,8 @@ export default function AnimatedAILoaderFX({
     justifyContent: "center",
     width: size,
     height: size,
+    ...font,
+    color: textColor,
     borderRadius: "50%",
     backgroundColor: "transparent",
     userSelect: "none",
@@ -80,20 +111,27 @@ export default function AnimatedAILoaderFX({
     pointerEvents: "none",
   };
 
+  const getLetterStyle = (index) => ({
+    display: "inline-block",
+    opacity: 0.4,
+    transform: "translateY(0)",
+    animation: `${letterKeyframeId} ${animationDuration}s infinite`,
+    animationDelay: `${index * letterDelay}s`,
+    zIndex: 1,
+    borderRadius: "50ch",
+    border: "none",
+  });
+
   return (
     <div style={wrapperStyle} className={className}>
       <style>{keyframes}</style>
       <div style={loaderStyle} />
-      {children || (text && (
-        <span
-          className={`relative z-10 font-sans text-[11px] xl:text-[12px] font-medium tracking-[0.24em] text-white/90 uppercase animate-pulse select-none text-center ${textClassName}`}
-          style={{
-            textShadow: '0 0 14px rgba(134, 183, 90, 0.65), 0 1px 2px rgba(0, 0, 0, 0.8)',
-          }}
-        >
-          {text}
-        </span>
-      ))}
+      {children ||
+        letters.map((letter, index) => (
+          <span key={index} style={getLetterStyle(index)}>
+            {letter}
+          </span>
+        ))}
     </div>
   );
 }

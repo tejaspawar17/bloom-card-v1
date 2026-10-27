@@ -14,22 +14,35 @@
   </head>
   <body class="bg-[#070908] text-white selection:bg-blue-500 selection:text-white">
     <div id="root">
-      <!-- 0ms Zero-Latency Inline Fallback Splash: AnimatedAILoaderFX with centered Generating... -->
+      <!-- 0ms Zero-Latency Inline Fallback Splash: Exact AnimatedAILoaderFX -->
       <div id="app-preloader" style="position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;background-color:#070908;z-index:99999;user-select:none;">
-        <div style="position:relative;display:flex;align-items:center;justify-content:center;width:160px;height:160px;border-radius:50%;">
+        <div style="position:relative;display:flex;align-items:center;justify-content:center;width:180px;height:180px;border-radius:50%;font-family:'Inter',sans-serif;font-size:19px;font-weight:300;color:#ffffff;">
           <style>
             @keyframes bloom-preload-rot {
-              0% { transform: rotate(90deg); box-shadow: 0 10px 20px 0 #ffffff inset, 0 20px 30px 0 #86B75A inset, 0 60px 60px 0 #132013 inset; }
-              50% { transform: rotate(270deg); box-shadow: 0 10px 20px 0 #ffffff inset, 0 20px 10px 0 #CFC531 inset, 0 40px 60px 0 #4F793E inset; }
-              100% { transform: rotate(450deg); box-shadow: 0 10px 20px 0 #ffffff inset, 0 20px 30px 0 #86B75A inset, 0 60px 60px 0 #132013 inset; }
+              0% { transform: rotate(90deg); box-shadow: 0 10px 20px 0 #ffffff inset, 0 20px 30px 0 #ad5fff inset, 0 60px 60px 0 #471eec inset; }
+              50% { transform: rotate(270deg); box-shadow: 0 10px 20px 0 #ffffff inset, 0 20px 10px 0 #d60a47 inset, 0 40px 60px 0 #311e80 inset; }
+              100% { transform: rotate(450deg); box-shadow: 0 10px 20px 0 #ffffff inset, 0 20px 30px 0 #ad5fff inset, 0 60px 60px 0 #471eec inset; }
             }
-            @keyframes bloom-text-pulse {
-              0%, 100% { opacity: 0.9; }
-              50% { opacity: 0.4; }
+            @keyframes bloom-preload-let {
+              0%, 100% { opacity: 0.4; transform: translateY(0); }
+              20% { opacity: 1; transform: scale(1.15); }
+              40% { opacity: 0.7; transform: translateY(0); }
             }
+            .f-let { display: inline-block; opacity: 0.4; animation: bloom-preload-let 2s infinite; }
           </style>
-          <div style="position:absolute;top:0;left:0;width:100%;height:100%;border-radius:50%;animation:bloom-preload-rot 6.5s linear infinite;pointer-events:none;"></div>
-          <span style="position:relative;z-index:1;font-family:system-ui,-apple-system,sans-serif;font-size:11.5px;font-weight:500;letter-spacing:0.24em;text-transform:uppercase;color:rgba(255,255,255,0.9);text-shadow:0 0 14px rgba(134,183,90,0.65),0 1px 2px rgba(0,0,0,0.8);animation:bloom-text-pulse 2s ease-in-out infinite;">Generating...</span>
+          <div style="position:absolute;top:0;left:0;width:100%;height:100%;border-radius:50%;animation:bloom-preload-rot 2s linear infinite;pointer-events:none;"></div>
+          <span style="position:relative;z-index:1;">
+            <span class="f-let" style="animation-delay:0s;">G</span>
+            <span class="f-let" style="animation-delay:0.1s;">e</span>
+            <span class="f-let" style="animation-delay:0.2s;">n</span>
+            <span class="f-let" style="animation-delay:0.3s;">e</span>
+            <span class="f-let" style="animation-delay:0.4s;">r</span>
+            <span class="f-let" style="animation-delay:0.5s;">a</span>
+            <span class="f-let" style="animation-delay:0.6s;">t</span>
+            <span class="f-let" style="animation-delay:0.7s;">i</span>
+            <span class="f-let" style="animation-delay:0.8s;">n</span>
+            <span class="f-let" style="animation-delay:0.9s;">g</span>
+          </span>
         </div>
       </div>
     </div>

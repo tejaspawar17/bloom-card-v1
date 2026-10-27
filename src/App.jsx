@@ -141,7 +141,7 @@ function AppShell() {
           exit="exit"
           className="fixed inset-0 z-[99999] flex flex-col items-center justify-center bg-[#070908] select-none"
         >
-          <AnimatedAILoaderFX size={160} text="Generating..." />
+          <AnimatedAILoaderFX />
         </motion.div>
       ) : (
         /* Full App Content: Enters seamlessly using existing Bloom optical blur transition */
@@ -176,7 +176,7 @@ function AppShell() {
                 <Suspense
                   fallback={
                     <div className="w-full flex-1 flex items-center justify-center min-h-[60vh]">
-                      <AnimatedAILoaderFX size={130} text="Generating..." />
+                      <AnimatedAILoaderFX size={140} />
                     </div>
                   }
                 >
