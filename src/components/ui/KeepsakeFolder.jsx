@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 /**
@@ -44,7 +44,7 @@ const defaultKeepsakeCards = [
 
 /**
  * FlipCard Component
- * Calibrated for portrait keepsake cards (96px x 134px, ~0.716 aspect ratio matching 688x960 keepsake scale).
+ * Calibrated for portrait keepsake cards (104px x 145px, ~0.717 aspect ratio matching 688x960 keepsake scale).
  */
 function KeepsakeFlipCard({
   image,
@@ -72,7 +72,7 @@ function KeepsakeFlipCard({
       onMouseLeave={() => {
         if (isSpread) setIsHoverFlipped(false);
       }}
-      className="relative w-[96px] h-[134px] select-none"
+      className="relative w-[104px] h-[145px] select-none"
       style={{
         perspective: 1000,
         cursor: isSpread ? 'pointer' : 'inherit',
@@ -84,7 +84,7 @@ function KeepsakeFlipCard({
           rotateY: activeFlip ? 180 : 0,
         }}
         transition={flipTransition}
-        className="absolute inset-0 w-full h-full rounded-[7px] overflow-hidden shadow-[0_4px_14px_rgba(0,0,0,0.35)]"
+        className="absolute inset-0 w-full h-full rounded-[8px] overflow-hidden shadow-[0_4px_14px_rgba(0,0,0,0.35)]"
         style={{
           backfaceVisibility: 'hidden',
           WebkitBackfaceVisibility: 'hidden',
@@ -94,7 +94,7 @@ function KeepsakeFlipCard({
         <img
           src={image}
           alt={text || 'keepsake photo'}
-          className="w-full h-full object-cover rounded-[7px] pointer-events-none"
+          className="w-full h-full object-cover rounded-[8px] pointer-events-none"
           loading="lazy"
         />
       </motion.div>
@@ -105,7 +105,7 @@ function KeepsakeFlipCard({
           rotateY: activeFlip ? 0 : 180,
         }}
         transition={flipTransition}
-        className="absolute inset-0 w-full h-full rounded-[7px] bg-white border border-[#222222] p-2 flex flex-col justify-center items-center text-center shadow-[0_4px_14px_rgba(0,0,0,0.35)]"
+        className="absolute inset-0 w-full h-full rounded-[8px] bg-white border border-[#222222] p-2 flex flex-col justify-center items-center text-center shadow-[0_4px_14px_rgba(0,0,0,0.35)]"
         style={{
           backfaceVisibility: 'hidden',
           WebkitBackfaceVisibility: 'hidden',
@@ -113,7 +113,7 @@ function KeepsakeFlipCard({
         }}
       >
         <p
-          className="text-[#222222] text-[11px] leading-[14px] font-medium tracking-tight"
+          className="text-[#222222] text-[11px] leading-[15px] font-medium tracking-tight"
           style={{
             fontFamily: '"Clash Display", sans-serif',
           }}
@@ -130,11 +130,11 @@ function KeepsakeFlipCard({
  * 
  * Sizing:
  * - Native Canvas size: 149px wide × 158px high (pocket 110px).
- * - Cards: 96px wide × 134px high (portrait keepsakes sitting snugly inside pocket).
+ * - Cards: 104px wide × 145px high (portrait keepsakes sitting snugly inside pocket with ~40px pop-out).
  * - Scaled cleanly via `scale` prop (default: 0.64) for delicate miniature stationery aesthetics.
  * 
  * Interactions:
- * - Variant 1 (Tucked): Cards resting neatly inside frosted glass sleeve without overflow.
+ * - Variant 1 (Tucked): Cards resting neatly inside frosted glass sleeve with prominent pop-out without overflow.
  * - Variant 2 (Peek): On hover, front flap tilts to -43deg, cards lift and fan gently, text turns Framer blue rgb(0, 88, 252).
  * - Variant 3 (Spread): Click interaction is temporarily disabled per request, but full spread physics and flip logic are preserved below.
  */
@@ -146,6 +146,7 @@ export default function KeepsakeFolder({
   defaultRotation = -6,
   floatDelay = 0,
   opacity = 1,
+  topCardIndex,
   className = '',
   style = {},
 }) {
@@ -153,11 +154,31 @@ export default function KeepsakeFolder({
   const [variant, setVariant] = useState('tucked');
   const [flippedCards, setFlippedCards] = useState({});
 
-  const cardList = [
-    cards[0] || defaultKeepsakeCards[0],
-    cards[1] || defaultKeepsakeCards[1],
-    cards[2] || defaultKeepsakeCards[2],
-  ];
+  // Resolve which card appears on the top (zIndex: 3 / front position)
+  const [resolvedTopIndex] = useState(() => {
+    if (typeof topCardIndex === 'number') {
+      return ((topCardIndex % 3) + 3) % 3;
+    }
+    if (topCardIndex === 'random') {
+      return Math.floor(Math.random() * 3);
+    }
+    // Default deterministic variation by folder title so different folders showcase distinct cards
+    let hash = 0;
+    for (let i = 0; i < folderTitle.length; i++) {
+      hash += folderTitle.charCodeAt(i);
+    }
+    return hash % 3;
+  });
+
+  // Reorder so that resolvedTopIndex ends up at index 2 (front layer with zIndex: 3)
+  const cardList = useMemo(() => {
+    const c0 = cards[0] || defaultKeepsakeCards[0];
+    const c1 = cards[1] || defaultKeepsakeCards[1];
+    const c2 = cards[2] || defaultKeepsakeCards[2];
+    if (resolvedTopIndex === 0) return [c1, c2, c0];
+    if (resolvedTopIndex === 1) return [c2, c0, c1];
+    return [c0, c1, c2];
+  }, [cards, resolvedTopIndex]);
 
   // Hover triggers tactile peek interaction
   const handleMouseEnter = () => {
@@ -198,29 +219,29 @@ export default function KeepsakeFolder({
   const scaledWidth = Math.round(149 * scale);
   const scaledHeight = Math.round(158 * scale);
 
-  // Exact portrait motion positions for the 3 cards (96px x 134px)
-  // Pocket height is 110px. At y=14..18px in tucked mode, cards sit snugly inside pocket, peeking out ~32px without overflowing the 158px folder.
+  // Exact portrait motion positions for the 3 cards (104px x 145px)
+  // Pocket height is 110px. At y=6..10px in tucked mode, cards sit snugly inside pocket, peeking out ~40px without overflowing the 158px folder.
   
   // Card 1 (Back / Right)
   const card1Animate = {
-    x: variant === 'spread' ? 140 : variant === 'peek' ? 37 : 31,
-    y: variant === 'spread' ? -125 : variant === 'peek' ? 0 : 14,
+    x: variant === 'spread' ? 145 : variant === 'peek' ? 33 : 27,
+    y: variant === 'spread' ? -130 : variant === 'peek' ? -6 : 6,
     rotate: variant === 'spread' ? 0 : variant === 'peek' ? 7 : 4,
     zIndex: variant === 'spread' ? 30 : 1,
   };
 
   // Card 2 (Middle / Center)
   const card2Animate = {
-    x: variant === 'spread' ? 26.5 : variant === 'peek' ? 26.5 : 26.5,
-    y: variant === 'spread' ? -125 : variant === 'peek' ? -4 : 16,
+    x: variant === 'spread' ? 22.5 : variant === 'peek' ? 22.5 : 22.5,
+    y: variant === 'spread' ? -130 : variant === 'peek' ? -10 : 8,
     rotate: variant === 'spread' ? 0 : variant === 'peek' ? 0 : -1,
     zIndex: variant === 'spread' ? 31 : 2,
   };
 
   // Card 3 (Front / Left)
   const card3Animate = {
-    x: variant === 'spread' ? -87 : variant === 'peek' ? 16 : 22,
-    y: variant === 'spread' ? -125 : variant === 'peek' ? 2 : 18,
+    x: variant === 'spread' ? -95 : variant === 'peek' ? 12 : 18,
+    y: variant === 'spread' ? -130 : variant === 'peek' ? -4 : 10,
     rotate: variant === 'spread' ? 0 : variant === 'peek' ? -7 : -5,
     zIndex: variant === 'spread' ? 30 : 3,
   };
@@ -300,8 +321,8 @@ export default function KeepsakeFolder({
             transition={keepsakeTransition}
             className="absolute"
             style={{
-              width: 96,
-              height: 134,
+              width: 104,
+              height: 145,
             }}
           >
             <KeepsakeFlipCard
@@ -319,8 +340,8 @@ export default function KeepsakeFolder({
             transition={keepsakeTransition}
             className="absolute"
             style={{
-              width: 96,
-              height: 134,
+              width: 104,
+              height: 145,
             }}
           >
             <KeepsakeFlipCard
@@ -338,8 +359,8 @@ export default function KeepsakeFolder({
             transition={keepsakeTransition}
             className="absolute"
             style={{
-              width: 96,
-              height: 134,
+              width: 104,
+              height: 145,
             }}
           >
             <KeepsakeFlipCard

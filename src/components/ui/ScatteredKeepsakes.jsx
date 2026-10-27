@@ -52,10 +52,10 @@ function CosmicStar({
  * 
  * Features:
  * 1. 4-Folder Balanced Orbit (eliminates empty space in Fold 1):
- *    - Folder 1 (Hero Left): January 2026, scale={0.64}, top-[240px], -10°
- *    - Folder 2 (Hero Right): Spring 2026, scale={0.48}, top-[340px], +12° (flanking CTA)
- *    - Folder 3 (How It Works Right): Summer 2026, scale={0.52}, top-[890px], -8°
- *    - Folder 4 (Creator Left): Autumn 2026, scale={0.38}, top-[1330px], +7° (clears footer)
+ *    - Folder 1 (Hero Left): January 2026, scale={0.64}, top-[180px], -10°, topCardIndex={0} (Pokemon style on top)
+ *    - Folder 2 (Hero Right): Spring 2026, scale={0.48}, top-[340px], +12°, topCardIndex={1} (Metallic style on top)
+ *    - Folder 3 (How It Works Right): Summer 2026, scale={0.52}, top-[890px], -8°, topCardIndex={2} (Paper style on top)
+ *    - Folder 4 (Creator Left): Autumn 2026, scale={0.38}, top-[1330px], +7°, topCardIndex="random"
  * 
  * 2. Unified 100% Opacity on all folders (crisp frosted glass, scale depth preserved).
  * 3. Bloom Green Gradient Starlight with Dreamy Bokeh Blur (1.5px – 2.4px).
@@ -105,7 +105,7 @@ export default function ScatteredKeepsakes() {
       <CosmicStar top="1560px" left="8%" size={4.5} blur={1.8} parallaxSpeed={-140} progress={smoothProgress} delay={1.4} />
 
       {/* ============================================================
-          1. FOLDER 1 (Hero Left): January 2026 (scale: 0.64)
+          1. FOLDER 1 (Hero Left): January 2026 (scale: 0.64, topCard: Card 1 / Pokemon)
           ============================================================ */}
       <motion.div 
         style={{
@@ -121,11 +121,12 @@ export default function ScatteredKeepsakes() {
           opacity={1.0}
           defaultRotation={-10}
           floatDelay={0}
+          topCardIndex={0}
         />
       </motion.div>
 
       {/* ============================================================
-          2. FOLDER 2 (Hero Right — Balances Fold 1): Spring 2026 (scale: 0.48)
+          2. FOLDER 2 (Hero Right — Balances Fold 1): Spring 2026 (scale: 0.48, topCard: Card 2 / Metallic)
           ============================================================ */}
       <motion.div 
         style={{
@@ -141,11 +142,12 @@ export default function ScatteredKeepsakes() {
           opacity={1.0}
           defaultRotation={12}
           floatDelay={1.8}
+          topCardIndex={1}
         />
       </motion.div>
 
       {/* ============================================================
-          3. FOLDER 3 (How It Works Right): Summer 2026 (scale: 0.52)
+          3. FOLDER 3 (How It Works Right): Summer 2026 (scale: 0.52, topCard: Card 3 / Paper)
           ============================================================ */}
       <motion.div 
         style={{
@@ -161,11 +163,12 @@ export default function ScatteredKeepsakes() {
           opacity={1.0}
           defaultRotation={-8}
           floatDelay={0.9}
+          topCardIndex={2}
         />
       </motion.div>
 
       {/* ============================================================
-          4. FOLDER 4 (Creator Left): Autumn 2026 (scale: 0.38)
+          4. FOLDER 4 (Creator Left): Autumn 2026 (scale: 0.38, topCard: Random)
           ============================================================ */}
       <motion.div 
         style={{
@@ -181,6 +184,7 @@ export default function ScatteredKeepsakes() {
           opacity={1.0}
           defaultRotation={7}
           floatDelay={2.5}
+          topCardIndex="random"
         />
       </motion.div>
     </div>
