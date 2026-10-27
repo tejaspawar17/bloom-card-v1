@@ -162,7 +162,7 @@ export default function CardViewer({ onConfirm, onOpenEditTitle, onOpenEditMessa
         {/* 2. Left Vertical Switcher (type="pill") */}
         <div className={`absolute top-1/2 -translate-y-1/2 right-full mr-[10px] xl:mr-[16px] z-20 flex justify-end transition-opacity duration-300 ${state.cardType === 'pokemon' ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
           <VerticalCardSelector
-              value={state.pokemonSubtype || 'base'}
+              value={state.pokemonSubtype === 'trainer' ? 'trainer' : 'base'}
               onValueChange={(val) => {
                 dispatch({ type: "SET_POKEMON_SUBTYPE", payload: val });
                 dispatch({ type: "SET_ACTIVE_SIDE", payload: "back" });

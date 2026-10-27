@@ -77,7 +77,7 @@ export const FLOWERS = [
 export const DEFAULT_STATE = {
   occasion: 'sorry',
   cardType: 'paper',
-  pokemonSubtype: 'standard',
+  pokemonSubtype: 'base',
   activeSide: 'front',
   selectedPokemon: 'gengar',
   selectedBackImage: 'landscape',
