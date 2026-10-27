@@ -52,8 +52,8 @@ export function DraggableSticker({ stickerData }) {
     setLandKey(Date.now());
     const cardWidth = stickerRef.current?.parentElement?.clientWidth || 360;
     const cardHeight = stickerRef.current?.parentElement?.clientHeight || 500;
-    const stickerWidth = stickerData.stickerId === "cmiygl" ? 176 : 144;
-    const stickerHeight = stickerWidth;
+    const stickerWidth = stickerRef.current?.offsetWidth || (stickerData.stickerId === "cmiygl" ? 150 : 122);
+    const stickerHeight = stickerRef.current?.offsetHeight || stickerWidth;
 
     // Clamp position so sticker stays on card and never overlaps the top segmented control
     const clampedX = Math.max(-stickerWidth * 0.4, Math.min(cardWidth - stickerWidth * 0.6, stickerData.x + info.offset.x));
@@ -115,10 +115,15 @@ export function DraggableSticker({ stickerData }) {
   const imageUrl = STICKERS.find(s => s.id === stickerData.stickerId)?.image;
   if (!imageUrl) return null;
 
+  const isCmiygl = stickerData.stickerId === "cmiygl";
+  const sizeClass = isCmiygl 
+    ? "w-[clamp(120px,42cqw,155px)] h-[clamp(120px,42cqw,155px)]" 
+    : "w-[clamp(98px,34cqw,130px)] h-[clamp(98px,34cqw,130px)]";
+
   return (
     <motion.div 
       ref={stickerRef}
-      className={"absolute pointer-events-auto top-0 left-0 " + (stickerData.stickerId === "cmiygl" ? "w-44 h-44" : "w-36 h-36") + " z-40 " + (isEditingSticker ? 'cursor-grab active:cursor-grabbing' : 'cursor-pointer')}
+      className={`absolute pointer-events-auto top-0 left-0 ${sizeClass} z-40 ${isEditingSticker ? 'cursor-grab active:cursor-grabbing' : 'cursor-pointer'}`}
       drag={isEditingSticker}
       dragControls={dragControls}
       dragListener={false}
@@ -171,7 +176,7 @@ export function DraggableSticker({ stickerData }) {
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.96 }}
               transition={{ duration: 0.15 }}
-              className="absolute inset-0 rounded-[18px] border-2 border-dashed border-white/50 shadow-[0_0_12px_rgba(255,255,255,0.15)] pointer-events-none z-30"
+              className="absolute inset-0 rounded-[16px] border-2 border-dashed border-white/50 shadow-[0_0_12px_rgba(255,255,255,0.15)] pointer-events-none z-30"
             />
 
             {/* Live Rotation Degree Readout in Center of Sticker */}
@@ -202,7 +207,7 @@ export function DraggableSticker({ stickerData }) {
                 e.stopPropagation();
                 setIsEditingSticker(false);
               }}
-              className="absolute top-1.5 left-1/2 -translate-x-1/2 w-7 h-7 rounded-full bg-[#0088FF] text-white flex items-center justify-center shadow-[0_2px_8px_rgba(0,136,255,0.4)] border border-white/40 cursor-pointer z-40 outline-none"
+              className="absolute top-1.5 left-1/2 -translate-x-1/2 w-7 h-7 rounded-full bg-[#0088FF] text-white flex items-center justify-center shadow-[0_2px_8px_rgba(0,136,255,0.4)] border border-white/40 cursor-pointer z-40 outline-none flex-shrink-0"
             >
               <Check size={14} weight="bold" />
             </motion.button>
@@ -222,12 +227,12 @@ export function DraggableSticker({ stickerData }) {
                 e.stopPropagation();
                 dispatch({ type: 'REMOVE_STICKER', payload: stickerData.id });
               }}
-              className="absolute top-1.5 right-1.5 w-7 h-7 rounded-full bg-red-600/95 text-white flex items-center justify-center shadow-[0_2px_8px_rgba(220,38,38,0.4)] border border-white/40 cursor-pointer z-40 outline-none hover:bg-red-500"
+              className="absolute top-1.5 right-1.5 w-7 h-7 rounded-full bg-red-600/95 text-white flex items-center justify-center shadow-[0_2px_8px_rgba(220,38,38,0.4)] border border-white/40 cursor-pointer z-40 outline-none hover:bg-red-500 flex-shrink-0"
             >
               <X size={14} weight="bold" />
             </motion.button>
 
-            {/* Rotation Handle — Bottom-Right */}
+            {/* Rotation Handle — Bottom-Center */}
             <motion.button 
               key="rotate-handle"
               type="button"
@@ -239,7 +244,7 @@ export function DraggableSticker({ stickerData }) {
               whileHover={{ scale: 1.12 }}
               whileTap={{ scale: 0.88 }}
               onPointerDown={startRotation}
-              className="absolute bottom-1.5 right-1.5 w-7 h-7 rounded-full bg-[#1A1A1A]/95 text-white flex items-center justify-center shadow-[0_2px_8px_rgba(0,0,0,0.5)] border border-white/40 cursor-grab active:cursor-grabbing z-40 outline-none hover:bg-neutral-800"
+              className="absolute bottom-1.5 left-1/2 -translate-x-1/2 w-7 h-7 rounded-full bg-[#1A1A1A]/95 text-white flex items-center justify-center shadow-[0_2px_8px_rgba(0,0,0,0.5)] border border-white/40 cursor-grab active:cursor-grabbing z-40 outline-none hover:bg-neutral-800 flex-shrink-0"
             >
               <ArrowsClockwise size={14} weight="bold" />
             </motion.button>

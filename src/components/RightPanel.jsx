@@ -192,7 +192,7 @@ export default function RightPanel({ className = '' }) {
                           type="button"
                           role="listitem"
                           aria-label={"Sticker: " + sticker.name}
-                          whileTap={{ scale: 0.92, y: 2 }}
+                          whileTap={{ scale: 0.95 }}
                           transition={{ type: "spring", stiffness: 450, damping: 22 }}
                           onClick={() => handleStickerClick(sticker)}
                           className="relative flex flex-col items-center cursor-pointer group outline-none w-[54px] h-[74px] xl:w-[61px] xl:h-[84px] 2xl:w-[66px] 2xl:h-[90px] font-sans"
@@ -210,7 +210,7 @@ export default function RightPanel({ className = '' }) {
 
                           {/* Image Thumbnail (Figma: 66x66, y:3, r:12) with tactile spring bounce */}
                           <motion.div 
-                            animate={isStickerActive ? { scale: [1.14, 0.95, 1], rotate: [0, -4, 4, 0] } : {}}
+                            animate={isStickerActive ? { scale: [1.1, 0.96, 1] } : {}}
                             transition={{ duration: 0.35, ease: "easeOut" }}
                             className="relative mt-[2.5px] xl:mt-[3px] w-[54px] h-[54px] xl:w-[61px] xl:h-[61px] 2xl:w-[66px] 2xl:h-[66px] rounded-[10px] xl:rounded-[11px] 2xl:rounded-[12px] overflow-hidden bg-black/40 z-10 flex items-center justify-center p-1"
                           >
@@ -227,7 +227,7 @@ export default function RightPanel({ className = '' }) {
                           {/* Label (Figma: Inter Regular 10, y:72, w:66) */}
                           <div className="relative mt-1 z-10 w-[54px] xl:w-[61px] 2xl:w-[66px] text-center">
                             <span
-                              className={cn('text-[10px] xl:text-[11px] 2xl:text-[12px] leading-[12px] font-normal truncate block text-center transition-colors duration-200', isSelected ? 'text-[#FFFFFF] font-medium' : 'text-[rgba(229,229,234,0.70)] group-hover:text-[rgba(255,255,255,0.85)]')}
+                              className={cn('text-[10px] xl:text-[11px] 2xl:text-[12px] leading-[12px] font-normal truncate block text-center transition-colors duration-200', isSelected ? 'text-[#FFFFFF]' : 'text-[rgba(229,229,234,0.70)] group-hover:text-[rgba(255,255,255,0.85)]')}
                               title={sticker.name}
                             >
                               {shortName}
