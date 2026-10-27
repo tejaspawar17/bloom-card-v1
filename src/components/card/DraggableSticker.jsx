@@ -57,7 +57,7 @@ export function DraggableSticker({ stickerData }) {
 
     // Clamp position so sticker stays on card and never overlaps the top segmented control
     const clampedX = Math.max(-stickerWidth * 0.4, Math.min(cardWidth - stickerWidth * 0.6, stickerData.x + info.offset.x));
-    const clampedY = Math.max(4, Math.min(cardHeight - stickerHeight * 0.6, stickerData.y + info.offset.y));
+    const clampedY = Math.max(8, Math.min(cardHeight - stickerHeight * 0.6, stickerData.y + info.offset.y));
 
     dispatch({
       type: 'UPDATE_STICKER_POS',
@@ -164,7 +164,7 @@ export function DraggableSticker({ stickerData }) {
       <AnimatePresence>
         {isEditingSticker && (
           <>
-            {/* Option A: Inward Frosted Dashed Bounding Box (Never protrudes outside sticker bounds) */}
+            {/* Inward Frosted Dashed Bounding Box (Never protrudes outside sticker bounds) */}
             <motion.div
               key="bounding-box"
               initial={{ opacity: 0, scale: 0.96 }}
@@ -187,7 +187,7 @@ export function DraggableSticker({ stickerData }) {
               </motion.div>
             )}
 
-            {/* Option A: Check Button (Confirm) — Inset at Top-Left */}
+            {/* Check Button (Confirm) — Top-Center */}
             <motion.button 
               key="check-handle"
               type="button"
@@ -202,12 +202,12 @@ export function DraggableSticker({ stickerData }) {
                 e.stopPropagation();
                 setIsEditingSticker(false);
               }}
-              className="absolute top-1.5 left-1.5 w-7 h-7 rounded-full bg-[#0088FF] text-white flex items-center justify-center shadow-[0_2px_8px_rgba(0,136,255,0.5)] border border-white/50 cursor-pointer z-40 outline-none"
+              className="absolute top-1.5 left-1/2 -translate-x-1/2 w-7 h-7 rounded-full bg-[#0088FF] text-white flex items-center justify-center shadow-[0_2px_8px_rgba(0,136,255,0.4)] border border-white/40 cursor-pointer z-40 outline-none"
             >
               <Check size={14} weight="bold" />
             </motion.button>
 
-            {/* Option A: Delete Button (X) — Inset at Top-Right */}
+            {/* Delete Button (X) — Top-Right */}
             <motion.button 
               key="delete-handle"
               type="button"
@@ -222,12 +222,12 @@ export function DraggableSticker({ stickerData }) {
                 e.stopPropagation();
                 dispatch({ type: 'REMOVE_STICKER', payload: stickerData.id });
               }}
-              className="absolute top-1.5 right-1.5 w-7 h-7 rounded-full bg-red-600/95 text-white flex items-center justify-center shadow-[0_2px_8px_rgba(220,38,38,0.5)] border border-white/50 cursor-pointer z-40 outline-none hover:bg-red-500"
+              className="absolute top-1.5 right-1.5 w-7 h-7 rounded-full bg-red-600/95 text-white flex items-center justify-center shadow-[0_2px_8px_rgba(220,38,38,0.4)] border border-white/40 cursor-pointer z-40 outline-none hover:bg-red-500"
             >
-              <X size={13} weight="bold" />
+              <X size={14} weight="bold" />
             </motion.button>
 
-            {/* Option A: Rotation Handle — Inset at Bottom-Center */}
+            {/* Rotation Handle — Bottom-Right */}
             <motion.button 
               key="rotate-handle"
               type="button"
@@ -239,7 +239,7 @@ export function DraggableSticker({ stickerData }) {
               whileHover={{ scale: 1.12 }}
               whileTap={{ scale: 0.88 }}
               onPointerDown={startRotation}
-              className="absolute bottom-1.5 left-1/2 -translate-x-1/2 w-7 h-7 rounded-full bg-[#1A1A1A]/95 text-white flex items-center justify-center shadow-[0_2px_8px_rgba(0,0,0,0.6)] border border-white/30 cursor-grab active:cursor-grabbing z-40 outline-none hover:bg-neutral-800"
+              className="absolute bottom-1.5 right-1.5 w-7 h-7 rounded-full bg-[#1A1A1A]/95 text-white flex items-center justify-center shadow-[0_2px_8px_rgba(0,0,0,0.5)] border border-white/40 cursor-grab active:cursor-grabbing z-40 outline-none hover:bg-neutral-800"
             >
               <ArrowsClockwise size={14} weight="bold" />
             </motion.button>
