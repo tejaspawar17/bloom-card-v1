@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import LeftPanel from '@/components/LeftPanel';
 import RightPanel from '@/components/RightPanel';
 import CardViewer from '@/components/cards/CardViewer';
+import MobileCustomizeSheet from '@/components/MobileCustomizeSheet';
 import TitleModal from '@/components/TitleModal';
 import MessageModal from '@/components/MessageModal';
 import ShareModal from '@/components/ShareModal';
@@ -36,6 +37,7 @@ const pageVariants = {
 
 export default function DesignPage({ isRecipientMode = false, onSetRecipientMode, onNavigateTab }) {
   const [modal, setModal] = useState(null);
+  const [isCustomizeOpen, setIsCustomizeOpen] = useState(false);
   const [leftHeight, setLeftHeight] = useState('auto');
   const observerRef = useRef(null);
 
@@ -103,28 +105,35 @@ export default function DesignPage({ isRecipientMode = false, onSetRecipientMode
           >
             {/* Main 3-Column Studio matching reference screen — centered vertically below Navbar */}
             <div className="w-full min-h-[calc(100dvh-60px)] xl:min-h-[calc(100dvh-74px)] flex flex-col justify-center pt-3 pb-1 xl:pt-4 xl:pb-2">
-          <main 
-            className="w-full max-w-[1440px] mx-auto px-3 xl:px-8 grid grid-cols-1 lg:grid-cols-[auto_1fr_auto] items-start justify-center gap-3 xl:gap-8 z-10 translate-y-[2px] xl:translate-y-[4px]"
-          >
-            {/* Left Window (Occasion & Pokemon Selection) */}
-            <div ref={leftPanelCallback}><LeftPanel /></div>
+              <main 
+                className="w-full max-w-[1440px] mx-auto px-3 xl:px-8 grid grid-cols-1 lg:grid-cols-[auto_1fr_auto] items-start justify-center gap-3 xl:gap-8 z-10 translate-y-[2px] xl:translate-y-[4px]"
+              >
+                {/* Left Window (Occasion & Pokemon Selection) - Desktop Only */}
+                <div ref={leftPanelCallback} className="hidden lg:block"><LeftPanel /></div>
 
-            {/* Center Canvas (Switchers, Card, Actions, Confirm Button) */}
-            <div className="flex flex-col items-center justify-center max-h-full">
-              <CardViewer 
-                onOpenEditTitle={() => setModal('title')}
-                onOpenEditMessage={() => setModal('message')}
-                onConfirm={() => setModal('share')}
-              />
+                {/* Center Canvas (Switchers, Card, Actions, Confirm Button) */}
+                <div className="flex flex-col items-center justify-center max-h-full">
+                  <CardViewer 
+                    onOpenEditTitle={() => setModal('title')}
+                    onOpenEditMessage={() => setModal('message')}
+                    onConfirm={() => setModal('share')}
+                    onOpenCustomize={() => setIsCustomizeOpen(true)}
+                  />
+                </div>
+
+                {/* Right Window (Back Image, Emote Emojis, Stickers) - Desktop Only */}
+                <div className="hidden lg:block"><RightPanel /></div>
+              </main>
             </div>
-
-            {/* Right Window (Back Image, Emote Emojis, Stickers) */}
-            <div><RightPanel /></div>
-          </main>
-        </div>
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* Mobile/Tablet Customization Bottom Sheet */}
+      <MobileCustomizeSheet 
+        isOpen={isCustomizeOpen} 
+        onClose={() => setIsCustomizeOpen(false)} 
+      />
 
       {/* Footer matching reference */}
       <div className={isRecipientMode ? "mt-8 pb-12 w-full z-10 relative" : "mt-8 xl:mt-24 pt-8 xl:pt-16 pb-12 w-full z-10 relative"}>

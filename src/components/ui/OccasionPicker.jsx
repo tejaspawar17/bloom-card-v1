@@ -11,7 +11,7 @@ const occasionRows = [
   ['sad', 'angry', 'tired', 'homie'],
 ];
 
-export default function OccasionPicker({ value, onChange }) {
+export default function OccasionPicker({ value, onChange, isMobile = false }) {
   const [internalSelected, setInternalSelected] = useState(null);
   const selected = value !== undefined ? value : internalSelected;
   
@@ -20,6 +20,51 @@ export default function OccasionPicker({ value, onChange }) {
     setInternalSelected(newSelected);
     if (onChange) onChange(newSelected);
   };
+
+  if (isMobile) {
+    return (
+      <WindowPanel 
+        title="What’s the Occasion?"
+        bodyClassName="p-3.5"
+      >
+        <div 
+          className="flex flex-wrap gap-[7px] w-full select-none" 
+          role="radiogroup" 
+          aria-label="What’s the Occasion?"
+        >
+          {OCCASIONS.map((occ) => {
+            const isSelected = selected === occ.label;
+
+            return (
+              <motion.button
+                whileTap={{ scale: 0.96 }}
+                transition={{ type: "spring", stiffness: 400, damping: 25 }}
+                type="button"
+                role="radio"
+                aria-checked={isSelected}
+                key={occ.label}
+                onClick={() => handleSelect(occ.label)}
+                className={cn(
+                  "inline-flex items-center justify-center gap-1.5 h-[34px] px-3.5 py-1.5 rounded-full font-sans text-[12.5px] leading-[17px] tracking-[-0.015em] font-medium transition-all duration-150 cursor-pointer outline-none select-none border-0 shadow-none whitespace-nowrap",
+                  isSelected
+                    ? "bg-[#0088FF] text-white"
+                    : "bg-[rgba(114,114,114,0.12)] text-[rgba(229,229,234,0.75)] hover:bg-[rgba(153,153,153,0.18)] hover:text-white"
+                )}
+                style={{ WebkitTapHighlightColor: "transparent" }}
+              >
+                <img 
+                  src={`/assets/emojis/${occ.emoji}.png`} 
+                  alt="" 
+                  className="w-[14px] h-[14px] object-contain flex-shrink-0" 
+                />
+                <span>{occ.label}</span>
+              </motion.button>
+            );
+          })}
+        </div>
+      </WindowPanel>
+    );
+  }
 
   return (
     <WindowPanel 

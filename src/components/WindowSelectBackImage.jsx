@@ -96,7 +96,7 @@ async function optimizeImageForPolaroid(fileOrBlob, maxDimension = 1200) {
 const defaultImage = "/assets/polaroid-defaults/image1.png";
 const alternateImage = "/assets/polaroid-defaults/image2.png";
 
-export default function WindowSelectBackImage() {
+export default function WindowSelectBackImage({ isMobile = false }) {
   const fileInputRef = useRef(null);
   const { state, dispatch } = useCard();
   const [uploadedUrl, setUploadedUrl] = useState(null);
@@ -218,6 +218,88 @@ export default function WindowSelectBackImage() {
       onClick: () => handleSelect('none'),
     },
   ];
+
+  if (isMobile) {
+    return (
+      <WindowPanel 
+        title="Back Cover Artwork"
+        bodyClassName="p-3.5"
+      >
+        <input 
+          accept="image/*,.heic,.heif" 
+          className="sr-only"
+          onChange={(event) => {
+            const file = event.target.files?.[0];
+            if (file) handleUpload(file);
+            event.target.value = '';
+          }}
+          ref={fileInputRef} 
+          type="file" 
+        />
+
+        <div 
+          className="w-full max-w-[360px] px-1 mx-auto flex flex-row justify-between items-start"
+          role="radiogroup"
+          aria-label="Back Cover Artwork"
+        >
+          {items.map((item) => {
+            const isSelected = selected === item.id;
+
+            return (
+              <button
+                key={item.id}
+                type="button"
+                role="radio"
+                aria-checked={isSelected}
+                onClick={item.onClick}
+                className="relative flex flex-col items-center cursor-pointer group outline-none active:scale-[0.96] transition-transform duration-150 ease-out w-[66px] h-[88px] font-sans"
+                style={{ WebkitTapHighlightColor: 'transparent' }}
+              >
+                {/* Selection BG */}
+                <div
+                  className={cn(
+                    'absolute top-0 -left-[3px] w-[72px] h-[88px] rounded-[14px] transition-colors duration-200 pointer-events-none',
+                    isSelected
+                      ? 'bg-[#0088FF]'
+                      : 'bg-transparent group-hover:bg-[rgba(153,153,153,0.15)]'
+                  )}
+                />
+
+                {/* Inner Card */}
+                <div className="relative mt-[3px] w-[66px] h-[66px] rounded-[12px] overflow-hidden bg-[#1A1A1A] z-10 flex items-center justify-center">
+                  {item.id === 'uploaded' ? (
+                    isConverting ? (
+                      <CircleNotch className="w-[26px] h-[26px] text-[#0088FF] animate-spin" weight="bold" />
+                    ) : item.isUploadedCustom ? (
+                      <img className="size-full object-cover" src={state.selectedBackImage} alt="Uploaded back" />
+                    ) : (
+                      <UploadSimple className="w-[26px] h-[26px] text-[#F5F5F5] group-hover:text-white transition-colors" weight="bold" />
+                    )
+                  ) : item.image ? (
+                    <img className="size-full object-cover" src={item.image} alt={item.label} />
+                  ) : (
+                    <Prohibit className="w-[26px] h-[26px] text-[#F5F5F5] group-hover:text-white transition-colors" weight="bold" />
+                  )}
+                </div>
+
+                {/* Label */}
+                <span
+                  className={cn(
+                    'relative mt-[3px] text-[11px] leading-[13px] tracking-[0.0055em] truncate w-[66px] text-center transition-colors duration-200 z-10 font-sans',
+                    isSelected
+                      ? 'text-white font-medium'
+                      : 'text-[rgba(229,229,234,0.70)] font-normal group-hover:text-[rgba(255,255,255,0.85)]'
+                  )}
+                >
+                  {item.label}
+                </span>
+              </button>
+            );
+          })}
+        </div>
+      </WindowPanel>
+    );
+  }
 
   return (
     <WindowPanel 
