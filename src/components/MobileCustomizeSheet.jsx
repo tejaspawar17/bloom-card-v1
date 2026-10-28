@@ -171,34 +171,34 @@ export default function MobileCustomizeSheet({ isOpen, onClose }) {
                   type="button"
                   onClick={onClose}
                   aria-label="Close sheet"
-                  className="w-9 h-9 rounded-full bg-white/10 hover:bg-white/15 active:bg-white/20 flex items-center justify-center text-white/90 transition-colors cursor-pointer"
+                  className="w-[42px] h-[42px] rounded-full bg-white/10 hover:bg-white/15 active:bg-white/20 flex items-center justify-center text-white/90 transition-colors cursor-pointer"
                 >
-                  <X size={18} weight="bold" />
+                  <X size={22} weight="bold" />
                 </button>
               ) : (
                 <button
                   type="button"
                   onClick={() => handleStepChange(step - 1)}
                   aria-label="Previous step"
-                  className="w-9 h-9 rounded-full bg-white/10 hover:bg-white/15 active:bg-white/20 flex items-center justify-center text-white/90 transition-colors cursor-pointer"
+                  className="w-[42px] h-[42px] rounded-full bg-white/10 hover:bg-white/15 active:bg-white/20 flex items-center justify-center text-white/90 transition-colors cursor-pointer"
                 >
-                  <CaretLeft size={18} weight="bold" />
+                  <CaretLeft size={22} weight="bold" />
                 </button>
               )}
 
               {/* Step Title & Apple-style Circular Page Indicator */}
               <div className="flex flex-col items-center select-none">
-                <span className="text-[14px] font-semibold text-white tracking-tight">
+                <span className="text-[17px] font-semibold text-white tracking-tight">
                   {stepMeta.title}
                 </span>
-                <div className="flex items-center gap-2 mt-1.5">
+                <div className="flex items-center gap-2.5 mt-2">
                   {STEPS.map((s) => (
                     <button
                       key={s.id}
                       type="button"
                       onClick={() => handleStepChange(s.id)}
                       aria-label={`Jump to ${s.title}`}
-                      className={`w-[7px] h-[7px] rounded-full transition-all duration-200 cursor-pointer ${
+                      className={`w-[8px] h-[8px] rounded-full transition-all duration-200 cursor-pointer ${
                         s.id === step
                           ? 'bg-white scale-110 shadow-[0_0_8px_rgba(255,255,255,0.6)]'
                           : 'bg-white/25 hover:bg-white/45'
@@ -214,18 +214,18 @@ export default function MobileCustomizeSheet({ isOpen, onClose }) {
                   type="button"
                   onClick={() => handleStepChange(step + 1)}
                   aria-label="Next step"
-                  className="w-9 h-9 rounded-full bg-white/10 hover:bg-white/15 active:bg-white/20 flex items-center justify-center text-white/90 transition-colors cursor-pointer"
+                  className="w-[42px] h-[42px] rounded-full bg-white/10 hover:bg-white/15 active:bg-white/20 flex items-center justify-center text-white/90 transition-colors cursor-pointer"
                 >
-                  <CaretRight size={18} weight="bold" />
+                  <CaretRight size={22} weight="bold" />
                 </button>
               ) : (
                 <button
                   type="button"
                   onClick={onClose}
                   aria-label="Save and close"
-                  className="w-9 h-9 rounded-full bg-[#0088FF] hover:bg-[#0077EE] active:scale-95 flex items-center justify-center text-white shadow-[0_2px_8px_rgba(0,136,255,0.4)] transition-all cursor-pointer"
+                  className="w-[42px] h-[42px] rounded-full bg-[#0088FF] hover:bg-[#0077EE] active:scale-95 flex items-center justify-center text-white shadow-[0_2px_8px_rgba(0,136,255,0.4)] transition-all cursor-pointer"
                 >
-                  <Check size={18} weight="bold" />
+                  <Check size={22} weight="bold" />
                 </button>
               )}
             </div>
@@ -235,7 +235,7 @@ export default function MobileCustomizeSheet({ isOpen, onClose }) {
               <span className="text-[11px] font-mono tracking-[0.16em] text-[#4ADE80] font-semibold uppercase">
                 {stepMeta.tag}
               </span>
-              <p className="text-[12.5px] leading-[18px] text-[rgba(229,229,234,0.75)]">
+              <p className="text-[13.5px] leading-[19px] text-[rgba(229,229,234,0.82)]">
                 {stepMeta.description}
               </p>
             </div>

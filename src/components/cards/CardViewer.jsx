@@ -188,7 +188,7 @@ export default function CardViewer({ onConfirm, onOpenEditTitle, onOpenEditMessa
                   image: "/assets/ui/segmented-vertical-trainer.svg"
                 }
               ]}
-              className="scale-[0.88] origin-left"
+              className=""
             />
           </div>
         )}
@@ -259,14 +259,14 @@ export default function CardViewer({ onConfirm, onOpenEditTitle, onOpenEditMessa
         <LiquidGlassIconButton
           aria-label="Fullscreen Preview"
           onClick={() => setIsFullscreen(true)}
-          icon={<Eye weight="regular" />}
-          className="w-[50px] h-[50px]"
+          icon={<Eye size={24} weight="bold" />}
+          className="w-[52px] h-[52px]"
         />
 
         <button
           type="button"
           onClick={onOpenCustomize}
-          className="dark-liquid-glass-pill flex-1 h-[50px] px-6 text-[#FFFFFF] hover:text-[#FFFFFF] text-[15px] font-medium cursor-pointer shadow-[0_4px_16px_rgba(0,0,0,0.3)] transition-transform active:scale-[0.98]"
+          className="dark-liquid-glass-pill flex-1 h-[52px] px-6 text-[#FFFFFF] hover:text-[#FFFFFF] text-[16px] font-semibold cursor-pointer shadow-[0_4px_16px_rgba(0,0,0,0.3)] transition-transform active:scale-[0.98]"
         >
           Customize
         </button>
@@ -274,8 +274,8 @@ export default function CardViewer({ onConfirm, onOpenEditTitle, onOpenEditMessa
         <LiquidGlassIconButton
           aria-label="Flip card"
           onClick={(e) => { e.preventDefault(); e.stopPropagation(); dispatch({ type: 'TOGGLE_SIDE' }); }}
-          icon={<ArrowClockwise weight="regular" />}
-          className="w-[50px] h-[50px]"
+          icon={<ArrowClockwise size={24} weight="bold" />}
+          className="w-[52px] h-[52px]"
         />
       </div>
 
@@ -284,7 +284,7 @@ export default function CardViewer({ onConfirm, onOpenEditTitle, onOpenEditMessa
         <LiquidGlassButton
           variant="primary"
           size="lg"
-          className="w-full h-[48px] text-[16px] font-semibold shadow-[0_4px_20px_rgba(0,136,255,0.35)]"
+          className="w-full h-[54px] text-[17px] font-semibold shadow-[0_4px_20px_rgba(0,136,255,0.35)]"
           onClick={onConfirm}
         >
           Confirm
