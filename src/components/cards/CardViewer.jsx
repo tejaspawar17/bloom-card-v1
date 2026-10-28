@@ -170,8 +170,8 @@ export default function CardViewer({ onConfirm, onOpenEditTitle, onOpenEditMessa
                 dispatch({ type: "SET_ACTIVE_SIDE", payload: "back" });
               }}
               className={clsx(
-                "px-3.5 py-1 rounded-full text-[11.5px] font-medium transition-all outline-none",
-                state.pokemonSubtype !== 'trainer' ? "bg-white/20 text-white shadow-sm font-semibold" : "text-white/50 hover:text-white/80"
+                "px-4 py-1 rounded-full text-[12px] font-medium transition-all outline-none",
+                state.pokemonSubtype !== 'trainer' ? "bg-white/20 text-white shadow-sm font-semibold" : "text-white/60 hover:text-white"
               )}
             >
               Base Card
@@ -183,8 +183,8 @@ export default function CardViewer({ onConfirm, onOpenEditTitle, onOpenEditMessa
                 dispatch({ type: "SET_ACTIVE_SIDE", payload: "back" });
               }}
               className={clsx(
-                "px-3.5 py-1 rounded-full text-[11.5px] font-medium transition-all outline-none",
-                state.pokemonSubtype === 'trainer' ? "bg-white/20 text-white shadow-sm font-semibold" : "text-white/50 hover:text-white/80"
+                "px-4 py-1 rounded-full text-[12px] font-medium transition-all outline-none",
+                state.pokemonSubtype === 'trainer' ? "bg-white/20 text-white shadow-sm font-semibold" : "text-white/60 hover:text-white"
               )}
             >
               Trainer Card
@@ -264,21 +264,23 @@ export default function CardViewer({ onConfirm, onOpenEditTitle, onOpenEditMessa
         </LiquidGlassButton>
       </div>
 
-      {/* 6. Mobile Actions (Option B: Two-Tier Action Hierarchy + Drawer Lip) */}
-      <div className="flex lg:hidden flex-col items-center w-full max-w-[340px] mt-1.5 px-3 z-20 space-y-2">
+      {/* 6. Mobile Actions (Apple HIG Two-Tier Hierarchy + Generous Touch Targets) */}
+      <div className="flex lg:hidden flex-col items-center w-full max-w-[360px] mt-1.5 px-3 z-20 space-y-2.5">
         {/* Tier 1: Action Strip (Preview + Flip + Customize) */}
-        <div className="flex items-center justify-between w-full gap-2">
+        <div className="flex items-center justify-between w-full gap-2.5">
           {/* Preview & Flip */}
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2.5">
             <LiquidGlassIconButton
               aria-label="Fullscreen Preview"
               onClick={() => setIsFullscreen(true)}
-              icon={<Eye weight="regular" />}
+              className="!w-[46px] !h-[46px]"
+              icon={<Eye weight="regular" size={22} />}
             />
             <LiquidGlassIconButton
               aria-label="Flip card"
               onClick={(e) => { e.preventDefault(); e.stopPropagation(); dispatch({ type: 'TOGGLE_SIDE' }); }}
-              icon={<ArrowClockwise weight="regular" />}
+              className="!w-[46px] !h-[46px]"
+              icon={<ArrowClockwise weight="regular" size={22} />}
             />
           </div>
 
@@ -286,10 +288,10 @@ export default function CardViewer({ onConfirm, onOpenEditTitle, onOpenEditMessa
           <button
             type="button"
             onClick={onOpenCustomize}
-            className="flex items-center gap-1.5 px-4 h-[40px] rounded-full bg-white/[0.08] hover:bg-white/[0.14] active:scale-95 text-[13.5px] font-medium text-white border border-white/12 transition-all outline-none shadow-sm backdrop-blur-md"
+            className="flex items-center gap-2 px-5 h-[46px] rounded-full bg-white/[0.08] hover:bg-white/[0.14] active:scale-95 text-[14.5px] font-medium text-white border border-white/12 transition-all outline-none shadow-sm backdrop-blur-md"
           >
             <span>Customize</span>
-            <CaretUp size={14} weight="bold" className="text-white/70" />
+            <CaretUp size={15} weight="bold" className="text-white/70" />
           </button>
         </div>
 
@@ -298,7 +300,7 @@ export default function CardViewer({ onConfirm, onOpenEditTitle, onOpenEditMessa
           <LiquidGlassButton 
             variant="primary" 
             size="lg" 
-            className="w-full h-[46px] text-[15px] font-semibold tracking-wide shadow-lg" 
+            className="w-full h-[50px] sm:h-[52px] text-[16px] font-semibold tracking-wide shadow-lg" 
             onClick={onConfirm}
           >
             Confirm
@@ -324,8 +326,8 @@ export default function CardViewer({ onConfirm, onOpenEditTitle, onOpenEditMessa
           className="w-full pt-1.5 pb-0.5 flex flex-col items-center justify-center opacity-70 hover:opacity-100 transition-opacity outline-none group cursor-pointer"
           aria-label="Open customization drawer"
         >
-          <div className="w-9 h-1 rounded-full bg-white/25 group-hover:bg-white/50 transition-colors mb-1" />
-          <span className="text-[10.5px] font-medium text-white/40 tracking-wider uppercase">Swipe to customize</span>
+          <div className="w-10 h-1.5 rounded-full bg-white/30 group-hover:bg-white/50 transition-colors mb-1" />
+          <span className="text-[11px] font-medium text-white/50 tracking-wider uppercase">Swipe to customize</span>
         </button>
       </div>
 

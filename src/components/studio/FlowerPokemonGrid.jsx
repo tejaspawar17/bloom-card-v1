@@ -5,7 +5,7 @@ import { useCard } from '@/context/CardContext';
 import { FLOWERS, POKEMON_CARDS } from '@/data/cardData';
 import { ScrollArea } from '@/components/ui/scroll-area';
 
-export default function FlowerPokemonGrid({ heightClassName, className = '' }) {
+export default function FlowerPokemonGrid({ heightClassName, className = '', isMobile = false }) {
   const { state, dispatch } = useCard();
   const containerRef = useRef(null);
   const [canScrollUp, setCanScrollUp] = useState(false);
@@ -76,7 +76,12 @@ export default function FlowerPokemonGrid({ heightClassName, className = '' }) {
               animate={{ opacity: 1, filter: 'blur(0px)', y: 0 }}
               exit={{ opacity: 0, filter: 'blur(4px)', y: -3 }}
               transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
-              className="w-full max-w-[328px] mx-auto px-[3px] grid grid-cols-[repeat(4,54px)] sm:grid-cols-[repeat(4,60px)] xl:grid-cols-[repeat(4,61px)] 2xl:grid-cols-[repeat(4,66px)] justify-between gap-y-[12px] xl:gap-y-[13px] 2xl:gap-y-[14px]"
+              className={cn(
+                "mx-auto px-[3px] grid justify-between",
+                isMobile 
+                  ? "w-full max-w-[360px] grid-cols-4 gap-y-[14px] gap-x-[10px]"
+                  : "w-full max-w-[328px] grid-cols-[repeat(4,54px)] sm:grid-cols-[repeat(4,60px)] xl:grid-cols-[repeat(4,61px)] 2xl:grid-cols-[repeat(4,66px)] gap-y-[12px] xl:gap-y-[13px] 2xl:gap-y-[14px]"
+              )}
               role="radiogroup"
               aria-label={listTitle}
             >
@@ -94,18 +99,31 @@ export default function FlowerPokemonGrid({ heightClassName, className = '' }) {
                     role="radio"
                     aria-checked={isSelected}
                     onClick={() => dispatch({ type: setActionType, payload: item.id })}
-                    className="relative flex flex-col items-center cursor-pointer group outline-none active:scale-[0.96] transition-transform duration-150 ease-out w-[54px] sm:w-[60px] h-[74px] xl:w-[61px] xl:h-[84px] 2xl:w-[66px] 2xl:h-[90px] font-sans"
+                    className={cn(
+                      "relative flex flex-col items-center cursor-pointer group outline-none active:scale-[0.96] transition-transform duration-150 ease-out font-sans",
+                      isMobile
+                        ? "w-[72px] h-[94px]"
+                        : "w-[54px] sm:w-[60px] h-[74px] xl:w-[61px] xl:h-[84px] 2xl:w-[66px] 2xl:h-[90px]"
+                    )}
                     style={{ WebkitTapHighlightColor: 'transparent' }}
                   >
                     <div
                       className={cn(
-                        'absolute top-0 -left-[2.5px] xl:-left-[3px] w-[59px] sm:w-[65px] h-[74px] xl:w-[67px] xl:h-[84px] 2xl:w-[72px] 2xl:h-[90px] rounded-[13px] xl:rounded-[14px] 2xl:rounded-[15px] transition-colors duration-200 pointer-events-none',
+                        'absolute top-0 pointer-events-none transition-colors duration-200',
+                        isMobile
+                          ? 'w-[76px] h-[94px] -left-[2px] rounded-[15px]'
+                          : '-left-[2.5px] xl:-left-[3px] w-[59px] sm:w-[65px] h-[74px] xl:w-[67px] xl:h-[84px] 2xl:w-[72px] 2xl:h-[90px] rounded-[13px] xl:rounded-[14px] 2xl:rounded-[15px]',
                         isSelected
                           ? 'bg-[#0088FF]'
                           : 'bg-transparent group-hover:bg-[rgba(153,153,153,0.15)]'
                       )}
                     />
-                    <div className="relative mt-[2.5px] xl:mt-[3px] w-[54px] sm:w-[58px] h-[54px] sm:h-[58px] xl:w-[61px] xl:h-[61px] 2xl:w-[66px] 2xl:h-[66px] rounded-[10px] xl:rounded-[11px] 2xl:rounded-[12px] overflow-hidden bg-black/40 z-10">
+                    <div className={cn(
+                      "relative overflow-hidden bg-black/40 z-10",
+                      isMobile
+                        ? "mt-[2px] w-[70px] h-[70px] rounded-[13px]"
+                        : "mt-[2.5px] xl:mt-[3px] w-[54px] sm:w-[58px] h-[54px] sm:h-[58px] xl:w-[61px] xl:h-[61px] 2xl:w-[66px] 2xl:h-[66px] rounded-[10px] xl:rounded-[11px] 2xl:rounded-[12px]"
+                    )}>
                       <img
                         src={item.thumb || item.image}
                         alt=""
@@ -117,7 +135,10 @@ export default function FlowerPokemonGrid({ heightClassName, className = '' }) {
                     </div>
                     <span
                       className={cn(
-                        'relative mt-[2.5px] xl:mt-[3px] text-[10px] leading-[12px] xl:text-[10.5px] xl:leading-[12.5px] 2xl:text-[11px] 2xl:leading-[13px] tracking-[0.0055em] truncate w-[54px] sm:w-[60px] xl:w-[61px] 2xl:w-[66px] text-center transition-colors duration-200 z-10 font-sans',
+                        'relative transition-colors duration-200 z-10 font-sans truncate text-center',
+                        isMobile
+                          ? 'mt-1 text-[11.5px] leading-[14px] w-[70px]'
+                          : 'mt-[2.5px] xl:mt-[3px] text-[10px] leading-[12px] xl:text-[10.5px] xl:leading-[12.5px] 2xl:text-[11px] 2xl:leading-[13px] tracking-[0.0055em] w-[54px] sm:w-[60px] xl:w-[61px] 2xl:w-[66px]',
                         isSelected
                           ? 'text-white font-medium'
                           : 'text-[rgba(229,229,234,0.70)] font-normal group-hover:text-[rgba(255,255,255,0.85)]'
@@ -137,7 +158,12 @@ export default function FlowerPokemonGrid({ heightClassName, className = '' }) {
               animate={{ opacity: 1, filter: 'blur(0px)', y: 0 }}
               exit={{ opacity: 0, filter: 'blur(4px)', y: -3 }}
               transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
-              className="w-full max-w-[328px] mx-auto px-[3px] pb-3 grid grid-cols-[repeat(4,54px)] sm:grid-cols-[repeat(4,60px)] xl:grid-cols-[repeat(4,61px)] 2xl:grid-cols-[repeat(4,66px)] justify-between gap-y-[12px] xl:gap-y-[13px] 2xl:gap-y-[14px]"
+              className={cn(
+                "mx-auto px-[3px] pb-3 grid justify-between",
+                isMobile 
+                  ? "w-full max-w-[360px] grid-cols-4 gap-y-[14px] gap-x-[10px]"
+                  : "w-full max-w-[328px] grid-cols-[repeat(4,54px)] sm:grid-cols-[repeat(4,60px)] xl:grid-cols-[repeat(4,61px)] 2xl:grid-cols-[repeat(4,66px)] gap-y-[12px] xl:gap-y-[13px] 2xl:gap-y-[14px]"
+              )}
               role="radiogroup"
               aria-label={listTitle}
             >
@@ -155,18 +181,31 @@ export default function FlowerPokemonGrid({ heightClassName, className = '' }) {
                     role="radio"
                     aria-checked={isSelected}
                     onClick={() => dispatch({ type: setActionType, payload: item.id })}
-                    className="relative flex flex-col items-center cursor-pointer group outline-none active:scale-[0.96] transition-transform duration-150 ease-out w-[54px] sm:w-[60px] h-[74px] xl:w-[61px] xl:h-[84px] 2xl:w-[66px] 2xl:h-[90px] font-sans"
+                    className={cn(
+                      "relative flex flex-col items-center cursor-pointer group outline-none active:scale-[0.96] transition-transform duration-150 ease-out font-sans",
+                      isMobile
+                        ? "w-[72px] h-[94px]"
+                        : "w-[54px] sm:w-[60px] h-[74px] xl:w-[61px] xl:h-[84px] 2xl:w-[66px] 2xl:h-[90px]"
+                    )}
                     style={{ WebkitTapHighlightColor: 'transparent' }}
                   >
                     <div
                       className={cn(
-                        'absolute top-0 -left-[2.5px] xl:-left-[3px] w-[59px] sm:w-[65px] h-[74px] xl:w-[67px] xl:h-[84px] 2xl:w-[72px] 2xl:h-[90px] rounded-[13px] xl:rounded-[14px] 2xl:rounded-[15px] transition-colors duration-200 pointer-events-none',
+                        'absolute top-0 pointer-events-none transition-colors duration-200',
+                        isMobile
+                          ? 'w-[76px] h-[94px] -left-[2px] rounded-[15px]'
+                          : '-left-[2.5px] xl:-left-[3px] w-[59px] sm:w-[65px] h-[74px] xl:w-[67px] xl:h-[84px] 2xl:w-[72px] 2xl:h-[90px] rounded-[13px] xl:rounded-[14px] 2xl:rounded-[15px]',
                         isSelected
                           ? 'bg-[#0088FF]'
                           : 'bg-transparent group-hover:bg-[rgba(153,153,153,0.15)]'
                       )}
                     />
-                    <div className="relative mt-[2.5px] xl:mt-[3px] w-[54px] sm:w-[58px] h-[54px] sm:h-[58px] xl:w-[61px] xl:h-[61px] 2xl:w-[66px] 2xl:h-[66px] rounded-[10px] xl:rounded-[11px] 2xl:rounded-[12px] overflow-hidden bg-black/40 z-10">
+                    <div className={cn(
+                      "relative overflow-hidden bg-black/40 z-10",
+                      isMobile
+                        ? "mt-[2px] w-[70px] h-[70px] rounded-[13px]"
+                        : "mt-[2.5px] xl:mt-[3px] w-[54px] sm:w-[58px] h-[54px] sm:h-[58px] xl:w-[61px] xl:h-[61px] 2xl:w-[66px] 2xl:h-[66px] rounded-[10px] xl:rounded-[11px] 2xl:rounded-[12px]"
+                    )}>
                       <img
                         src={item.image}
                         alt=""
@@ -177,7 +216,10 @@ export default function FlowerPokemonGrid({ heightClassName, className = '' }) {
                     </div>
                     <span
                       className={cn(
-                        'relative mt-[2.5px] xl:mt-[3px] text-[10px] leading-[12px] xl:text-[10.5px] xl:leading-[12.5px] 2xl:text-[11px] 2xl:leading-[13px] tracking-[0.0055em] truncate w-[54px] sm:w-[60px] xl:w-[61px] 2xl:w-[66px] text-center transition-colors duration-200 z-10 font-sans',
+                        'relative transition-colors duration-200 z-10 font-sans truncate text-center',
+                        isMobile
+                          ? 'mt-1 text-[11.5px] leading-[14px] w-[70px]'
+                          : 'mt-[2.5px] xl:mt-[3px] text-[10px] leading-[12px] xl:text-[10.5px] xl:leading-[12.5px] 2xl:text-[11px] 2xl:leading-[13px] tracking-[0.0055em] w-[54px] sm:w-[60px] xl:w-[61px] 2xl:w-[66px]',
                         isSelected
                           ? 'text-white font-medium'
                           : 'text-[rgba(229,229,234,0.70)] font-normal group-hover:text-[rgba(255,255,255,0.85)]'

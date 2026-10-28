@@ -96,7 +96,7 @@ async function optimizeImageForPolaroid(fileOrBlob, maxDimension = 1200) {
 const defaultImage = "/assets/polaroid-defaults/image1.png";
 const alternateImage = "/assets/polaroid-defaults/image2.png";
 
-export default function WindowSelectBackImage() {
+export default function WindowSelectBackImage({ bare = false }) {
   const fileInputRef = useRef(null);
   const { state, dispatch } = useCard();
   const [uploadedUrl, setUploadedUrl] = useState(null);
@@ -219,11 +219,8 @@ export default function WindowSelectBackImage() {
     },
   ];
 
-  return (
-    <WindowPanel 
-      title="Back Cover Artwork"
-      bodyClassName="pt-[13px] px-[15px] pb-[15px] xl:pt-[15px] xl:px-[17px] xl:pb-[17px] 2xl:pt-[16px] 2xl:px-[18px] 2xl:pb-[18px]"
-    >
+  const renderBackArtworkItems = (isMobileMode = false) => (
+    <>
       <input 
         accept="image/*,.heic,.heif" 
         className="sr-only"
@@ -237,7 +234,12 @@ export default function WindowSelectBackImage() {
       />
 
       <div 
-        className="w-[268px] xl:w-[305px] 2xl:w-[328px] px-[3px] mx-auto flex flex-row justify-between items-start"
+        className={cn(
+          "px-[3px] mx-auto flex flex-row justify-between items-start",
+          isMobileMode
+            ? "w-full max-w-[360px] gap-2"
+            : "w-[268px] xl:w-[305px] 2xl:w-[328px]"
+        )}
         role="radiogroup"
         aria-label="Back Cover Artwork"
       >
@@ -251,40 +253,53 @@ export default function WindowSelectBackImage() {
               role="radio"
               aria-checked={isSelected}
               onClick={item.onClick}
-              className="relative flex flex-col items-center cursor-pointer group outline-none active:scale-[0.96] transition-transform duration-150 ease-out w-[54px] h-[74px] xl:w-[61px] xl:h-[84px] 2xl:w-[66px] 2xl:h-[90px] font-sans"
+              className={cn(
+                "relative flex flex-col items-center cursor-pointer group outline-none active:scale-[0.96] transition-transform duration-150 ease-out font-sans",
+                isMobileMode
+                  ? "w-[72px] h-[94px]"
+                  : "w-[54px] h-[74px] xl:w-[61px] xl:h-[84px] 2xl:w-[66px] 2xl:h-[90px]"
+              )}
               style={{ WebkitTapHighlightColor: 'transparent' }}
             >
-              {/* Selection BG matching Flower & Sticker chips (59x74 / 67x84 / 72x90, x:-3, r:15, #0088FF) */}
               <div
                 className={cn(
-                  'absolute top-0 -left-[2.5px] xl:-left-[3px] w-[59px] h-[74px] xl:w-[67px] xl:h-[84px] 2xl:w-[72px] 2xl:h-[90px] rounded-[13px] xl:rounded-[14px] 2xl:rounded-[15px] transition-colors duration-200 pointer-events-none',
+                  'absolute top-0 pointer-events-none transition-colors duration-200',
+                  isMobileMode
+                    ? 'w-[76px] h-[94px] -left-[2px] rounded-[15px]'
+                    : '-left-[2.5px] xl:-left-[3px] w-[59px] h-[74px] xl:w-[67px] xl:h-[84px] 2xl:w-[72px] 2xl:h-[90px] rounded-[13px] xl:rounded-[14px] 2xl:rounded-[15px]',
                   isSelected
                     ? 'bg-[#0088FF]'
                     : 'bg-transparent group-hover:bg-[rgba(153,153,153,0.15)]'
                 )}
               />
 
-              {/* Inner Card (Figma: 66x66, y:3, r:12, #1A1A1A) */}
-              <div className="relative mt-[2.5px] xl:mt-[3px] w-[54px] h-[54px] xl:w-[61px] xl:h-[61px] 2xl:w-[66px] 2xl:h-[66px] rounded-[10px] xl:rounded-[11px] 2xl:rounded-[12px] overflow-hidden bg-[#1A1A1A] z-10 flex items-center justify-center">
+              <div className={cn(
+                "relative overflow-hidden bg-[#1A1A1A] z-10 flex items-center justify-center",
+                isMobileMode
+                  ? "mt-[2px] w-[70px] h-[70px] rounded-[13px]"
+                  : "mt-[2.5px] xl:mt-[3px] w-[54px] h-[54px] xl:w-[61px] xl:h-[61px] 2xl:w-[66px] 2xl:h-[66px] rounded-[10px] xl:rounded-[11px] 2xl:rounded-[12px]"
+              )}>
                 {item.id === 'uploaded' ? (
                   isConverting ? (
-                    <CircleNotch className="w-[22px] h-[22px] xl:w-[25px] xl:h-[25px] 2xl:w-[28px] 2xl:h-[28px] text-[#0088FF] animate-spin" weight="bold" />
+                    <CircleNotch className={isMobileMode ? "w-[26px] h-[26px] text-[#0088FF] animate-spin" : "w-[22px] h-[22px] xl:w-[25px] xl:h-[25px] 2xl:w-[28px] 2xl:h-[28px] text-[#0088FF] animate-spin"} weight="bold" />
                   ) : item.isUploadedCustom ? (
                     <img className="size-full object-cover" src={state.selectedBackImage} alt="Uploaded back" />
                   ) : (
-                    <UploadSimple className="w-[22px] h-[22px] xl:w-[25px] xl:h-[25px] 2xl:w-[28px] 2xl:h-[28px] text-[#F5F5F5] group-hover:text-white transition-colors" weight="bold" />
+                    <UploadSimple className={isMobileMode ? "w-[26px] h-[26px] text-[#F5F5F5] group-hover:text-white transition-colors" : "w-[22px] h-[22px] xl:w-[25px] xl:h-[25px] 2xl:w-[28px] 2xl:h-[28px] text-[#F5F5F5] group-hover:text-white transition-colors"} weight="bold" />
                   )
                 ) : item.image ? (
                   <img className="size-full object-cover" src={item.image} alt={item.label} />
                 ) : (
-                  <Prohibit className="w-[22px] h-[22px] xl:w-[25px] xl:h-[25px] 2xl:w-[28px] 2xl:h-[28px] text-[#F5F5F5] group-hover:text-white transition-colors" weight="bold" />
+                  <Prohibit className={isMobileMode ? "w-[26px] h-[26px] text-[#F5F5F5] group-hover:text-white transition-colors" : "w-[22px] h-[22px] xl:w-[25px] xl:h-[25px] 2xl:w-[28px] 2xl:h-[28px] text-[#F5F5F5] group-hover:text-white transition-colors"} weight="bold" />
                 )}
               </div>
 
-              {/* Label (Inter 400 11/13, rgba(229,229,234,0.70)) */}
               <span
                 className={cn(
-                  'relative mt-[2.5px] xl:mt-[3px] text-[10px] leading-[12px] xl:text-[10.5px] xl:leading-[12.5px] 2xl:text-[11px] 2xl:leading-[13px] tracking-[0.0055em] truncate w-[54px] xl:w-[61px] 2xl:w-[66px] text-center transition-colors duration-200 z-10 font-sans',
+                  'relative font-sans truncate text-center transition-colors duration-200 z-10',
+                  isMobileMode
+                    ? 'mt-1 text-[11.5px] leading-[14px] w-[70px]'
+                    : 'mt-[2.5px] xl:mt-[3px] text-[10px] leading-[12px] xl:text-[10.5px] xl:leading-[12.5px] 2xl:text-[11px] 2xl:leading-[13px] tracking-[0.0055em] w-[54px] xl:w-[61px] 2xl:w-[66px]',
                   isSelected
                     ? 'text-white font-medium'
                     : 'text-[rgba(229,229,234,0.70)] font-normal group-hover:text-[rgba(255,255,255,0.85)]'
@@ -296,6 +311,26 @@ export default function WindowSelectBackImage() {
           );
         })}
       </div>
+    </>
+  );
+
+  if (bare) {
+    return (
+      <div className="w-full">
+        <div className="text-[14px] font-semibold text-white tracking-tight mb-2.5 px-0.5">
+          Back Cover Artwork
+        </div>
+        {renderBackArtworkItems(true)}
+      </div>
+    );
+  }
+
+  return (
+    <WindowPanel 
+      title="Back Cover Artwork"
+      bodyClassName="pt-[13px] px-[15px] pb-[15px] xl:pt-[15px] xl:px-[17px] xl:pb-[17px] 2xl:pt-[16px] 2xl:px-[18px] 2xl:pb-[18px]"
+    >
+      {renderBackArtworkItems(false)}
     </WindowPanel>
   );
 }

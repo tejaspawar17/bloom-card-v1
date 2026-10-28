@@ -104,7 +104,7 @@ export default function DesignPage({ isRecipientMode = false, onSetRecipientMode
             className="w-full flex-1 flex flex-col"
           >
             {/* Main Studio — Desktop 3-Column Studio or Mobile Centered Card */}
-            <div className="w-full min-h-[calc(100dvh-60px)] xl:min-h-[calc(100dvh-74px)] flex flex-col justify-center pt-2 pb-1 lg:pt-3 lg:pb-1 xl:pt-4 xl:pb-2">
+            <div className="w-full h-[calc(100dvh-56px)] lg:h-auto lg:min-h-[calc(100dvh-60px)] xl:min-h-[calc(100dvh-74px)] flex flex-col justify-between lg:justify-center overflow-hidden lg:overflow-visible pt-1 pb-2 lg:pt-3 lg:pb-1 xl:pt-4 xl:pb-2">
               <main 
                 className="w-full max-w-[1440px] mx-auto px-3 xl:px-8 grid grid-cols-1 lg:grid-cols-[auto_1fr_auto] items-start justify-center gap-3 xl:gap-8 z-10 translate-y-[2px] xl:translate-y-[4px]"
               >
@@ -139,8 +139,8 @@ export default function DesignPage({ isRecipientMode = false, onSetRecipientMode
         onClose={() => setIsMobileSheetOpen(false)}
       />
 
-      {/* Footer matching reference */}
-      <div className={isRecipientMode ? "mt-8 pb-12 w-full z-10 relative" : "mt-8 xl:mt-24 pt-8 xl:pt-16 pb-12 w-full z-10 relative"}>
+      {/* Footer matching reference — Hidden on mobile studio to prevent canvas pushing off-screen */}
+      <div className={isRecipientMode ? "mt-8 pb-12 w-full z-10 relative" : "hidden lg:block mt-8 xl:mt-24 pt-8 xl:pt-16 pb-12 w-full z-10 relative"}>
         <Footer 
           onFeedback={() => setModal('feedback')} 
           onTerms={() => onNavigateTab?.('terms')}

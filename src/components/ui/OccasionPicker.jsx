@@ -11,7 +11,7 @@ const occasionRows = [
   ['sad', 'angry', 'tired', 'homie'],
 ];
 
-export default function OccasionPicker({ value, onChange }) {
+export default function OccasionPicker({ value, onChange, bare = false }) {
   const [internalSelected, setInternalSelected] = useState(null);
   const selected = value !== undefined ? value : internalSelected;
   
@@ -21,11 +21,43 @@ export default function OccasionPicker({ value, onChange }) {
     if (onChange) onChange(newSelected);
   };
 
-  return (
-    <WindowPanel 
-      title="What’s the Occasion?"
-      bodyClassName="pt-[13px] px-[15px] pb-[15px] xl:pt-[15px] xl:px-[17px] xl:pb-[17px] 2xl:pt-[16px] 2xl:px-[18px] 2xl:pb-[18px]"
-    >
+  const renderChips = (isMobileMode = false) => {
+    if (isMobileMode) {
+      return (
+        <div className="flex flex-wrap gap-2 w-full select-none" role="radiogroup" aria-label="What’s the Occasion?">
+          {OCCASIONS.map((occ) => {
+            const isSelected = selected === occ.label;
+            return (
+              <motion.button
+                whileTap={{ scale: 0.96 }}
+                transition={{ type: "spring", stiffness: 400, damping: 25 }}
+                type="button"
+                role="radio"
+                aria-checked={isSelected}
+                key={occ.label}
+                onClick={() => handleSelect(occ.label)}
+                className={cn(
+                  "inline-flex items-center justify-center gap-2 h-[38px] px-3.5 py-1.5 rounded-full font-sans text-[13.5px] font-medium transition-all duration-150 cursor-pointer outline-none select-none border whitespace-nowrap",
+                  isSelected
+                    ? "bg-[#0088FF] text-white border-transparent shadow-[0_2px_10px_rgba(0,136,255,0.35)]"
+                    : "bg-white/[0.08] hover:bg-white/[0.14] text-white/80 border-white/8 active:scale-95"
+                )}
+                style={{ WebkitTapHighlightColor: "transparent" }}
+              >
+                <img 
+                  src={`/assets/emojis/${occ.emoji}.png`} 
+                  alt="" 
+                  className="w-4 h-4 object-contain flex-shrink-0" 
+                />
+                <span>{occ.label}</span>
+              </motion.button>
+            );
+          })}
+        </div>
+      );
+    }
+
+    return (
       <div 
         className="flex flex-col justify-between h-[125px] xl:h-[141px] 2xl:h-[152px] gap-[6px] xl:gap-[7px] 2xl:gap-[8px] w-full select-none" 
         role="radiogroup" 
@@ -67,6 +99,26 @@ export default function OccasionPicker({ value, onChange }) {
           </div>
         ))}
       </div>
+    );
+  };
+
+  if (bare) {
+    return (
+      <div className="w-full">
+        <div className="text-[14px] font-semibold text-white tracking-tight mb-2.5 px-0.5">
+          What’s the Occasion?
+        </div>
+        {renderChips(true)}
+      </div>
+    );
+  }
+
+  return (
+    <WindowPanel 
+      title="What’s the Occasion?"
+      bodyClassName="pt-[13px] px-[15px] pb-[15px] xl:pt-[15px] xl:px-[17px] xl:pb-[17px] 2xl:pt-[16px] 2xl:px-[18px] 2xl:pb-[18px]"
+    >
+      {renderChips(false)}
     </WindowPanel>
   );
 }
