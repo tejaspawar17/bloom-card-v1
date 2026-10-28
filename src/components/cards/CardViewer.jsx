@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import { motion } from 'framer-motion';
-import { Eye, ArrowClockwise, ArrowLeft } from '@phosphor-icons/react';
+import { Eye, ArrowClockwise, ArrowLeft, CaretUp } from '@phosphor-icons/react';
 import clsx from 'clsx';
 import { useCard } from '@/context/CardContext';
 
@@ -26,6 +26,7 @@ export default function CardViewer({ onConfirm, onOpenEditTitle, onOpenEditMessa
   // Magic Spin Decoy State
   const [spinDegrees, setSpinDegrees] = useState(0);
   const [visualCardType, setVisualCardType] = useState(state.cardType);
+  const touchLipStartY = useRef(null);
 
   useEffect(() => {
     if (state.cardType !== visualCardType) {
@@ -136,7 +137,7 @@ export default function CardViewer({ onConfirm, onOpenEditTitle, onOpenEditMessa
   return (
     <div className="flex flex-col items-center select-none w-full" role="region" aria-label="Card Studio Viewer">
       {/* 1. Top Switcher: Segmented Control (Glass) */}
-      <div className="mb-2 xl:mb-2.5 flex justify-center relative z-30">
+      <div className="mb-2 xl:mb-2.5 flex flex-col items-center justify-center relative z-30">
         <GlassSegmentedControl 
           value={state.cardType}
           onValueChange={(val) => dispatch({ type: 'SET_CARD_TYPE', payload: val })}
@@ -158,10 +159,42 @@ export default function CardViewer({ onConfirm, onOpenEditTitle, onOpenEditMessa
             }
           ]}
         />
+
+        {/* Mobile Sub-selector (Base vs Trainer for Pokemon) - Directly below segmented control */}
+        {state.cardType === 'pokemon' && (
+          <div className="flex lg:hidden items-center justify-center gap-1.5 mt-2 bg-black/50 p-1 rounded-full border border-white/10 backdrop-blur-md shadow-sm">
+            <button
+              type="button"
+              onClick={() => {
+                dispatch({ type: "SET_POKEMON_SUBTYPE", payload: "base" });
+                dispatch({ type: "SET_ACTIVE_SIDE", payload: "back" });
+              }}
+              className={clsx(
+                "px-3.5 py-1 rounded-full text-[11.5px] font-medium transition-all outline-none",
+                state.pokemonSubtype !== 'trainer' ? "bg-white/20 text-white shadow-sm font-semibold" : "text-white/50 hover:text-white/80"
+              )}
+            >
+              Base Card
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                dispatch({ type: "SET_POKEMON_SUBTYPE", payload: "trainer" });
+                dispatch({ type: "SET_ACTIVE_SIDE", payload: "back" });
+              }}
+              className={clsx(
+                "px-3.5 py-1 rounded-full text-[11.5px] font-medium transition-all outline-none",
+                state.pokemonSubtype === 'trainer' ? "bg-white/20 text-white shadow-sm font-semibold" : "text-white/50 hover:text-white/80"
+              )}
+            >
+              Trainer Card
+            </button>
+          </div>
+        )}
       </div>
 
       {/* Main Center Stage */}
-      <div className="relative flex items-start justify-center mb-1.5 xl:mb-2 w-[min(280px,calc((100dvh-200px)*688/960))] sm:w-[min(310px,calc((100dvh-200px)*688/960))] xl:w-[min(360px,calc((100dvh-228px)*688/960))] 2xl:w-[min(380px,calc((100dvh-240px)*688/960))] mx-auto">
+      <div className="relative flex items-start justify-center mb-2 xl:mb-2 w-[min(330px,calc((100dvh-260px)*688/960),84vw)] sm:w-[min(350px,calc((100dvh-250px)*688/960),82vw)] lg:w-[min(340px,calc((100dvh-220px)*688/960))] xl:w-[min(360px,calc((100dvh-228px)*688/960))] 2xl:w-[min(380px,calc((100dvh-240px)*688/960))] mx-auto">
         {/* 2. Left Vertical Switcher (Desktop only) */}
         <div className={`hidden lg:flex absolute top-1/2 -translate-y-1/2 right-full mr-[10px] xl:mr-[16px] z-20 justify-end transition-opacity duration-300 ${state.cardType === 'pokemon' ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
           <VerticalCardSelector
@@ -231,43 +264,11 @@ export default function CardViewer({ onConfirm, onOpenEditTitle, onOpenEditMessa
         </LiquidGlassButton>
       </div>
 
-      {/* 6. Mobile Actions Bar (< 1024px) matching Screen 1 from Figma */}
-      <div className="flex lg:hidden flex-col items-center w-full max-w-[340px] mt-2 px-2 z-20">
-        {/* Mobile Sub-selector (Base vs Trainer for Pokemon) */}
-        {state.cardType === 'pokemon' && (
-          <div className="flex items-center justify-center gap-1.5 mb-2.5 bg-black/50 p-1 rounded-full border border-white/10">
-            <button
-              type="button"
-              onClick={() => {
-                dispatch({ type: "SET_POKEMON_SUBTYPE", payload: "base" });
-                dispatch({ type: "SET_ACTIVE_SIDE", payload: "back" });
-              }}
-              className={clsx(
-                "px-3 py-1 rounded-full text-[11px] font-medium transition-all outline-none",
-                state.pokemonSubtype !== 'trainer' ? "bg-white/20 text-white shadow-sm" : "text-white/50 hover:text-white/80"
-              )}
-            >
-              Base Card
-            </button>
-            <button
-              type="button"
-              onClick={() => {
-                dispatch({ type: "SET_POKEMON_SUBTYPE", payload: "trainer" });
-                dispatch({ type: "SET_ACTIVE_SIDE", payload: "back" });
-              }}
-              className={clsx(
-                "px-3 py-1 rounded-full text-[11px] font-medium transition-all outline-none",
-                state.pokemonSubtype === 'trainer' ? "bg-white/20 text-white shadow-sm" : "text-white/50 hover:text-white/80"
-              )}
-            >
-              Trainer Card
-            </button>
-          </div>
-        )}
-
-        {/* Action Row */}
-        <div className="flex items-center justify-between w-full gap-2.5">
-          {/* Left Action Buttons: Preview & Flip */}
+      {/* 6. Mobile Actions (Option B: Two-Tier Action Hierarchy + Drawer Lip) */}
+      <div className="flex lg:hidden flex-col items-center w-full max-w-[340px] mt-1.5 px-3 z-20 space-y-2">
+        {/* Tier 1: Action Strip (Preview + Flip + Customize) */}
+        <div className="flex items-center justify-between w-full gap-2">
+          {/* Preview & Flip */}
           <div className="flex items-center gap-2">
             <LiquidGlassIconButton
               aria-label="Fullscreen Preview"
@@ -281,21 +282,51 @@ export default function CardViewer({ onConfirm, onOpenEditTitle, onOpenEditMessa
             />
           </div>
 
-          {/* Right Action Buttons: Customize & Confirm */}
-          <div className="flex items-center gap-2 flex-1 justify-end">
-            <button
-              type="button"
-              onClick={onOpenCustomize}
-              className="flex items-center justify-center px-4 h-[40px] rounded-full bg-white/[0.08] hover:bg-white/[0.14] active:scale-95 text-[13.5px] font-medium text-white border border-white/12 transition-all outline-none shadow-sm backdrop-blur-md"
-            >
-              Customize
-            </button>
-
-            <LiquidGlassButton variant="primary" size="md" className="h-[40px] px-5 text-[14px] font-medium" onClick={onConfirm}>
-              Confirm
-            </LiquidGlassButton>
-          </div>
+          {/* Customize Trigger Button */}
+          <button
+            type="button"
+            onClick={onOpenCustomize}
+            className="flex items-center gap-1.5 px-4 h-[40px] rounded-full bg-white/[0.08] hover:bg-white/[0.14] active:scale-95 text-[13.5px] font-medium text-white border border-white/12 transition-all outline-none shadow-sm backdrop-blur-md"
+          >
+            <span>Customize</span>
+            <CaretUp size={14} weight="bold" className="text-white/70" />
+          </button>
         </div>
+
+        {/* Tier 2: Dedicated Full-Width Confirm CTA */}
+        <div className="w-full">
+          <LiquidGlassButton 
+            variant="primary" 
+            size="lg" 
+            className="w-full h-[46px] text-[15px] font-semibold tracking-wide shadow-lg" 
+            onClick={onConfirm}
+          >
+            Confirm
+          </LiquidGlassButton>
+        </div>
+
+        {/* Peeking Drawer Lip (Indicator that sheet is swipeable/openable) */}
+        <button
+          type="button"
+          onClick={onOpenCustomize}
+          onTouchStart={(e) => {
+            touchLipStartY.current = e.touches[0].clientY;
+          }}
+          onTouchEnd={(e) => {
+            if (touchLipStartY.current !== null) {
+              const deltaY = e.changedTouches[0].clientY - touchLipStartY.current;
+              if (deltaY < -20) {
+                onOpenCustomize?.();
+              }
+            }
+            touchLipStartY.current = null;
+          }}
+          className="w-full pt-1.5 pb-0.5 flex flex-col items-center justify-center opacity-70 hover:opacity-100 transition-opacity outline-none group cursor-pointer"
+          aria-label="Open customization drawer"
+        >
+          <div className="w-9 h-1 rounded-full bg-white/25 group-hover:bg-white/50 transition-colors mb-1" />
+          <span className="text-[10.5px] font-medium text-white/40 tracking-wider uppercase">Swipe to customize</span>
+        </button>
       </div>
 
       {/* Fullscreen Overlay with Pokemon TCG style interactive 3D scaling */}
