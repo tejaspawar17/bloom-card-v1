@@ -112,14 +112,22 @@ export default function DesignPage({ isRecipientMode = false, onSetRecipientMode
                 <div ref={leftPanelCallback} className="hidden lg:block"><LeftPanel /></div>
 
                 {/* Center Canvas (Switchers, Card, Actions, Confirm Button) */}
-                <div className="flex flex-col items-center justify-center max-h-full">
+                <motion.div 
+                  animate={{
+                    scale: isCustomizeOpen ? 0.96 : 1,
+                    y: isCustomizeOpen ? -8 : 0,
+                    opacity: isCustomizeOpen ? 0.88 : 1,
+                  }}
+                  transition={{ type: 'spring', damping: 28, stiffness: 280 }}
+                  className="flex flex-col items-center justify-center max-h-full"
+                >
                   <CardViewer 
                     onOpenEditTitle={() => setModal('title')}
                     onOpenEditMessage={() => setModal('message')}
                     onConfirm={() => setModal('share')}
                     onOpenCustomize={() => setIsCustomizeOpen(true)}
                   />
-                </div>
+                </motion.div>
 
                 {/* Right Window (Back Image, Emote Emojis, Stickers) - Desktop Only */}
                 <div className="hidden lg:block"><RightPanel /></div>

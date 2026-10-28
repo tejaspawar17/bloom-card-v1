@@ -158,10 +158,18 @@ export default function CardViewer({ onConfirm, onOpenEditTitle, onOpenEditMessa
       </div>
 
       {/* Main Center Stage */}
-      <div className="relative flex items-start justify-center mb-1.5 xl:mb-2 w-[min(330px,84vw)] sm:w-[min(380px,76vw)] lg:w-[min(280px,calc((100dvh-192px)*688/960))] xl:w-[min(360px,calc((100dvh-228px)*688/960))] 2xl:w-[min(380px,calc((100dvh-240px)*688/960))] mx-auto">
-        {/* Mobile/Tablet: Left Vertical Switcher overlay (Instagram Reels style on card top-left) */}
+      <div className="relative flex items-start justify-center mb-1.5 xl:mb-2 w-[min(344px,88vw,calc((100dvh-236px)*688/960))] sm:w-[min(380px,76vw)] lg:w-[min(280px,calc((100dvh-192px)*688/960))] xl:w-[min(360px,calc((100dvh-228px)*688/960))] 2xl:w-[min(380px,calc((100dvh-240px)*688/960))] mx-auto">
+        {/* Mobile Ambient Aura Glow behind Card to eliminate empty dead space */}
+        <div 
+          className="absolute -inset-6 z-0 rounded-[40px] blur-[36px] pointer-events-none opacity-50 flex lg:hidden"
+          style={{
+            background: "radial-gradient(ellipse at center, rgba(134, 183, 90, 0.45) 0%, rgba(113, 157, 83, 0.22) 45%, rgba(79, 121, 62, 0.08) 75%, transparent 100%)"
+          }}
+        />
+
+        {/* Mobile/Tablet: Left Vertical Switcher overlay (Centered vertically on card's left margin) */}
         {state.cardType === 'pokemon' && (
-          <div className="absolute top-3 left-3 z-30 flex lg:hidden shadow-lg">
+          <div className="absolute top-1/2 -translate-y-1/2 left-2.5 z-30 flex lg:hidden shadow-xl">
             <VerticalCardSelector
               value={state.pokemonSubtype === 'trainer' ? 'trainer' : 'base'}
               onValueChange={(val) => {
@@ -180,7 +188,7 @@ export default function CardViewer({ onConfirm, onOpenEditTitle, onOpenEditMessa
                   image: "/assets/ui/segmented-vertical-trainer.svg"
                 }
               ]}
-              className="scale-[0.88] origin-top-left"
+              className="scale-[0.88] origin-left"
             />
           </div>
         )}
@@ -247,7 +255,7 @@ export default function CardViewer({ onConfirm, onOpenEditTitle, onOpenEditMessa
       </div>
 
       {/* Mobile/Tablet Controls: Tier 1 Actions (Eye, Customize, Flip) */}
-      <div className="flex lg:hidden items-center justify-center gap-3 mt-3 w-full max-w-[340px]">
+      <div className="flex lg:hidden items-center justify-center gap-3 mt-2 sm:mt-3 w-full max-w-[340px]">
         <LiquidGlassIconButton
           aria-label="Fullscreen Preview"
           onClick={() => setIsFullscreen(true)}
@@ -272,7 +280,7 @@ export default function CardViewer({ onConfirm, onOpenEditTitle, onOpenEditMessa
       </div>
 
       {/* Mobile/Tablet Controls: Tier 2 Action (Confirm CTA) */}
-      <div className="flex lg:hidden items-center justify-center mt-2.5 w-full max-w-[340px]">
+      <div className="flex lg:hidden items-center justify-center mt-2 w-full max-w-[340px]">
         <LiquidGlassButton
           variant="primary"
           size="lg"
@@ -283,15 +291,23 @@ export default function CardViewer({ onConfirm, onOpenEditTitle, onOpenEditMessa
         </LiquidGlassButton>
       </div>
 
-      {/* Mobile/Tablet: Peeking Apple Grabber */}
-      <div
+      {/* Mobile/Tablet: Peeking Apple Grabber with drag-up support */}
+      <motion.div
+        drag="y"
+        dragConstraints={{ top: 0, bottom: 0 }}
+        dragElastic={{ top: 0.25, bottom: 0 }}
+        onDragEnd={(e, info) => {
+          if (info.offset.y < -25 || info.velocity.y < -150) {
+            onOpenCustomize();
+          }
+        }}
         onClick={onOpenCustomize}
-        className="flex lg:hidden flex-col items-center justify-center pt-3 pb-1 cursor-pointer group select-none active:opacity-75"
+        className="flex lg:hidden flex-col items-center justify-center pt-2 pb-0.5 cursor-pointer group select-none active:opacity-75"
         role="button"
         aria-label="Open customization drawer"
       >
         <div className="w-14 h-1.5 rounded-full bg-white/20 group-hover:bg-white/40 transition-colors" />
-      </div>
+      </motion.div>
 
       {/* Desktop 'Confirm' Button Component */}
       <div className="hidden lg:flex items-center justify-center mt-1 xl:mt-1.5 relative">

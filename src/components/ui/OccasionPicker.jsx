@@ -45,17 +45,17 @@ export default function OccasionPicker({ value, onChange, isMobile = false }) {
                 key={occ.label}
                 onClick={() => handleSelect(occ.label)}
                 className={cn(
-                  "inline-flex items-center justify-center gap-1.5 h-[34px] px-3.5 py-1.5 rounded-full font-sans text-[12.5px] leading-[17px] tracking-[-0.015em] font-medium transition-all duration-150 cursor-pointer outline-none select-none border-0 shadow-none whitespace-nowrap",
+                  "inline-flex items-center justify-center gap-2 h-[38px] px-3.5 py-1.5 rounded-full font-sans text-[13px] leading-[18px] tracking-[-0.015em] font-medium transition-all duration-150 cursor-pointer outline-none select-none border-0 shadow-none whitespace-nowrap",
                   isSelected
-                    ? "bg-[#0088FF] text-white"
-                    : "bg-[rgba(114,114,114,0.12)] text-[rgba(229,229,234,0.75)] hover:bg-[rgba(153,153,153,0.18)] hover:text-white"
+                    ? "bg-[#0088FF] text-white shadow-sm"
+                    : "bg-[rgba(114,114,114,0.14)] text-[rgba(229,229,234,0.75)] hover:bg-[rgba(153,153,153,0.2)] hover:text-white"
                 )}
                 style={{ WebkitTapHighlightColor: "transparent" }}
               >
                 <img 
                   src={`/assets/emojis/${occ.emoji}.png`} 
                   alt="" 
-                  className="w-[14px] h-[14px] object-contain flex-shrink-0" 
+                  className="w-[16px] h-[16px] object-contain flex-shrink-0" 
                 />
                 <span>{occ.label}</span>
               </motion.button>

@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { CaretLeft, Check, X } from '@phosphor-icons/react';
+import { CaretLeft, CaretRight, Check, X } from '@phosphor-icons/react';
 import { useCard } from '@/context/CardContext';
 import { OCCASIONS } from '@/data/cardData';
 import WindowPanel from '@/components/ui/WindowPanel';
@@ -17,21 +17,21 @@ const STEPS = [
     tag: '01 · OCCASION & FRONT',
     title: 'Card Front',
     description: 'Choose an occasion and pick your floral arrangement or Pokémon companion.',
-    heightClass: 'max-h-[88dvh] h-[88dvh]',
+    heightClass: 'max-h-[76dvh] h-[76dvh]',
   },
   {
     id: 2,
     tag: '02 · BACK COVER & STAMP',
     title: 'Back Cover',
     description: 'Select back cover artwork or upload a photo, then stamp an emotion emoji.',
-    heightClass: 'max-h-[70dvh] h-[70dvh]',
+    heightClass: 'max-h-[64dvh] h-[64dvh]',
   },
   {
     id: 3,
     tag: '03 · DECORATE & FINISH',
     title: 'Stickers',
     description: 'Add finishing touches and collectible stickers across your card.',
-    heightClass: 'max-h-[58dvh] h-[58dvh]',
+    heightClass: 'max-h-[52dvh] h-[52dvh]',
   },
 ];
 
@@ -134,7 +134,7 @@ export default function MobileCustomizeSheet({ isOpen, onClose }) {
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
             onClick={onClose}
-            className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+            className="absolute inset-0 bg-black/40 backdrop-blur-md"
             aria-hidden="true"
           />
 
@@ -208,15 +208,26 @@ export default function MobileCustomizeSheet({ isOpen, onClose }) {
                 </div>
               </div>
 
-              {/* Right action button: Persistent solid blue circle (✓) to commit & close */}
-              <button
-                type="button"
-                onClick={onClose}
-                aria-label="Save and close"
-                className="w-9 h-9 rounded-full bg-[#0088FF] hover:bg-[#0077EE] active:scale-95 flex items-center justify-center text-white shadow-[0_2px_8px_rgba(0,136,255,0.4)] transition-all cursor-pointer"
-              >
-                <Check size={18} weight="bold" />
-              </button>
+              {/* Right action button: Next (→) on steps 1 & 2, Done (✓) on step 3 */}
+              {step < 3 ? (
+                <button
+                  type="button"
+                  onClick={() => handleStepChange(step + 1)}
+                  aria-label="Next step"
+                  className="w-9 h-9 rounded-full bg-white/10 hover:bg-white/15 active:bg-white/20 flex items-center justify-center text-white/90 transition-colors cursor-pointer"
+                >
+                  <CaretRight size={18} weight="bold" />
+                </button>
+              ) : (
+                <button
+                  type="button"
+                  onClick={onClose}
+                  aria-label="Save and close"
+                  className="w-9 h-9 rounded-full bg-[#0088FF] hover:bg-[#0077EE] active:scale-95 flex items-center justify-center text-white shadow-[0_2px_8px_rgba(0,136,255,0.4)] transition-all cursor-pointer"
+                >
+                  <Check size={18} weight="bold" />
+                </button>
+              )}
             </div>
 
             {/* Sub-header: Green Category Tag + Explanatory Description */}
