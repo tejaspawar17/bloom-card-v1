@@ -8,6 +8,7 @@ import MessageModal from '@/components/MessageModal';
 import ShareModal from '@/components/ShareModal';
 import CardRevealPreview from '@/components/cards/CardRevealPreview';
 import FeedbackModal from '@/components/FeedbackModal';
+import MobileCustomizeSheet from '@/components/mobile/MobileCustomizeSheet';
 import Footer from '@/components/Footer';
 
 // Atmospheric page transition: pure optical opacity + blur dissolve (matching About ↔ Design)
@@ -36,6 +37,7 @@ const pageVariants = {
 
 export default function DesignPage({ isRecipientMode = false, onSetRecipientMode, onNavigateTab }) {
   const [modal, setModal] = useState(null);
+  const [isMobileSheetOpen, setIsMobileSheetOpen] = useState(false);
   const [leftHeight, setLeftHeight] = useState('auto');
   const observerRef = useRef(null);
 
@@ -101,30 +103,41 @@ export default function DesignPage({ isRecipientMode = false, onSetRecipientMode
             exit="exit"
             className="w-full flex-1 flex flex-col"
           >
-            {/* Main 3-Column Studio matching reference screen — centered vertically below Navbar */}
-            <div className="w-full min-h-[calc(100dvh-60px)] xl:min-h-[calc(100dvh-74px)] flex flex-col justify-center pt-3 pb-1 xl:pt-4 xl:pb-2">
-          <main 
-            className="w-full max-w-[1440px] mx-auto px-3 xl:px-8 grid grid-cols-1 lg:grid-cols-[auto_1fr_auto] items-start justify-center gap-3 xl:gap-8 z-10 translate-y-[2px] xl:translate-y-[4px]"
-          >
-            {/* Left Window (Occasion & Pokemon Selection) */}
-            <div ref={leftPanelCallback}><LeftPanel /></div>
+            {/* Main Studio — Desktop 3-Column Studio or Mobile Centered Card */}
+            <div className="w-full min-h-[calc(100dvh-60px)] xl:min-h-[calc(100dvh-74px)] flex flex-col justify-center pt-2 pb-1 lg:pt-3 lg:pb-1 xl:pt-4 xl:pb-2">
+              <main 
+                className="w-full max-w-[1440px] mx-auto px-3 xl:px-8 grid grid-cols-1 lg:grid-cols-[auto_1fr_auto] items-start justify-center gap-3 xl:gap-8 z-10 translate-y-[2px] xl:translate-y-[4px]"
+              >
+                {/* Left Window (Occasion & Pokemon Selection) — Desktop only */}
+                <div ref={leftPanelCallback} className="hidden lg:block">
+                  <LeftPanel />
+                </div>
 
-            {/* Center Canvas (Switchers, Card, Actions, Confirm Button) */}
-            <div className="flex flex-col items-center justify-center max-h-full">
-              <CardViewer 
-                onOpenEditTitle={() => setModal('title')}
-                onOpenEditMessage={() => setModal('message')}
-                onConfirm={() => setModal('share')}
-              />
+                {/* Center Canvas (Switchers, Card, Actions, Confirm Button) */}
+                <div className="flex flex-col items-center justify-center max-h-full w-full">
+                  <CardViewer 
+                    onOpenEditTitle={() => setModal('title')}
+                    onOpenEditMessage={() => setModal('message')}
+                    onConfirm={() => setModal('share')}
+                    onOpenCustomize={() => setIsMobileSheetOpen(true)}
+                  />
+                </div>
+
+                {/* Right Window (Back Image, Emote Emojis, Stickers) — Desktop only */}
+                <div className="hidden lg:block">
+                  <RightPanel />
+                </div>
+              </main>
             </div>
-
-            {/* Right Window (Back Image, Emote Emojis, Stickers) */}
-            <div><RightPanel /></div>
-          </main>
-        </div>
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* Mobile Stepped Customization Sheet */}
+      <MobileCustomizeSheet
+        isOpen={isMobileSheetOpen}
+        onClose={() => setIsMobileSheetOpen(false)}
+      />
 
       {/* Footer matching reference */}
       <div className={isRecipientMode ? "mt-8 pb-12 w-full z-10 relative" : "mt-8 xl:mt-24 pt-8 xl:pt-16 pb-12 w-full z-10 relative"}>
