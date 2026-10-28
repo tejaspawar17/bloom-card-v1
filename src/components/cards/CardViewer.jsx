@@ -133,7 +133,7 @@ export default function CardViewer({ onConfirm, onOpenEditTitle, onOpenEditMessa
   return (
     <div className="flex flex-col items-center select-none" role="region" aria-label="Card Studio Viewer">
       {/* 1. Top Switcher: Segmented Control (Glass) */}
-      <div className="mt-2 mb-2 sm:mt-2.5 sm:mb-2.5 lg:mt-0 lg:mb-1.5 xl:mb-2 flex justify-center relative z-30">
+      <div className="mt-3.5 mb-2.5 sm:mt-2.5 sm:mb-2.5 lg:mt-0 lg:mb-1.5 xl:mb-2 flex justify-center relative z-30">
         <GlassSegmentedControl 
           value={state.cardType}
           onValueChange={(val) => dispatch({ type: 'SET_CARD_TYPE', payload: val })}
@@ -157,44 +157,34 @@ export default function CardViewer({ onConfirm, onOpenEditTitle, onOpenEditMessa
         />
       </div>
 
-      {/* Mobile-only Pokemon Subtype Switcher (Horizontal pill above card, never obscuring card face) */}
-      {state.cardType === 'pokemon' && (
-        <div className="flex lg:hidden justify-center mb-2.5 z-20">
-          <div className="inline-flex p-1 rounded-full bg-[rgba(255,255,255,0.08)] backdrop-blur-xl border border-white/10 shadow-sm">
-            <button
-              type="button"
-              onClick={() => {
-                dispatch({ type: "SET_POKEMON_SUBTYPE", payload: "base" });
-                dispatch({ type: "SET_ACTIVE_SIDE", payload: "back" });
-              }}
-              className={`px-3.5 py-1 rounded-full text-[12px] font-medium transition-all ${
-                state.pokemonSubtype !== 'trainer'
-                  ? 'bg-white text-black shadow-sm'
-                  : 'text-white/70 hover:text-white'
-              }`}
-            >
-              Base Card
-            </button>
-            <button
-              type="button"
-              onClick={() => {
-                dispatch({ type: "SET_POKEMON_SUBTYPE", payload: "trainer" });
-                dispatch({ type: "SET_ACTIVE_SIDE", payload: "back" });
-              }}
-              className={`px-3.5 py-1 rounded-full text-[12px] font-medium transition-all ${
-                state.pokemonSubtype === 'trainer'
-                  ? 'bg-white text-black shadow-sm'
-                  : 'text-white/70 hover:text-white'
-              }`}
-            >
-              Trainer Card
-            </button>
-          </div>
-        </div>
-      )}
-
       {/* Main Center Stage */}
       <div className="relative flex items-start justify-center mb-1.5 xl:mb-2 w-[min(330px,84vw)] sm:w-[min(380px,76vw)] lg:w-[min(280px,calc((100dvh-192px)*688/960))] xl:w-[min(360px,calc((100dvh-228px)*688/960))] 2xl:w-[min(380px,calc((100dvh-240px)*688/960))] mx-auto">
+        {/* Mobile/Tablet: Left Vertical Switcher overlay (Instagram Reels style on card top-left) */}
+        {state.cardType === 'pokemon' && (
+          <div className="absolute top-3 left-3 z-30 flex lg:hidden shadow-lg">
+            <VerticalCardSelector
+              value={state.pokemonSubtype === 'trainer' ? 'trainer' : 'base'}
+              onValueChange={(val) => {
+                dispatch({ type: "SET_POKEMON_SUBTYPE", payload: val });
+                dispatch({ type: "SET_ACTIVE_SIDE", payload: "back" });
+              }}
+              segments={[
+                {
+                  value: "base",
+                  label: "Pokemon Card",
+                  image: "/assets/ui/segmented-vertical-pokemon.svg"
+                },
+                {
+                  value: "trainer",
+                  label: "Trainer Card",
+                  image: "/assets/ui/segmented-vertical-trainer.svg"
+                }
+              ]}
+              className="scale-[0.88] origin-top-left"
+            />
+          </div>
+        )}
+
         {/* 2. Left Vertical Switcher (type="pill") - Desktop Only */}
         <div className={`absolute top-1/2 -translate-y-1/2 right-full mr-[10px] xl:mr-[16px] z-20 hidden lg:flex justify-end transition-opacity duration-300 ${state.cardType === 'pokemon' ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
           <VerticalCardSelector
@@ -262,21 +252,22 @@ export default function CardViewer({ onConfirm, onOpenEditTitle, onOpenEditMessa
           aria-label="Fullscreen Preview"
           onClick={() => setIsFullscreen(true)}
           icon={<Eye weight="regular" />}
+          className="w-[50px] h-[50px]"
         />
 
-        <LiquidGlassButton
-          variant="secondary"
-          size="md"
-          className="flex-1 h-[42px] px-5 text-[14px] font-medium"
+        <button
+          type="button"
           onClick={onOpenCustomize}
+          className="dark-liquid-glass-pill flex-1 h-[50px] px-6 text-[#FFFFFF] hover:text-[#FFFFFF] text-[15px] font-medium cursor-pointer shadow-[0_4px_16px_rgba(0,0,0,0.3)] transition-transform active:scale-[0.98]"
         >
           Customize
-        </LiquidGlassButton>
+        </button>
 
         <LiquidGlassIconButton
           aria-label="Flip card"
           onClick={(e) => { e.preventDefault(); e.stopPropagation(); dispatch({ type: 'TOGGLE_SIDE' }); }}
           icon={<ArrowClockwise weight="regular" />}
+          className="w-[50px] h-[50px]"
         />
       </div>
 
@@ -285,22 +276,21 @@ export default function CardViewer({ onConfirm, onOpenEditTitle, onOpenEditMessa
         <LiquidGlassButton
           variant="primary"
           size="lg"
-          className="w-full h-[46px] text-[15px] font-semibold"
+          className="w-full h-[48px] text-[16px] font-semibold shadow-[0_4px_20px_rgba(0,136,255,0.35)]"
           onClick={onConfirm}
         >
           Confirm
         </LiquidGlassButton>
       </div>
 
-      {/* Mobile/Tablet: Peeking Drawer Lip */}
+      {/* Mobile/Tablet: Peeking Apple Grabber */}
       <div
         onClick={onOpenCustomize}
-        className="flex lg:hidden flex-col items-center justify-center mt-3 cursor-pointer group select-none active:opacity-75"
+        className="flex lg:hidden flex-col items-center justify-center pt-3 pb-1 cursor-pointer group select-none active:opacity-75"
+        role="button"
+        aria-label="Open customization drawer"
       >
-        <div className="w-12 h-1 rounded-full bg-white/20 group-hover:bg-white/40 transition-colors" />
-        <span className="text-[11px] text-white/40 group-hover:text-white/60 font-medium tracking-wide mt-1">
-          Tap to customize card details
-        </span>
+        <div className="w-14 h-1.5 rounded-full bg-white/20 group-hover:bg-white/40 transition-colors" />
       </div>
 
       {/* Desktop 'Confirm' Button Component */}
