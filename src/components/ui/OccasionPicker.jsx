@@ -25,10 +25,10 @@ export default function OccasionPicker({ value, onChange, isMobile = false }) {
     return (
       <WindowPanel 
         title="What’s the Occasion?"
-        bodyClassName="p-3.5"
+        bodyClassName="p-3"
       >
         <div 
-          className="flex flex-wrap gap-[7px] w-full select-none" 
+          className="flex flex-wrap gap-[6px] w-full select-none" 
           role="radiogroup" 
           aria-label="What’s the Occasion?"
         >
@@ -45,7 +45,7 @@ export default function OccasionPicker({ value, onChange, isMobile = false }) {
                 key={occ.label}
                 onClick={() => handleSelect(occ.label)}
                 className={cn(
-                  "inline-flex items-center justify-center gap-2 h-[40px] px-4 py-1.5 rounded-full font-sans text-[13.5px] leading-[18px] tracking-[-0.015em] font-medium transition-all duration-150 cursor-pointer outline-none select-none border-0 shadow-none whitespace-nowrap",
+                  "inline-flex items-center justify-center gap-1.5 h-[32px] px-3 py-1 rounded-full font-sans text-[12.5px] leading-[16px] tracking-[-0.015em] font-medium transition-all duration-150 cursor-pointer outline-none select-none border-0 shadow-none whitespace-nowrap",
                   isSelected
                     ? "bg-[#0088FF] text-white shadow-sm"
                     : "bg-[rgba(114,114,114,0.14)] text-[rgba(229,229,234,0.75)] hover:bg-[rgba(153,153,153,0.2)] hover:text-white"
@@ -55,7 +55,7 @@ export default function OccasionPicker({ value, onChange, isMobile = false }) {
                 <img 
                   src={`/assets/emojis/${occ.emoji}.png`} 
                   alt="" 
-                  className="w-[17px] h-[17px] object-contain flex-shrink-0" 
+                  className="w-[14px] h-[14px] object-contain flex-shrink-0" 
                 />
                 <span>{occ.label}</span>
               </motion.button>

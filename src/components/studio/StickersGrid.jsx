@@ -80,7 +80,7 @@ export default function StickersGrid({
 
   const defaultHeight = heightClassName || (
     isMobile
-      ? 'h-[288px]'
+      ? 'h-[256px]'
       : 'h-[min(186px,calc(100dvh-410px))] xl:h-[min(229px,calc(100dvh-482px))] 2xl:h-[min(246px,calc(100dvh-510px))]'
   );
 
@@ -95,7 +95,7 @@ export default function StickersGrid({
           className={cn(
             "mx-auto px-[3px] grid justify-between",
             isMobile
-              ? "w-full max-w-[340px] grid-cols-4 gap-y-[12px] gap-x-[8px]"
+              ? "w-full max-w-[308px] grid-cols-4 gap-y-[10px] gap-x-[6px]"
               : "w-[268px] xl:w-[305px] 2xl:w-[328px] grid-cols-[repeat(4,54px)] xl:grid-cols-[repeat(4,61px)] 2xl:grid-cols-[repeat(4,66px)] gap-y-[12px] xl:gap-y-[13px] 2xl:gap-y-[14px]"
           )}
           role="list"
@@ -120,7 +120,7 @@ export default function StickersGrid({
                   className={cn(
                     "relative flex flex-col items-center cursor-pointer group outline-none font-sans",
                     isMobile
-                      ? "w-[66px] h-[88px]"
+                      ? "w-[58px] h-[78px]"
                       : "w-[54px] h-[74px] xl:w-[61px] xl:h-[84px] 2xl:w-[66px] 2xl:h-[90px]"
                   )}
                   style={{ WebkitTapHighlightColor: 'transparent' }}
@@ -129,7 +129,7 @@ export default function StickersGrid({
                     className={cn(
                       'absolute top-0 pointer-events-none transition-colors duration-200',
                       isMobile
-                        ? 'w-[72px] h-[88px] -left-[3px] rounded-[14px]'
+                        ? 'w-[64px] h-[78px] -left-[3px] rounded-[13px]'
                         : '-left-[2.5px] xl:-left-[3px] w-[59px] h-[74px] xl:w-[67px] xl:h-[84px] 2xl:w-[72px] 2xl:h-[90px] rounded-[13px] xl:rounded-[14px] 2xl:rounded-[15px]',
                       isSelected
                         ? 'bg-[#0088FF]'
@@ -143,7 +143,7 @@ export default function StickersGrid({
                     className={cn(
                       "relative overflow-hidden bg-[#1A1A1A] z-10 flex items-center justify-center p-1.5",
                       isMobile
-                        ? "mt-[3px] w-[66px] h-[66px] rounded-[12px] p-0.5"
+                        ? "mt-[2.5px] w-[58px] h-[58px] rounded-[11px] p-0.5"
                         : "mt-[2.5px] xl:mt-[3px] w-[54px] sm:w-[58px] h-[54px] sm:h-[58px] xl:w-[61px] xl:h-[61px] 2xl:w-[66px] 2xl:h-[66px] rounded-[10px] xl:rounded-[11px] 2xl:rounded-[12px]"
                     )}
                   >
@@ -159,12 +159,12 @@ export default function StickersGrid({
 
                   <div className={cn(
                     "relative z-10 text-center",
-                    isMobile ? "mt-1 w-[70px]" : "mt-1 w-[54px] sm:w-[60px] xl:w-[61px] 2xl:w-[66px]"
+                    isMobile ? "mt-[2.5px] w-[58px]" : "mt-1 w-[54px] sm:w-[60px] xl:w-[61px] 2xl:w-[66px]"
                   )}>
                     <span
                       className={cn(
                         'leading-[13px] font-normal truncate block text-center transition-colors duration-200',
-                        isMobile ? 'text-[11.5px]' : 'text-[10px] xl:text-[11px] 2xl:text-[12px]',
+                        isMobile ? 'text-[10.5px]' : 'text-[10px] xl:text-[11px] 2xl:text-[12px]',
                         isSelected ? 'text-[#FFFFFF]' : 'text-[rgba(229,229,234,0.70)] group-hover:text-[rgba(255,255,255,0.85)]'
                       )}
                       title={sticker.name}

@@ -19,7 +19,7 @@ export default function StampEmotionPicker({ title = "Stamp an Emotion", classNa
   };
 
   const renderGrid = (isMobileMode = false) => (
-    <div className={clsx("flex flex-col w-full mx-auto", isMobileMode ? "gap-2.5 max-w-[360px]" : "gap-[5px] xl:gap-[6px] max-w-[328px]")}>
+    <div className={clsx("flex flex-col w-full mx-auto", isMobileMode ? "gap-2 max-w-[308px]" : "gap-[5px] xl:gap-[6px] max-w-[328px]")}>
       {/* Row 1 (First 8 Emojis) */}
       <div className="flex flex-row justify-between items-center w-full">
         {EMOTE_EMOJIS.slice(0, 8).map((emote) => {
@@ -37,7 +37,7 @@ export default function StampEmotionPicker({ title = "Stamp an Emotion", classNa
                 className={clsx(
                   "flex items-center justify-center rounded-full outline-none cursor-pointer select-none border-0 shadow-none transition-colors duration-150",
                   isMobileMode
-                    ? "w-[36px] h-[36px] sm:w-[38px] sm:h-[38px]"
+                    ? "w-[33px] h-[33px]"
                     : "w-[28px] h-[28px] sm:w-[32px] sm:h-[32px] xl:w-[32px] xl:h-[32px] 2xl:w-[34px] 2xl:h-[34px]",
                   state.stampEmoji === emote.id
                     ? "bg-[#0088FF] shadow-[0_2px_8px_rgba(0,136,255,0.4)]"
@@ -50,7 +50,7 @@ export default function StampEmotionPicker({ title = "Stamp an Emotion", classNa
                   alt={emote.name} 
                   className={clsx(
                     "object-contain drop-shadow-sm pointer-events-none",
-                    isMobileMode ? "w-[22px] h-[22px]" : "w-[16px] h-[16px] sm:w-[18px] sm:h-[18px] xl:w-[18px] xl:h-[18px] 2xl:w-[20px] 2xl:h-[20px]"
+                    isMobileMode ? "w-[19px] h-[19px]" : "w-[16px] h-[16px] sm:w-[18px] sm:h-[18px] xl:w-[18px] xl:h-[18px] 2xl:w-[20px] 2xl:h-[20px]"
                   )}
                   draggable={false}
                   animate={isEmoteActive ? { scale: [1.25, 0.95, 1], rotate: [0, -6, 6, 0] } : {}}
@@ -78,7 +78,7 @@ export default function StampEmotionPicker({ title = "Stamp an Emotion", classNa
                 className={clsx(
                   "flex items-center justify-center rounded-full outline-none cursor-pointer select-none border-0 shadow-none transition-colors duration-150",
                   isMobileMode
-                    ? "w-[36px] h-[36px] sm:w-[38px] sm:h-[38px]"
+                    ? "w-[33px] h-[33px]"
                     : "w-[28px] h-[28px] sm:w-[32px] sm:h-[32px] xl:w-[32px] xl:h-[32px] 2xl:w-[34px] 2xl:h-[34px]",
                   state.stampEmoji === emote.id
                     ? "bg-[#0088FF] shadow-[0_2px_8px_rgba(0,136,255,0.4)]"
@@ -91,7 +91,7 @@ export default function StampEmotionPicker({ title = "Stamp an Emotion", classNa
                   alt={emote.name} 
                   className={clsx(
                     "object-contain drop-shadow-sm pointer-events-none",
-                    isMobileMode ? "w-[22px] h-[22px]" : "w-[16px] h-[16px] sm:w-[18px] sm:h-[18px] xl:w-[18px] xl:h-[18px] 2xl:w-[20px] 2xl:h-[20px]"
+                    isMobileMode ? "w-[19px] h-[19px]" : "w-[16px] h-[16px] sm:w-[18px] sm:h-[18px] xl:w-[18px] xl:h-[18px] 2xl:w-[20px] 2xl:h-[20px]"
                   )}
                   draggable={false}
                   animate={isEmoteActive ? { scale: [1.25, 0.95, 1], rotate: [0, -6, 6, 0] } : {}}

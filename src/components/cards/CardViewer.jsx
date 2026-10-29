@@ -107,10 +107,11 @@ export default function CardViewer({ onConfirm, onOpenEditTitle, onOpenEditMessa
 
   const handlePreviewTouchMove = (e) => {
     if (!isFullscreen || !e.touches || e.touches.length === 0) return;
+    if (e.cancelable) e.preventDefault();
     const touch = e.touches[0];
     const rect = e.currentTarget.getBoundingClientRect();
-    const x = (touch.clientX - rect.left) / rect.width - 0.5;
-    const y = (touch.clientY - rect.top) / rect.height - 0.5;
+    const x = Math.max(-0.6, Math.min(0.6, (touch.clientX - rect.left) / rect.width - 0.5));
+    const y = Math.max(-0.6, Math.min(0.6, (touch.clientY - rect.top) / rect.height - 0.5));
     setMousePos({ x, y });
   };
 
@@ -383,9 +384,10 @@ export default function CardViewer({ onConfirm, onOpenEditTitle, onOpenEditMessa
 
             {/* Card (Slightly larger, dynamic viewport safe) */}
             <div 
-              className="perspective-container relative w-[min(340px,calc((100dvh-110px)*688/960))] xl:w-[min(380px,calc((100dvh-120px)*688/960))] 2xl:w-[min(405px,calc((100dvh-130px)*688/960))] aspect-[688/960]" 
+              className="perspective-container relative w-[min(300px,80vw,calc((100svh-130px)*688/960))] sm:w-[min(340px,75vw,calc((100dvh-110px)*688/960))] lg:w-[min(340px,calc((100dvh-110px)*688/960))] xl:w-[min(380px,calc((100dvh-120px)*688/960))] 2xl:w-[min(405px,calc((100dvh-130px)*688/960))] aspect-[688/960] touch-none" 
               style={{ perspective: '1200px' }}
               onClick={e => e.stopPropagation()}
+              onTouchMove={handlePreviewTouchMove}
             >
               <motion.div 
                   className="w-full h-full relative"

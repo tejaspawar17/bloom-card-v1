@@ -60,7 +60,7 @@ export default function FlowerPokemonGrid({ heightClassName, className = '', isM
 
   const defaultHeight = heightClassName || (
     isMobile 
-      ? 'h-[195px]' 
+      ? 'h-[178px]' 
       : 'h-[min(186px,calc(100dvh-410px))] xl:h-[min(229px,calc(100dvh-482px))] 2xl:h-[min(246px,calc(100dvh-510px))]'
   );
 
@@ -83,7 +83,7 @@ export default function FlowerPokemonGrid({ heightClassName, className = '', isM
               className={cn(
                 "mx-auto px-[3px] grid justify-between",
                 isMobile
-                  ? "w-full max-w-[340px] grid-cols-4 gap-y-[12px] gap-x-[8px]"
+                  ? "w-full max-w-[308px] grid-cols-4 gap-y-[10px] gap-x-[6px]"
                   : "w-[268px] xl:w-[305px] 2xl:w-[328px] grid-cols-[repeat(4,54px)] xl:grid-cols-[repeat(4,61px)] 2xl:grid-cols-[repeat(4,66px)] gap-y-[12px] xl:gap-y-[13px] 2xl:gap-y-[14px]"
               )}
               role="radiogroup"
@@ -106,7 +106,7 @@ export default function FlowerPokemonGrid({ heightClassName, className = '', isM
                     className={cn(
                       "relative flex flex-col items-center cursor-pointer group outline-none active:scale-[0.96] transition-transform duration-150 ease-out font-sans",
                       isMobile
-                        ? "w-[66px] h-[88px]"
+                        ? "w-[58px] h-[78px]"
                         : "w-[54px] h-[74px] xl:w-[61px] xl:h-[84px] 2xl:w-[66px] 2xl:h-[90px]"
                     )}
                     style={{ WebkitTapHighlightColor: 'transparent' }}
@@ -115,7 +115,7 @@ export default function FlowerPokemonGrid({ heightClassName, className = '', isM
                       className={cn(
                         'absolute top-0 pointer-events-none transition-colors duration-200',
                         isMobile
-                          ? 'w-[72px] h-[88px] -left-[3px] rounded-[14px]'
+                          ? 'w-[64px] h-[78px] -left-[3px] rounded-[13px]'
                           : '-left-[2.5px] xl:-left-[3px] w-[59px] h-[74px] xl:w-[67px] xl:h-[84px] 2xl:w-[72px] 2xl:h-[90px] rounded-[13px] xl:rounded-[14px] 2xl:rounded-[15px]',
                         isSelected
                           ? 'bg-[#0088FF]'
@@ -125,7 +125,7 @@ export default function FlowerPokemonGrid({ heightClassName, className = '', isM
                     <div className={cn(
                       "relative overflow-hidden bg-black/40 z-10",
                       isMobile
-                        ? "mt-[3px] w-[66px] h-[66px] rounded-[12px]"
+                        ? "mt-[2.5px] w-[58px] h-[58px] rounded-[11px]"
                         : "mt-[2.5px] xl:mt-[3px] w-[54px] h-[54px] xl:w-[61px] xl:h-[61px] 2xl:w-[66px] 2xl:h-[66px] rounded-[10px] xl:rounded-[11px] 2xl:rounded-[12px]"
                     )}>
                       <img
@@ -141,7 +141,7 @@ export default function FlowerPokemonGrid({ heightClassName, className = '', isM
                       className={cn(
                         'relative transition-colors duration-200 z-10 font-sans truncate text-center',
                         isMobile
-                          ? 'mt-[3px] text-[11px] leading-[13px] tracking-[0.0055em] w-[66px]'
+                          ? 'mt-[2.5px] text-[10.5px] leading-[12.5px] tracking-[0.0055em] w-[58px]'
                           : 'mt-[2.5px] xl:mt-[3px] text-[10px] leading-[12px] xl:text-[10.5px] xl:leading-[12.5px] 2xl:text-[11px] 2xl:leading-[13px] tracking-[0.0055em] w-[54px] xl:w-[61px] 2xl:w-[66px]',
                         isSelected
                           ? 'text-white font-medium'
@@ -165,7 +165,7 @@ export default function FlowerPokemonGrid({ heightClassName, className = '', isM
               className={cn(
                 "mx-auto px-[3px] grid justify-between",
                 isMobile
-                  ? "w-full max-w-[340px] grid-cols-4 gap-y-[12px] gap-x-[8px]"
+                  ? "w-full max-w-[308px] grid-cols-4 gap-y-[10px] gap-x-[6px]"
                   : "w-[268px] xl:w-[305px] 2xl:w-[328px] grid-cols-[repeat(4,54px)] xl:grid-cols-[repeat(4,61px)] 2xl:grid-cols-[repeat(4,66px)] gap-y-[12px] xl:gap-y-[13px] 2xl:gap-y-[14px]"
               )}
               role="radiogroup"
@@ -188,7 +188,7 @@ export default function FlowerPokemonGrid({ heightClassName, className = '', isM
                     className={cn(
                       "relative flex flex-col items-center cursor-pointer group outline-none active:scale-[0.96] transition-transform duration-150 ease-out font-sans",
                       isMobile
-                        ? "w-[66px] h-[88px]"
+                        ? "w-[58px] h-[78px]"
                         : "w-[54px] h-[74px] xl:w-[61px] xl:h-[84px] 2xl:w-[66px] 2xl:h-[90px]"
                     )}
                     style={{ WebkitTapHighlightColor: 'transparent' }}
@@ -197,7 +197,7 @@ export default function FlowerPokemonGrid({ heightClassName, className = '', isM
                       className={cn(
                         'absolute top-0 pointer-events-none transition-colors duration-200',
                         isMobile
-                          ? 'w-[72px] h-[88px] -left-[3px] rounded-[14px]'
+                          ? 'w-[64px] h-[78px] -left-[3px] rounded-[13px]'
                           : '-left-[2.5px] xl:-left-[3px] w-[59px] h-[74px] xl:w-[67px] xl:h-[84px] 2xl:w-[72px] 2xl:h-[90px] rounded-[13px] xl:rounded-[14px] 2xl:rounded-[15px]',
                         isSelected
                           ? 'bg-[#0088FF]'
@@ -207,7 +207,7 @@ export default function FlowerPokemonGrid({ heightClassName, className = '', isM
                     <div className={cn(
                       "relative overflow-hidden bg-[#1A1A1A] z-10",
                       isMobile
-                        ? "mt-[3px] w-[66px] h-[66px] rounded-[12px]"
+                        ? "mt-[2.5px] w-[58px] h-[58px] rounded-[11px]"
                         : "mt-[2.5px] xl:mt-[3px] w-[54px] h-[54px] xl:w-[61px] xl:h-[61px] 2xl:w-[66px] 2xl:h-[66px] rounded-[10px] xl:rounded-[11px] 2xl:rounded-[12px]"
                     )}>
                       <img
@@ -223,7 +223,7 @@ export default function FlowerPokemonGrid({ heightClassName, className = '', isM
                       className={cn(
                         'relative transition-colors duration-200 z-10 font-sans truncate text-center',
                         isMobile
-                          ? 'mt-[3px] text-[11px] leading-[13px] tracking-[0.0055em] w-[66px]'
+                          ? 'mt-[2.5px] text-[10.5px] leading-[12.5px] tracking-[0.0055em] w-[58px]'
                           : 'mt-[2.5px] xl:mt-[3px] text-[10px] leading-[12px] xl:text-[10.5px] xl:leading-[12.5px] 2xl:text-[11px] 2xl:leading-[13px] tracking-[0.0055em] w-[54px] xl:w-[61px] 2xl:w-[66px]',
                         isSelected
                           ? 'text-white font-medium'

@@ -258,21 +258,11 @@ export default function MobileCustomizeSheet({ isOpen, onClose }) {
               </div>
             </div>
 
-            {/* Sub-header: Green Category Tag + Explanatory Description */}
-            <div className="px-5 pt-3 pb-2.5 flex flex-col gap-1 border-b border-white/[0.05] select-none">
-              <span className="text-[11px] font-mono tracking-[0.16em] text-[#4ADE80] font-semibold uppercase">
-                {stepMeta.tag}
-              </span>
-              <p className="text-[13.5px] leading-[19px] text-[rgba(229,229,234,0.82)]">
-                {stepMeta.description}
-              </p>
-            </div>
-
             {/* Scrollable Step Content with Swipe Gesture Support */}
             <div 
               onTouchStart={handleTouchStart}
               onTouchEnd={handleTouchEnd}
-              className="flex-1 overflow-y-auto px-3.5 pb-2 pt-2"
+              className="flex-1 overflow-y-auto px-3.5 pb-2 pt-3"
             >
               <AnimatePresence mode="wait" custom={direction}>
                 <motion.div
@@ -312,7 +302,7 @@ export default function MobileCustomizeSheet({ isOpen, onClose }) {
                   )}
 
                   {step === 3 && (
-                    <StickersGrid isMobile={true} heightClassName="h-[288px]" />
+                    <StickersGrid isMobile={true} heightClassName="h-[256px]" />
                   )}
                 </motion.div>
               </AnimatePresence>

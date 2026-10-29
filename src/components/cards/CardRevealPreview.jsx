@@ -160,10 +160,11 @@ export default function CardRevealPreview({ onCraftOwn }) {
 
   const handleTouchMove = (e) => {
     if (revealStage !== 'revealed' || !e.touches || e.touches.length === 0) return;
+    if (e.cancelable) e.preventDefault();
     const touch = e.touches[0];
     const rect = e.currentTarget.getBoundingClientRect();
-    const x = (touch.clientX - rect.left) / rect.width - 0.5;
-    const y = (touch.clientY - rect.top) / rect.height - 0.5;
+    const x = Math.max(-0.6, Math.min(0.6, (touch.clientX - rect.left) / rect.width - 0.5));
+    const y = Math.max(-0.6, Math.min(0.6, (touch.clientY - rect.top) / rect.height - 0.5));
     setMousePos({ x, y });
   };
 
@@ -466,8 +467,9 @@ export default function CardRevealPreview({ onCraftOwn }) {
           </AnimatePresence>
 
           <div 
-            className="perspective-container relative w-[min(300px,80vw,calc((100svh-220px)*688/960))] sm:w-[min(355px,75vw,calc((100svh-220px)*688/960))] aspect-[688/960]"
+            className="perspective-container relative w-[min(300px,80vw,calc((100svh-220px)*688/960))] sm:w-[min(355px,75vw,calc((100svh-220px)*688/960))] aspect-[688/960] touch-none"
             style={{ perspective: '1200px' }}
+            onTouchMove={handleTouchMove}
           >
             {/* Card Presentation Container (Pure 3D without flattening filter) */}
             <motion.div
