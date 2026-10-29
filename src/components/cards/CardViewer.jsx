@@ -259,14 +259,15 @@ export default function CardViewer({ onConfirm, onOpenEditTitle, onOpenEditMessa
         <LiquidGlassIconButton
           aria-label="Fullscreen Preview"
           onClick={() => setIsFullscreen(true)}
-          icon={<Eye size={24} weight="bold" />}
-          className="w-[52px] h-[52px]"
+          icon={<Eye size={26} weight="bold" />}
+          size="lg"
+          className="!w-[52px] !h-[52px]"
         />
 
         <button
           type="button"
           onClick={onOpenCustomize}
-          className="dark-liquid-glass-pill flex-1 h-[52px] px-6 text-[#FFFFFF] hover:text-[#FFFFFF] text-[16px] font-semibold cursor-pointer shadow-[0_4px_16px_rgba(0,0,0,0.3)] transition-transform active:scale-[0.98]"
+          className="dark-liquid-glass-pill flex-1 h-[52px] px-6 text-[#FFFFFF] hover:text-[#FFFFFF] text-[17px] font-semibold cursor-pointer shadow-[0_4px_16px_rgba(0,0,0,0.3)] transition-transform active:scale-[0.98]"
         >
           Customize
         </button>
@@ -274,8 +275,9 @@ export default function CardViewer({ onConfirm, onOpenEditTitle, onOpenEditMessa
         <LiquidGlassIconButton
           aria-label="Flip card"
           onClick={(e) => { e.preventDefault(); e.stopPropagation(); dispatch({ type: 'TOGGLE_SIDE' }); }}
-          icon={<ArrowClockwise size={24} weight="bold" />}
-          className="w-[52px] h-[52px]"
+          icon={<ArrowClockwise size={26} weight="bold" />}
+          size="lg"
+          className="!w-[52px] !h-[52px]"
         />
       </div>
 

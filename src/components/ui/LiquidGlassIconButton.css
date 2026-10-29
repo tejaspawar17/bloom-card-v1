@@ -166,3 +166,14 @@
   outline: 2px solid #fff;
   outline-offset: 3px;
 }
+
+.liquid-glass-icon-button--lg {
+  width: 52px !important;
+  height: 52px !important;
+}
+
+.liquid-glass-icon-button--lg img,
+.liquid-glass-icon-button--lg svg {
+  width: 26px !important;
+  height: 26px !important;
+}

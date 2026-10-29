@@ -333,7 +333,7 @@ export default function ShareModal({ onClose, onOpenRecipientPreview }) {
           aria-modal="true"
           aria-label="Generate Link or Download"
           layout
-          className="relative z-10 w-full max-w-[466px] flex flex-col select-none rounded-[24px] bg-[#0E0E0E] border border-white/[0.12] overflow-hidden shadow-[0_24px_60px_rgba(0,0,0,0.85)] font-sans"
+          className="relative z-10 w-[calc(100%-32px)] max-w-[466px] mx-auto flex flex-col select-none rounded-[24px] bg-[#0E0E0E] border border-white/[0.12] overflow-hidden shadow-[0_24px_60px_rgba(0,0,0,0.85)] font-sans"
           onClick={(e) => e.stopPropagation()}
           initial={{ opacity: 0, scale: 0.95, y: 8 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -359,7 +359,7 @@ export default function ShareModal({ onClose, onOpenRecipientPreview }) {
               size="sm"
               label="Close dialog"
               onClick={onClose}
-              icon={<X size={26} weight="regular" className="text-[#FF383C]" />}
+              icon={<X size={20} weight="bold" className="text-white/80 hover:text-white transition-colors" />}
             />
           </div>
 
@@ -388,12 +388,12 @@ export default function ShareModal({ onClose, onOpenRecipientPreview }) {
                 </p>
 
                 {/* Actions Group: Figma 24px breathing space */}
-                <div className="flex items-center gap-3 w-full justify-center mt-6 font-sans">
-                  <div className="relative flex-1 max-w-[190px]">
+                <div className="flex flex-col-reverse sm:flex-row items-center gap-2.5 sm:gap-3 w-full max-w-[380px] justify-center mt-6 font-sans">
+                  <div className="relative w-full sm:flex-1 sm:max-w-[190px]">
                     <button
                       type="button"
                       onClick={handleDownloadPDF}
-                      className="dark-liquid-glass-pill w-full h-[44px] px-5 text-[14px] leading-[20px] font-medium text-white flex items-center justify-center font-sans active:scale-[0.96] transition-transform cursor-pointer"
+                      className="dark-liquid-glass-pill w-full h-[48px] sm:h-[44px] px-5 text-[15px] sm:text-[14px] leading-[20px] font-medium text-white flex items-center justify-center font-sans active:scale-[0.96] transition-transform cursor-pointer whitespace-nowrap"
                     >
                       <span>{isGeneratingPdf ? 'Packaging...' : 'Download PDF'}</span>
                     </button>
@@ -403,7 +403,7 @@ export default function ShareModal({ onClose, onOpenRecipientPreview }) {
                     variant="primary"
                     size="md"
                     onClick={handleGenerateLink}
-                    className="flex-1 max-w-[190px] font-sans"
+                    className="w-full sm:flex-1 sm:max-w-[190px] h-[48px] sm:h-[44px] text-[15px] sm:text-[14px] font-sans"
                   >
                     Generate Link
                   </LiquidGlassButton>

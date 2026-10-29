@@ -11,7 +11,7 @@ export default function LiquidGlassIconButton({
   return (
     <button
       type="button"
-      className={`liquid-glass-icon-button ${size === 'sm' ? 'liquid-glass-icon-button--sm' : ''} ${className}`}
+      className={`liquid-glass-icon-button ${size === 'sm' ? 'liquid-glass-icon-button--sm' : size === 'lg' ? 'liquid-glass-icon-button--lg' : ''} ${className}`}
       aria-label={label}
       onClick={onClick}
       {...rest}
