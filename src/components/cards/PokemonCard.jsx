@@ -19,7 +19,7 @@ export function PokemonCardFront({ onOpenEditTitle, isPreview = false }) {
       />
 
       {/* Equipped Sticker if selected */}
-      {state?.stickers?.filter(s => s.side === 'front').map(sticker => ( <DraggableSticker key={sticker.id} stickerData={sticker} /> ))}
+      {state?.stickers?.filter(s => s.side === 'front').map(sticker => ( <DraggableSticker key={sticker.id} stickerData={sticker} isPreview={isPreview} /> ))}
 
       {/* Subject Box matching reference: white box with red border and magenta edit pencil */}
         <div 
@@ -111,7 +111,7 @@ export function PokemonCardBack({ onOpenEditMessage, isPreview = false }) {
         </div>
         )}
 
-        {state?.stickers?.filter(s => s.side === 'back').map(sticker => ( <DraggableSticker key={sticker.id} stickerData={sticker} /> ))}
+        {state?.stickers?.filter(s => s.side === 'back').map(sticker => ( <DraggableSticker key={sticker.id} stickerData={sticker} isPreview={isPreview} /> ))}
       </div>
     );
   }
@@ -198,7 +198,7 @@ export function PokemonCardBack({ onOpenEditMessage, isPreview = false }) {
           </div>
         </div>
 
-      {state?.stickers?.filter(s => s.side === 'back').map(sticker => ( <DraggableSticker key={sticker.id} stickerData={sticker} /> ))}
+      {state?.stickers?.filter(s => s.side === 'back').map(sticker => ( <DraggableSticker key={sticker.id} stickerData={sticker} isPreview={isPreview} /> ))}
     </div>
   );
 }

@@ -116,7 +116,7 @@ export function PaperCardBack({ onOpenEditMessage, isPreview = false }) {
       </div>
 
       {state?.stickers?.filter(s => s.side === 'back').map(sticker => (
-        <DraggableSticker key={sticker.id} stickerData={sticker} />
+        <DraggableSticker key={sticker.id} stickerData={sticker} isPreview={isPreview} />
       ))}
     </div>
   );

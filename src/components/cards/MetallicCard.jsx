@@ -36,7 +36,7 @@ export function MetallicCardFront({ onOpenEditTitle, isPreview = false }) {
         className="absolute inset-0 w-full h-full pointer-events-none z-20" 
       />
 
-      {state?.stickers?.filter(s => s.side === 'front').map(sticker => ( <DraggableSticker key={sticker.id} stickerData={sticker} /> ))} 
+      {state?.stickers?.filter(s => s.side === 'front').map(sticker => ( <DraggableSticker key={sticker.id} stickerData={sticker} isPreview={isPreview} /> ))} 
 
       {/* Subject Box */}
       <div className="absolute bottom-[4.5%] inset-x-0 mx-auto w-[86%] aspect-[738/474] z-30">
@@ -108,7 +108,7 @@ export function MetallicCardBack({ onOpenEditMessage, isPreview = false }) {
       </div>
 
       {/* Equipped Sticker on back */}
-      {state?.stickers?.filter(s => s.side === 'back').map(sticker => ( <DraggableSticker key={sticker.id} stickerData={sticker} /> ))}
+      {state?.stickers?.filter(s => s.side === 'back').map(sticker => ( <DraggableSticker key={sticker.id} stickerData={sticker} isPreview={isPreview} /> ))}
       
     </div>
   );

@@ -54,8 +54,51 @@ export default function CardRevealPreview({ onCraftOwn }) {
     ? `/assets/emojis/${state.stampEmoji}.png`
     : '/assets/emojis/pleading-face.png';
 
+  // Device Orientation (Gyroscope / Accelerometer 3D Tilt for Mobile)
+  useEffect(() => {
+    if (revealStage !== 'revealed') return;
+
+    let animId;
+    let targetX = 0;
+    let targetY = 0;
+    let currentX = 0;
+    let currentY = 0;
+
+    const handleOrientation = (e) => {
+      if (e.gamma === null || e.beta === null) return;
+      // gamma: left-to-right tilt [-30deg, 30deg]
+      const clampedGamma = Math.max(-30, Math.min(30, e.gamma));
+      // beta: front-to-back tilt centered at natural 45deg holding angle
+      const clampedBeta = Math.max(-30, Math.min(30, e.beta - 45));
+
+      targetX = (clampedGamma / 30) * 0.75;
+      targetY = (clampedBeta / 30) * 0.75;
+    };
+
+    const smoothLoop = () => {
+      currentX += (targetX - currentX) * 0.12;
+      currentY += (targetY - currentY) * 0.12;
+      setMousePos({ x: currentX, y: currentY });
+      animId = requestAnimationFrame(smoothLoop);
+    };
+
+    animId = requestAnimationFrame(smoothLoop);
+    window.addEventListener('deviceorientation', handleOrientation, { passive: true });
+
+    return () => {
+      cancelAnimationFrame(animId);
+      window.removeEventListener('deviceorientation', handleOrientation);
+    };
+  }, [revealStage]);
+
   const handleReveal = () => {
     if (revealStage !== 'idle') return;
+
+    // Prompt user gesture permission for DeviceOrientation on iOS 13+
+    if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
+      DeviceOrientationEvent.requestPermission().catch(() => {});
+    }
+
     setRevealStage('charging');
 
     // Phase 1: Tension Shake & Charging (650ms)
@@ -113,6 +156,15 @@ export default function CardRevealPreview({ onCraftOwn }) {
 
   const handleMouseLeave = () => {
     setMousePos({ x: 0, y: 0 });
+  };
+
+  const handleTouchMove = (e) => {
+    if (revealStage !== 'revealed' || !e.touches || e.touches.length === 0) return;
+    const touch = e.touches[0];
+    const rect = e.currentTarget.getBoundingClientRect();
+    const x = (touch.clientX - rect.left) / rect.width - 0.5;
+    const y = (touch.clientY - rect.top) / rect.height - 0.5;
+    setMousePos({ x, y });
   };
 
   // Keyboard shortcut: Spacebar / Enter triggers reveal or flip
@@ -302,6 +354,7 @@ export default function CardRevealPreview({ onCraftOwn }) {
         className="relative flex flex-col items-center justify-center"
         onMouseMove={handleMouseMove}
         onMouseLeave={handleMouseLeave}
+        onTouchMove={handleTouchMove}
       >
         {/* Card Stage Wrapper (holds card, shockwave, and side dock) */}
         <div className="relative">
@@ -413,7 +466,7 @@ export default function CardRevealPreview({ onCraftOwn }) {
           </AnimatePresence>
 
           <div 
-            className="perspective-container relative w-[300px] sm:w-[355px] aspect-[688/960]"
+            className="perspective-container relative w-[min(300px,80vw,calc((100svh-220px)*688/960))] sm:w-[min(355px,75vw,calc((100svh-220px)*688/960))] aspect-[688/960]"
             style={{ perspective: '1200px' }}
           >
             {/* Card Presentation Container (Pure 3D without flattening filter) */}
@@ -491,6 +544,16 @@ export default function CardRevealPreview({ onCraftOwn }) {
                 }
               }}
             >
+              {/* Dynamic Lighting Glare matching the tilt (Pokemon TCG effect) */}
+              {revealStage === 'revealed' && (
+                <div 
+                  className={`absolute inset-0 z-50 pointer-events-none ${state.cardType === 'paper' ? 'rounded-none' : 'rounded-[16px]'} mix-blend-overlay opacity-50`}
+                  style={{
+                    background: `radial-gradient(circle at ${mousePos.x * 100 + 50}% ${mousePos.y * 100 + 50}%, rgba(255,255,255,0.75) 0%, transparent 60%)`,
+                    transform: 'translateZ(2px)'
+                  }}
+                />
+              )}
               {/* Front Card Face (Revealed Flower Artwork) */}
               <div 
                 className={`absolute inset-0 ${state.cardType === 'paper' ? 'rounded-none' : 'rounded-[16px]'} ${

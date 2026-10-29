@@ -48,6 +48,53 @@ export default function CardViewer({ onConfirm, onOpenEditTitle, onOpenEditMessa
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [isFullscreen]);
 
+  // Device Orientation (Gyroscope / Accelerometer 3D Tilt for Mobile)
+  useEffect(() => {
+    if (!isFullscreen) return;
+
+    let animId;
+    let targetX = 0;
+    let targetY = 0;
+    let currentX = 0;
+    let currentY = 0;
+
+    const handleOrientation = (e) => {
+      if (e.gamma === null || e.beta === null) return;
+      // gamma: left-to-right tilt [-30deg, 30deg]
+      const clampedGamma = Math.max(-30, Math.min(30, e.gamma));
+      // beta: front-to-back tilt centered at natural 45deg holding angle
+      const clampedBeta = Math.max(-30, Math.min(30, e.beta - 45));
+
+      targetX = (clampedGamma / 30) * 0.75;
+      targetY = (clampedBeta / 30) * 0.75;
+    };
+
+    const smoothLoop = () => {
+      currentX += (targetX - currentX) * 0.12;
+      currentY += (targetY - currentY) * 0.12;
+      setMousePos({ x: currentX, y: currentY });
+      animId = requestAnimationFrame(smoothLoop);
+    };
+
+    animId = requestAnimationFrame(smoothLoop);
+    window.addEventListener('deviceorientation', handleOrientation, { passive: true });
+
+    return () => {
+      cancelAnimationFrame(animId);
+      window.removeEventListener('deviceorientation', handleOrientation);
+    };
+  }, [isFullscreen]);
+
+  const handleOpenFullscreen = () => {
+    if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
+      DeviceOrientationEvent.requestPermission()
+        .then(() => setIsFullscreen(true))
+        .catch(() => setIsFullscreen(true));
+    } else {
+      setIsFullscreen(true);
+    }
+  };
+
   const isFlipped = state.activeSide === 'back';
 
   const handlePreviewMouseMove = (e) => {
@@ -55,6 +102,15 @@ export default function CardViewer({ onConfirm, onOpenEditTitle, onOpenEditMessa
     const rect = e.currentTarget.getBoundingClientRect();
     const x = (e.clientX - rect.left) / rect.width - 0.5;
     const y = (e.clientY - rect.top) / rect.height - 0.5;
+    setMousePos({ x, y });
+  };
+
+  const handlePreviewTouchMove = (e) => {
+    if (!isFullscreen || !e.touches || e.touches.length === 0) return;
+    const touch = e.touches[0];
+    const rect = e.currentTarget.getBoundingClientRect();
+    const x = (touch.clientX - rect.left) / rect.width - 0.5;
+    const y = (touch.clientY - rect.top) / rect.height - 0.5;
     setMousePos({ x, y });
   };
 
@@ -158,7 +214,7 @@ export default function CardViewer({ onConfirm, onOpenEditTitle, onOpenEditMessa
       </div>
 
       {/* Main Center Stage */}
-      <div className="relative flex items-start justify-center mb-1.5 xl:mb-2 w-[min(418px,93vw,calc((100dvh-200px)*688/960))] sm:w-[min(418px,82vw,calc((100dvh-200px)*688/960))] lg:w-[min(280px,calc((100dvh-192px)*688/960))] xl:w-[min(360px,calc((100dvh-228px)*688/960))] 2xl:w-[min(380px,calc((100dvh-240px)*688/960))] mx-auto">
+      <div className="relative flex items-start justify-center mb-1.5 xl:mb-2 w-[min(300px,80vw,calc((100svh-248px)*688/960))] sm:w-[min(340px,75vw,calc((100svh-248px)*688/960))] lg:w-[min(280px,calc((100dvh-192px)*688/960))] xl:w-[min(360px,calc((100dvh-228px)*688/960))] 2xl:w-[min(380px,calc((100dvh-240px)*688/960))] mx-auto">
         {/* Mobile Ambient Aura Glow behind Card to eliminate empty dead space */}
         <div 
           className="absolute -inset-6 z-0 rounded-[40px] blur-[36px] pointer-events-none opacity-50 flex lg:hidden"
@@ -242,7 +298,7 @@ export default function CardViewer({ onConfirm, onOpenEditTitle, onOpenEditMessa
         <div className="hidden lg:flex absolute top-1/2 -translate-y-1/2 left-full ml-[10px] xl:ml-[16px] flex-col items-start gap-[8px] xl:gap-[12px] z-20">
           <LiquidGlassIconButton
             aria-label="Fullscreen Preview"
-            onClick={() => setIsFullscreen(true)}
+            onClick={handleOpenFullscreen}
             icon={<Eye weight="regular" />}
           />
 
@@ -255,10 +311,10 @@ export default function CardViewer({ onConfirm, onOpenEditTitle, onOpenEditMessa
       </div>
 
       {/* Mobile/Tablet Controls: Tier 1 Actions (Eye, Customize, Flip) */}
-      <div className="flex lg:hidden items-center justify-center gap-3 mt-2.5 sm:mt-3 w-full max-w-[min(418px,93vw)]">
+      <div className="flex lg:hidden items-center justify-center gap-3 mt-2.5 sm:mt-3 w-full max-w-[min(300px,80vw,calc((100svh-248px)*688/960))] sm:max-w-[min(340px,75vw,calc((100svh-248px)*688/960))]">
         <LiquidGlassIconButton
           aria-label="Fullscreen Preview"
-          onClick={() => setIsFullscreen(true)}
+          onClick={handleOpenFullscreen}
           icon={<Eye size={26} weight="bold" />}
           size="lg"
           className="!w-[52px] !h-[52px]"
@@ -282,7 +338,7 @@ export default function CardViewer({ onConfirm, onOpenEditTitle, onOpenEditMessa
       </div>
 
       {/* Mobile/Tablet Controls: Tier 2 Action (Confirm CTA) */}
-      <div className="flex lg:hidden items-center justify-center mt-2.5 w-full max-w-[min(418px,93vw)]">
+      <div className="flex lg:hidden items-center justify-center mt-2.5 w-full max-w-[min(300px,80vw,calc((100svh-248px)*688/960))] sm:max-w-[min(340px,75vw,calc((100svh-248px)*688/960))]">
         <LiquidGlassButton
           variant="primary"
           size="lg"
@@ -307,6 +363,7 @@ export default function CardViewer({ onConfirm, onOpenEditTitle, onOpenEditMessa
           onClick={() => setIsFullscreen(false)}
           onMouseMove={handlePreviewMouseMove}
           onMouseLeave={handlePreviewMouseLeave}
+          onTouchMove={handlePreviewTouchMove}
         >
           {/* Card & Closer Flanking Controls Container */}
           <div className="relative flex flex-col items-center justify-center">
@@ -376,7 +433,7 @@ export default function CardViewer({ onConfirm, onOpenEditTitle, onOpenEditMessa
 
             {/* Mobile Controls: Same level DIRECTLY beneath card (Back on Left, Flip in Center) */}
             <div 
-              className="flex lg:hidden relative w-full max-w-[340px] mt-5 h-[52px] items-center z-50 select-none"
+              className="flex lg:hidden relative w-full max-w-[min(300px,80vw,calc((100svh-248px)*688/960))] sm:max-w-[min(340px,75vw,calc((100svh-248px)*688/960))] mt-5 h-[52px] items-center z-50 select-none"
               onClick={e => e.stopPropagation()}
             >
               {/* Back Button (Red Arrow, Left-aligned to Card) */}

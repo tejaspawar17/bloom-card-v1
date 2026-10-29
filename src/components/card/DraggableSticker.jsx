@@ -5,9 +5,9 @@ import { useCard } from '@/context/CardContext';
 import { STICKERS } from '@/data/cardData';
 import StampDustParticles from '@/components/ui/StampDustParticles';
 
-export function DraggableSticker({ stickerData }) {
+export function DraggableSticker({ stickerData, isPreview = false }) {
   const { dispatch } = useCard();
-  const [isEditingSticker, setIsEditingSticker] = useState(false);
+  const [isEditingSticker, setIsEditingSticker] = useState(!isPreview);
   const [isRotating, setIsRotating] = useState(false);
   const [hasLanded, setHasLanded] = useState(false);
   const [landKey, setLandKey] = useState(0);
@@ -22,8 +22,7 @@ export function DraggableSticker({ stickerData }) {
   // Two-touch / two-thumb gesture rotation tracking (No scaling)
   const twoTouchRef = useRef({
     active: false,
-    startAngle: 0,
-    initialRot: 0,
+    prevAngle: 0,
   });
 
   // Sync motion value when sticker rotation changes externally or on load
@@ -34,14 +33,16 @@ export function DraggableSticker({ stickerData }) {
 
   // Tactile "slap on card" animation on initial spawn
   useEffect(() => {
-    setIsEditingSticker(true);
+    if (!isPreview) {
+      setIsEditingSticker(true);
+    }
     // Fire land dust and trigger shadow compaction
     const timer = setTimeout(() => {
       setHasLanded(true);
       setLandKey(Date.now());
     }, 180);
     return () => clearTimeout(timer);
-  }, []);
+  }, [isPreview]);
 
   // Click outside sticker on card auto-commits / dismisses handles
   useEffect(() => {
@@ -129,7 +130,7 @@ export function DraggableSticker({ stickerData }) {
     window.addEventListener('pointercancel', onUp);
   };
 
-  // Two-Thumb / Two-Finger Touch Rotation (Mobile Natural Gesture)
+  // Two-Thumb / Two-Finger Touch Rotation (Mobile Natural Gesture with smooth delta unwrap)
   const handleTouchStart = (e) => {
     if (!isEditingSticker) return;
     if (e.touches.length === 2) {
@@ -138,8 +139,7 @@ export function DraggableSticker({ stickerData }) {
       const angle = Math.atan2(t2.clientY - t1.clientY, t2.clientX - t1.clientX) * (180 / Math.PI);
       twoTouchRef.current = {
         active: true,
-        startAngle: angle,
-        initialRot: latestRotationRef.current,
+        prevAngle: angle,
       };
       setIsRotating(true);
     }
@@ -152,8 +152,13 @@ export function DraggableSticker({ stickerData }) {
       const t1 = e.touches[0];
       const t2 = e.touches[1];
       const currentAngle = Math.atan2(t2.clientY - t1.clientY, t2.clientX - t1.clientX) * (180 / Math.PI);
-      const delta = currentAngle - twoTouchRef.current.startAngle;
-      const newRot = twoTouchRef.current.initialRot + delta;
+      let diff = currentAngle - twoTouchRef.current.prevAngle;
+      // Normalize angle delta across the +/- 180 wrap boundary to prevent sudden spinning snaps
+      if (diff > 180) diff -= 360;
+      if (diff < -180) diff += 360;
+      
+      twoTouchRef.current.prevAngle = currentAngle;
+      const newRot = latestRotationRef.current + diff;
 
       latestRotationRef.current = newRot;
       rotate.set(newRot);
@@ -182,31 +187,31 @@ export function DraggableSticker({ stickerData }) {
   const isAlbum = ["igor", "blond", "sos", "pink_floyd", "brat"].includes(stickerData.stickerId);
   const isApples = stickerData.stickerId === "apples";
 
-  let sizeClass = "w-[clamp(118px,40cqw,154px)] h-[clamp(118px,40cqw,154px)]";
+  let sizeClass = "w-[clamp(82px,27cqw,120px)] h-[clamp(82px,27cqw,120px)]";
   if (isCmiygl) {
-    // Landscape passport ticket ratio (~1.9:1)
-    sizeClass = "w-[clamp(168px,54cqw,215px)] h-[clamp(96px,31cqw,122px)]";
+    // Landscape passport ticket ratio (~1.84:1)
+    sizeClass = "w-[clamp(114px,37cqw,165px)] h-[clamp(62px,20cqw,90px)]";
   } else if (isAlbum) {
     // Vinyl sleeve + peeking disc ratio (1.11:1)
-    sizeClass = "w-[clamp(124px,42cqw,162px)] h-[clamp(112px,38cqw,146px)]";
+    sizeClass = "w-[clamp(86px,28cqw,124px)] h-[clamp(78px,25cqw,112px)]";
   } else if (isApples) {
     // Apples quote badge (prominent hand lettering)
-    sizeClass = "w-[clamp(122px,41cqw,158px)] h-[clamp(126px,42cqw,162px)]";
+    sizeClass = "w-[clamp(84px,27cqw,122px)] h-[clamp(86px,28cqw,126px)]";
   }
 
   return (
     <motion.div 
       ref={stickerRef}
-      className={`absolute pointer-events-auto top-0 left-0 ${sizeClass} z-40 ${isEditingSticker ? 'cursor-grab active:cursor-grabbing' : 'cursor-pointer'}`}
-      drag={isEditingSticker}
+      className={`absolute ${isPreview ? 'pointer-events-none' : 'pointer-events-auto'} top-0 left-0 ${sizeClass} z-40 ${(!isPreview && isEditingSticker) ? 'cursor-grab active:cursor-grabbing' : (isPreview ? '' : 'cursor-pointer')}`}
+      drag={!isPreview && isEditingSticker}
       dragControls={dragControls}
       dragListener={false}
       dragMomentum={false}
       style={{ rotate }}
-      onTouchStart={handleTouchStart}
-      onTouchMove={handleTouchMove}
-      onTouchEnd={handleTouchEnd}
-      onTouchCancel={handleTouchEnd}
+      onTouchStart={!isPreview ? handleTouchStart : undefined}
+      onTouchMove={!isPreview ? handleTouchMove : undefined}
+      onTouchEnd={!isPreview ? handleTouchEnd : undefined}
+      onTouchCancel={!isPreview ? handleTouchEnd : undefined}
       initial={{ 
         x: stickerData.x, 
         y: stickerData.y - 14, 
@@ -229,7 +234,7 @@ export function DraggableSticker({ stickerData }) {
       }}
       onDragEnd={handleDragEnd}
       onClick={(e) => {
-        if (!isEditingSticker) {
+        if (!isPreview && !isEditingSticker) {
           e.stopPropagation();
           setIsEditingSticker(true);
         }
@@ -243,7 +248,7 @@ export function DraggableSticker({ stickerData }) {
       <div 
         className="w-full h-full relative touch-none select-none" 
         onPointerDown={(e) => { 
-          if (isEditingSticker && e.isPrimary) {
+          if (!isPreview && isEditingSticker && e.isPrimary) {
             dragControls.start(e); 
           }
         }}
@@ -252,7 +257,7 @@ export function DraggableSticker({ stickerData }) {
       </div>
       
       <AnimatePresence>
-        {isEditingSticker && (
+        {!isPreview && isEditingSticker && (
           <>
             {/* Inward Frosted Dashed Bounding Box */}
             <motion.div

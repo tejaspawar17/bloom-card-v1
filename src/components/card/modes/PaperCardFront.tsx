@@ -31,7 +31,7 @@ export function PaperCardFront({ state: propState, flower: propFlower, onOpenEdi
       </div>
 
       {state?.stickers?.filter(s => s.side === 'front').map(sticker => (
-        <DraggableSticker key={sticker.id} stickerData={sticker} />
+        <DraggableSticker key={sticker.id} stickerData={sticker} isPreview={isPreview} />
       ))}
     </div>
   );
