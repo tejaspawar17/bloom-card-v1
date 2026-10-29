@@ -17,21 +17,18 @@ const STEPS = [
     tag: '01 · OCCASION & FRONT',
     title: 'Card Front',
     description: 'Choose an occasion and pick your floral arrangement or Pokémon companion.',
-    heightClass: 'max-h-[82dvh] h-[82dvh]',
   },
   {
     id: 2,
     tag: '02 · BACK COVER & STAMP',
     title: 'Back Cover',
     description: 'Select back cover artwork or upload a photo, then stamp an emotion emoji.',
-    heightClass: 'max-h-[72dvh] h-[72dvh]',
   },
   {
     id: 3,
     tag: '03 · DECORATE & FINISH',
     title: 'Stickers',
     description: 'Add finishing touches and collectible stickers across your card.',
-    heightClass: 'max-h-[64dvh] h-[64dvh]',
   },
 ];
 
@@ -127,7 +124,8 @@ export default function MobileCustomizeSheet({ isOpen, onClose }) {
   };
 
   const stepMeta = STEPS[step - 1] || STEPS[0];
-  const currentHeightClass = isExpanded ? 'max-h-[92dvh] h-[92dvh]' : stepMeta.heightClass;
+  // Apple HIG Unified Detent Heights: Never morph height between tabs
+  const currentHeightClass = isExpanded ? 'max-h-[92dvh] h-[92dvh]' : 'max-h-[68dvh] h-[68dvh]';
 
   if (typeof document === 'undefined') return null;
 
@@ -309,14 +307,14 @@ export default function MobileCustomizeSheet({ isOpen, onClose }) {
                   )}
 
                   {step === 3 && (
-                    <StickersGrid isMobile={true} heightClassName={isExpanded ? "h-[calc(92dvh-280px)] min-h-[360px]" : "h-[270px]"} />
+                    <StickersGrid isMobile={true} heightClassName={isExpanded ? "h-[calc(92dvh-280px)] min-h-[360px]" : "h-[240px]"} />
                   )}
                 </motion.div>
               </AnimatePresence>
             </div>
 
             {/* Pinned Bottom Primary Action Bar: Preview Card */}
-            <div className="p-3.5 pt-2 pb-5 border-t border-white/[0.06] bg-[#121214]/90 backdrop-blur-xl shrink-0">
+            <div className="px-4 pt-2.5 pb-[max(16px,env(safe-area-inset-bottom,16px))] border-t border-white/[0.08] bg-[#121214]/95 backdrop-blur-2xl shrink-0">
               <button
                 type="button"
                 onClick={onClose}
