@@ -324,6 +324,7 @@ export default function CardViewer({ onConfirm, onOpenEditTitle, onOpenEditMessa
       {/* Mobile/Tablet Controls: Tier 1 Actions (Eye, Customize, Flip) */}
       <div className="flex lg:hidden items-center justify-center gap-2.5 sm:gap-3 mt-2 sm:mt-2.5 w-full max-w-[min(300px,80vw,calc((100svh-248px)*688/960))] sm:max-w-[min(340px,75vw,calc((100svh-248px)*688/960))]">
         <LiquidGlassIconButton
+          label="Fullscreen Preview"
           aria-label="Fullscreen Preview"
           onClick={handleOpenFullscreen}
           icon={<Eye size={20} weight="bold" />}
@@ -340,6 +341,7 @@ export default function CardViewer({ onConfirm, onOpenEditTitle, onOpenEditMessa
         </button>
 
         <LiquidGlassIconButton
+          label="Flip card"
           aria-label="Flip card"
           onClick={(e) => { e.preventDefault(); e.stopPropagation(); dispatch({ type: 'TOGGLE_SIDE' }); }}
           icon={<ArrowClockwise size={20} weight="bold" />}
