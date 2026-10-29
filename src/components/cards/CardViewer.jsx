@@ -57,9 +57,11 @@ export default function CardViewer({ onConfirm, onOpenEditTitle, onOpenEditMessa
     let targetY = 0;
     let currentX = 0;
     let currentY = 0;
+    let hasGyroData = false;
 
     const handleOrientation = (e) => {
       if (e.gamma === null || e.beta === null) return;
+      hasGyroData = true;
       // gamma: left-to-right tilt [-30deg, 30deg]
       const clampedGamma = Math.max(-30, Math.min(30, e.gamma));
       // beta: front-to-back tilt centered at natural 45deg holding angle
@@ -70,9 +72,11 @@ export default function CardViewer({ onConfirm, onOpenEditTitle, onOpenEditMessa
     };
 
     const smoothLoop = () => {
-      currentX += (targetX - currentX) * 0.12;
-      currentY += (targetY - currentY) * 0.12;
-      setMousePos({ x: currentX, y: currentY });
+      if (hasGyroData) {
+        currentX += (targetX - currentX) * 0.12;
+        currentY += (targetY - currentY) * 0.12;
+        setMousePos({ x: currentX, y: currentY });
+      }
       animId = requestAnimationFrame(smoothLoop);
     };
 
@@ -84,6 +88,12 @@ export default function CardViewer({ onConfirm, onOpenEditTitle, onOpenEditMessa
       window.removeEventListener('deviceorientation', handleOrientation);
     };
   }, [isFullscreen]);
+
+  const requestGyroPermission = () => {
+    if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
+      DeviceOrientationEvent.requestPermission().catch(() => {});
+    }
+  };
 
   const handleOpenFullscreen = () => {
     if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
@@ -312,19 +322,19 @@ export default function CardViewer({ onConfirm, onOpenEditTitle, onOpenEditMessa
       </div>
 
       {/* Mobile/Tablet Controls: Tier 1 Actions (Eye, Customize, Flip) */}
-      <div className="flex lg:hidden items-center justify-center gap-3 mt-2.5 sm:mt-3 w-full max-w-[min(300px,80vw,calc((100svh-248px)*688/960))] sm:max-w-[min(340px,75vw,calc((100svh-248px)*688/960))]">
+      <div className="flex lg:hidden items-center justify-center gap-2.5 sm:gap-3 mt-2 sm:mt-2.5 w-full max-w-[min(300px,80vw,calc((100svh-248px)*688/960))] sm:max-w-[min(340px,75vw,calc((100svh-248px)*688/960))]">
         <LiquidGlassIconButton
           aria-label="Fullscreen Preview"
           onClick={handleOpenFullscreen}
-          icon={<Eye size={26} weight="bold" />}
-          size="lg"
-          className="!w-[52px] !h-[52px]"
+          icon={<Eye size={20} weight="bold" />}
+          size="md"
+          className="!w-[44px] !h-[44px]"
         />
 
         <button
           type="button"
           onClick={onOpenCustomize}
-          className="dark-liquid-glass-pill flex-1 h-[52px] px-6 text-[#FFFFFF] hover:text-[#FFFFFF] text-[17px] font-semibold cursor-pointer shadow-[0_4px_16px_rgba(0,0,0,0.3)] transition-transform active:scale-[0.98]"
+          className="dark-liquid-glass-pill flex-1 h-[44px] px-5 text-[#FFFFFF] hover:text-[#FFFFFF] text-[15px] font-semibold tracking-[-0.01em] cursor-pointer shadow-[0_3px_12px_rgba(0,0,0,0.3)] transition-transform active:scale-[0.98]"
         >
           Customize
         </button>
@@ -332,18 +342,18 @@ export default function CardViewer({ onConfirm, onOpenEditTitle, onOpenEditMessa
         <LiquidGlassIconButton
           aria-label="Flip card"
           onClick={(e) => { e.preventDefault(); e.stopPropagation(); dispatch({ type: 'TOGGLE_SIDE' }); }}
-          icon={<ArrowClockwise size={26} weight="bold" />}
-          size="lg"
-          className="!w-[52px] !h-[52px]"
+          icon={<ArrowClockwise size={20} weight="bold" />}
+          size="md"
+          className="!w-[44px] !h-[44px]"
         />
       </div>
 
       {/* Mobile/Tablet Controls: Tier 2 Action (Confirm CTA) */}
-      <div className="flex lg:hidden items-center justify-center mt-2.5 w-full max-w-[min(300px,80vw,calc((100svh-248px)*688/960))] sm:max-w-[min(340px,75vw,calc((100svh-248px)*688/960))]">
+      <div className="flex lg:hidden items-center justify-center mt-2 sm:mt-2.5 w-full max-w-[min(300px,80vw,calc((100svh-248px)*688/960))] sm:max-w-[min(340px,75vw,calc((100svh-248px)*688/960))]">
         <LiquidGlassButton
           variant="primary"
-          size="lg"
-          className="w-full h-[52px] text-[17px] font-semibold shadow-[0_4px_20px_rgba(0,136,255,0.35)]"
+          size="md"
+          className="w-full !h-[48px] !text-[16px] font-semibold tracking-[-0.01em] shadow-[0_4px_16px_rgba(0,136,255,0.3)]"
           onClick={onConfirm}
         >
           Confirm
@@ -435,31 +445,31 @@ export default function CardViewer({ onConfirm, onOpenEditTitle, onOpenEditMessa
 
             {/* Mobile Controls: Same level DIRECTLY beneath card (Back on Left, Flip in Center) */}
             <div 
-              className="flex lg:hidden relative w-full max-w-[min(300px,80vw,calc((100svh-248px)*688/960))] sm:max-w-[min(340px,75vw,calc((100svh-248px)*688/960))] mt-5 h-[52px] items-center z-50 select-none"
+              className="flex lg:hidden relative w-full max-w-[min(300px,80vw,calc((100svh-248px)*688/960))] sm:max-w-[min(340px,75vw,calc((100svh-248px)*688/960))] mt-4 sm:mt-5 h-[44px] items-center z-50 select-none"
               onClick={e => e.stopPropagation()}
             >
               {/* Back Button (Red Arrow, Left-aligned to Card) */}
               <div className="absolute left-0 top-0">
                 <LiquidGlassIconButton
-                  size="lg"
+                  size="md"
                   aria-label="Exit Preview"
                   onClick={() => setIsFullscreen(false)}
-                  icon={<ArrowLeft size={24} weight="bold" className="text-[#FF383C]" />}
-                  className="!w-[52px] !h-[52px] shadow-[0_4px_16px_rgba(0,0,0,0.5)]"
+                  icon={<ArrowLeft size={20} weight="bold" className="text-[#FF383C]" />}
+                  className="!w-[44px] !h-[44px] shadow-[0_4px_16px_rgba(0,0,0,0.5)]"
                 />
               </div>
 
               {/* Flip Button (White Icon, Dead Center beneath Card) */}
               <div className="absolute left-1/2 -translate-x-1/2 top-0">
                 <LiquidGlassIconButton
-                  size="lg"
+                  size="md"
                   aria-label="Flip card"
                   onClick={() => {
                     setMousePos({ x: 0, y: 0 });
                     dispatch({ type: 'TOGGLE_SIDE' });
                   }}
-                  icon={<ArrowClockwise size={24} weight="bold" className="text-white" />}
-                  className="!w-[52px] !h-[52px] shadow-[0_4px_16px_rgba(0,0,0,0.5)]"
+                  icon={<ArrowClockwise size={20} weight="bold" className="text-white" />}
+                  className="!w-[44px] !h-[44px] shadow-[0_4px_16px_rgba(0,0,0,0.5)]"
                 />
               </div>
             </div>

@@ -101,45 +101,45 @@ export default function MessageModal({ onClose }) {
           onClick={onClose}
         />
         
-        {/* Modal Window matching Figma Tablets */}
+        {/* Modal Window matching Figma Tablets & Compact Mobile */}
         <motion.div
           role="dialog"
           aria-modal="true"
           aria-label={isTrainer ? "Edit Trainer Details" : "Edit Card Message"}
-          className="relative z-10 w-full max-w-[480px] bg-[#0E0E0E] rounded-[24px] overflow-hidden flex flex-col shadow-[0_24px_60px_rgba(0,0,0,0.85)] border border-white/[0.12] select-none"
+          className="relative z-10 w-full max-w-[440px] sm:max-w-[480px] max-h-[calc(100svh-32px)] bg-[#0E0E0E] rounded-[20px] sm:rounded-[24px] overflow-hidden flex flex-col shadow-[0_24px_60px_rgba(0,0,0,0.85)] border border-white/[0.12] select-none"
           initial={{ opacity: 0, scale: 0.95, y: 8 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.95, y: 8 }}
           transition={{ type: "spring", stiffness: 420, damping: 28, mass: 0.9 }}
           onClick={(e) => e.stopPropagation()}
         >
-          {/* Header Bar matching Figma Tablet Surface */}
-          {/* Title Background Band matching Figma [466x60] */}
-          <div className="flex items-center justify-between h-[60px] pl-5 pr-3 bg-[#1F1F1F] border-b border-white/[0.08]">
-            <h2 className="text-[rgba(255,255,255,0.85)] font-medium text-[17px] leading-[22px] tracking-[-0.02em] font-sans">
+          {/* Header Bar */}
+          <div className="flex items-center justify-between h-[48px] sm:h-[60px] pl-4 sm:pl-5 pr-2.5 sm:pr-3 bg-[#1F1F1F] border-b border-white/[0.08] shrink-0">
+            <h2 className="text-[rgba(255,255,255,0.85)] font-semibold text-[15px] sm:text-[17px] leading-[20px] sm:leading-[22px] tracking-[-0.02em] font-sans">
               {isTrainer ? 'Trainer Details' : 'Your Personal Note'}
             </h2>
             
-            {/* Cancel Button (Destructive Icon Button) centered vertically 5px from edges */}
+            {/* Cancel Button (Destructive Icon Button) */}
             <LiquidGlassIconButton 
               size="sm"
               label="Close dialog"
               onClick={onClose}
-              icon={<X size={22} weight="bold" className="text-[#FF383C]" />}
+              icon={<X size={18} weight="bold" className="text-[#FF383C]" />}
+              className="!w-[34px] !h-[34px] sm:!w-[38px] sm:!h-[38px]"
             />
           </div>
 
           {/* Form Content Area */}
-          <form onSubmit={handleSubmit} className="p-6 flex flex-col gap-4 bg-[#0E0E0E]">
+          <form onSubmit={handleSubmit} className="p-3.5 sm:p-6 flex flex-col gap-2.5 sm:gap-4 bg-[#0E0E0E] overflow-y-auto flex-1">
             {isTrainer ? (
               <>
                 {/* Name Field */}
-                <div className="flex flex-col gap-1.5">
+                <div className="flex flex-col gap-1 sm:gap-1.5">
                   <div className="flex items-center justify-between">
-                    <label htmlFor="trainer-name-input" className="text-[13px] leading-[18px] font-semibold text-[#D9D9D9] font-sans">
+                    <label htmlFor="trainer-name-input" className="text-[12px] sm:text-[13px] leading-[16px] sm:leading-[18px] font-semibold text-[#D9D9D9] font-sans">
                       Trainer Name:
                     </label>
-                    <span className="text-[11px] text-[#8E8E93] font-sans">
+                    <span className="text-[10px] sm:text-[11px] text-[#8E8E93] font-sans">
                       Badge name
                     </span>
                   </div>
@@ -151,22 +151,22 @@ export default function MessageModal({ onClose }) {
                       value={trainerName}
                       onChange={(e) => setTrainerName(e.target.value)}
                       maxLength={15}
-                      className="w-full bg-transparent px-4 py-3 text-[15px] leading-[20px] text-white placeholder-[#727272] outline-none font-sans pr-16"
+                      className="w-full bg-transparent px-3.5 sm:px-4 py-2 sm:py-3 text-[14px] sm:text-[15px] leading-[20px] text-white placeholder-[#727272] outline-none font-sans pr-14 sm:pr-16"
                       autoFocus
                     />
-                    <div className={`absolute right-3.5 top-1/2 -translate-y-1/2 text-[11px] font-normal tabular-nums font-sans ${trainerName.length >= 15 ? 'text-[#FF6961]/70' : 'text-[#727272]'}`}>
+                    <div className={`absolute right-3 sm:right-3.5 top-1/2 -translate-y-1/2 text-[10px] sm:text-[11px] font-normal tabular-nums font-sans ${trainerName.length >= 15 ? 'text-[#FF6961]/70' : 'text-[#727272]'}`}>
                       {trainerName.length} / 15
                     </div>
                   </div>
                 </div>
 
                 {/* Bio Field */}
-                <div className="flex flex-col gap-1.5">
+                <div className="flex flex-col gap-1 sm:gap-1.5">
                   <div className="flex items-center justify-between">
-                    <label htmlFor="trainer-bio-input" className="text-[13px] leading-[18px] font-semibold text-[#D9D9D9] font-sans">
+                    <label htmlFor="trainer-bio-input" className="text-[12px] sm:text-[13px] leading-[16px] sm:leading-[18px] font-semibold text-[#D9D9D9] font-sans">
                       Bio & Battle Stats:
                     </label>
-                    <span className="text-[11px] text-[#8E8E93] font-sans">
+                    <span className="text-[10px] sm:text-[11px] text-[#8E8E93] font-sans">
                       Bottom banner
                     </span>
                   </div>
@@ -177,10 +177,10 @@ export default function MessageModal({ onClose }) {
                       placeholder="e.g., Level 99 Coffee Lover • HT: 5'8&quot; WT: 150 lbs"
                       onChange={(e) => setTrainerBio(e.target.value)}
                       maxLength={80}
-                      rows={3}
-                      className="w-full bg-transparent px-4 pt-3.5 pb-7 text-[15px] leading-[22px] text-white placeholder-[#727272] outline-none resize-none font-sans h-[96px]"
+                      rows={2}
+                      className="w-full bg-transparent px-3.5 sm:px-4 pt-2.5 sm:pt-3.5 pb-6 sm:pb-7 text-[14px] sm:text-[15px] leading-[20px] sm:leading-[22px] text-white placeholder-[#727272] outline-none resize-none font-sans h-[76px] sm:h-[96px]"
                     />
-                    <div className={`absolute bottom-2.5 right-3 text-[11px] font-normal tabular-nums font-sans ${trainerBio.length >= 80 ? 'text-[#FF6961]/70' : 'text-[#727272]'}`}>
+                    <div className={`absolute bottom-2 sm:bottom-2.5 right-3 text-[10px] sm:text-[11px] font-normal tabular-nums font-sans ${trainerBio.length >= 80 ? 'text-[#FF6961]/70' : 'text-[#727272]'}`}>
                       {trainerBio.length} / 80
                     </div>
                   </div>
@@ -189,12 +189,12 @@ export default function MessageModal({ onClose }) {
             ) : (
               <>
                 {/* To Field */}
-                <div className="flex flex-col gap-1.5">
+                <div className="flex flex-col gap-1 sm:gap-1.5">
                   <div className="flex items-center justify-between">
-                    <label htmlFor="card-to-input" className="text-[13px] leading-[18px] font-semibold text-[#D9D9D9] font-sans">
+                    <label htmlFor="card-to-input" className="text-[12px] sm:text-[13px] leading-[16px] sm:leading-[18px] font-semibold text-[#D9D9D9] font-sans">
                       To:
                     </label>
-                    <span className="text-[11px] text-[#8E8E93] font-sans">
+                    <span className="text-[10px] sm:text-[11px] text-[#8E8E93] font-sans">
                       Recipient
                     </span>
                   </div>
@@ -206,22 +206,22 @@ export default function MessageModal({ onClose }) {
                       value={to}
                       onChange={(e) => setTo(e.target.value)}
                       maxLength={15}
-                      className="w-full bg-transparent px-4 py-3 text-[15px] leading-[20px] text-white placeholder-[#727272] outline-none font-sans pr-16"
+                      className="w-full bg-transparent px-3.5 sm:px-4 py-2 sm:py-3 text-[14px] sm:text-[15px] leading-[20px] text-white placeholder-[#727272] outline-none font-sans pr-14 sm:pr-16"
                       autoFocus
                     />
-                    <div className={`absolute right-3.5 top-1/2 -translate-y-1/2 text-[11px] font-normal tabular-nums font-sans ${to.length >= 15 ? 'text-[#FF6961]/70' : 'text-[#727272]'}`}>
+                    <div className={`absolute right-3 sm:right-3.5 top-1/2 -translate-y-1/2 text-[10px] sm:text-[11px] font-normal tabular-nums font-sans ${to.length >= 15 ? 'text-[#FF6961]/70' : 'text-[#727272]'}`}>
                       {to.length} / 15
                     </div>
                   </div>
                 </div>
 
                 {/* From Field */}
-                <div className="flex flex-col gap-1.5">
+                <div className="flex flex-col gap-1 sm:gap-1.5">
                   <div className="flex items-center justify-between">
-                    <label htmlFor="card-from-input" className="text-[13px] leading-[18px] font-semibold text-[#D9D9D9] font-sans">
+                    <label htmlFor="card-from-input" className="text-[12px] sm:text-[13px] leading-[16px] sm:leading-[18px] font-semibold text-[#D9D9D9] font-sans">
                       From:
                     </label>
-                    <span className="text-[11px] text-[#8E8E93] font-sans">
+                    <span className="text-[10px] sm:text-[11px] text-[#8E8E93] font-sans">
                       Sender
                     </span>
                   </div>
@@ -233,21 +233,21 @@ export default function MessageModal({ onClose }) {
                       value={from}
                       onChange={(e) => setFrom(e.target.value)}
                       maxLength={15}
-                      className="w-full bg-transparent px-4 py-3 text-[15px] leading-[20px] text-white placeholder-[#727272] outline-none font-sans pr-16"
+                      className="w-full bg-transparent px-3.5 sm:px-4 py-2 sm:py-3 text-[14px] sm:text-[15px] leading-[20px] text-white placeholder-[#727272] outline-none font-sans pr-14 sm:pr-16"
                     />
-                    <div className={`absolute right-3.5 top-1/2 -translate-y-1/2 text-[11px] font-normal tabular-nums font-sans ${from.length >= 15 ? 'text-[#FF6961]/70' : 'text-[#727272]'}`}>
+                    <div className={`absolute right-3 sm:right-3.5 top-1/2 -translate-y-1/2 text-[10px] sm:text-[11px] font-normal tabular-nums font-sans ${from.length >= 15 ? 'text-[#FF6961]/70' : 'text-[#727272]'}`}>
                       {from.length} / 15
                     </div>
                   </div>
                 </div>
 
                 {/* Message Field */}
-                <div className="flex flex-col gap-1.5">
+                <div className="flex flex-col gap-1 sm:gap-1.5">
                   <div className="flex items-center justify-between">
-                    <label htmlFor="card-message-input" className="text-[13px] leading-[18px] font-semibold text-[#D9D9D9] font-sans">
+                    <label htmlFor="card-message-input" className="text-[12px] sm:text-[13px] leading-[16px] sm:leading-[18px] font-semibold text-[#D9D9D9] font-sans">
                       Message:
                     </label>
-                    <span className="text-[11px] text-[#8E8E93] font-sans">
+                    <span className="text-[10px] sm:text-[11px] text-[#8E8E93] font-sans">
                       Printed on back
                     </span>
                   </div>
@@ -259,9 +259,9 @@ export default function MessageModal({ onClose }) {
                       value={message}
                       onChange={(e) => setMessage(e.target.value)}
                       maxLength={194}
-                      className="w-full h-[140px] bg-transparent px-4 pt-3.5 pb-8 text-[15px] leading-[22px] text-white placeholder-[#727272] outline-none resize-none font-sans"
+                      className="w-full h-[90px] sm:h-[135px] bg-transparent px-3.5 sm:px-4 pt-2.5 sm:pt-3.5 pb-6 sm:pb-8 text-[14px] sm:text-[15px] leading-[20px] sm:leading-[22px] text-white placeholder-[#727272] outline-none resize-none font-sans"
                     />
-                    <div className={`absolute bottom-2.5 right-3 text-[11px] font-normal tabular-nums font-sans ${message.length >= 194 ? 'text-[#FF6961]/70' : 'text-[#727272]'}`}>
+                    <div className={`absolute bottom-2 sm:bottom-2.5 right-3 text-[10px] sm:text-[11px] font-normal tabular-nums font-sans ${message.length >= 194 ? 'text-[#FF6961]/70' : 'text-[#727272]'}`}>
                       {message.length} / 194
                     </div>
                   </div>
@@ -270,12 +270,12 @@ export default function MessageModal({ onClose }) {
             )}
 
             {/* Footer Action Buttons matching Figma Pills */}
-            <div className="flex items-center justify-end gap-3 pt-2">
+            <div className="flex items-center justify-end gap-2.5 sm:gap-3 pt-1 sm:pt-2 shrink-0">
               {/* Clear All Pill Button */}
               <button 
                 type="button" 
                 onClick={handleReset}
-                className="dark-liquid-glass-pill h-[44px] px-5 text-[15px] leading-[20px] font-medium text-white font-sans"
+                className="dark-liquid-glass-pill h-[38px] sm:h-[44px] px-4 sm:px-5 text-[14px] sm:text-[15px] leading-[18px] sm:leading-[20px] font-medium text-white font-sans"
               >
                 Clear All
               </button>
@@ -285,6 +285,7 @@ export default function MessageModal({ onClose }) {
                 variant="primary" 
                 size="md" 
                 type="submit"
+                className="!h-[38px] sm:!h-[44px] !px-4 sm:!px-5 !text-[14px] sm:!text-[15px]"
               >
                 Done
               </LiquidGlassButton>

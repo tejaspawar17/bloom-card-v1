@@ -313,7 +313,7 @@ export default function MobileCustomizeSheet({ isOpen, onClose }) {
               <button
                 type="button"
                 onClick={onClose}
-                className="w-full h-[52px] rounded-full bg-[#0088FF] hover:bg-[#0077EE] active:scale-[0.98] text-white text-[17px] font-semibold flex items-center justify-center gap-2 shadow-[0_2px_10px_rgba(0,0,0,0.35)] transition-all cursor-pointer font-sans"
+                className="w-full h-[48px] rounded-full bg-[#0088FF] hover:bg-[#0077EE] active:scale-[0.98] text-white text-[16px] font-semibold tracking-[-0.01em] flex items-center justify-center gap-2 shadow-[0_2px_10px_rgba(0,0,0,0.35)] transition-all cursor-pointer font-sans"
               >
                 <span>Preview Card</span>
               </button>

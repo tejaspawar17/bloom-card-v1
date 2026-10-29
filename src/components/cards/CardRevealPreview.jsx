@@ -63,9 +63,11 @@ export default function CardRevealPreview({ onCraftOwn }) {
     let targetY = 0;
     let currentX = 0;
     let currentY = 0;
+    let hasGyroData = false;
 
     const handleOrientation = (e) => {
       if (e.gamma === null || e.beta === null) return;
+      hasGyroData = true;
       // gamma: left-to-right tilt [-30deg, 30deg]
       const clampedGamma = Math.max(-30, Math.min(30, e.gamma));
       // beta: front-to-back tilt centered at natural 45deg holding angle
@@ -76,9 +78,11 @@ export default function CardRevealPreview({ onCraftOwn }) {
     };
 
     const smoothLoop = () => {
-      currentX += (targetX - currentX) * 0.12;
-      currentY += (targetY - currentY) * 0.12;
-      setMousePos({ x: currentX, y: currentY });
+      if (hasGyroData) {
+        currentX += (targetX - currentX) * 0.12;
+        currentY += (targetY - currentY) * 0.12;
+        setMousePos({ x: currentX, y: currentY });
+      }
       animId = requestAnimationFrame(smoothLoop);
     };
 
@@ -91,13 +95,17 @@ export default function CardRevealPreview({ onCraftOwn }) {
     };
   }, [revealStage]);
 
+  const requestGyroPermission = () => {
+    if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
+      DeviceOrientationEvent.requestPermission().catch(() => {});
+    }
+  };
+
   const handleReveal = () => {
     if (revealStage !== 'idle') return;
 
     // Prompt user gesture permission for DeviceOrientation on iOS 13+
-    if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
-      DeviceOrientationEvent.requestPermission().catch(() => {});
-    }
+    requestGyroPermission();
 
     setRevealStage('charging');
 
@@ -132,6 +140,7 @@ export default function CardRevealPreview({ onCraftOwn }) {
   };
 
   const handleReplay = () => {
+    requestGyroPermission();
     setIsFlipped(false);
     setIsShockwave(false);
     setIsFlashing(false);
@@ -142,6 +151,7 @@ export default function CardRevealPreview({ onCraftOwn }) {
   };
 
   const handleToggleFlip = () => {
+    requestGyroPermission();
     setMousePos({ x: 0, y: 0 });
     setIsFlipped(prev => !prev);
   };
@@ -622,21 +632,21 @@ export default function CardRevealPreview({ onCraftOwn }) {
               pointerEvents: revealStage === 'revealed' ? 'auto' : 'none'
             }}
             transition={{ duration: 0.35 }}
-            className="flex lg:hidden items-center justify-center gap-6 mt-4 z-20"
+            className="flex lg:hidden items-center justify-center gap-4 sm:gap-6 mt-2.5 sm:mt-3 z-20"
           >
             <LiquidGlassIconButton
-              size="lg"
+              size="md"
               label="Replay reveal"
               onClick={handleReplay}
-              icon={<Play size={24} weight="bold" />}
-              className="!w-[52px] !h-[52px]"
+              icon={<Play size={20} weight="bold" />}
+              className="!w-[44px] !h-[44px]"
             />
             <LiquidGlassIconButton
-              size="lg"
+              size="md"
               label="Rotate card"
               onClick={handleToggleFlip}
-              icon={<ArrowClockwise size={24} weight="bold" />}
-              className="!w-[52px] !h-[52px]"
+              icon={<ArrowClockwise size={20} weight="bold" />}
+              className="!w-[44px] !h-[44px]"
             />
           </motion.div>
 
@@ -648,11 +658,12 @@ export default function CardRevealPreview({ onCraftOwn }) {
             y: 0
           }}
           transition={{ duration: 0.35 }}
-          className="flex items-center justify-center mt-3.5 sm:mt-4 z-20"
+          className="flex items-center justify-center mt-2.5 sm:mt-3.5 z-20"
         >
           <LiquidGlassButton
             variant="primary"
-            size="lg"
+            size="md"
+            className="w-full max-w-[min(300px,80vw)] sm:max-w-none !h-[48px] lg:!h-[52px] !text-[16px] lg:!text-[17px] font-semibold tracking-[-0.01em] shadow-[0_4px_16px_rgba(0,136,255,0.3)]"
             disabled={revealStage !== 'revealed'}
             onClick={revealStage === 'revealed' ? onCraftOwn : undefined}
           >

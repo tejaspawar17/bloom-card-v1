@@ -87,12 +87,12 @@ export default function TitleModal({ onClose }) {
           onClick={onClose}
         />
 
-        {/* Modal Window matching Figma Tablets */}
+        {/* Modal Window matching Figma Tablets & Compact Mobile */}
         <motion.div
           role="dialog"
           aria-modal="true"
           aria-label="Edit Card Title"
-          className="relative z-10 w-full max-w-[466px] flex flex-col select-none rounded-[24px] bg-[#0E0E0E] border border-white/[0.12] overflow-hidden shadow-[0_24px_60px_rgba(0,0,0,0.85)]"
+          className="relative z-10 w-full max-w-[420px] sm:max-w-[466px] max-h-[calc(100svh-32px)] flex flex-col select-none rounded-[20px] sm:rounded-[24px] bg-[#0E0E0E] border border-white/[0.12] overflow-hidden shadow-[0_24px_60px_rgba(0,0,0,0.85)]"
           onClick={(e) => e.stopPropagation()}
           initial={{ opacity: 0, scale: 0.95, y: 8 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -104,35 +104,35 @@ export default function TitleModal({ onClose }) {
             mass: 0.9
           }}
         >
-          {/* Header Bar matching Figma Tablet Surface */}
-          {/* Title Background Band matching Figma [466x60] */}
-          <div className="flex items-center justify-between h-[60px] pl-5 pr-3 bg-[#1F1F1F] border-b border-white/[0.08]">
-            <h2 className="text-white/85 font-semibold text-[17px] leading-[22px] tracking-[-0.02em] font-sans">
+          {/* Header Bar */}
+          <div className="flex items-center justify-between h-[48px] sm:h-[60px] pl-4 sm:pl-5 pr-2.5 sm:pr-3 bg-[#1F1F1F] border-b border-white/[0.08] shrink-0">
+            <h2 className="text-white/85 font-semibold text-[15px] sm:text-[17px] leading-[20px] sm:leading-[22px] tracking-[-0.02em] font-sans">
               Card Title
             </h2>
 
-            {/* Cancel Button (Destructive Icon Button) centered vertically 5px from edges */}
+            {/* Cancel Button (Destructive Icon Button) */}
             <LiquidGlassIconButton 
               size="sm"
               label="Close dialog"
               onClick={onClose}
-              icon={<X size={22} weight="bold" className="text-[#FF383C]" />}
+              icon={<X size={18} weight="bold" className="text-[#FF383C]" />}
+              className="!w-[34px] !h-[34px] sm:!w-[38px] sm:!h-[38px]"
             />
           </div>
 
           {/* Form Content Area */}
-          <form onSubmit={handleSubmit} className="flex flex-col p-6 gap-6 bg-[#0E0E0E]">
+          <form onSubmit={handleSubmit} className="flex flex-col p-4 sm:p-6 gap-4 sm:gap-6 bg-[#0E0E0E] overflow-y-auto">
             {/* Title Field matching Figma Recessed Dark Box */}
-            <div className="flex flex-col gap-2">
+            <div className="flex flex-col gap-1.5 sm:gap-2">
               <div className="flex items-center justify-between">
                 <label 
                   htmlFor="card-title-input" 
-                  className="text-[13px] leading-[18px] font-semibold text-[#D9D9D9] font-sans"
+                  className="text-[12px] sm:text-[13px] leading-[16px] sm:leading-[18px] font-semibold text-[#D9D9D9] font-sans"
                 >
                   Title:
                 </label>
                 {/* Spatial Context Helper Tag */}
-                <span className="text-[11px] text-[#8E8E93] font-sans">
+                <span className="text-[10px] sm:text-[11px] text-[#8E8E93] font-sans">
                   Appears on front cover
                 </span>
               </div>
@@ -143,15 +143,15 @@ export default function TitleModal({ onClose }) {
                   value={val}
                   onChange={(e) => setVal(e.target.value)}
                   placeholder={placeholder}
-                  rows={3}
+                  rows={2}
                   maxLength={maxLength}
-                  className="w-full bg-transparent px-4 pt-3.5 pb-8 text-[15px] leading-[22px] text-white placeholder-[#727272] outline-none resize-none font-sans"
+                  className="w-full bg-transparent px-3.5 sm:px-4 pt-3 pb-6 sm:pb-8 text-[14px] sm:text-[15px] leading-[20px] sm:leading-[22px] text-white placeholder-[#727272] outline-none resize-none font-sans"
                   autoFocus
                 />
                 
                 {/* Character Counter */}
                 <div 
-                  className={`absolute bottom-2.5 right-3 text-[11px] font-normal tabular-nums tracking-[0.0055em] font-sans transition-colors ${
+                  className={`absolute bottom-2 sm:bottom-2.5 right-3 text-[10px] sm:text-[11px] font-normal tabular-nums tracking-[0.0055em] font-sans transition-colors ${
                     isAtLimit ? 'text-[#FF6961]/70' : 'text-white/25'
                   }`}
                 >
@@ -160,13 +160,13 @@ export default function TitleModal({ onClose }) {
               </div>
             </div>
 
-            {/* Footer Action Buttons matching Figma Pills */}
-            <div className="flex items-center justify-end gap-3 pt-2">
+            {/* Footer Action Buttons */}
+            <div className="flex items-center justify-end gap-2.5 sm:gap-3 pt-1 sm:pt-2 shrink-0">
               {/* Clear Pill Button */}
               <button 
                 type="button"
                 onClick={handleReset}
-                className="dark-liquid-glass-pill h-[44px] px-5 text-[15px] leading-[20px] font-medium text-white font-sans"
+                className="dark-liquid-glass-pill h-[38px] sm:h-[44px] px-4 sm:px-5 text-[14px] sm:text-[15px] leading-[18px] sm:leading-[20px] font-medium text-white font-sans"
               >
                 Clear
               </button>
@@ -176,6 +176,7 @@ export default function TitleModal({ onClose }) {
                 variant="primary" 
                 size="md" 
                 type="submit"
+                className="!h-[38px] sm:!h-[44px] !px-4 sm:!px-5 !text-[14px] sm:!text-[15px]"
               >
                 Done
               </LiquidGlassButton>
