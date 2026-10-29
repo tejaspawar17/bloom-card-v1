@@ -19,6 +19,13 @@ export function DraggableSticker({ stickerData }) {
   const latestRotationRef = useRef(stickerData.r || 0);
   const degreeTextRef = useRef(null);
 
+  // Two-touch / two-thumb gesture rotation tracking (No scaling)
+  const twoTouchRef = useRef({
+    active: false,
+    startAngle: 0,
+    initialRot: 0,
+  });
+
   // Sync motion value when sticker rotation changes externally or on load
   useEffect(() => {
     rotate.set(stickerData.r || 0);
@@ -69,12 +76,18 @@ export function DraggableSticker({ stickerData }) {
     });
   };
 
+  // 1-Finger/Mouse Rotation via Pointer Capture
   const startRotation = (e) => {
     e.stopPropagation();
     e.preventDefault();
     setIsRotating(true);
     
     if (!stickerRef.current) return;
+    
+    const target = e.currentTarget;
+    try {
+      target.setPointerCapture?.(e.pointerId);
+    } catch (err) {}
     
     const rect = stickerRef.current.getBoundingClientRect();
     const centerX = rect.left + rect.width / 2;
@@ -96,7 +109,10 @@ export function DraggableSticker({ stickerData }) {
       }
     };
 
-    const onUp = () => {
+    const onUp = (upEvent) => {
+      try {
+        target.releasePointerCapture?.(upEvent.pointerId);
+      } catch (err) {}
       setIsRotating(false);
       window.removeEventListener('pointermove', onMove);
       window.removeEventListener('pointerup', onUp);
@@ -111,6 +127,52 @@ export function DraggableSticker({ stickerData }) {
     window.addEventListener('pointermove', onMove);
     window.addEventListener('pointerup', onUp);
     window.addEventListener('pointercancel', onUp);
+  };
+
+  // Two-Thumb / Two-Finger Touch Rotation (Mobile Natural Gesture)
+  const handleTouchStart = (e) => {
+    if (!isEditingSticker) return;
+    if (e.touches.length === 2) {
+      const t1 = e.touches[0];
+      const t2 = e.touches[1];
+      const angle = Math.atan2(t2.clientY - t1.clientY, t2.clientX - t1.clientX) * (180 / Math.PI);
+      twoTouchRef.current = {
+        active: true,
+        startAngle: angle,
+        initialRot: latestRotationRef.current,
+      };
+      setIsRotating(true);
+    }
+  };
+
+  const handleTouchMove = (e) => {
+    if (!isEditingSticker) return;
+    if (e.touches.length === 2 && twoTouchRef.current.active) {
+      if (e.cancelable) e.preventDefault();
+      const t1 = e.touches[0];
+      const t2 = e.touches[1];
+      const currentAngle = Math.atan2(t2.clientY - t1.clientY, t2.clientX - t1.clientX) * (180 / Math.PI);
+      const delta = currentAngle - twoTouchRef.current.startAngle;
+      const newRot = twoTouchRef.current.initialRot + delta;
+
+      latestRotationRef.current = newRot;
+      rotate.set(newRot);
+
+      if (degreeTextRef.current) {
+        degreeTextRef.current.textContent = `${Math.round(newRot)}°`;
+      }
+    }
+  };
+
+  const handleTouchEnd = (e) => {
+    if (twoTouchRef.current.active && e.touches.length < 2) {
+      twoTouchRef.current.active = false;
+      setIsRotating(false);
+      dispatch({
+        type: 'UPDATE_STICKER_POS',
+        payload: { id: stickerData.id, pos: { r: latestRotationRef.current } }
+      });
+    }
   };
 
   const imageUrl = STICKERS.find(s => s.id === stickerData.stickerId)?.image;
@@ -141,6 +203,10 @@ export function DraggableSticker({ stickerData }) {
       dragListener={false}
       dragMomentum={false}
       style={{ rotate }}
+      onTouchStart={handleTouchStart}
+      onTouchMove={handleTouchMove}
+      onTouchEnd={handleTouchEnd}
+      onTouchCancel={handleTouchEnd}
       initial={{ 
         x: stickerData.x, 
         y: stickerData.y - 14, 
@@ -174,14 +240,21 @@ export function DraggableSticker({ stickerData }) {
         <StampDustParticles triggerKey={landKey} color="#FFD60A" />
       </div>
 
-      <div className="w-full h-full relative" onPointerDown={(e) => { if (isEditingSticker) dragControls.start(e); }}>
+      <div 
+        className="w-full h-full relative touch-none select-none" 
+        onPointerDown={(e) => { 
+          if (isEditingSticker && e.isPrimary) {
+            dragControls.start(e); 
+          }
+        }}
+      >
         <img src={imageUrl} alt="Sticker" className="w-full h-full object-contain pointer-events-none select-none" draggable={false} />
       </div>
       
       <AnimatePresence>
         {isEditingSticker && (
           <>
-            {/* Inward Frosted Dashed Bounding Box (Never protrudes outside sticker bounds) */}
+            {/* Inward Frosted Dashed Bounding Box */}
             <motion.div
               key="bounding-box"
               initial={{ opacity: 0, scale: 0.96 }}
@@ -204,14 +277,15 @@ export function DraggableSticker({ stickerData }) {
               </motion.div>
             )}
 
-            {/* Check Button (Confirm) — Top-Center */}
+            {/* Check Button (Confirm) — Top-Left (38px Touch Target, 20px Icon) */}
             <motion.div
               key="check-handle"
               initial={{ scale: 0.85, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.85, opacity: 0 }}
               transition={{ duration: 0.15, ease: "easeOut" }}
-              className="absolute top-1.5 inset-x-0 mx-auto w-7 h-7 z-40 flex items-center justify-center pointer-events-auto"
+              className="absolute -top-3 -left-3 w-10 h-10 z-40 flex items-center justify-center pointer-events-auto"
+              onPointerDown={(e) => e.stopPropagation()}
             >
               <button 
                 type="button"
@@ -220,20 +294,21 @@ export function DraggableSticker({ stickerData }) {
                   e.stopPropagation();
                   setIsEditingSticker(false);
                 }}
-                className="w-full h-full rounded-full bg-[#0088FF] text-white flex items-center justify-center shadow-[0_2px_8px_rgba(0,136,255,0.4)] border border-white/40 cursor-pointer outline-none transition-transform duration-100 ease-out hover:scale-105 active:scale-95 flex-shrink-0"
+                className="w-full h-full rounded-full bg-[#0088FF] hover:bg-[#0077EE] active:scale-95 text-white flex items-center justify-center shadow-[0_4px_12px_rgba(0,136,255,0.45)] border-2 border-white/60 cursor-pointer outline-none transition-transform duration-100 ease-out flex-shrink-0"
               >
-                <Check size={14} weight="bold" className="block shrink-0 pointer-events-none" />
+                <Check size={20} weight="bold" className="block shrink-0 pointer-events-none" />
               </button>
             </motion.div>
 
-            {/* Delete Button (X) — Top-Right */}
+            {/* Delete Button (X) — Top-Right (38px Touch Target, 20px Icon) */}
             <motion.div
               key="delete-handle"
               initial={{ scale: 0.85, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.85, opacity: 0 }}
               transition={{ duration: 0.15, ease: "easeOut" }}
-              className="absolute top-1.5 right-1.5 w-7 h-7 z-40 flex items-center justify-center pointer-events-auto"
+              className="absolute -top-3 -right-3 w-10 h-10 z-40 flex items-center justify-center pointer-events-auto"
+              onPointerDown={(e) => e.stopPropagation()}
             >
               <button 
                 type="button"
@@ -242,28 +317,29 @@ export function DraggableSticker({ stickerData }) {
                   e.stopPropagation();
                   dispatch({ type: 'REMOVE_STICKER', payload: stickerData.id });
                 }}
-                className="w-full h-full rounded-full bg-red-600/95 text-white flex items-center justify-center shadow-[0_2px_8px_rgba(220,38,38,0.4)] border border-white/40 cursor-pointer outline-none hover:bg-red-500 transition-transform duration-100 ease-out hover:scale-105 active:scale-95 flex-shrink-0"
+                className="w-full h-full rounded-full bg-[#EF4444] hover:bg-[#DC2626] active:scale-95 text-white flex items-center justify-center shadow-[0_4px_12px_rgba(239,68,68,0.45)] border-2 border-white/60 cursor-pointer outline-none transition-transform duration-100 ease-out flex-shrink-0"
               >
-                <X size={14} weight="bold" className="block shrink-0 pointer-events-none" />
+                <X size={20} weight="bold" className="block shrink-0 pointer-events-none" />
               </button>
             </motion.div>
 
-            {/* Rotation Handle — Bottom-Center */}
+            {/* Rotation Handle — Bottom-Center (38px Touch Target, 20px Icon) */}
             <motion.div
               key="rotate-handle"
               initial={{ scale: 0.85, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.85, opacity: 0 }}
               transition={{ duration: 0.15, ease: "easeOut" }}
-              className="absolute bottom-1.5 inset-x-0 mx-auto w-7 h-7 z-40 flex items-center justify-center pointer-events-auto"
+              className="absolute -bottom-3 inset-x-0 mx-auto w-10 h-10 z-40 flex items-center justify-center pointer-events-auto"
+              onPointerDown={(e) => e.stopPropagation()}
             >
               <button 
                 type="button"
                 aria-label="Rotate sticker"
                 onPointerDown={startRotation}
-                className="w-full h-full rounded-full bg-[#1A1A1A]/95 text-white flex items-center justify-center shadow-[0_2px_8px_rgba(0,0,0,0.5)] border border-white/40 cursor-grab active:cursor-grabbing outline-none hover:bg-neutral-800 transition-transform duration-100 ease-out hover:scale-105 active:scale-95 flex-shrink-0"
+                className="w-full h-full rounded-full bg-[#18191C]/95 hover:bg-neutral-800 active:scale-95 text-white flex items-center justify-center shadow-[0_4px_12px_rgba(0,0,0,0.6)] border-2 border-white/60 cursor-grab active:cursor-grabbing outline-none transition-transform duration-100 ease-out flex-shrink-0 touch-none"
               >
-                <ArrowsClockwise size={14} weight="bold" className="block shrink-0 pointer-events-none" />
+                <ArrowsClockwise size={20} weight="bold" className="block shrink-0 pointer-events-none" />
               </button>
             </motion.div>
           </>

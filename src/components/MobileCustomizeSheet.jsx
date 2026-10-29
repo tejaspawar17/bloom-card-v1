@@ -63,6 +63,14 @@ export default function MobileCustomizeSheet({ isOpen, onClose }) {
   const [step, setStep] = useState(1);
   const [direction, setDirection] = useState(1);
   const [hasPickedOccasion, setHasPickedOccasion] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(false);
+
+  // Reset expansion state when sheet closes
+  useEffect(() => {
+    if (!isOpen) {
+      setIsExpanded(false);
+    }
+  }, [isOpen]);
 
   // Horizontal swipe touch tracking
   const touchStartX = useRef(null);
@@ -119,6 +127,7 @@ export default function MobileCustomizeSheet({ isOpen, onClose }) {
   };
 
   const stepMeta = STEPS[step - 1] || STEPS[0];
+  const currentHeightClass = isExpanded ? 'max-h-[92dvh] h-[92dvh]' : stepMeta.heightClass;
 
   if (typeof document === 'undefined') return null;
 
@@ -146,21 +155,33 @@ export default function MobileCustomizeSheet({ isOpen, onClose }) {
             exit={{ y: '100%' }}
             transition={{ type: 'spring', damping: 28, stiffness: 280, mass: 0.85 }}
             drag="y"
-            dragConstraints={{ top: 0, bottom: 0 }}
-            dragElastic={{ top: 0.08, bottom: 0.6 }}
+            dragConstraints={{ top: isExpanded ? 0 : -60, bottom: 0 }}
+            dragElastic={{ top: isExpanded ? 0.05 : 0.25, bottom: 0.6 }}
             onDragEnd={(e, info) => {
-              if (info.offset.y > 70 || info.velocity.y > 350) {
-                onClose();
+              if (isExpanded) {
+                if (info.offset.y > 60 || info.velocity.y > 250) {
+                  setIsExpanded(false);
+                }
+              } else {
+                if (info.offset.y < -40 || info.velocity.y < -250) {
+                  setIsExpanded(true);
+                } else if (info.offset.y > 70 || info.velocity.y > 350) {
+                  onClose();
+                }
               }
             }}
-            className={`relative w-full max-w-[460px] mx-auto bg-[#121214]/94 backdrop-blur-3xl border-t border-white/15 rounded-t-[38px] shadow-[0_-16px_48px_rgba(0,0,0,0.85)] flex flex-col z-10 transition-[height,max-height] duration-300 ease-out ${stepMeta.heightClass}`}
+            className={`relative w-full max-w-[460px] mx-auto bg-[#121214]/94 backdrop-blur-3xl border-t border-white/15 rounded-t-[38px] shadow-[0_-16px_48px_rgba(0,0,0,0.85)] flex flex-col z-10 transition-[height,max-height] duration-300 ease-out ${currentHeightClass}`}
             role="dialog"
             aria-modal="true"
             aria-label="Customize Card"
           >
             {/* Grabber only - clean Apple HIG, interactive drag handle */}
-            <div className="w-full pt-3 pb-1 flex justify-center cursor-pointer select-none">
-              <div className="w-[60px] h-[4px] rounded-full bg-white/25 hover:bg-white/40 transition-colors" />
+            <div 
+              onClick={() => setIsExpanded(prev => !prev)}
+              className="w-full pt-3 pb-1 flex flex-col items-center justify-center cursor-pointer select-none active:opacity-70 transition-opacity"
+              aria-label={isExpanded ? "Collapse sheet to medium" : "Expand sheet to full height"}
+            >
+              <div className="w-[60px] h-[4px] rounded-full bg-white/25 hover:bg-white/40 active:bg-white/60 transition-colors" />
             </div>
 
             {/* Header Control Bar: Row 1 - Navigation & Title */}
@@ -288,7 +309,7 @@ export default function MobileCustomizeSheet({ isOpen, onClose }) {
                   )}
 
                   {step === 3 && (
-                    <StickersGrid isMobile={true} heightClassName="h-[270px]" />
+                    <StickersGrid isMobile={true} heightClassName={isExpanded ? "h-[calc(92dvh-280px)] min-h-[360px]" : "h-[270px]"} />
                   )}
                 </motion.div>
               </AnimatePresence>
@@ -301,7 +322,6 @@ export default function MobileCustomizeSheet({ isOpen, onClose }) {
                 onClick={onClose}
                 className="w-full h-[52px] rounded-full bg-[#0088FF] hover:bg-[#0077EE] active:scale-[0.98] text-white text-[17px] font-semibold flex items-center justify-center gap-2 shadow-[0_4px_16px_rgba(0,136,255,0.35)] transition-all cursor-pointer font-sans"
               >
-                <Eye size={20} weight="bold" />
                 <span>Preview Card</span>
               </button>
             </div>
