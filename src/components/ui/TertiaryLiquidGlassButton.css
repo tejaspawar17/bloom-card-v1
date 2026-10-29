@@ -134,3 +134,20 @@
     transition: none;
   }
 }
+
+@media (max-width: 1023px) {
+  .tertiary-liquid-glass-button {
+    width: 50px !important;
+    height: 50px !important;
+    min-width: 50px !important;
+    min-height: 50px !important;
+  }
+
+  .tertiary-liquid-glass-button img,
+  .tertiary-liquid-glass-button svg {
+    width: 26px !important;
+    height: 26px !important;
+    max-width: 26px !important;
+    max-height: 26px !important;
+  }
+}

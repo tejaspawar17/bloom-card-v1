@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { CaretLeft, CaretRight, Check, X } from '@phosphor-icons/react';
+import { Eye, CaretLeft, CaretRight, Check, X } from '@phosphor-icons/react';
 import { useCard } from '@/context/CardContext';
 import { OCCASIONS } from '@/data/cardData';
 import WindowPanel from '@/components/ui/WindowPanel';
@@ -163,9 +163,9 @@ export default function MobileCustomizeSheet({ isOpen, onClose }) {
               <div className="w-[60px] h-[4px] rounded-full bg-white/25 hover:bg-white/40 transition-colors" />
             </div>
 
-            {/* Header Control Bar */}
-            <div className="px-4 py-2 border-b border-white/[0.08] flex items-center justify-between">
-              {/* Left action button (Circle 36px) */}
+            {/* Header Control Bar: Row 1 - Navigation & Title */}
+            <div className="px-4 pt-2.5 pb-2 flex items-center justify-between">
+              {/* Left action button (Circle 42px) */}
               {step === 1 ? (
                 <button
                   type="button"
@@ -186,26 +186,11 @@ export default function MobileCustomizeSheet({ isOpen, onClose }) {
                 </button>
               )}
 
-              {/* Step Title & Apple-style Circular Page Indicator */}
-              <div className="flex flex-col items-center select-none">
+              {/* Step Title - horizontally centered with buttons */}
+              <div className="flex-1 flex justify-center items-center select-none px-2">
                 <span className="text-[17px] font-semibold text-white tracking-tight">
                   {stepMeta.title}
                 </span>
-                <div className="flex items-center gap-2 mt-1.5 px-2.5 py-1 rounded-full bg-white/[0.08] backdrop-blur-md border border-white/[0.06]">
-                  {STEPS.map((s) => (
-                    <button
-                      key={s.id}
-                      type="button"
-                      onClick={() => handleStepChange(s.id)}
-                      aria-label={`Jump to ${s.title}`}
-                      className={`w-[7px] h-[7px] rounded-full transition-all duration-200 cursor-pointer ${
-                        s.id === step
-                          ? 'bg-white scale-110 shadow-[0_0_8px_rgba(255,255,255,0.7)]'
-                          : 'bg-white/30 hover:bg-white/50'
-                      }`}
-                    />
-                  ))}
-                </div>
               </div>
 
               {/* Right action button: Next (→) on steps 1 & 2, Done (✓) on step 3 */}
@@ -228,6 +213,25 @@ export default function MobileCustomizeSheet({ isOpen, onClose }) {
                   <Check size={22} weight="bold" />
                 </button>
               )}
+            </div>
+
+            {/* Header Control Bar: Row 2 - Floating Page Indicator Capsule */}
+            <div className="flex justify-center pb-2.5 border-b border-white/[0.08]">
+              <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-white/[0.08] backdrop-blur-md border border-white/[0.06]">
+                {STEPS.map((s) => (
+                  <button
+                    key={s.id}
+                    type="button"
+                    onClick={() => handleStepChange(s.id)}
+                    aria-label={`Jump to ${s.title}`}
+                    className={`w-[7px] h-[7px] rounded-full transition-all duration-200 cursor-pointer ${
+                      s.id === step
+                        ? 'bg-white scale-110 shadow-[0_0_8px_rgba(255,255,255,0.7)]'
+                        : 'bg-white/30 hover:bg-white/50'
+                    }`}
+                  />
+                ))}
+              </div>
             </div>
 
             {/* Sub-header: Green Category Tag + Explanatory Description */}
@@ -290,27 +294,16 @@ export default function MobileCustomizeSheet({ isOpen, onClose }) {
               </AnimatePresence>
             </div>
 
-            {/* Pinned Bottom Primary Action Bar (Figma Screen 4) */}
+            {/* Pinned Bottom Primary Action Bar: Preview Card */}
             <div className="p-3.5 pt-2 pb-5 border-t border-white/[0.06] bg-[#121214]/90 backdrop-blur-xl shrink-0">
-              {step < 3 ? (
-                <button
-                  type="button"
-                  onClick={() => handleStepChange(step + 1)}
-                  className="w-full h-[50px] rounded-full bg-[#0088FF] hover:bg-[#0077EE] active:scale-[0.98] text-white text-[16px] font-semibold flex items-center justify-center gap-2 shadow-[0_4px_16px_rgba(0,136,255,0.35)] transition-all cursor-pointer font-sans"
-                >
-                  <span>Next Step</span>
-                  <CaretRight size={18} weight="bold" />
-                </button>
-              ) : (
-                <button
-                  type="button"
-                  onClick={onClose}
-                  className="w-full h-[50px] rounded-full bg-[#0088FF] hover:bg-[#0077EE] active:scale-[0.98] text-white text-[16px] font-semibold flex items-center justify-center gap-2 shadow-[0_4px_16px_rgba(0,136,255,0.35)] transition-all cursor-pointer font-sans"
-                >
-                  <Check size={18} weight="bold" />
-                  <span>Done</span>
-                </button>
-              )}
+              <button
+                type="button"
+                onClick={onClose}
+                className="w-full h-[52px] rounded-full bg-[#0088FF] hover:bg-[#0077EE] active:scale-[0.98] text-white text-[17px] font-semibold flex items-center justify-center gap-2 shadow-[0_4px_16px_rgba(0,136,255,0.35)] transition-all cursor-pointer font-sans"
+              >
+                <Eye size={20} weight="bold" />
+                <span>Preview Card</span>
+              </button>
             </div>
           </motion.div>
         </div>

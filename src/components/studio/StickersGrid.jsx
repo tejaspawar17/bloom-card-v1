@@ -139,7 +139,7 @@ export default function StickersGrid({
                     className={cn(
                       "relative overflow-hidden bg-[#1A1A1A] z-10 flex items-center justify-center p-1.5",
                       isMobile
-                        ? "mt-[3px] w-[66px] h-[66px] rounded-[12px]"
+                        ? "mt-[3px] w-[66px] h-[66px] rounded-[12px] p-0.5"
                         : "mt-[2.5px] xl:mt-[3px] w-[54px] sm:w-[58px] h-[54px] sm:h-[58px] xl:w-[61px] xl:h-[61px] 2xl:w-[66px] 2xl:h-[66px] rounded-[10px] xl:rounded-[11px] 2xl:rounded-[12px]"
                     )}
                   >

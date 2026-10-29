@@ -293,24 +293,6 @@ export default function CardViewer({ onConfirm, onOpenEditTitle, onOpenEditMessa
         </LiquidGlassButton>
       </div>
 
-      {/* Mobile/Tablet: Peeking Apple Grabber with drag-up support */}
-      <motion.div
-        drag="y"
-        dragConstraints={{ top: 0, bottom: 0 }}
-        dragElastic={{ top: 0.25, bottom: 0 }}
-        onDragEnd={(e, info) => {
-          if (info.offset.y < -25 || info.velocity.y < -150) {
-            onOpenCustomize();
-          }
-        }}
-        onClick={onOpenCustomize}
-        className="flex lg:hidden flex-col items-center justify-center pt-2 pb-0.5 cursor-pointer group select-none active:opacity-75"
-        role="button"
-        aria-label="Open customization drawer"
-      >
-        <div className="w-14 h-1.5 rounded-full bg-white/20 group-hover:bg-white/40 transition-colors" />
-      </motion.div>
-
       {/* Desktop 'Confirm' Button Component */}
       <div className="hidden lg:flex items-center justify-center mt-1 xl:mt-1.5 relative">
         <LiquidGlassButton variant="primary" size="lg" className="h-[42px] xl:h-[48px] px-5 xl:px-6 text-[15px] xl:text-[17px]" onClick={onConfirm}>
