@@ -124,8 +124,10 @@ export default function MobileCustomizeSheet({ isOpen, onClose }) {
   };
 
   const stepMeta = STEPS[step - 1] || STEPS[0];
-  // Apple HIG Unified Detent Heights: Never morph height between tabs
-  const currentHeightClass = isExpanded ? 'max-h-[92dvh] h-[92dvh]' : 'max-h-[68dvh] h-[68dvh]';
+  // Apple HIG Unified Detent: 68dvh default fits all steps cleanly, 92dvh when expanded
+  const currentHeightClass = isExpanded 
+    ? 'max-h-[92dvh] h-[92dvh]' 
+    : 'max-h-[68dvh] h-[68dvh]';
 
   if (typeof document === 'undefined') return null;
 
@@ -192,7 +194,7 @@ export default function MobileCustomizeSheet({ isOpen, onClose }) {
                   aria-label="Close sheet"
                   className="w-[42px] h-[42px] rounded-full bg-white/10 hover:bg-white/15 active:bg-white/20 flex items-center justify-center text-white/90 transition-colors cursor-pointer"
                 >
-                  <X size={22} weight="bold" />
+                  <X size={22} weight="bold" className="text-[#FF383C]" />
                 </button>
               ) : (
                 <button
@@ -201,7 +203,7 @@ export default function MobileCustomizeSheet({ isOpen, onClose }) {
                   aria-label="Previous step"
                   className="w-[42px] h-[42px] rounded-full bg-white/10 hover:bg-white/15 active:bg-white/20 flex items-center justify-center text-white/90 transition-colors cursor-pointer"
                 >
-                  <CaretLeft size={22} weight="bold" />
+                  <CaretLeft size={22} weight="bold" className="text-[#FF383C]" />
                 </button>
               )}
 
@@ -307,7 +309,7 @@ export default function MobileCustomizeSheet({ isOpen, onClose }) {
                   )}
 
                   {step === 3 && (
-                    <StickersGrid isMobile={true} heightClassName={isExpanded ? "h-[calc(92dvh-280px)] min-h-[360px]" : "h-[240px]"} />
+                    <StickersGrid isMobile={true} heightClassName={isExpanded ? "h-[calc(92dvh-280px)] min-h-[360px]" : "h-[292px]"} />
                   )}
                 </motion.div>
               </AnimatePresence>
@@ -318,7 +320,7 @@ export default function MobileCustomizeSheet({ isOpen, onClose }) {
               <button
                 type="button"
                 onClick={onClose}
-                className="w-full h-[52px] rounded-full bg-[#0088FF] hover:bg-[#0077EE] active:scale-[0.98] text-white text-[17px] font-semibold flex items-center justify-center gap-2 shadow-[0_4px_16px_rgba(0,136,255,0.35)] transition-all cursor-pointer font-sans"
+                className="w-full h-[52px] rounded-full bg-[#0088FF] hover:bg-[#0077EE] active:scale-[0.98] text-white text-[17px] font-semibold flex items-center justify-center gap-2 shadow-[0_2px_10px_rgba(0,0,0,0.35)] transition-all cursor-pointer font-sans"
               >
                 <span>Preview Card</span>
               </button>

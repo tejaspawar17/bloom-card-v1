@@ -530,7 +530,7 @@ export default function CardRevealPreview({ onCraftOwn }) {
               pointerEvents: revealStage === 'revealed' ? 'auto' : 'none'
             }}
             transition={{ duration: 0.35 }}
-            className="absolute left-[calc(100%+16px)] sm:left-[calc(100%+24px)] top-1/2 -translate-y-1/2 flex flex-col items-center gap-3.5 z-20"
+            className="hidden lg:flex absolute left-[calc(100%+16px)] sm:left-[calc(100%+24px)] top-1/2 -translate-y-1/2 flex-col items-center gap-3.5 z-20"
           >
             {/* 1. Play Button (Circular dark liquid glass) */}
             <LiquidGlassIconButton
@@ -548,7 +548,34 @@ export default function CardRevealPreview({ onCraftOwn }) {
           </motion.div>
         </div>
 
-        {/* Bottom Button: Disabled until card is revealed, fits within viewport */}
+                  {/* Mobile Tier 1: Card Interaction Controls [ ▶ Replay ] & [ 🔄 Flip ] side-by-side beneath card */}
+          <motion.div 
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ 
+              opacity: revealStage === 'revealed' ? 1 : 0,
+              y: revealStage === 'revealed' ? 0 : 8,
+              pointerEvents: revealStage === 'revealed' ? 'auto' : 'none'
+            }}
+            transition={{ duration: 0.35 }}
+            className="flex lg:hidden items-center justify-center gap-6 mt-4 z-20"
+          >
+            <LiquidGlassIconButton
+              size="lg"
+              label="Replay reveal"
+              onClick={handleReplay}
+              icon={<Play size={24} weight="bold" />}
+              className="!w-[52px] !h-[52px]"
+            />
+            <LiquidGlassIconButton
+              size="lg"
+              label="Rotate card"
+              onClick={handleToggleFlip}
+              icon={<ArrowClockwise size={24} weight="bold" />}
+              className="!w-[52px] !h-[52px]"
+            />
+          </motion.div>
+
+        {/* Bottom Button: Tier 2 Conversion Action (Anchored safely below) */}
         <motion.div 
           initial={{ opacity: 0, y: 10 }}
           animate={{ 
