@@ -124,10 +124,13 @@ export default function MobileCustomizeSheet({ isOpen, onClose }) {
   };
 
   const stepMeta = STEPS[step - 1] || STEPS[0];
-  // Apple HIG Unified Detent: 68dvh default fits all steps cleanly, 92dvh when expanded
+  // Apple HIG Content-Aware Detents:
+  // Step 3 (Stickers) fits its 11 items cleanly (~62dvh), keeping 3D card visible above
   const currentHeightClass = isExpanded 
     ? 'max-h-[92dvh] h-[92dvh]' 
-    : 'max-h-[68dvh] h-[68dvh]';
+    : step === 3
+      ? 'max-h-[62dvh] h-[62dvh]'
+      : 'max-h-[68dvh] h-[68dvh]';
 
   if (typeof document === 'undefined') return null;
 
@@ -155,22 +158,22 @@ export default function MobileCustomizeSheet({ isOpen, onClose }) {
             exit={{ y: '100%' }}
             transition={{ type: 'spring', damping: 28, stiffness: 280, mass: 0.85 }}
             drag="y"
-            dragConstraints={{ top: isExpanded ? 0 : -60, bottom: 0 }}
-            dragElastic={{ top: isExpanded ? 0.05 : 0.25, bottom: 0.6 }}
+            dragConstraints={{ top: 0, bottom: 0 }}
+            dragElastic={{ top: 0, bottom: 0.5 }}
             onDragEnd={(e, info) => {
               if (isExpanded) {
                 if (info.offset.y > 60 || info.velocity.y > 250) {
                   setIsExpanded(false);
                 }
               } else {
-                if (info.offset.y < -40 || info.velocity.y < -250) {
+                if (info.offset.y < -30 || info.velocity.y < -200) {
                   setIsExpanded(true);
-                } else if (info.offset.y > 70 || info.velocity.y > 350) {
+                } else if (info.offset.y > 80 || info.velocity.y > 350) {
                   onClose();
                 }
               }
             }}
-            className={`relative w-full max-w-[460px] mx-auto bg-[#121214]/94 backdrop-blur-3xl border-t border-white/15 rounded-t-[38px] shadow-[0_-16px_48px_rgba(0,0,0,0.85)] flex flex-col z-10 transition-[height,max-height] duration-300 ease-out ${currentHeightClass}`}
+            className={`relative w-full max-w-[460px] mx-auto bg-[#121214] backdrop-blur-3xl border-t border-white/15 rounded-t-[38px] shadow-[0_-16px_48px_rgba(0,0,0,0.85)] flex flex-col z-10 transition-[height,max-height] duration-300 ease-out ${currentHeightClass}`}
             role="dialog"
             aria-modal="true"
             aria-label="Customize Card"
@@ -309,14 +312,14 @@ export default function MobileCustomizeSheet({ isOpen, onClose }) {
                   )}
 
                   {step === 3 && (
-                    <StickersGrid isMobile={true} heightClassName={isExpanded ? "h-[calc(92dvh-280px)] min-h-[360px]" : "h-[292px]"} />
+                    <StickersGrid isMobile={true} heightClassName="h-[288px]" />
                   )}
                 </motion.div>
               </AnimatePresence>
             </div>
 
             {/* Pinned Bottom Primary Action Bar: Preview Card */}
-            <div className="px-4 pt-2.5 pb-[max(16px,env(safe-area-inset-bottom,16px))] border-t border-white/[0.08] bg-[#121214]/95 backdrop-blur-2xl shrink-0">
+            <div className="px-4 pt-2.5 pb-[max(16px,env(safe-area-inset-bottom,16px))] border-t border-white/[0.08] bg-[#121214] shrink-0 relative after:content-[''] after:absolute after:top-full after:left-0 after:right-0 after:h-[300px] after:bg-[#121214] after:pointer-events-none">
               <button
                 type="button"
                 onClick={onClose}

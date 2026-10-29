@@ -80,7 +80,7 @@ export default function StickersGrid({
 
   const defaultHeight = heightClassName || (
     isMobile
-      ? 'h-[195px]'
+      ? 'h-[288px]'
       : 'h-[min(186px,calc(100dvh-410px))] xl:h-[min(229px,calc(100dvh-482px))] 2xl:h-[min(246px,calc(100dvh-510px))]'
   );
 
