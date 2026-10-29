@@ -37,6 +37,12 @@ const pageVariants = {
 
 export default function DesignPage({ isRecipientMode = false, onSetRecipientMode, onNavigateTab }) {
   const [modal, setModal] = useState(null);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      window.__setModal = setModal;
+    }
+  }, []);
   const [isCustomizeOpen, setIsCustomizeOpen] = useState(false);
   const [leftHeight, setLeftHeight] = useState('auto');
   const observerRef = useRef(null);

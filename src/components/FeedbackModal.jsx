@@ -124,6 +124,65 @@ export default function FeedbackModal({ onClose }) {
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [confettiKey, setConfettiKey] = useState(0);
 
+  // Mobile virtual keyboard & visual viewport tracking
+  const [viewportHeight, setViewportHeight] = useState(null);
+  const [viewportTop, setViewportTop] = useState(0);
+  const [isKeyboardOpen, setIsKeyboardOpen] = useState(false);
+  const [isFocused, setIsFocused] = useState(false);
+
+  // Prevent background scroll and maintain viewport stability on iOS
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+
+    const scrollY = window.scrollY;
+    const prevOverflow = document.body.style.overflow;
+    const prevPosition = document.body.style.position;
+    const prevTop = document.body.style.top;
+    const prevWidth = document.body.style.width;
+
+    document.body.style.position = 'fixed';
+    document.body.style.top = `-${scrollY}px`;
+    document.body.style.width = '100%';
+    document.body.style.overflow = 'hidden';
+
+    const updateViewport = () => {
+      if (window.visualViewport) {
+        const vv = window.visualViewport;
+        setViewportHeight(vv.height);
+        setViewportTop(vv.offsetTop);
+        const shrunk = vv.height < (window.innerHeight - 80);
+        setIsKeyboardOpen(shrunk);
+      }
+      if (window.scrollY !== 0) {
+        window.scrollTo(0, 0);
+      }
+    };
+
+    updateViewport();
+
+    if (window.visualViewport) {
+      window.visualViewport.addEventListener('resize', updateViewport);
+      window.visualViewport.addEventListener('scroll', updateViewport);
+    }
+    window.addEventListener('scroll', updateViewport, { passive: false });
+
+    return () => {
+      document.body.style.position = prevPosition;
+      document.body.style.top = prevTop;
+      document.body.style.width = prevWidth;
+      document.body.style.overflow = prevOverflow;
+      window.scrollTo(0, scrollY);
+
+      if (window.visualViewport) {
+        window.visualViewport.removeEventListener('resize', updateViewport);
+        window.visualViewport.removeEventListener('scroll', updateViewport);
+      }
+      window.removeEventListener('scroll', updateViewport);
+    };
+  }, []);
+
+  const isShifted = isKeyboardOpen;
+
   // Close on ESC
   useEffect(() => {
     const handleKeyDown = (e) => {
@@ -200,10 +259,17 @@ export default function FeedbackModal({ onClose }) {
   if (typeof document === 'undefined') return null;
 
   return createPortal(
-    <div className="fixed inset-0 z-50 flex items-start justify-center p-3 sm:p-4 pt-[max(16px,env(safe-area-inset-top,16px))] sm:items-center sm:pt-0">
+    <div 
+      style={{
+        top: isShifted && viewportTop ? `${viewportTop}px` : 0,
+        height: isShifted && viewportHeight ? `${viewportHeight}px` : '100%',
+        maxHeight: isShifted && viewportHeight ? `${viewportHeight}px` : '100dvh',
+      }}
+      className="fixed inset-x-0 z-50 flex items-center justify-center p-3 sm:p-4 transition-[height,padding] duration-300 ease-out"
+    >
       {/* Backdrop matching ShareModal */}
       <motion.div
-        className="absolute inset-0 bg-black/60 backdrop-blur-md"
+        className="fixed inset-0 bg-black/60 backdrop-blur-md"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
@@ -244,6 +310,12 @@ export default function FeedbackModal({ onClose }) {
             <motion.form 
               key="form"
               onSubmit={handleSubmit}
+              onFocusCapture={() => setIsFocused(true)}
+              onBlurCapture={(e) => {
+                if (!e.currentTarget.contains(e.relatedTarget)) {
+                  setIsFocused(false);
+                }
+              }}
               initial={{ opacity: 0, y: 6 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -6 }}

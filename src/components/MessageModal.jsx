@@ -14,6 +14,68 @@ export default function MessageModal({ onClose }) {
   const [trainerName, setTrainerName] = useState(state.trainerName || '');
   const [trainerBio, setTrainerBio] = useState(state.trainerBio || '');
 
+  // Mobile virtual keyboard & visual viewport tracking
+  const [viewportHeight, setViewportHeight] = useState(null);
+  const [viewportTop, setViewportTop] = useState(0);
+  const [isKeyboardOpen, setIsKeyboardOpen] = useState(false);
+  const [isFocused, setIsFocused] = useState(false);
+
+  // Prevent background scroll and maintain viewport stability on iOS
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+
+    const scrollY = window.scrollY;
+    const prevOverflow = document.body.style.overflow;
+    const prevPosition = document.body.style.position;
+    const prevTop = document.body.style.top;
+    const prevWidth = document.body.style.width;
+
+    document.body.style.position = 'fixed';
+    document.body.style.top = `-${scrollY}px`;
+    document.body.style.width = '100%';
+    document.body.style.overflow = 'hidden';
+
+    const updateViewport = () => {
+      if (window.visualViewport) {
+        const vv = window.visualViewport;
+        setViewportHeight(vv.height);
+        setViewportTop(vv.offsetTop);
+        // Mobile keyboard is open if visual viewport is significantly smaller than window height
+        const shrunk = vv.height < (window.innerHeight - 80);
+        setIsKeyboardOpen(shrunk);
+      }
+      if (window.scrollY !== 0) {
+        window.scrollTo(0, 0);
+      }
+    };
+
+    updateViewport();
+
+    if (window.visualViewport) {
+      window.visualViewport.addEventListener('resize', updateViewport);
+      window.visualViewport.addEventListener('scroll', updateViewport);
+    }
+    window.addEventListener('scroll', updateViewport, { passive: false });
+
+    return () => {
+      document.body.style.position = prevPosition;
+      document.body.style.top = prevTop;
+      document.body.style.width = prevWidth;
+      document.body.style.overflow = prevOverflow;
+      window.scrollTo(0, scrollY);
+
+      if (window.visualViewport) {
+        window.visualViewport.removeEventListener('resize', updateViewport);
+        window.visualViewport.removeEventListener('scroll', updateViewport);
+      }
+      window.removeEventListener('scroll', updateViewport);
+    };
+  }, []);
+
+  // When keyboard is open, modal adapts to the visible area above the keyboard;
+  // when collapsed, modal centers dead-center on the screen
+  const isShifted = isKeyboardOpen;
+
   // Handle escape key
   useEffect(() => {
     const handleKeyDown = (e) => {
@@ -90,10 +152,17 @@ export default function MessageModal({ onClose }) {
 
   return createPortal(
     <AnimatePresence>
-      <div className="fixed inset-0 z-[100] flex items-start justify-center p-3 sm:p-4 pt-[max(16px,env(safe-area-inset-top,16px))] sm:items-center sm:pt-0">
+      <div 
+        style={{
+          top: isShifted && viewportTop ? `${viewportTop}px` : 0,
+          height: isShifted && viewportHeight ? `${viewportHeight}px` : '100%',
+          maxHeight: isShifted && viewportHeight ? `${viewportHeight}px` : '100dvh',
+        }}
+        className="fixed inset-x-0 z-[100] flex items-center justify-center p-3 sm:p-4 transition-[height,padding] duration-300 ease-out"
+      >
         {/* Backdrop */}
         <motion.div
-          className="absolute inset-0 bg-black/60 backdrop-blur-md"
+          className="fixed inset-0 bg-black/60 backdrop-blur-md"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
@@ -106,7 +175,8 @@ export default function MessageModal({ onClose }) {
           role="dialog"
           aria-modal="true"
           aria-label={isTrainer ? "Edit Trainer Details" : "Edit Card Message"}
-          className="relative z-10 w-full max-w-[440px] sm:max-w-[480px] max-h-[calc(100svh-32px)] bg-[#0E0E0E] rounded-[20px] sm:rounded-[24px] overflow-hidden flex flex-col shadow-[0_24px_60px_rgba(0,0,0,0.85)] border border-white/[0.12] select-none"
+          layout
+          className="relative z-10 w-full max-w-[440px] sm:max-w-[480px] max-h-[calc(100%-16px)] sm:max-h-[calc(100svh-32px)] bg-[#0E0E0E] rounded-[20px] sm:rounded-[24px] overflow-hidden flex flex-col shadow-[0_24px_60px_rgba(0,0,0,0.85)] border border-white/[0.12] select-none"
           initial={{ opacity: 0, scale: 0.95, y: 8 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.95, y: 8 }}
@@ -130,7 +200,16 @@ export default function MessageModal({ onClose }) {
           </div>
 
           {/* Form Content Area */}
-          <form onSubmit={handleSubmit} className="p-3 sm:p-6 flex flex-col gap-2 sm:gap-4 bg-[#0E0E0E] overflow-y-auto flex-1">
+          <form 
+            onSubmit={handleSubmit} 
+            onFocusCapture={() => setIsFocused(true)}
+            onBlurCapture={(e) => {
+              if (!e.currentTarget.contains(e.relatedTarget)) {
+                setIsFocused(false);
+              }
+            }}
+            className="p-3 sm:p-6 flex flex-col gap-2 sm:gap-4 bg-[#0E0E0E] overflow-y-auto flex-1"
+          >
             {isTrainer ? (
               <>
                 {/* Name Field */}
@@ -152,7 +231,7 @@ export default function MessageModal({ onClose }) {
                       onChange={(e) => setTrainerName(e.target.value)}
                       maxLength={15}
                       className="w-full bg-transparent px-3.5 sm:px-4 py-2 sm:py-3 text-[16px] sm:text-[15px] leading-[22px] sm:leading-[20px] text-white placeholder-[#727272] outline-none font-sans pr-14 sm:pr-16"
-                      autoFocus
+                      autoFocus={typeof window !== 'undefined' && window.innerWidth >= 640}
                     />
                     <div className={`absolute right-3 sm:right-3.5 top-1/2 -translate-y-1/2 text-[10px] sm:text-[11px] font-normal tabular-nums font-sans ${trainerName.length >= 15 ? 'text-[#FF6961]/70' : 'text-[#727272]'}`}>
                       {trainerName.length} / 15
@@ -178,7 +257,7 @@ export default function MessageModal({ onClose }) {
                       onChange={(e) => setTrainerBio(e.target.value)}
                       maxLength={80}
                       rows={2}
-                      className="w-full bg-transparent px-3.5 sm:px-4 pt-2.5 sm:pt-3.5 pb-6 sm:pb-7 text-[16px] sm:text-[15px] leading-[22px] text-white placeholder-[#727272] outline-none resize-none font-sans h-[72px] sm:h-[96px]"
+                      className="w-full bg-transparent px-3.5 sm:px-4 pt-2.5 sm:pt-3.5 pb-6 sm:pb-7 text-[16px] sm:text-[15px] leading-[22px] text-white placeholder-[#727272] outline-none resize-none font-sans h-[80px] sm:h-[96px] overflow-y-auto"
                     />
                     <div className={`absolute bottom-2 sm:bottom-2.5 right-3 text-[10px] sm:text-[11px] font-normal tabular-nums font-sans ${trainerBio.length >= 80 ? 'text-[#FF6961]/70' : 'text-[#727272]'}`}>
                       {trainerBio.length} / 80
@@ -207,7 +286,7 @@ export default function MessageModal({ onClose }) {
                       onChange={(e) => setTo(e.target.value)}
                       maxLength={15}
                       className="w-full bg-transparent px-3.5 sm:px-4 py-2 sm:py-3 text-[16px] sm:text-[15px] leading-[22px] sm:leading-[20px] text-white placeholder-[#727272] outline-none font-sans pr-14 sm:pr-16"
-                      autoFocus
+                      autoFocus={typeof window !== 'undefined' && window.innerWidth >= 640}
                     />
                     <div className={`absolute right-3 sm:right-3.5 top-1/2 -translate-y-1/2 text-[10px] sm:text-[11px] font-normal tabular-nums font-sans ${to.length >= 15 ? 'text-[#FF6961]/70' : 'text-[#727272]'}`}>
                       {to.length} / 15
@@ -241,7 +320,7 @@ export default function MessageModal({ onClose }) {
                   </div>
                 </div>
 
-                {/* Message Field */}
+                {/* Message Field: Height expanded to h-[138px] so full 194 chars are completely visible */}
                 <div className="flex flex-col gap-1 sm:gap-1.5">
                   <div className="flex items-center justify-between">
                     <label htmlFor="card-message-input" className="text-[12px] sm:text-[13px] leading-[16px] sm:leading-[18px] font-semibold text-[#D9D9D9] font-sans">
@@ -259,7 +338,7 @@ export default function MessageModal({ onClose }) {
                       value={message}
                       onChange={(e) => setMessage(e.target.value)}
                       maxLength={194}
-                      className="w-full h-[84px] sm:h-[135px] bg-transparent px-3.5 sm:px-4 pt-2 sm:pt-3.5 pb-6 sm:pb-8 text-[16px] sm:text-[15px] leading-[22px] text-white placeholder-[#727272] outline-none resize-none font-sans"
+                      className="w-full h-[142px] sm:h-[148px] bg-transparent px-3.5 sm:px-4 pt-2.5 sm:pt-3.5 pb-6 sm:pb-8 text-[16px] sm:text-[15px] leading-[21px] text-white placeholder-[#727272] outline-none resize-none font-sans overflow-y-auto"
                     />
                     <div className={`absolute bottom-2 sm:bottom-2.5 right-3 text-[10px] sm:text-[11px] font-normal tabular-nums font-sans ${message.length >= 194 ? 'text-[#FF6961]/70' : 'text-[#727272]'}`}>
                       {message.length} / 194
