@@ -200,7 +200,7 @@ export default function FeedbackModal({ onClose }) {
   if (typeof document === 'undefined') return null;
 
   return createPortal(
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+    <div className="fixed inset-0 z-50 flex items-start justify-center p-3 sm:p-4 pt-[max(16px,env(safe-area-inset-top,16px))] sm:items-center sm:pt-0">
       {/* Backdrop matching ShareModal */}
       <motion.div
         className="absolute inset-0 bg-black/60 backdrop-blur-md"
@@ -309,7 +309,7 @@ export default function FeedbackModal({ onClose }) {
                   onChange={(e) => setMessage(e.target.value)}
                   placeholder={activeCategory.placeholder}
                   maxLength={MAX_CHARS}
-                  className="w-full bg-transparent px-3.5 pt-3 pb-8 text-[13.5px] leading-[20px] text-white placeholder-white/25 outline-none resize-none font-sans"
+                  className="w-full bg-transparent px-3.5 pt-3 pb-8 text-[16px] sm:text-[13.5px] leading-[22px] sm:leading-[20px] text-white placeholder-white/25 outline-none resize-none font-sans"
                 />
                 
                 {/* Character Counter recessed in bottom-right corner */}
@@ -334,7 +334,7 @@ export default function FeedbackModal({ onClose }) {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="So I can reply (or send you a virtual note)"
-                    className="w-full bg-[#161616] border border-white/[0.10] focus:border-[#0055D4]/70 focus:ring-1 focus:ring-[#0055D4]/30 rounded-[14px] h-[42px] pl-3.5 pr-11 text-[13.5px] text-white placeholder-white/25 outline-none transition-all font-sans"
+                    className="w-full bg-[#161616] border border-white/[0.10] focus:border-[#0055D4]/70 focus:ring-1 focus:ring-[#0055D4]/30 rounded-[14px] h-[42px] pl-3.5 pr-11 text-[16px] sm:text-[13.5px] text-white placeholder-white/25 outline-none transition-all font-sans"
                   />
                   {!email && (
                     <div className="absolute right-3.5 flex items-center pointer-events-none">

@@ -76,7 +76,7 @@ export default function TitleModal({ onClose }) {
 
   return createPortal(
     <AnimatePresence>
-      <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+      <div className="fixed inset-0 z-50 flex items-start justify-center p-3 sm:p-4 pt-[max(16px,env(safe-area-inset-top,16px))] sm:items-center sm:pt-0">
         {/* Backdrop */}
         <motion.div
           className="absolute inset-0 bg-black/60 backdrop-blur-md"
@@ -145,7 +145,7 @@ export default function TitleModal({ onClose }) {
                   placeholder={placeholder}
                   rows={2}
                   maxLength={maxLength}
-                  className="w-full bg-transparent px-3.5 sm:px-4 pt-3 pb-6 sm:pb-8 text-[14px] sm:text-[15px] leading-[20px] sm:leading-[22px] text-white placeholder-[#727272] outline-none resize-none font-sans"
+                  className="w-full bg-transparent px-3.5 sm:px-4 pt-3 pb-6 sm:pb-8 text-[16px] sm:text-[15px] leading-[22px] text-white placeholder-[#727272] outline-none resize-none font-sans"
                   autoFocus
                 />
                 

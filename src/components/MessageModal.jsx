@@ -90,7 +90,7 @@ export default function MessageModal({ onClose }) {
 
   return createPortal(
     <AnimatePresence>
-      <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+      <div className="fixed inset-0 z-[100] flex items-start justify-center p-3 sm:p-4 pt-[max(16px,env(safe-area-inset-top,16px))] sm:items-center sm:pt-0">
         {/* Backdrop */}
         <motion.div
           className="absolute inset-0 bg-black/60 backdrop-blur-md"
@@ -130,7 +130,7 @@ export default function MessageModal({ onClose }) {
           </div>
 
           {/* Form Content Area */}
-          <form onSubmit={handleSubmit} className="p-3.5 sm:p-6 flex flex-col gap-2.5 sm:gap-4 bg-[#0E0E0E] overflow-y-auto flex-1">
+          <form onSubmit={handleSubmit} className="p-3 sm:p-6 flex flex-col gap-2 sm:gap-4 bg-[#0E0E0E] overflow-y-auto flex-1">
             {isTrainer ? (
               <>
                 {/* Name Field */}
@@ -151,7 +151,7 @@ export default function MessageModal({ onClose }) {
                       value={trainerName}
                       onChange={(e) => setTrainerName(e.target.value)}
                       maxLength={15}
-                      className="w-full bg-transparent px-3.5 sm:px-4 py-2 sm:py-3 text-[14px] sm:text-[15px] leading-[20px] text-white placeholder-[#727272] outline-none font-sans pr-14 sm:pr-16"
+                      className="w-full bg-transparent px-3.5 sm:px-4 py-2 sm:py-3 text-[16px] sm:text-[15px] leading-[22px] sm:leading-[20px] text-white placeholder-[#727272] outline-none font-sans pr-14 sm:pr-16"
                       autoFocus
                     />
                     <div className={`absolute right-3 sm:right-3.5 top-1/2 -translate-y-1/2 text-[10px] sm:text-[11px] font-normal tabular-nums font-sans ${trainerName.length >= 15 ? 'text-[#FF6961]/70' : 'text-[#727272]'}`}>
@@ -178,7 +178,7 @@ export default function MessageModal({ onClose }) {
                       onChange={(e) => setTrainerBio(e.target.value)}
                       maxLength={80}
                       rows={2}
-                      className="w-full bg-transparent px-3.5 sm:px-4 pt-2.5 sm:pt-3.5 pb-6 sm:pb-7 text-[14px] sm:text-[15px] leading-[20px] sm:leading-[22px] text-white placeholder-[#727272] outline-none resize-none font-sans h-[76px] sm:h-[96px]"
+                      className="w-full bg-transparent px-3.5 sm:px-4 pt-2.5 sm:pt-3.5 pb-6 sm:pb-7 text-[16px] sm:text-[15px] leading-[22px] text-white placeholder-[#727272] outline-none resize-none font-sans h-[72px] sm:h-[96px]"
                     />
                     <div className={`absolute bottom-2 sm:bottom-2.5 right-3 text-[10px] sm:text-[11px] font-normal tabular-nums font-sans ${trainerBio.length >= 80 ? 'text-[#FF6961]/70' : 'text-[#727272]'}`}>
                       {trainerBio.length} / 80
@@ -206,7 +206,7 @@ export default function MessageModal({ onClose }) {
                       value={to}
                       onChange={(e) => setTo(e.target.value)}
                       maxLength={15}
-                      className="w-full bg-transparent px-3.5 sm:px-4 py-2 sm:py-3 text-[14px] sm:text-[15px] leading-[20px] text-white placeholder-[#727272] outline-none font-sans pr-14 sm:pr-16"
+                      className="w-full bg-transparent px-3.5 sm:px-4 py-2 sm:py-3 text-[16px] sm:text-[15px] leading-[22px] sm:leading-[20px] text-white placeholder-[#727272] outline-none font-sans pr-14 sm:pr-16"
                       autoFocus
                     />
                     <div className={`absolute right-3 sm:right-3.5 top-1/2 -translate-y-1/2 text-[10px] sm:text-[11px] font-normal tabular-nums font-sans ${to.length >= 15 ? 'text-[#FF6961]/70' : 'text-[#727272]'}`}>
@@ -233,7 +233,7 @@ export default function MessageModal({ onClose }) {
                       value={from}
                       onChange={(e) => setFrom(e.target.value)}
                       maxLength={15}
-                      className="w-full bg-transparent px-3.5 sm:px-4 py-2 sm:py-3 text-[14px] sm:text-[15px] leading-[20px] text-white placeholder-[#727272] outline-none font-sans pr-14 sm:pr-16"
+                      className="w-full bg-transparent px-3.5 sm:px-4 py-2 sm:py-3 text-[16px] sm:text-[15px] leading-[22px] sm:leading-[20px] text-white placeholder-[#727272] outline-none font-sans pr-14 sm:pr-16"
                     />
                     <div className={`absolute right-3 sm:right-3.5 top-1/2 -translate-y-1/2 text-[10px] sm:text-[11px] font-normal tabular-nums font-sans ${from.length >= 15 ? 'text-[#FF6961]/70' : 'text-[#727272]'}`}>
                       {from.length} / 15
@@ -259,7 +259,7 @@ export default function MessageModal({ onClose }) {
                       value={message}
                       onChange={(e) => setMessage(e.target.value)}
                       maxLength={194}
-                      className="w-full h-[90px] sm:h-[135px] bg-transparent px-3.5 sm:px-4 pt-2.5 sm:pt-3.5 pb-6 sm:pb-8 text-[14px] sm:text-[15px] leading-[20px] sm:leading-[22px] text-white placeholder-[#727272] outline-none resize-none font-sans"
+                      className="w-full h-[84px] sm:h-[135px] bg-transparent px-3.5 sm:px-4 pt-2 sm:pt-3.5 pb-6 sm:pb-8 text-[16px] sm:text-[15px] leading-[22px] text-white placeholder-[#727272] outline-none resize-none font-sans"
                     />
                     <div className={`absolute bottom-2 sm:bottom-2.5 right-3 text-[10px] sm:text-[11px] font-normal tabular-nums font-sans ${message.length >= 194 ? 'text-[#FF6961]/70' : 'text-[#727272]'}`}>
                       {message.length} / 194
