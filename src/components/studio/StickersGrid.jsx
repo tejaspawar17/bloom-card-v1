@@ -61,17 +61,21 @@ export default function StickersGrid({
     setSelectedSticker(sticker.id);
     setActiveStampTrigger(`sticker-${sticker.id}-${Date.now()}`);
 
-    const newSticker = {
-      id: Date.now(),
-      src: sticker.image,
-      name: sticker.name,
-      x: 50,
-      y: 50,
-      rotation: (Math.random() - 0.5) * 30,
-      scale: 1,
-    };
-
-    dispatch({ type: 'ADD_STICKER', payload: newSticker });
+    dispatch({ 
+      type: 'ADD_STICKER', 
+      payload: { 
+        id: Date.now().toString() + Math.random().toString(), 
+        stickerId: sticker.id, 
+        src: sticker.image,
+        name: sticker.name,
+        side: state.activeSide || 'front', 
+        x: 80, 
+        y: 80, 
+        r: (Math.random() * 20 - 10),
+        rotation: (Math.random() * 20 - 10),
+        scale: 1,
+      } 
+    });
   };
 
   const defaultHeight = heightClassName || (

@@ -226,7 +226,7 @@ export default function MobileCustomizeSheet({ isOpen, onClose }) {
                     aria-label={`Jump to ${s.title}`}
                     className={`w-[7px] h-[7px] rounded-full transition-all duration-200 cursor-pointer ${
                       s.id === step
-                        ? 'bg-white scale-110 shadow-[0_0_8px_rgba(255,255,255,0.7)]'
+                        ? 'bg-white scale-110'
                         : 'bg-white/30 hover:bg-white/50'
                     }`}
                   />

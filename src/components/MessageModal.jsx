@@ -125,7 +125,7 @@ export default function MessageModal({ onClose }) {
               size="sm"
               label="Close dialog"
               onClick={onClose}
-              icon={<X size={26} weight="regular" className="text-[#FF383C]" />}
+              icon={<X size={22} weight="bold" className="text-white/80 hover:text-white transition-colors" />}
             />
           </div>
 

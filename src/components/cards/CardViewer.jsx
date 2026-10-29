@@ -158,7 +158,7 @@ export default function CardViewer({ onConfirm, onOpenEditTitle, onOpenEditMessa
       </div>
 
       {/* Main Center Stage */}
-      <div className="relative flex items-start justify-center mb-1.5 xl:mb-2 w-[min(414px,92vw,calc((100dvh-230px)*688/960))] sm:w-[min(414px,82vw,calc((100dvh-230px)*688/960))] lg:w-[min(280px,calc((100dvh-192px)*688/960))] xl:w-[min(360px,calc((100dvh-228px)*688/960))] 2xl:w-[min(380px,calc((100dvh-240px)*688/960))] mx-auto">
+      <div className="relative flex items-start justify-center mb-1.5 xl:mb-2 w-[min(418px,93vw,calc((100dvh-200px)*688/960))] sm:w-[min(418px,82vw,calc((100dvh-200px)*688/960))] lg:w-[min(280px,calc((100dvh-192px)*688/960))] xl:w-[min(360px,calc((100dvh-228px)*688/960))] 2xl:w-[min(380px,calc((100dvh-240px)*688/960))] mx-auto">
         {/* Mobile Ambient Aura Glow behind Card to eliminate empty dead space */}
         <div 
           className="absolute -inset-6 z-0 rounded-[40px] blur-[36px] pointer-events-none opacity-50 flex lg:hidden"
@@ -255,7 +255,7 @@ export default function CardViewer({ onConfirm, onOpenEditTitle, onOpenEditMessa
       </div>
 
       {/* Mobile/Tablet Controls: Tier 1 Actions (Eye, Customize, Flip) */}
-      <div className="flex lg:hidden items-center justify-center gap-3 mt-2.5 sm:mt-3 w-full max-w-[min(414px,92vw)]">
+      <div className="flex lg:hidden items-center justify-center gap-3 mt-2.5 sm:mt-3 w-full max-w-[min(418px,93vw)]">
         <LiquidGlassIconButton
           aria-label="Fullscreen Preview"
           onClick={() => setIsFullscreen(true)}
@@ -282,7 +282,7 @@ export default function CardViewer({ onConfirm, onOpenEditTitle, onOpenEditMessa
       </div>
 
       {/* Mobile/Tablet Controls: Tier 2 Action (Confirm CTA) */}
-      <div className="flex lg:hidden items-center justify-center mt-2.5 w-full max-w-[min(414px,92vw)]">
+      <div className="flex lg:hidden items-center justify-center mt-2.5 w-full max-w-[min(418px,93vw)]">
         <LiquidGlassButton
           variant="primary"
           size="lg"
@@ -310,15 +310,15 @@ export default function CardViewer({ onConfirm, onOpenEditTitle, onOpenEditMessa
         >
           {/* Card & Closer Flanking Controls Container */}
           <div className="relative flex items-center justify-center">
-            {/* Back Button (Left - anchored closer to card) */}
+            {/* Desktop Back Button (Left - anchored closer to card) */}
             <div 
-              className="absolute right-full mr-4 sm:mr-5 xl:mr-8 top-1/2 -translate-y-1/2 z-50 flex items-center justify-center" 
+              className="hidden lg:flex absolute right-full mr-5 xl:mr-8 top-1/2 -translate-y-1/2 z-50 items-center justify-center" 
               onClick={e => e.stopPropagation()}
             >
               <LiquidGlassIconButton
                 aria-label="Exit Preview"
                 onClick={() => setIsFullscreen(false)}
-                icon={<ArrowLeft weight="regular" className="text-red-500" />}
+                icon={<ArrowLeft weight="regular" className="text-[#FF383C]" />}
               />
             </div>
 
@@ -356,21 +356,50 @@ export default function CardViewer({ onConfirm, onOpenEditTitle, onOpenEditMessa
                 </motion.div>
             </div>
 
-            {/* Flip Button (Right - anchored closer to card) */}
+            {/* Desktop Flip Button (Right - anchored closer to card) */}
             <div 
-              className="absolute left-full ml-4 sm:ml-5 xl:ml-8 top-1/2 -translate-y-1/2 z-50 flex items-center justify-center" 
+              className="hidden lg:flex absolute left-full ml-5 xl:ml-8 top-1/2 -translate-y-1/2 z-50 items-center justify-center" 
               onClick={e => e.stopPropagation()}
             >
               <LiquidGlassIconButton
                 aria-label="Flip card"
                 onClick={() => {
-                  // Reset tilt momentarily on flip for cleaner flip animation
                   setMousePos({ x: 0, y: 0 });
                   dispatch({ type: 'TOGGLE_SIDE' });
                 }}
                 icon={<ArrowClockwise weight="regular" />}
               />
             </div>
+          </div>
+
+          {/* Mobile Preview Controls: Bottom-Left Red Back, Bottom-Center Flip (Never cut off!) */}
+          <div 
+            className="flex lg:hidden fixed bottom-7 left-5 z-50 items-center justify-center"
+            onClick={e => e.stopPropagation()}
+          >
+            <LiquidGlassIconButton
+              size="lg"
+              aria-label="Exit Preview"
+              onClick={() => setIsFullscreen(false)}
+              icon={<ArrowLeft size={24} weight="bold" className="text-[#FF383C]" />}
+              className="!w-[52px] !h-[52px] shadow-[0_4px_16px_rgba(0,0,0,0.5)]"
+            />
+          </div>
+
+          <div 
+            className="flex lg:hidden fixed bottom-7 left-1/2 -translate-x-1/2 z-50 items-center justify-center"
+            onClick={e => e.stopPropagation()}
+          >
+            <LiquidGlassIconButton
+              size="lg"
+              aria-label="Flip card"
+              onClick={() => {
+                setMousePos({ x: 0, y: 0 });
+                dispatch({ type: 'TOGGLE_SIDE' });
+              }}
+              icon={<ArrowClockwise size={24} weight="bold" className="text-white" />}
+              className="!w-[52px] !h-[52px] shadow-[0_4px_16px_rgba(0,0,0,0.5)]"
+            />
           </div>
         </div>,
         document.body
