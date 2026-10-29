@@ -37,7 +37,7 @@ export default function LiquidGlassButton({
     const primarySizeStyles = {
       sm: 'h-[36px] px-4 text-[13px] leading-[18px]',
       md: 'h-[44px] px-5 text-[15px] leading-[20px]',
-      lg: 'h-[clamp(44px,5.2vh,50px)] px-[clamp(18px,2vw,24px)] text-[clamp(15px,1.8vh,17px)] leading-[22px]',
+      lg: 'h-[52px] px-6 text-[17px] leading-[22px]',
     };
 
     return (
@@ -64,7 +64,6 @@ export default function LiquidGlassButton({
           style={{
             color: 'var(--Color-Primary-Button-Label-Default, #E5E5EA)',
             fontFamily: 'Inter, sans-serif',
-            fontWeight: 500,
           }}
         >
           {icon && <span className="flex-shrink-0">{icon}</span>}

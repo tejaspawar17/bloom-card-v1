@@ -86,14 +86,14 @@
 
 @media (max-width: 1023px) {
   .vertical-glass-segmented-control {
-    width: 56px;
-    height: 106px;
+    width: 54px;
+    height: 112px;
     padding: 5px;
   }
 
   .vertical-glass-tab {
-    width: 46px;
-    height: 46px;
+    width: 44px;
+    height: 50px;
   }
 
   .vertical-glass-tab__content {

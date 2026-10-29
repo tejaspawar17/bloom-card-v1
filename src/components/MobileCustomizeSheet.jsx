@@ -17,21 +17,21 @@ const STEPS = [
     tag: '01 · OCCASION & FRONT',
     title: 'Card Front',
     description: 'Choose an occasion and pick your floral arrangement or Pokémon companion.',
-    heightClass: 'max-h-[76dvh] h-[76dvh]',
+    heightClass: 'max-h-[82dvh] h-[82dvh]',
   },
   {
     id: 2,
     tag: '02 · BACK COVER & STAMP',
     title: 'Back Cover',
     description: 'Select back cover artwork or upload a photo, then stamp an emotion emoji.',
-    heightClass: 'max-h-[64dvh] h-[64dvh]',
+    heightClass: 'max-h-[72dvh] h-[72dvh]',
   },
   {
     id: 3,
     tag: '03 · DECORATE & FINISH',
     title: 'Stickers',
     description: 'Add finishing touches and collectible stickers across your card.',
-    heightClass: 'max-h-[52dvh] h-[52dvh]',
+    heightClass: 'max-h-[64dvh] h-[64dvh]',
   },
 ];
 
@@ -153,14 +153,14 @@ export default function MobileCustomizeSheet({ isOpen, onClose }) {
                 onClose();
               }
             }}
-            className={`relative w-full max-w-[460px] mx-auto bg-[#121214]/95 backdrop-blur-2xl border-t border-white/12 rounded-t-[32px] shadow-[0_-16px_40px_rgba(0,0,0,0.85)] flex flex-col z-10 transition-[height,max-height] duration-300 ease-out ${stepMeta.heightClass}`}
+            className={`relative w-full max-w-[460px] mx-auto bg-[#121214]/94 backdrop-blur-3xl border-t border-white/15 rounded-t-[38px] shadow-[0_-16px_48px_rgba(0,0,0,0.85)] flex flex-col z-10 transition-[height,max-height] duration-300 ease-out ${stepMeta.heightClass}`}
             role="dialog"
             aria-modal="true"
             aria-label="Customize Card"
           >
             {/* Grabber only - clean Apple HIG, interactive drag handle */}
             <div className="w-full pt-3 pb-1 flex justify-center cursor-pointer select-none">
-              <div className="w-14 h-1.5 rounded-full bg-white/25 hover:bg-white/40 transition-colors" />
+              <div className="w-[60px] h-[4px] rounded-full bg-white/25 hover:bg-white/40 transition-colors" />
             </div>
 
             {/* Header Control Bar */}
@@ -191,17 +191,17 @@ export default function MobileCustomizeSheet({ isOpen, onClose }) {
                 <span className="text-[17px] font-semibold text-white tracking-tight">
                   {stepMeta.title}
                 </span>
-                <div className="flex items-center gap-2.5 mt-2">
+                <div className="flex items-center gap-2 mt-1.5 px-2.5 py-1 rounded-full bg-white/[0.08] backdrop-blur-md border border-white/[0.06]">
                   {STEPS.map((s) => (
                     <button
                       key={s.id}
                       type="button"
                       onClick={() => handleStepChange(s.id)}
                       aria-label={`Jump to ${s.title}`}
-                      className={`w-[8px] h-[8px] rounded-full transition-all duration-200 cursor-pointer ${
+                      className={`w-[7px] h-[7px] rounded-full transition-all duration-200 cursor-pointer ${
                         s.id === step
-                          ? 'bg-white scale-110 shadow-[0_0_8px_rgba(255,255,255,0.6)]'
-                          : 'bg-white/25 hover:bg-white/45'
+                          ? 'bg-white scale-110 shadow-[0_0_8px_rgba(255,255,255,0.7)]'
+                          : 'bg-white/30 hover:bg-white/50'
                       }`}
                     />
                   ))}
@@ -244,7 +244,7 @@ export default function MobileCustomizeSheet({ isOpen, onClose }) {
             <div 
               onTouchStart={handleTouchStart}
               onTouchEnd={handleTouchEnd}
-              className="flex-1 overflow-y-auto px-3.5 pb-6 pt-2"
+              className="flex-1 overflow-y-auto px-3.5 pb-2 pt-2"
             >
               <AnimatePresence mode="wait" custom={direction}>
                 <motion.div
@@ -288,6 +288,29 @@ export default function MobileCustomizeSheet({ isOpen, onClose }) {
                   )}
                 </motion.div>
               </AnimatePresence>
+            </div>
+
+            {/* Pinned Bottom Primary Action Bar (Figma Screen 4) */}
+            <div className="p-3.5 pt-2 pb-5 border-t border-white/[0.06] bg-[#121214]/90 backdrop-blur-xl shrink-0">
+              {step < 3 ? (
+                <button
+                  type="button"
+                  onClick={() => handleStepChange(step + 1)}
+                  className="w-full h-[50px] rounded-full bg-[#0088FF] hover:bg-[#0077EE] active:scale-[0.98] text-white text-[16px] font-semibold flex items-center justify-center gap-2 shadow-[0_4px_16px_rgba(0,136,255,0.35)] transition-all cursor-pointer font-sans"
+                >
+                  <span>Next Step</span>
+                  <CaretRight size={18} weight="bold" />
+                </button>
+              ) : (
+                <button
+                  type="button"
+                  onClick={onClose}
+                  className="w-full h-[50px] rounded-full bg-[#0088FF] hover:bg-[#0077EE] active:scale-[0.98] text-white text-[16px] font-semibold flex items-center justify-center gap-2 shadow-[0_4px_16px_rgba(0,136,255,0.35)] transition-all cursor-pointer font-sans"
+                >
+                  <Check size={18} weight="bold" />
+                  <span>Done</span>
+                </button>
+              )}
             </div>
           </motion.div>
         </div>

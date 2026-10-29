@@ -87,12 +87,12 @@
 
 @media (max-width: 1023px) {
   .glass-segmented-control {
-    height: 58px;
+    height: 56px;
     padding: 5px;
   }
   .glass-tab {
-    width: 62px;
-    height: 48px;
+    width: 66px;
+    height: 46px;
   }
   .glass-tab__content {
     width: 40px;

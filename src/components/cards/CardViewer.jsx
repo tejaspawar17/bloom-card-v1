@@ -158,7 +158,7 @@ export default function CardViewer({ onConfirm, onOpenEditTitle, onOpenEditMessa
       </div>
 
       {/* Main Center Stage */}
-      <div className="relative flex items-start justify-center mb-1.5 xl:mb-2 w-[min(344px,88vw,calc((100dvh-236px)*688/960))] sm:w-[min(380px,76vw)] lg:w-[min(280px,calc((100dvh-192px)*688/960))] xl:w-[min(360px,calc((100dvh-228px)*688/960))] 2xl:w-[min(380px,calc((100dvh-240px)*688/960))] mx-auto">
+      <div className="relative flex items-start justify-center mb-1.5 xl:mb-2 w-[min(414px,92vw,calc((100dvh-230px)*688/960))] sm:w-[min(414px,82vw,calc((100dvh-230px)*688/960))] lg:w-[min(280px,calc((100dvh-192px)*688/960))] xl:w-[min(360px,calc((100dvh-228px)*688/960))] 2xl:w-[min(380px,calc((100dvh-240px)*688/960))] mx-auto">
         {/* Mobile Ambient Aura Glow behind Card to eliminate empty dead space */}
         <div 
           className="absolute -inset-6 z-0 rounded-[40px] blur-[36px] pointer-events-none opacity-50 flex lg:hidden"
@@ -255,7 +255,7 @@ export default function CardViewer({ onConfirm, onOpenEditTitle, onOpenEditMessa
       </div>
 
       {/* Mobile/Tablet Controls: Tier 1 Actions (Eye, Customize, Flip) */}
-      <div className="flex lg:hidden items-center justify-center gap-3 mt-2 sm:mt-3 w-full max-w-[340px]">
+      <div className="flex lg:hidden items-center justify-center gap-3 mt-2.5 sm:mt-3 w-full max-w-[min(414px,92vw)]">
         <LiquidGlassIconButton
           aria-label="Fullscreen Preview"
           onClick={() => setIsFullscreen(true)}
@@ -282,11 +282,11 @@ export default function CardViewer({ onConfirm, onOpenEditTitle, onOpenEditMessa
       </div>
 
       {/* Mobile/Tablet Controls: Tier 2 Action (Confirm CTA) */}
-      <div className="flex lg:hidden items-center justify-center mt-2 w-full max-w-[340px]">
+      <div className="flex lg:hidden items-center justify-center mt-2.5 w-full max-w-[min(414px,92vw)]">
         <LiquidGlassButton
           variant="primary"
           size="lg"
-          className="w-full h-[54px] text-[17px] font-semibold shadow-[0_4px_20px_rgba(0,136,255,0.35)]"
+          className="w-full h-[52px] text-[17px] font-semibold shadow-[0_4px_20px_rgba(0,136,255,0.35)]"
           onClick={onConfirm}
         >
           Confirm
