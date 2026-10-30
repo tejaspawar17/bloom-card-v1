@@ -208,11 +208,39 @@ export default function StickersGrid({
     </div>
   );
 
-  const headerBadge = selectedIdsSet.size > 0 ? (
-    <span className="mr-2 px-2 py-0.5 rounded-full bg-[#0088FF]/20 border border-[#0088FF]/40 text-[#4DA8FF] text-[11px] font-medium leading-[14px] select-none font-sans">
-      {selectedIdsSet.size} selected
-    </span>
-  ) : null;
+  const headerBadge = (
+    <div className="flex items-center gap-1.5 mr-1.5">
+      {selectedIdsSet.size > 0 && (
+        <span className="px-2 py-0.5 rounded-full bg-[#0088FF]/20 border border-[#0088FF]/40 text-[#4DA8FF] text-[11px] font-medium leading-[14px] select-none font-sans">
+          {selectedIdsSet.size} selected
+        </span>
+      )}
+      {isMobile && (
+        <div className="flex items-center p-0.5 rounded-full bg-white/[0.08] border border-white/[0.1] text-[11px] font-medium font-sans">
+          <button
+            type="button"
+            onClick={() => dispatch({ type: 'SET_ACTIVE_SIDE', payload: 'front' })}
+            className={cn(
+              'px-2 py-0.5 rounded-full transition-colors cursor-pointer',
+              currentSide === 'front' ? 'bg-[#0088FF] text-white' : 'text-white/60'
+            )}
+          >
+            Front
+          </button>
+          <button
+            type="button"
+            onClick={() => dispatch({ type: 'SET_ACTIVE_SIDE', payload: 'back' })}
+            className={cn(
+              'px-2 py-0.5 rounded-full transition-colors cursor-pointer',
+              currentSide === 'back' ? 'bg-[#0088FF] text-white' : 'text-white/60'
+            )}
+          >
+            Back
+          </button>
+        </div>
+      )}
+    </div>
+  );
 
   return (
     <div className={cn("h-fit w-full", className)}>

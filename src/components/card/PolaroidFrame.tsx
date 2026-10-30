@@ -4,14 +4,16 @@ interface PolaroidFrameProps {
   imageSrc: string;
   className?: string;
   style?: React.CSSProperties;
+  onClick?: (e: React.MouseEvent) => void;
 }
 
-export function PolaroidFrame({ imageSrc, className = '', style }: PolaroidFrameProps) {
+export function PolaroidFrame({ imageSrc, className = '', style, onClick }: PolaroidFrameProps) {
   if (!imageSrc) return null;
 
   return (
     <div 
-      className={`w-[clamp(100px,38.4cqw,146px)] h-[clamp(115px,44.2cqw,168px)] bg-[#F8F8F5] pt-[clamp(5.5px,2.2cqw,8.5px)] px-[clamp(5.5px,2.2cqw,8.5px)] pb-[clamp(16px,6.8cqw,26px)] rounded-[1px] absolute top-[clamp(28px,10.5cqw,50px)] right-[clamp(14px,5.8cqw,22px)] rotate-[-4.8deg] z-10 pointer-events-none flex flex-col select-none ${className}`}
+      onClick={onClick ? (e) => { e.stopPropagation(); onClick(e); } : undefined}
+      className={`w-[clamp(100px,38.4cqw,146px)] h-[clamp(115px,44.2cqw,168px)] bg-[#F8F8F5] pt-[clamp(5.5px,2.2cqw,8.5px)] px-[clamp(5.5px,2.2cqw,8.5px)] pb-[clamp(16px,6.8cqw,26px)] rounded-[1px] absolute top-[clamp(28px,10.5cqw,50px)] right-[clamp(14px,5.8cqw,22px)] rotate-[-4.8deg] z-10 ${onClick ? 'pointer-events-auto cursor-pointer active:scale-[0.97] transition-transform' : 'pointer-events-none'} flex flex-col select-none ${className}`}
       style={{ 
         boxShadow: '1px 1px 2px 0 rgba(0, 0, 0, 0.35)',
         ...style 

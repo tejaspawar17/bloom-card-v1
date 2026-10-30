@@ -7,11 +7,15 @@ import { EmojiStamp } from '@/components/card/EmojiStamp';
 import { PolaroidFrame } from '@/components/card/PolaroidFrame';
 import { FlowerNameBadge, FlowerUsecaseBadge, Polaroid, Stamp, CardSubjectBox, CardMessageBox } from '@/components/ui';
 
-export function MetallicCardFront({ onOpenEditTitle, isPreview = false }) {
+export function MetallicCardFront({ onOpenEditTitle, onOpenQuickPicker, isPreview = false }) {
   const { state, flower } = useCard();
 
   return (
-    <div className={`relative w-full h-full aspect-[688/960] rounded-[16px] overflow-hidden shadow-2xl select-none bg-transparent @container`} style={{ containerType: "inline-size" }}>
+    <div 
+      onClick={!isPreview && onOpenQuickPicker ? () => onOpenQuickPicker('frontArtwork') : undefined}
+      className={`relative w-full h-full aspect-[688/960] rounded-[16px] overflow-hidden shadow-2xl select-none bg-transparent @container ${!isPreview && onOpenQuickPicker ? 'cursor-pointer lg:cursor-default' : ''}`} 
+      style={{ containerType: "inline-size" }}
+    >
       {/* Background artwork */}
       <img
         src={flower?.image || '/assets/flower-illustrations/flower_1.png'}
@@ -39,14 +43,17 @@ export function MetallicCardFront({ onOpenEditTitle, isPreview = false }) {
       {state?.stickers?.filter(s => s.side === 'front').map(sticker => ( <DraggableSticker key={sticker.id} stickerData={sticker} isPreview={isPreview} /> ))} 
 
       {/* Subject Box */}
-      <div className="absolute bottom-[4.5%] inset-x-0 mx-auto w-[86%] aspect-[738/474] z-30">
+      <div 
+        onClick={(e) => e.stopPropagation()}
+        className="absolute bottom-[4.5%] inset-x-0 mx-auto w-[86%] aspect-[738/474] z-30"
+      >
         <CardSubjectBox variant="metallic" onClick={onOpenEditTitle} isPreview={isPreview} className="w-full h-full" />
       </div>
     </div>
   );
 }
 
-export function MetallicCardBack({ onOpenEditMessage, isPreview = false }) {
+export function MetallicCardBack({ onOpenEditMessage, onOpenQuickPicker, isPreview = false }) {
   const { state, flower, dispatch } = useCard();
   const [isEditing, setIsEditing] = useState(false);
 
@@ -70,9 +77,16 @@ export function MetallicCardBack({ onOpenEditMessage, isPreview = false }) {
 
       <div className="absolute inset-0 pointer-events-none translate-y-[clamp(10px,2.8%,15px)] z-10">
         {state.selectedBackImage && state.selectedBackImage !== 'none' && backImageSrc && (
-          <PolaroidFrame imageSrc={backImageSrc} />
+          <PolaroidFrame 
+            imageSrc={backImageSrc} 
+            onClick={!isPreview && onOpenQuickPicker ? () => onOpenQuickPicker('polaroid') : undefined}
+          />
         )}
-        <EmojiStamp emoji={state.stampEmoji} className="inset-x-0 mx-auto top-[clamp(118px,38.4cqw,146px)]" />
+        <EmojiStamp 
+          emoji={state.stampEmoji} 
+          className="inset-x-0 mx-auto top-[clamp(118px,38.4cqw,146px)]" 
+          onClick={!isPreview && onOpenQuickPicker ? () => onOpenQuickPicker('stamp') : undefined}
+        />
       </div>
 
       {/* Labels added as real text for crisp rendering */}
@@ -80,7 +94,7 @@ export function MetallicCardBack({ onOpenEditMessage, isPreview = false }) {
       <div className="absolute z-30 bottom-[13.3%] left-[39.25%] font-['Instrument_Serif',serif] text-[4.44cqw] leading-[5.33cqw] antialiased text-[#141413] font-normal tracking-wide" style={{ WebkitTextStroke: '0.2px currentColor' }}>From:</div>
 
       <div 
-        className={`absolute z-30 top-[54.5%] left-[24%] font-['Syne_Tactile',cursive] text-[4.44cqw] leading-[5.33cqw] text-[#141413] tracking-normal rounded px-1 -ml-1 outline-none min-w-[50px] min-h-[20px] truncate max-w-[55%] block antialiased ${isPreview ? '' : 'cursor-pointer'}`}
+        className={`absolute z-30 top-[54.0%] left-[24%] font-['Syne_Tactile',cursive] text-[4.44cqw] leading-[5.33cqw] text-[#141413] tracking-normal rounded px-1 -ml-1 outline-none min-w-[50px] truncate max-w-[55%] block antialiased ${isPreview ? '' : 'cursor-pointer'}`}
         onClick={() => !isPreview && onOpenEditMessage?.()}
         style={{ WebkitTextStroke: '0.2px currentColor' }}
       >
@@ -96,7 +110,7 @@ export function MetallicCardBack({ onOpenEditMessage, isPreview = false }) {
       </div>
 
       <div 
-        className={`absolute z-30 bottom-[13.3%] left-[50.25%] font-['Syne_Tactile',cursive] text-[4.44cqw] leading-[5.33cqw] text-[#141413] tracking-normal rounded px-1 -ml-1 outline-none min-w-[50px] min-h-[20px] truncate max-w-[40%] block antialiased ${isPreview ? '' : 'cursor-pointer'}`}
+        className={`absolute z-30 bottom-[13.5%] left-[50.25%] font-['Syne_Tactile',cursive] text-[4.44cqw] leading-[5.33cqw] text-[#141413] tracking-normal rounded px-1 -ml-1 outline-none min-w-[50px] truncate max-w-[40%] block antialiased ${isPreview ? '' : 'cursor-pointer'}`}
         onClick={() => !isPreview && onOpenEditMessage?.()}
         style={{ WebkitTextStroke: '0.2px currentColor' }}
       >

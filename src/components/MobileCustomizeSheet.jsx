@@ -74,14 +74,24 @@ export default function MobileCustomizeSheet({ isOpen, onClose }) {
   const touchStartX = useRef(null);
   const touchStartY = useRef(null);
   const isDraggingSheetRef = useRef(false);
+  const initialSideWhenOpenedRef = useRef('front');
 
-  // Sync card side with the active step
+  // Capture whichever side the user was viewing when they opened the Customize sheet
+  useEffect(() => {
+    if (isOpen) {
+      initialSideWhenOpenedRef.current = state.activeSide || 'front';
+    }
+  }, [isOpen]);
+
+  // Sync card side with the active step (Step 3 preserves the side the user started on!)
   useEffect(() => {
     if (!isOpen) return;
     if (step === 1 && state.activeSide !== 'front') {
       dispatch({ type: 'SET_ACTIVE_SIDE', payload: 'front' });
-    } else if ((step === 2 || step === 3) && state.activeSide !== 'back') {
+    } else if (step === 2 && state.activeSide !== 'back') {
       dispatch({ type: 'SET_ACTIVE_SIDE', payload: 'back' });
+    } else if (step === 3 && state.activeSide !== initialSideWhenOpenedRef.current) {
+      dispatch({ type: 'SET_ACTIVE_SIDE', payload: initialSideWhenOpenedRef.current });
     }
   }, [step, isOpen, dispatch]);
 

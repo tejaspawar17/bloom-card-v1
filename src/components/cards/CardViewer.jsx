@@ -13,12 +13,14 @@ import LiquidGlassButton from '@/components/ui/LiquidGlassButton';
 import LiquidGlassIconButton from '@/components/ui/LiquidGlassIconButton';
 import GlassSegmentedControl from '@/components/ui/GlassSegmentedControl';
 import VerticalCardSelector from '@/components/ui/VerticalCardSelector';
+import MobileQuickPickerPopover from '@/components/MobileQuickPickerPopover';
 
 export default function CardViewer({ onConfirm, onOpenEditTitle, onOpenEditMessage, onOpenCustomize }) {
   const { state, dispatch, flower } = useCard();
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [isAnimating, setIsAnimating] = useState(false);
   const [isSwapping, setIsSwapping] = useState(false);
+  const [quickPickerMode, setQuickPickerMode] = useState(null);
   // Mouse tracking for Pokemon TCG style tilt in preview
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
 
@@ -107,6 +109,16 @@ export default function CardViewer({ onConfirm, onOpenEditTitle, onOpenEditMessa
 
   const isFlipped = state.activeSide === 'back';
 
+  // Close contextual quick picker when flipping sides
+  useEffect(() => {
+    setQuickPickerMode(null);
+  }, [state.activeSide]);
+
+  const handleOpenQuickPicker = (mode) => {
+    if (typeof window !== 'undefined' && window.innerWidth >= 1024) return;
+    setQuickPickerMode((prev) => (prev === mode ? null : mode));
+  };
+
   const handlePreviewMouseMove = (e) => {
     if (!isFullscreen) return;
     const rect = e.currentTarget.getBoundingClientRect();
@@ -139,7 +151,11 @@ export default function CardViewer({ onConfirm, onOpenEditTitle, onOpenEditMessa
             pointerEvents: visualCardType === 'pokemon' ? 'auto' : 'none'
           }}
         >
-          <PokemonCardFront onOpenEditTitle={preview ? null : onOpenEditTitle} isPreview={preview} />
+          <PokemonCardFront 
+            onOpenEditTitle={preview ? null : onOpenEditTitle} 
+            onOpenQuickPicker={preview ? null : handleOpenQuickPicker}
+            isPreview={preview} 
+          />
         </div>
         <div 
           className="absolute inset-0"
@@ -148,7 +164,11 @@ export default function CardViewer({ onConfirm, onOpenEditTitle, onOpenEditMessa
             pointerEvents: visualCardType === 'metallic' ? 'auto' : 'none'
           }}
         >
-          <MetallicCardFront onOpenEditTitle={preview ? null : onOpenEditTitle} isPreview={preview} />
+          <MetallicCardFront 
+            onOpenEditTitle={preview ? null : onOpenEditTitle} 
+            onOpenQuickPicker={preview ? null : handleOpenQuickPicker}
+            isPreview={preview} 
+          />
         </div>
         <div 
           className="absolute inset-0"
@@ -157,7 +177,13 @@ export default function CardViewer({ onConfirm, onOpenEditTitle, onOpenEditMessa
             pointerEvents: visualCardType === 'paper' ? 'auto' : 'none'
           }}
         >
-          <PaperCardFront state={state} flower={flower} onOpenEditTitle={preview ? null : onOpenEditTitle} isPreview={preview} />
+          <PaperCardFront 
+            state={state} 
+            flower={flower} 
+            onOpenEditTitle={preview ? null : onOpenEditTitle} 
+            onOpenQuickPicker={preview ? null : handleOpenQuickPicker}
+            isPreview={preview} 
+          />
         </div>
       </div>
     );
@@ -173,7 +199,11 @@ export default function CardViewer({ onConfirm, onOpenEditTitle, onOpenEditMessa
             pointerEvents: visualCardType === 'pokemon' ? 'auto' : 'none'
           }}
         >
-          <PokemonCardBack onOpenEditMessage={preview ? null : onOpenEditMessage} isPreview={preview} />
+          <PokemonCardBack 
+            onOpenEditMessage={preview ? null : onOpenEditMessage} 
+            onOpenQuickPicker={preview ? null : handleOpenQuickPicker}
+            isPreview={preview} 
+          />
         </div>
         <div 
           className="absolute inset-0"
@@ -182,7 +212,11 @@ export default function CardViewer({ onConfirm, onOpenEditTitle, onOpenEditMessa
             pointerEvents: visualCardType === 'metallic' ? 'auto' : 'none'
           }}
         >
-          <MetallicCardBack onOpenEditMessage={preview ? null : onOpenEditMessage} isPreview={preview} />
+          <MetallicCardBack 
+            onOpenEditMessage={preview ? null : onOpenEditMessage} 
+            onOpenQuickPicker={preview ? null : handleOpenQuickPicker}
+            isPreview={preview} 
+          />
         </div>
         <div 
           className="absolute inset-0"
@@ -191,7 +225,11 @@ export default function CardViewer({ onConfirm, onOpenEditTitle, onOpenEditMessa
             pointerEvents: visualCardType === 'paper' ? 'auto' : 'none'
           }}
         >
-          <PaperCardBack onOpenEditMessage={preview ? null : onOpenEditMessage} isPreview={preview} />
+          <PaperCardBack 
+            onOpenEditMessage={preview ? null : onOpenEditMessage} 
+            onOpenQuickPicker={preview ? null : handleOpenQuickPicker}
+            isPreview={preview} 
+          />
         </div>
       </div>
     );
@@ -234,9 +272,9 @@ export default function CardViewer({ onConfirm, onOpenEditTitle, onOpenEditMessa
           }}
         />
 
-        {/* Mobile/Tablet: Left Vertical Switcher overlay (Centered vertically on card's left margin) */}
+        {/* Mobile/Tablet: Left Vertical Switcher overlay (Shifted up on back so it never covers "To:") */}
         {state.cardType === 'pokemon' && (
-          <div className="absolute top-1/2 -translate-y-1/2 left-2.5 z-30 flex lg:hidden shadow-xl">
+          <div className={`absolute -translate-y-1/2 left-2.5 z-30 flex lg:hidden shadow-xl transition-all duration-300 ${isFlipped ? 'top-[26%]' : 'top-1/2'}`}>
             <VerticalCardSelector
               value={state.pokemonSubtype === 'trainer' ? 'trainer' : 'base'}
               onValueChange={(val) => {
@@ -321,45 +359,65 @@ export default function CardViewer({ onConfirm, onOpenEditTitle, onOpenEditMessa
         </div>
       </div>
 
-      {/* Mobile/Tablet Controls: Tier 1 Actions (Eye, Customize, Flip) */}
-      <div className="flex lg:hidden items-center justify-center gap-2.5 sm:gap-3 mt-2 sm:mt-2.5 w-full max-w-[min(300px,80vw,calc((100svh-248px)*688/960))] sm:max-w-[min(340px,75vw,calc((100svh-248px)*688/960))]">
-        <LiquidGlassIconButton
-          label="Fullscreen Preview"
-          aria-label="Fullscreen Preview"
-          onClick={handleOpenFullscreen}
-          icon={<Eye size={20} weight="bold" />}
-          size="md"
-          className="!w-[44px] !h-[44px]"
+      {/* Mobile/Tablet Bottom Dock: Either Contextual Quick Picker OR Tier 1 & 2 Controls */}
+      {quickPickerMode && (
+        <div
+          className="fixed inset-0 z-20 lg:hidden"
+          onClick={() => setQuickPickerMode(null)}
+          aria-hidden="true"
         />
+      )}
 
-        <button
-          type="button"
-          onClick={onOpenCustomize}
-          className="dark-liquid-glass-pill flex-1 h-[44px] px-5 text-[#FFFFFF] hover:text-[#FFFFFF] text-[15px] font-semibold tracking-[-0.01em] cursor-pointer shadow-[0_3px_12px_rgba(0,0,0,0.3)] transition-transform active:scale-[0.98]"
-        >
-          Customize
-        </button>
+      <div className="relative flex flex-col items-center w-full lg:hidden">
+        {quickPickerMode && (
+          <div className="absolute -bottom-1 inset-x-0 flex justify-center z-40 px-2">
+            <MobileQuickPickerPopover
+              mode={quickPickerMode}
+              onClose={() => setQuickPickerMode(null)}
+            />
+          </div>
+        )}
 
-        <LiquidGlassIconButton
-          label="Flip card"
-          aria-label="Flip card"
-          onClick={(e) => { e.preventDefault(); e.stopPropagation(); dispatch({ type: 'TOGGLE_SIDE' }); }}
-          icon={<ArrowClockwise size={20} weight="bold" />}
-          size="md"
-          className="!w-[44px] !h-[44px]"
-        />
-      </div>
+        {/* Mobile/Tablet Controls: Tier 1 Actions (Eye, Customize, Flip) */}
+        <div className={`flex items-center justify-center gap-2.5 sm:gap-3 mt-2 sm:mt-2.5 w-full max-w-[min(300px,80vw,calc((100svh-248px)*688/960))] sm:max-w-[min(340px,75vw,calc((100svh-248px)*688/960))] transition-opacity duration-200 ${quickPickerMode ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
+          <LiquidGlassIconButton
+            label="Fullscreen Preview"
+            aria-label="Fullscreen Preview"
+            onClick={handleOpenFullscreen}
+            icon={<Eye size={20} weight="bold" />}
+            size="md"
+            className="!w-[44px] !h-[44px]"
+          />
 
-      {/* Mobile/Tablet Controls: Tier 2 Action (Confirm CTA) */}
-      <div className="flex lg:hidden items-center justify-center mt-2 sm:mt-2.5 w-full max-w-[min(300px,80vw,calc((100svh-248px)*688/960))] sm:max-w-[min(340px,75vw,calc((100svh-248px)*688/960))]">
-        <LiquidGlassButton
-          variant="primary"
-          size="md"
-          className="w-full !h-[48px] !text-[16px] font-semibold tracking-[-0.01em] shadow-[0_4px_16px_rgba(0,136,255,0.3)]"
-          onClick={onConfirm}
-        >
-          Confirm
-        </LiquidGlassButton>
+          <button
+            type="button"
+            onClick={onOpenCustomize}
+            className="dark-liquid-glass-pill flex-1 h-[44px] px-5 text-[#FFFFFF] hover:text-[#FFFFFF] text-[15px] font-semibold tracking-[-0.01em] cursor-pointer shadow-[0_3px_12px_rgba(0,0,0,0.3)] transition-transform active:scale-[0.98]"
+          >
+            Customize
+          </button>
+
+          <LiquidGlassIconButton
+            label="Flip card"
+            aria-label="Flip card"
+            onClick={(e) => { e.preventDefault(); e.stopPropagation(); dispatch({ type: 'TOGGLE_SIDE' }); }}
+            icon={<ArrowClockwise size={20} weight="bold" />}
+            size="md"
+            className="!w-[44px] !h-[44px]"
+          />
+        </div>
+
+        {/* Mobile/Tablet Controls: Tier 2 Action (Confirm CTA) */}
+        <div className={`flex items-center justify-center mt-2 sm:mt-2.5 w-full max-w-[min(300px,80vw,calc((100svh-248px)*688/960))] sm:max-w-[min(340px,75vw,calc((100svh-248px)*688/960))] transition-opacity duration-200 ${quickPickerMode ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
+          <LiquidGlassButton
+            variant="primary"
+            size="md"
+            className="w-full !h-[48px] !text-[16px] font-semibold tracking-[-0.01em] shadow-[0_4px_16px_rgba(0,136,255,0.3)]"
+            onClick={onConfirm}
+          >
+            Confirm
+          </LiquidGlassButton>
+        </div>
       </div>
 
       {/* Desktop 'Confirm' Button Component */}

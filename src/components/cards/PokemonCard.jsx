@@ -6,11 +6,15 @@ import { EmojiStamp } from '@/components/card/EmojiStamp';
 import TertiaryLiquidGlassButton from '@/components/ui/TertiaryLiquidGlassButton';
 import { STICKERS } from '@/data/cardData';
 
-export function PokemonCardFront({ onOpenEditTitle, isPreview = false }) {
+export function PokemonCardFront({ onOpenEditTitle, onOpenQuickPicker, isPreview = false }) {
   const { state, pokemonCard } = useCard();
 
   return (
-    <div className={`relative w-full h-full aspect-[688/960] rounded-[16px] ${isPreview ? 'border-none' : 'border border-[#95a0a6]/60'} overflow-hidden shadow-2xl select-none bg-transparent @container`} style={{ containerType: "inline-size" }}>
+    <div 
+      onClick={!isPreview && onOpenQuickPicker ? () => onOpenQuickPicker('frontArtwork') : undefined}
+      className={`relative w-full h-full aspect-[688/960] rounded-[16px] ${isPreview ? 'border-none' : 'border border-[#95a0a6]/60'} overflow-hidden shadow-2xl select-none bg-transparent @container ${!isPreview && onOpenQuickPicker ? 'cursor-pointer lg:cursor-default' : ''}`} 
+      style={{ containerType: "inline-size" }}
+    >
       {/* Real Pokemon Card Image from Reference (Squirtle with sunglasses) */}
       <img
         src={pokemonCard?.image || '/pokemon/001-003-squirtle.png'}
@@ -23,7 +27,7 @@ export function PokemonCardFront({ onOpenEditTitle, isPreview = false }) {
 
       {/* Subject Box matching reference: white box with red border and magenta edit pencil */}
         <div 
-          onClick={isPreview ? undefined : onOpenEditTitle}
+          onClick={isPreview ? undefined : (e) => { e.stopPropagation(); onOpenEditTitle?.(); }}
           className={`absolute bottom-[5%] left-1/2 -translate-x-1/2 w-[73.1%] h-[21%] -rotate-[2deg] z-20 group ${isPreview ? '' : 'cursor-pointer hover:scale-[1.02] transition-transform'}`}
         >
           {/* Outer White Box with Shadow (Matches Figma exact structure) */}
@@ -45,7 +49,7 @@ export function PokemonCardFront({ onOpenEditTitle, isPreview = false }) {
   );
 }
 
-export function PokemonCardBack({ onOpenEditMessage, isPreview = false }) {
+export function PokemonCardBack({ onOpenEditMessage, onOpenQuickPicker, isPreview = false }) {
   const { state, pokemonCard } = useCard();
 
   const backPhoto = 
@@ -63,14 +67,21 @@ export function PokemonCardBack({ onOpenEditMessage, isPreview = false }) {
           className="absolute inset-0 w-full h-full object-cover pointer-events-none"
         />
 
-        <EmojiStamp emoji={state.stampEmoji} className="top-[14.1%] left-[38.3%] z-30" />
+        <EmojiStamp 
+          emoji={state.stampEmoji} 
+          className="top-[14.1%] left-[38.3%] z-30" 
+          onClick={!isPreview && onOpenQuickPicker ? () => onOpenQuickPicker('stamp') : undefined}
+        />
 
         {/* Silver Metallic Frame Container (Hidden when 'None' is selected on Trainer Card) */}
         {state.selectedBackImage !== 'none' && (
         <div className="absolute top-[27.92%] left-1/2 -translate-x-1/2 w-[88.08%] h-[68.33%] z-20 shadow-[0.5cqw_0.5cqw_0.2cqw_rgba(0,0,0,0.4)] rounded-[4.6cqw]">
           
           {/* User Photo (z-0, bottom) */}
-          <div className="absolute top-[17.38%] left-[4.29%] w-[92.41%] h-[69.82%] overflow-hidden rounded-[4.6cqw] z-0">
+          <div 
+            onClick={!isPreview && onOpenQuickPicker ? (e) => { e.stopPropagation(); onOpenQuickPicker('polaroid'); } : undefined}
+            className={`absolute top-[17.38%] left-[4.29%] w-[92.41%] h-[69.82%] overflow-hidden rounded-[4.6cqw] z-0 ${!isPreview && onOpenQuickPicker ? 'cursor-pointer' : ''}`}
+          >
             {backPhoto || pokemonCard?.image ? (
               <img src={backPhoto || pokemonCard?.image} className="w-full h-full object-cover" alt="Trainer" />
             ) : (
@@ -125,13 +136,11 @@ export function PokemonCardBack({ onOpenEditMessage, isPreview = false }) {
         className="absolute inset-0 w-full h-full object-cover pointer-events-none"
       />
 
-      
-
-      
-        
-        
         {backPhoto && backPhoto !== 'none' && (
-          <div className="absolute top-[14.1%] right-[6.4%] z-10 w-[40.2%] h-[33.2%] drop-shadow-[2px_4px_6px_rgba(0,0,0,0.5)] rounded-[8px] overflow-hidden -rotate-[4.8deg]">
+          <div 
+            onClick={!isPreview && onOpenQuickPicker ? (e) => { e.stopPropagation(); onOpenQuickPicker('polaroid'); } : undefined}
+            className={`absolute top-[14.1%] right-[6.4%] z-10 w-[40.2%] h-[33.2%] drop-shadow-[2px_4px_6px_rgba(0,0,0,0.5)] rounded-[8px] overflow-hidden -rotate-[4.8deg] ${!isPreview && onOpenQuickPicker ? 'cursor-pointer active:scale-[0.97] transition-transform' : ''}`}
+          >
             <Polaroid image={backPhoto} className="w-full h-full !shadow-none" />
             
             {/* Pokeball Card Textures (702:12751) */}
@@ -156,7 +165,11 @@ export function PokemonCardBack({ onOpenEditMessage, isPreview = false }) {
         )}
 
 
-        <EmojiStamp emoji={state.stampEmoji} className="top-[14.1%] left-[38.3%] z-20" />
+        <EmojiStamp 
+          emoji={state.stampEmoji} 
+          className="top-[14.1%] left-[38.3%] z-20" 
+          onClick={!isPreview && onOpenQuickPicker ? () => onOpenQuickPicker('stamp') : undefined}
+        />
 
       <div className="absolute top-[42.7%] left-1/2 -translate-x-1/2 w-[87.8%] h-[52.3%] bg-white rounded-[14px] z-20 shadow-[2px_2px_2px_0.5px_rgba(0,0,0,0.25)] p-[3px] flex flex-col justify-center items-center gap-[10px]">
           <div className="w-full h-full border-[3px] border-[#FF0000] rounded-[12px] bg-white flex flex-col overflow-hidden relative">
@@ -168,10 +181,9 @@ export function PokemonCardBack({ onOpenEditMessage, isPreview = false }) {
             {/* Content Body */}
             <div className="flex-1 w-full px-[10.4%] pt-[8.1%] pb-[6.3%] flex flex-col justify-between">
               {/* To Line */}
-              <div className="flex items-end w-[67.3%]">
-                <span className="font-['Arial_Narrow',Arial,sans-serif] text-[4.07cqw] text-black tracking-tighter mr-[6px] leading-none pb-[2px] shrink-0">To:</span>
-                <div className="relative flex-1">
-                  <div className="absolute bottom-[2px] w-full border-b-[0.5px] border-black"></div>
+              <div className="flex items-baseline w-[67.3%]">
+                <span className="font-['Arial_Narrow',Arial,sans-serif] text-[4.07cqw] text-black tracking-tighter mr-[6px] leading-none shrink-0">To:</span>
+                <div className="relative flex-1 border-b-[0.5px] border-black pb-[1px]">
                   <span className="relative font-['Syne_Tactile',cursive] text-[4.65cqw] text-black leading-none truncate block">{state.to}</span>
                 </div>
               </div>
@@ -184,10 +196,9 @@ export function PokemonCardBack({ onOpenEditMessage, isPreview = false }) {
               </div>
 
               {/* From Line */}
-              <div className="flex items-end w-[66.9%] ml-auto">
-                <span className="font-['Arial_Narrow',Arial,sans-serif] text-[3.49cqw] text-black tracking-tighter mr-[6px] leading-none pb-[2px] shrink-0">From:</span>
-                <div className="relative flex-1">
-                  <div className="absolute bottom-[2px] w-full border-b-[0.5px] border-black"></div>
+              <div className="flex items-baseline w-[66.9%] ml-auto">
+                <span className="font-['Arial_Narrow',Arial,sans-serif] text-[3.49cqw] text-black tracking-tighter mr-[6px] leading-none shrink-0">From:</span>
+                <div className="relative flex-1 border-b-[0.5px] border-black pb-[1px]">
                   <span className="relative font-['Syne_Tactile',cursive] text-[4.65cqw] text-black leading-none truncate block">{state.from}</span>
                 </div>
               </div>

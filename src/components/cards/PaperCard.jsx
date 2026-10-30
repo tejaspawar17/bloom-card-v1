@@ -9,7 +9,7 @@ import { Check, ArrowsClockwise, X } from '@phosphor-icons/react';
 import { STICKERS } from '@/data/cardData';
 import { DraggableSticker } from '@/components/card/DraggableSticker';
 
-export function PaperCardBack({ onOpenEditMessage, isPreview = false }) {
+export function PaperCardBack({ onOpenEditMessage, onOpenQuickPicker, isPreview = false }) {
   const { state, dispatch } = useCard();
   const [currentDate, setCurrentDate] = useState("");
   const [currentTime, setCurrentTime] = useState("");
@@ -56,9 +56,16 @@ export function PaperCardBack({ onOpenEditMessage, isPreview = false }) {
 
       <div className="absolute inset-0 pointer-events-none translate-y-[clamp(10px,2.8%,15px)] z-10">
         {state.selectedBackImage && state.selectedBackImage !== 'none' && backImageSrc && (
-          <PolaroidFrame imageSrc={backImageSrc} />
+          <PolaroidFrame 
+            imageSrc={backImageSrc} 
+            onClick={!isPreview && onOpenQuickPicker ? () => onOpenQuickPicker('polaroid') : undefined}
+          />
         )}
-        <EmojiStamp emoji={state.stampEmoji} className="inset-x-0 mx-auto top-[clamp(118px,38.4cqw,146px)]" />
+        <EmojiStamp 
+          emoji={state.stampEmoji} 
+          className="inset-x-0 mx-auto top-[clamp(118px,38.4cqw,146px)]" 
+          onClick={!isPreview && onOpenQuickPicker ? () => onOpenQuickPicker('stamp') : undefined}
+        />
       </div>      
       
       
@@ -69,7 +76,7 @@ export function PaperCardBack({ onOpenEditMessage, isPreview = false }) {
         <div className="absolute z-30 bottom-[4.3%] left-[53%] font-['Instrument_Serif',serif] text-[4.2cqw] leading-[5.2cqw] antialiased text-[#141413] font-normal tracking-wide" style={{ WebkitTextStroke: '0.2px currentColor' }}>Time :</div>
 
         <div 
-        className={"absolute z-30 top-[50.8%] left-[30.8%] font-['Syne_Tactile',cursive] text-[4.44cqw] leading-[5.33cqw] text-[#141413] tracking-normal rounded px-1 -ml-1 outline-none min-w-[50px] min-h-[20px] truncate max-w-[55%] block antialiased " + (isEditing ? 'ring-1 ring-black/10 cursor-text' : (isPreview ? '' : 'cursor-pointer'))}
+        className={"absolute z-30 top-[50.3%] left-[30.8%] font-['Syne_Tactile',cursive] text-[4.44cqw] leading-[5.33cqw] text-[#141413] tracking-normal rounded px-1 -ml-1 outline-none min-w-[50px] truncate max-w-[55%] block antialiased " + (isEditing ? 'ring-1 ring-black/10 cursor-text' : (isPreview ? '' : 'cursor-pointer'))}
         onClick={() => !isPreview && !isEditing && onOpenEditMessage?.()}
         contentEditable={isEditing}
         suppressContentEditableWarning={true}
@@ -91,7 +98,7 @@ export function PaperCardBack({ onOpenEditMessage, isPreview = false }) {
       </div>
 
       <div 
-        className={"absolute z-30 bottom-[13.9%] left-[56.2%] font-['Syne_Tactile',cursive] text-[4.44cqw] leading-[5.33cqw] text-[#141413] tracking-normal rounded px-1 -ml-1 outline-none min-w-[50px] min-h-[20px] truncate max-w-[40%] block antialiased " + (isEditing ? 'ring-1 ring-black/10 cursor-text' : (isPreview ? '' : 'cursor-pointer'))}
+        className={"absolute z-30 bottom-[14.1%] left-[56.2%] font-['Syne_Tactile',cursive] text-[4.44cqw] leading-[5.33cqw] text-[#141413] tracking-normal rounded px-1 -ml-1 outline-none min-w-[50px] truncate max-w-[40%] block antialiased " + (isEditing ? 'ring-1 ring-black/10 cursor-text' : (isPreview ? '' : 'cursor-pointer'))}
         onClick={() => !isPreview && !isEditing && onOpenEditMessage?.()}
         contentEditable={isEditing}
         suppressContentEditableWarning={true}

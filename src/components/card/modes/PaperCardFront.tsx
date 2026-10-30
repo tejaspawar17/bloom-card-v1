@@ -4,7 +4,7 @@ import { FlowerInfoPill } from '@/components/card/FlowerInfoPill';
 import { DraggableSticker } from '@/components/card/DraggableSticker';
 import { useCard } from '@/context/CardContext';
 
-export function PaperCardFront({ state: propState, flower: propFlower, onOpenEditTitle, isPreview = false }: any) {
+export function PaperCardFront({ state: propState, flower: propFlower, onOpenEditTitle, onOpenQuickPicker, isPreview = false }: any) {
   const cardContext = useCard();
   const state = propState || cardContext?.state;
   const flower = propFlower || cardContext?.flower;
@@ -13,14 +13,20 @@ export function PaperCardFront({ state: propState, flower: propFlower, onOpenEdi
   return (
     <div className="relative bg-white p-[10px] xl:p-[12px] shadow-2xl aspect-[688/960] w-full h-full rounded-none overflow-hidden select-none @container">
       <FlowerInfoPill variant="front" />
-      <div className="relative w-full h-full overflow-hidden rounded-none">
+      <div 
+        onClick={!isPreview && onOpenQuickPicker ? () => onOpenQuickPicker('frontArtwork') : undefined}
+        className={`relative w-full h-full overflow-hidden rounded-none ${!isPreview && onOpenQuickPicker ? 'cursor-pointer lg:cursor-default' : ''}`}
+      >
         <img src={selectedFlower.image} 
           alt={selectedFlower.name} 
           className="w-full h-full object-cover" 
         />
 
         {/* Bottom Stamp Overlay (Figma: y=300 inside 456px inner image -> 18px from bottom of flower image, minus 6px built-in PNG shadow margin = 12px) */}
-        <div className="absolute bottom-[7px] xl:bottom-[10px] inset-x-0 flex justify-center z-20">
+        <div 
+          onClick={(e) => e.stopPropagation()}
+          className="absolute bottom-[7px] xl:bottom-[10px] inset-x-0 flex justify-center z-20"
+        >
           <PostageStampNote 
             message={state?.subject ?? ''} 
             recipient={state?.to || 'Aayush'} 

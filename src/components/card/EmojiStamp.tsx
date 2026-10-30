@@ -5,13 +5,21 @@ import { cn } from '@/lib/utils';
 interface EmojiStampProps {
   emoji?: string;
   className?: string;
+  onClick?: (e: React.MouseEvent) => void;
 }
 
-export function EmojiStamp({ emoji, className = '' }: EmojiStampProps) {
+export function EmojiStamp({ emoji, className = '', onClick }: EmojiStampProps) {
   if (!emoji) return null;
 
   return (
-    <div className={cn("absolute z-20 flex items-center justify-center w-[clamp(62px,23.1cqw,95px)] h-[clamp(62px,23.1cqw,95px)] select-none aspect-square", className)}>
+    <div
+      onClick={onClick ? (e) => { e.stopPropagation(); onClick(e); } : undefined}
+      className={cn(
+        "absolute z-20 flex items-center justify-center w-[clamp(62px,23.1cqw,95px)] h-[clamp(62px,23.1cqw,95px)] select-none aspect-square",
+        onClick ? "pointer-events-auto cursor-pointer active:scale-95 transition-transform" : "",
+        className
+      )}
+    >
       
       {/* Layer 1: Wider 16-Point Royal Blue Starburst with Stroke */}
       <div className="absolute z-10 flex items-center justify-center w-[88%] h-[88%]">
