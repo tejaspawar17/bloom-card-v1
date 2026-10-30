@@ -6,15 +6,19 @@ const CardContext = createContext(null);
 function cardReducer(state, action) {
   switch (action.type) {
     case 'SET_OCCASION': {
-      const occ = OCCASIONS.find((o) => o.id === action.payload);
+      const occ = OCCASIONS.find((o) => o.id === action.payload || o.label === action.payload);
+      if (!occ) {
+        return { ...state, occasion: action.payload };
+      }
       return {
         ...state,
-        occasion: action.payload,
-        cardType: occ?.defaultCardType || 'paper',
+        occasion: occ.id,
+        cardType: occ.defaultCardType || state.cardType,
         activeSide: 'front',
-        subject: occ ? occ.defaultSubject : state.subject,
-        selectedFlower: occ?.defaultFlower || state.selectedFlower,
-        selectedPokemon: occ?.defaultPokemon || state.selectedPokemon,
+        subject: occ.defaultSubject || state.subject,
+        selectedFlower: occ.defaultFlower || state.selectedFlower,
+        selectedPokemon: occ.defaultPokemon || state.selectedPokemon,
+        stampEmoji: occ.emoji || state.stampEmoji,
       };
     }
     case 'SET_CARD_TYPE':

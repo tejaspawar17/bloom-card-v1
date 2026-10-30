@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Bug, Sticker, ChatTeardropDots } from '@phosphor-icons/react';
@@ -124,11 +124,10 @@ export default function FeedbackModal({ onClose }) {
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [confettiKey, setConfettiKey] = useState(0);
 
-  // Mobile virtual keyboard & visual viewport tracking
-  const [viewportHeight, setViewportHeight] = useState(null);
-  const [viewportTop, setViewportTop] = useState(0);
+  // Mobile virtual keyboard state (boolean only - avoids 60fps visualViewport jitter & iOS transform caret bug)
   const [isKeyboardOpen, setIsKeyboardOpen] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
+  const blurTimeoutRef = useRef(null);
 
   // Prevent background scroll and maintain viewport stability on iOS
   useEffect(() => {
@@ -148,10 +147,8 @@ export default function FeedbackModal({ onClose }) {
     const updateViewport = () => {
       if (window.visualViewport) {
         const vv = window.visualViewport;
-        setViewportHeight(vv.height);
-        setViewportTop(vv.offsetTop);
-        const shrunk = vv.height < (window.innerHeight - 80);
-        setIsKeyboardOpen(shrunk);
+        const shrunk = vv.height < (window.innerHeight - 100);
+        setIsKeyboardOpen((prev) => (prev !== shrunk ? shrunk : prev));
       }
       if (window.scrollY !== 0) {
         window.scrollTo(0, 0);
@@ -167,6 +164,7 @@ export default function FeedbackModal({ onClose }) {
     window.addEventListener('scroll', updateViewport, { passive: false });
 
     return () => {
+      if (blurTimeoutRef.current) clearTimeout(blurTimeoutRef.current);
       document.body.style.position = prevPosition;
       document.body.style.top = prevTop;
       document.body.style.width = prevWidth;
@@ -181,9 +179,7 @@ export default function FeedbackModal({ onClose }) {
     };
   }, []);
 
-  const shiftY = isKeyboardOpen && viewportHeight && typeof window !== 'undefined'
-    ? Math.max(0, (window.innerHeight - viewportHeight) / 2 - viewportTop)
-    : 0;
+  const isKeyboardActive = isFocused || isKeyboardOpen;
 
   // Close on ESC
   useEffect(() => {
@@ -261,15 +257,22 @@ export default function FeedbackModal({ onClose }) {
   if (typeof document === 'undefined') return null;
 
   return createPortal(
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4">
+    <div className="fixed inset-0 z-[100] flex flex-col items-center sm:justify-center p-3 sm:p-4">
       {/* Backdrop matching ShareModal */}
       <motion.div
         className="fixed inset-0 bg-black/60 backdrop-blur-md"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
-        transition={{ duration: 0.25 }}
+        transition={{ duration: 0.2 }}
         onClick={onClose}
+      />
+
+      {/* Mobile Top Flex Spacer: smoothly glides modal up on focus without CSS transform (keeps iOS blue caret 100% locked) */}
+      <div
+        className={`w-full sm:hidden transition-[flex-grow,height] duration-300 ease-[cubic-bezier(0.32,0.72,0,1)] pointer-events-none ${
+          isKeyboardActive ? 'grow-0 h-[4px]' : 'grow'
+        }`}
       />
 
       {/* Modal Window in exact ShareModal / Tablet Surface styling */}
@@ -277,15 +280,15 @@ export default function FeedbackModal({ onClose }) {
         role="dialog"
         aria-modal="true"
         aria-label="Send feedback"
-        className="relative z-10 w-full max-w-[466px] max-h-[calc(100svh-24px)] sm:max-h-[calc(100svh-32px)] flex flex-col select-none rounded-[24px] bg-[#0E0E0E] border border-white/[0.12] overflow-hidden shadow-[0_24px_60px_rgba(0,0,0,0.85)] font-sans will-change-transform"
+        className="relative z-10 w-full max-w-[440px] sm:max-w-[466px] max-h-[calc(100svh-24px)] sm:max-h-[calc(100svh-32px)] flex flex-col select-none rounded-[20px] sm:rounded-[24px] bg-[#0E0E0E] border border-white/[0.12] overflow-hidden shadow-[0_24px_60px_rgba(0,0,0,0.85)] font-sans"
         onClick={(e) => e.stopPropagation()}
-        initial={{ opacity: 0, scale: 0.95, y: 8 }}
-        animate={{ opacity: 1, scale: 1, y: -shiftY }}
-        exit={{ opacity: 0, scale: 0.95, y: 8 }}
-        transition={modalSpring}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        transition={{ duration: 0.18, ease: "easeOut" }}
       >
         {/* Header Bar matching Figma Tablet Surface [466x60] */}
-        <div className="flex items-center justify-between h-[48px] sm:h-[60px] pl-4 sm:pl-5 pr-2 sm:pr-[11px] bg-[#1F1F1F] border-b border-white/[0.08]">
+        <div className="flex items-center justify-between h-[48px] sm:h-[60px] pl-4 sm:pl-5 pr-2 sm:pr-[11px] bg-[#1F1F1F] border-b border-white/[0.08] shrink-0">
           <h2 className="text-[rgba(255,255,255,0.85)] font-semibold sm:font-medium text-[15px] sm:text-[17px] leading-[20px] sm:leading-[22px] tracking-[-0.02em] font-sans">
             {isSubmitted ? 'Feedback Sent' : 'Send Feedback'}
           </h2>
@@ -299,25 +302,30 @@ export default function FeedbackModal({ onClose }) {
           />
         </div>
 
-        {/* Modal Body: Aligned with official HeroUI p-6 (24px) container scale */}
+        {/* Modal Body: Aligned with TitleModal / MessageModal mobile & tablet scale */}
         <AnimatePresence mode="wait">
           {!isSubmitted ? (
             <motion.form 
               key="form"
               onSubmit={handleSubmit}
-              onFocusCapture={() => setIsFocused(true)}
+              onFocusCapture={() => {
+                if (blurTimeoutRef.current) clearTimeout(blurTimeoutRef.current);
+                setIsFocused(true);
+              }}
               onBlurCapture={(e) => {
                 if (!e.currentTarget.contains(e.relatedTarget)) {
-                  setIsFocused(false);
+                  blurTimeoutRef.current = setTimeout(() => {
+                    setIsFocused(false);
+                  }, 80);
                 }
               }}
               initial={{ opacity: 0, y: 6 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -6 }}
-              className="p-6 flex flex-col gap-4 bg-[#0E0E0E]"
+              className="p-4 sm:p-6 flex flex-col gap-3 sm:gap-4 bg-[#0E0E0E] overflow-y-auto flex-1"
             >
               {/* Clean Subtitle */}
-              <p className="text-[#999999] text-[13px] leading-[18px] font-sans font-normal">
+              <p className="text-[#999999] text-[12.5px] sm:text-[13px] leading-[17px] sm:leading-[18px] font-sans font-normal">
                 Bugs, sticker ideas, or confessions. Goes straight to me.
               </p>
 
@@ -339,7 +347,7 @@ export default function FeedbackModal({ onClose }) {
                         id={`tab-${cat.id}`}
                         aria-selected={isActive}
                         onClick={() => setCategory(cat.id)}
-                        className="relative z-10 flex items-center justify-center gap-1.5 h-[34px] rounded-full text-[13px] font-medium transition-colors cursor-pointer outline-none select-none"
+                        className="relative z-10 flex items-center justify-center gap-1 sm:gap-1.5 h-[32px] sm:h-[34px] rounded-full text-[12px] sm:text-[13px] font-medium transition-colors cursor-pointer outline-none select-none"
                       >
                         {/* Pure Neutral Active Pill matching modal surface hierarchy */}
                         {isActive && (
@@ -357,9 +365,9 @@ export default function FeedbackModal({ onClose }) {
                         <Icon 
                           size={15} 
                           weight={isActive ? 'duotone' : 'regular'} 
-                          className={`transition-colors ${isActive ? 'text-[#FFFFFF]' : 'text-[#999999]'}`} 
+                          className={`transition-colors shrink-0 ${isActive ? 'text-[#FFFFFF]' : 'text-[#999999]'}`} 
                         />
-                        <span className={`transition-colors ${isActive ? 'text-[#FFFFFF] font-medium' : 'text-[#999999] hover:text-[#FFFFFF]'}`}>
+                        <span className={`transition-colors truncate ${isActive ? 'text-[#FFFFFF] font-medium' : 'text-[#999999] hover:text-[#FFFFFF]'}`}>
                           {cat.label}
                         </span>
                       </button>
@@ -369,19 +377,19 @@ export default function FeedbackModal({ onClose }) {
               </div>
 
               {/* Recessed Textarea with Integrated Counter: HeroUI p-3.5 input scale */}
-              <div className="relative rounded-[14px] bg-[#161616] border border-white/[0.10] focus-within:border-[#0055D4]/70 focus-within:ring-1 focus-within:ring-[#0055D4]/30 transition-all">
+              <div className="relative rounded-[12px] sm:rounded-[14px] bg-[#161616] border border-white/[0.10] focus-within:border-[#0055D4]/70 focus-within:ring-1 focus-within:ring-[#0055D4]/30 transition-all">
                 <textarea
-                  rows={4}
+                  rows={3}
                   value={message}
                   onChange={(e) => setMessage(e.target.value)}
                   placeholder={activeCategory.placeholder}
                   maxLength={MAX_CHARS}
-                  className="w-full bg-transparent px-3.5 pt-3 pb-8 text-[16px] sm:text-[13.5px] leading-[22px] sm:leading-[20px] text-white placeholder-white/25 outline-none resize-none font-sans"
+                  className="w-full h-[86px] sm:h-[108px] bg-transparent px-3.5 pt-2.5 sm:pt-3 pb-7 sm:pb-8 text-[16px] sm:text-[13.5px] leading-[21px] sm:leading-[20px] text-white placeholder-white/25 outline-none resize-none font-sans"
                 />
                 
                 {/* Character Counter recessed in bottom-right corner */}
                 <div 
-                  className={`absolute bottom-2.5 right-3 text-[11px] font-normal tabular-nums font-sans transition-colors ${
+                  className={`absolute bottom-2 sm:bottom-2.5 right-3 text-[10px] sm:text-[11px] font-normal tabular-nums font-sans transition-colors ${
                     isAtLimit ? 'text-[#FF6961]' : 'text-[#727272]'
                   }`}
                 >
@@ -390,10 +398,10 @@ export default function FeedbackModal({ onClose }) {
               </div>
 
               {/* Email Input (Optional) with Vibrant 3D Microsoft Fluent Envelope */}
-              <div className="flex flex-col gap-1.5">
-                <label className="text-[12.5px] font-medium text-[#E5E5EA] flex items-center gap-1.5">
+              <div className="flex flex-col gap-1 sm:gap-1.5">
+                <label className="text-[12px] sm:text-[12.5px] font-medium text-[#E5E5EA] flex items-center gap-1.5">
                   <span>Your email</span>
-                  <span className="text-[#727272] font-normal text-[11px]">(optional)</span>
+                  <span className="text-[#727272] font-normal text-[10.5px] sm:text-[11px]">(optional)</span>
                 </label>
                 <div className="relative flex items-center">
                   <input
@@ -401,27 +409,27 @@ export default function FeedbackModal({ onClose }) {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="So I can reply (or send you a virtual note)"
-                    className="w-full bg-[#161616] border border-white/[0.10] focus:border-[#0055D4]/70 focus:ring-1 focus:ring-[#0055D4]/30 rounded-[14px] h-[42px] pl-3.5 pr-11 text-[16px] sm:text-[13.5px] text-white placeholder-white/25 outline-none transition-all font-sans"
+                    className="w-full bg-[#161616] border border-white/[0.10] focus:border-[#0055D4]/70 focus:ring-1 focus:ring-[#0055D4]/30 rounded-[12px] sm:rounded-[14px] h-[38px] sm:h-[42px] pl-3.5 pr-11 text-[16px] sm:text-[13.5px] text-white placeholder-white/25 outline-none transition-all font-sans"
                   />
                   {!email && (
                     <div className="absolute right-3.5 flex items-center pointer-events-none">
                       <img 
                         src="/assets/bloom/envelope.png" 
                         alt="envelope" 
-                        className="w-[20px] h-[20px] object-contain drop-shadow-md select-none" 
+                        className="w-[18px] h-[18px] sm:w-[20px] sm:h-[20px] object-contain drop-shadow-md select-none" 
                       />
                     </div>
                   )}
                 </div>
               </div>
 
-              {/* Modal Footer Actions: Official HeroUI mt-5 (20px) and gap-3 (12px) */}
-              <div className="flex items-center gap-3 w-full justify-end mt-2 pt-1 font-sans">
+              {/* Modal Footer Actions: Matches TitleModal / MessageModal button sizes */}
+              <div className="flex items-center gap-2.5 sm:gap-3 w-full justify-end pt-1 shrink-0 font-sans">
                 {/* Clear Button */}
                 <button
                   type="button"
                   onClick={handleReset}
-                  className="dark-liquid-glass-pill h-[42px] px-5 text-[14px] font-medium text-white font-sans cursor-pointer active:scale-95 transition-transform"
+                  className="dark-liquid-glass-pill h-[38px] sm:h-[42px] px-4 sm:px-5 text-[14px] font-medium text-white font-sans cursor-pointer active:scale-95 transition-transform"
                 >
                   Clear
                 </button>
@@ -435,7 +443,7 @@ export default function FeedbackModal({ onClose }) {
                     size="md"
                     onClick={handleSubmit}
                     isDisabled={!message.trim() || isSubmitting}
-                    className="px-6 font-sans text-[14px] font-medium"
+                    className="!h-[38px] sm:!h-[42px] px-5 sm:px-6 font-sans text-[14px] font-medium"
                   >
                     {isSubmitting ? 'Sending...' : 'Send'}
                   </LiquidGlassButton>

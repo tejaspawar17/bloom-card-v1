@@ -3,7 +3,7 @@ import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Check, Warning } from '@phosphor-icons/react';
 import { useCard } from '@/context/CardContext';
-import { saveSharedCard } from '@/lib/supabase';
+import { saveSharedCard, encodeCardStateParam } from '@/lib/supabase';
 import LiquidGlassIconButton from '@/components/ui/LiquidGlassIconButton';
 import LiquidGlassButton from '@/components/ui/LiquidGlassButton';
 import { PokemonCardFront, PokemonCardBack } from './cards/PokemonCard';
@@ -228,8 +228,12 @@ export default function ShareModal({ onClose, onOpenRecipientPreview }) {
   const [pdfConfettiKey, setPdfConfettiKey] = useState(0);
   const [shareUrl, setShareUrl] = useState(`${window.location.origin}/?preview=recipient`);
 
-  // Handle ESC to close
+  // Handle ESC to close & pre-warm PDF font cache in background on modal open
   useEffect(() => {
+    import('@/lib/generateCardPdf')
+      .then((m) => m.getStudioFontEmbedCSS?.())
+      .catch(() => {});
+
     const handleKeyDown = (e) => {
       if (e.key === 'Escape') onClose();
     };
@@ -251,7 +255,7 @@ export default function ShareModal({ onClose, onOpenRecipientPreview }) {
 
     const stepInterval = setInterval(() => {
       setPreflightIndex((prev) => (prev < LINK_PREFLIGHT_STEPS.length - 1 ? prev + 1 : prev));
-    }, 450);
+    }, 350);
 
     try {
       const result = await saveSharedCard(state);
@@ -259,15 +263,20 @@ export default function ShareModal({ onClose, onOpenRecipientPreview }) {
         dispatch({ type: 'SET_BACK_IMAGE', payload: result.state.selectedBackImage });
       }
       setShareUrl(result.shareUrl);
-      window.history.replaceState(null, '', `/?card=${result.id}`);
+      const urlObj = new URL(result.shareUrl);
+      window.history.replaceState(null, '', urlObj.pathname + urlObj.search);
     } catch (err) {
-      console.error('Failed to save card to Supabase:', err);
-      setShareUrl(`${window.location.origin}/?preview=recipient`);
+      console.error('Failed to save card to Supabase, using self-contained URL fallback:', err);
+      const encoded = encodeCardStateParam(state);
+      const fallbackUrl = encoded
+        ? `${window.location.origin}/?preview=recipient&d=${encoded}`
+        : `${window.location.origin}/?preview=recipient`;
+      setShareUrl(fallbackUrl);
     } finally {
       setTimeout(() => {
         clearInterval(stepInterval);
         setStep('success');
-      }, 1400);
+      }, 650);
     }
   };
 
@@ -279,10 +288,10 @@ export default function ShareModal({ onClose, onOpenRecipientPreview }) {
 
     const stepInterval = setInterval(() => {
       setPreflightIndex((prev) => (prev < PDF_PREFLIGHT_STEPS.length - 1 ? prev + 1 : prev));
-    }, 450);
+    }, 300);
 
-    // Give browser brief tick to transition into packaging view smoothly
-    await new Promise((r) => setTimeout(r, 80));
+    // Give browser 1 frame to paint packaging state before heavy canvas work
+    await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
 
     try {
       const { generateKeychainPdf } = await import('@/lib/generateCardPdf');
@@ -292,13 +301,12 @@ export default function ShareModal({ onClose, onOpenRecipientPreview }) {
         cardTitle: state.subject || state.title || 'bloom-keychain-keepsake',
       });
 
-      // Brief pause for tactile visual feedback before showing success
       setTimeout(() => {
         clearInterval(stepInterval);
         setIsGeneratingPdf(false);
         setStep('pdf-success');
         setPdfConfettiKey((prev) => prev + 1);
-      }, 1000);
+      }, 180);
     } catch (err) {
       clearInterval(stepInterval);
       setIsGeneratingPdf(false);

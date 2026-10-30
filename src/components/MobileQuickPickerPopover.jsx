@@ -215,8 +215,13 @@ export default function MobileQuickPickerPopover({ mode, onSelectMode, onClose }
       }
     }
     targetFile = await optimizeImageForPolaroid(targetFile, 1200);
-    const url = URL.createObjectURL(targetFile);
-    dispatch({ type: 'SET_BACK_IMAGE', payload: url });
+    const dataUrl = await new Promise((resolve) => {
+      const reader = new FileReader();
+      reader.onloadend = () => resolve(reader.result);
+      reader.onerror = () => resolve(URL.createObjectURL(targetFile));
+      reader.readAsDataURL(targetFile);
+    });
+    dispatch({ type: 'SET_BACK_IMAGE', payload: dataUrl });
   };
 
   const handleStickerClick = (sticker) => {
@@ -300,7 +305,7 @@ export default function MobileQuickPickerPopover({ mode, onSelectMode, onClose }
 
   const renderOccasionStrip = () => {
     return OCCASIONS.map((occ) => {
-      const isSelected = state.occasion === occ.label;
+      const isSelected = state.occasion === occ.id || state.occasion === occ.label;
       return (
         <motion.button
           whileTap={{ scale: 0.96 }}
@@ -311,7 +316,7 @@ export default function MobileQuickPickerPopover({ mode, onSelectMode, onClose }
           onClick={() =>
             dispatch({
               type: 'SET_OCCASION',
-              payload: isSelected ? '' : occ.label,
+              payload: occ.id,
             })
           }
           className={cn(

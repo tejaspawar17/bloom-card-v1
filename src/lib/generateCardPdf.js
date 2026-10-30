@@ -5,6 +5,7 @@ const GOOGLE_FONTS_CSS_URL =
   'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Homemade+Apple&family=Vampiro+One&family=Syne+Tactile&family=Instrument+Serif:ital@0;1&display=swap';
 
 let cachedFontEmbedCSS = null;
+let fontEmbedPromise = null;
 
 function blobToDataUrl(blob) {
   return new Promise((resolve, reject) => {
@@ -17,42 +18,61 @@ function blobToDataUrl(blob) {
 
 /**
  * Fetches and embeds studio webfonts (Vampiro One, Homemade Apple, Syne Tactile, Instrument Serif, Inter)
- * as base64 @font-face rules so isolated <svg><foreignObject> renders authentic typography on mobile & desktop.
+ * as base64 @font-face rules (latin subset only for speed) so isolated <svg><foreignObject> renders authentic typography.
  */
-async function getStudioFontEmbedCSS() {
-  if (cachedFontEmbedCSS !== null) return cachedFontEmbedCSS;
-  try {
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 3500);
-    const res = await fetch(GOOGLE_FONTS_CSS_URL, { signal: controller.signal });
-    clearTimeout(timeoutId);
-    if (!res.ok) return '';
-    let cssText = await res.text();
+export function getStudioFontEmbedCSS() {
+  if (cachedFontEmbedCSS !== null) return Promise.resolve(cachedFontEmbedCSS);
+  if (fontEmbedPromise) return fontEmbedPromise;
 
-    const urlRegex = /url\((['"]?)(https?:\/\/[^)'"]+)\1\)/g;
-    const matches = [...cssText.matchAll(urlRegex)];
+  fontEmbedPromise = (async () => {
+    try {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 2500);
+      const res = await fetch(GOOGLE_FONTS_CSS_URL, { signal: controller.signal });
+      clearTimeout(timeoutId);
+      if (!res.ok) return '';
+      const rawCss = await res.text();
 
-    await Promise.all(
-      matches.map(async (match) => {
-        const fullMatch = match[0];
-        const fontUrl = match[2];
-        try {
-          const fontRes = await fetch(fontUrl);
-          if (!fontRes.ok) return;
-          const fontBlob = await fontRes.blob();
-          const dataUrl = await blobToDataUrl(fontBlob);
-          cssText = cssText.split(fullMatch).join(`url("${dataUrl}")`);
-        } catch {
-          // Ignore individual font fetch failure
-        }
-      })
-    );
+      // Keep only latin blocks (skip cyrillic/vietnamese/greek to cut download count by 70%)
+      const blockRegex = /\/\*\s*([a-z-]+)\s*\*\/\s*@font-face\s*\{[^}]+\}/gi;
+      const blocks = [...rawCss.matchAll(blockRegex)];
+      let cssText =
+        blocks.length > 0
+          ? blocks
+              .filter((m) => m[1] === 'latin')
+              .map((m) => m[0])
+              .join('\n')
+          : rawCss;
 
-    cachedFontEmbedCSS = cssText;
-    return cssText;
-  } catch {
-    return '';
-  }
+      const urlRegex = /url\((['"]?)(https?:\/\/[^)'"]+)\1\)/g;
+      const matches = [...cssText.matchAll(urlRegex)];
+
+      await Promise.all(
+        matches.map(async (match) => {
+          const fullMatch = match[0];
+          const fontUrl = match[2];
+          try {
+            const fontRes = await fetch(fontUrl);
+            if (!fontRes.ok) return;
+            const fontBlob = await fontRes.blob();
+            const dataUrl = await blobToDataUrl(fontBlob);
+            cssText = cssText.split(fullMatch).join(`url("${dataUrl}")`);
+          } catch {
+            // Ignore individual font fetch failure
+          }
+        })
+      );
+
+      cachedFontEmbedCSS = cssText;
+      return cssText;
+    } catch {
+      return '';
+    } finally {
+      fontEmbedPromise = null;
+    }
+  })();
+
+  return fontEmbedPromise;
 }
 
 /**
@@ -80,7 +100,7 @@ function loadDecodedImage(src) {
  * Pre-renders an <img> element onto an offscreen canvas with its exact object-fit (cover/contain)
  * so mobile WebKit <svg><foreignObject> never drops large card artwork or mis-crops aspect ratios.
  */
-async function rasterizeImgToDataUrl(imgEl, scale = 2.5) {
+async function rasterizeImgToDataUrl(imgEl, scale = 2) {
   const src = imgEl.currentSrc || imgEl.src;
   if (!src) return null;
 
@@ -122,7 +142,20 @@ async function rasterizeImgToDataUrl(imgEl, scale = 2.5) {
   }
 
   ctx.drawImage(decodedImg, drawX, drawY, drawW, drawH);
-  return canvas.toDataURL('image/png', 0.98);
+
+  // Use PNG for assets that require alpha transparency (frames, textures, emojis, stickers, Pokémon rounded corners)
+  const needsAlpha =
+    src.includes('frame') ||
+    src.includes('texture') ||
+    src.includes('emojis') ||
+    src.includes('stickers') ||
+    src.includes('pokemon') ||
+    src.includes('metallic_back') ||
+    objectFit === 'contain';
+
+  return needsAlpha
+    ? canvas.toDataURL('image/png')
+    : canvas.toDataURL('image/jpeg', 0.92);
 }
 
 const TRANSPARENT_PIXEL_GIF =
@@ -201,7 +234,7 @@ async function prepareElementForMobileCapture(rootElement) {
         const originalLoading = imgEl.getAttribute('loading');
         const originalDecoding = imgEl.getAttribute('decoding');
 
-        const dataUrl = await rasterizeImgToDataUrl(imgEl, 2.5);
+        const dataUrl = await rasterizeImgToDataUrl(imgEl, 2);
         if (!dataUrl) return;
 
         restoreCallbacks.push(() => {
@@ -267,12 +300,12 @@ export async function generateKeychainPdf({
 
   const fontEmbedCSS = await getStudioFontEmbedCSS();
 
-  // 1. Capture Front and Back DOM nodes at high pixel density (~800+ DPI at 54mm keychain scale)
+  // 1. Capture Front and Back DOM nodes at 330+ DPI (700x976px at 54mm keychain scale)
   const imageCaptureOptions = {
     width: 350,
     height: 488,
-    pixelRatio: 2.5,
-    quality: 0.98,
+    pixelRatio: 2,
+    quality: 0.96,
     cacheBust: false,
     skipFonts: true,
     fontEmbedCSS,
@@ -290,17 +323,13 @@ export async function generateKeychainPdf({
   const captureCard = async (element) => {
     const cleanup = await prepareElementForMobileCapture(element);
     try {
-      // Warm-up pass forces Mobile Safari/WebKit to decode all <foreignObject> resources into cache
-      await toPng(element, { ...imageCaptureOptions, pixelRatio: 1 }).catch(() => {});
-      await new Promise((r) => setTimeout(r, 60));
-
       try {
         return await toPng(element, imageCaptureOptions);
       } catch (err) {
         console.warn('Initial PDF capture attempt encountered an issue, retrying with fallback...', err);
         return await toPng(element, {
           ...imageCaptureOptions,
-          pixelRatio: 2,
+          pixelRatio: 1.5,
         });
       }
     } finally {
@@ -308,8 +337,11 @@ export async function generateKeychainPdf({
     }
   };
 
-  const frontDataUrl = await captureCard(frontElement);
-  const backDataUrl = await captureCard(backElement);
+  // Capture Front and Back in parallel to cut total export time in half
+  const [frontDataUrl, backDataUrl] = await Promise.all([
+    captureCard(frontElement),
+    captureCard(backElement),
+  ]);
 
   // 2. Create A4 Document (210mm x 297mm)
   const pdf = new jsPDF({

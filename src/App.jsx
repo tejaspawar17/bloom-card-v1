@@ -2,7 +2,7 @@ import AppleToast from '@/components/ui/AppleToast';
 import React, { useState, useCallback, useEffect, Suspense } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { CardProvider, useCard } from './context/CardContext';
-import { loadSharedCard } from './lib/supabase';
+import { loadSharedCard, decodeCardStateParam } from './lib/supabase';
 import Navbar from './components/Navbar';
 import DesignPage from './pages/DesignPage';
 import FeedbackModal from './components/FeedbackModal';
@@ -59,11 +59,17 @@ const loaderVariants = {
 function AppShell() {
   const { dispatch } = useCard();
   
-  // Only show the preloader on first session visit; reloads and ?og=1 bypass immediately (0ms delay)
+  // Only show the preloader on first session visit OR when hydrating a shared card link (?card= / ?d=)
   const [isAppLoading, setIsAppLoading] = useState(() => {
     try {
       if (typeof window !== 'undefined' && window.location.search.includes('og=1')) {
         return false;
+      }
+      if (
+        typeof window !== 'undefined' &&
+        (window.location.search.includes('card=') || window.location.search.includes('d='))
+      ) {
+        return true;
       }
       return sessionStorage.getItem('bloom_has_loaded') !== 'true';
     } catch {
@@ -78,11 +84,13 @@ function AppShell() {
   const syncFromUrl = useCallback(async () => {
     const params = new URLSearchParams(window.location.search);
     const sharedCardId = params.get('card');
+    const encodedData = params.get('d');
     const hash = window.location.hash;
     const hasPreview =
       hash === '#preview' ||
       params.get('preview') === 'recipient' ||
-      Boolean(sharedCardId);
+      Boolean(sharedCardId) ||
+      Boolean(encodedData);
 
     setIsRecipientMode(hasPreview);
 
@@ -92,6 +100,13 @@ function AppShell() {
       setActiveTab('privacy');
     } else if (hash === '#about') {
       setActiveTab('about');
+    }
+
+    if (encodedData) {
+      const decodedState = decodeCardStateParam(encodedData);
+      if (decodedState) {
+        dispatch({ type: 'HYDRATE_CARD', payload: decodedState });
+      }
     }
 
     if (sharedCardId) {
@@ -179,7 +194,11 @@ function AppShell() {
     setActiveTab(tab);
     window.scrollTo({ top: 0, behavior: 'smooth' });
     if (tab === 'design') {
-      if (window.location.hash === '#preview' || window.location.search.includes('card=')) {
+      if (
+        window.location.hash === '#preview' ||
+        window.location.search.includes('card=') ||
+        window.location.search.includes('d=')
+      ) {
         window.history.replaceState(null, '', window.location.pathname);
       } else if (window.location.hash) {
         window.history.replaceState(null, '', window.location.pathname);

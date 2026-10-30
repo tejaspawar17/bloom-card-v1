@@ -73,14 +73,20 @@ export default function CardRevealPreview({ onCraftOwn }) {
         baseBeta = e.beta;
       }
 
-      // Responsive [-22deg, 22deg] wrist-tilt window relative to initial posture
-      const deltaGamma = Math.max(-22, Math.min(22, e.gamma - baseGamma));
-      const deltaBeta = Math.max(-22, Math.min(22, e.beta - baseBeta));
+      // Sliding-window calibration so reversing tilt direction has zero deadzone
+      const maxTiltDeg = 14;
+      if (e.gamma - baseGamma > maxTiltDeg) baseGamma = e.gamma - maxTiltDeg;
+      if (e.gamma - baseGamma < -maxTiltDeg) baseGamma = e.gamma + maxTiltDeg;
+      if (e.beta - baseBeta > maxTiltDeg) baseBeta = e.beta - maxTiltDeg;
+      if (e.beta - baseBeta < -maxTiltDeg) baseBeta = e.beta + maxTiltDeg;
 
-      const nextX = (deltaGamma / 22) * 0.85;
-      const nextY = (deltaBeta / 22) * 0.85;
+      const deltaGamma = Math.max(-maxTiltDeg, Math.min(maxTiltDeg, e.gamma - baseGamma));
+      const deltaBeta = Math.max(-maxTiltDeg, Math.min(maxTiltDeg, e.beta - baseBeta));
 
-      if (Math.abs(nextX - lastX) < 0.003 && Math.abs(nextY - lastY) < 0.003) return;
+      const nextX = deltaGamma / maxTiltDeg;
+      const nextY = deltaBeta / maxTiltDeg;
+
+      if (Math.abs(nextX - lastX) < 0.002 && Math.abs(nextY - lastY) < 0.002) return;
       lastX = nextX;
       lastY = nextY;
 
@@ -526,8 +532,8 @@ export default function CardRevealPreview({ onCraftOwn }) {
                   : {
                       scale: 1,
                       y: 0,
-                      rotateY: (isFlipped ? 180 : 0) + (mousePos.x * 20),
-                      rotateX: -(mousePos.y * 20),
+                      rotateY: (isFlipped ? 180 : 0) + (mousePos.x * 28),
+                      rotateX: -(mousePos.y * 28),
                       boxShadow: '0 10px 30px rgba(0,0,0,0.5)',
                     }
               }
@@ -555,8 +561,8 @@ export default function CardRevealPreview({ onCraftOwn }) {
                     }
                   : {
                       scale: { type: 'spring', stiffness: 280, damping: 24 },
-                      rotateY: { type: 'spring', stiffness: 460, damping: 28, mass: 0.6 },
-                      rotateX: { type: 'spring', stiffness: 460, damping: 28, mass: 0.6 },
+                      rotateY: { type: 'spring', stiffness: 650, damping: 22, mass: 0.42 },
+                      rotateX: { type: 'spring', stiffness: 650, damping: 22, mass: 0.42 },
                     }
               }
               onClick={() => {

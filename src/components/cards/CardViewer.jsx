@@ -70,14 +70,20 @@ export default function CardViewer({ onConfirm, onOpenEditTitle, onOpenEditMessa
         baseBeta = e.beta;
       }
 
-      // Responsive [-22deg, 22deg] wrist-tilt window relative to initial posture
-      const deltaGamma = Math.max(-22, Math.min(22, e.gamma - baseGamma));
-      const deltaBeta = Math.max(-22, Math.min(22, e.beta - baseBeta));
+      // Sliding-window calibration so reversing tilt direction has zero deadzone
+      const maxTiltDeg = 14;
+      if (e.gamma - baseGamma > maxTiltDeg) baseGamma = e.gamma - maxTiltDeg;
+      if (e.gamma - baseGamma < -maxTiltDeg) baseGamma = e.gamma + maxTiltDeg;
+      if (e.beta - baseBeta > maxTiltDeg) baseBeta = e.beta - maxTiltDeg;
+      if (e.beta - baseBeta < -maxTiltDeg) baseBeta = e.beta + maxTiltDeg;
 
-      const nextX = (deltaGamma / 22) * 0.85;
-      const nextY = (deltaBeta / 22) * 0.85;
+      const deltaGamma = Math.max(-maxTiltDeg, Math.min(maxTiltDeg, e.gamma - baseGamma));
+      const deltaBeta = Math.max(-maxTiltDeg, Math.min(maxTiltDeg, e.beta - baseBeta));
 
-      if (Math.abs(nextX - lastX) < 0.003 && Math.abs(nextY - lastY) < 0.003) return;
+      const nextX = deltaGamma / maxTiltDeg;
+      const nextY = deltaBeta / maxTiltDeg;
+
+      if (Math.abs(nextX - lastX) < 0.002 && Math.abs(nextY - lastY) < 0.002) return;
       lastX = nextX;
       lastY = nextY;
 
@@ -557,13 +563,17 @@ export default function CardViewer({ onConfirm, onOpenEditTitle, onOpenEditMessa
                   className="w-full h-full relative"
                   style={{ transformStyle: 'preserve-3d', willChange: 'auto' }}
                   animate={{ 
-                      rotateY: (isFlipped ? 180 : 0) + (mousePos.x * 25) + spinDegrees, // Tilt horizontally based on mouse
-                      rotateX: -(mousePos.y * 25), // Tilt vertically based on mouse
+                      rotateY: (isFlipped ? 180 : 0) + (mousePos.x * 28) + spinDegrees, // Tilt horizontally based on gyro/mouse
+                      rotateX: -(mousePos.y * 28), // Tilt vertically based on gyro/mouse
                       scale: isSwapping ? 0.98 : 1.02, // Apple bounce
                       y: 0
                     }} 
                   initial={{ scale: 1, rotateY: isFlipped ? 180 : 0, rotateX: 0, y: 0 }} 
-                  transition={{ type: "spring", stiffness: 460, damping: 28, mass: 0.6 }}
+                  transition={{
+                    rotateY: { type: "spring", stiffness: 650, damping: 22, mass: 0.42 },
+                    rotateX: { type: "spring", stiffness: 650, damping: 22, mass: 0.42 },
+                    scale: { type: "spring", stiffness: 320, damping: 26, mass: 0.9 }
+                  }}
                   onAnimationStart={() => setIsAnimating(true)}
                   onAnimationComplete={() => setIsAnimating(false)}
                 >

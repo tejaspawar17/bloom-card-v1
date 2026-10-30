@@ -163,7 +163,12 @@ export default function WindowSelectBackImage({ isMobile = false }) {
       URL.revokeObjectURL(uploadedUrl);
     }
 
-    const url = URL.createObjectURL(targetFile);
+    const url = await new Promise((resolve) => {
+      const reader = new FileReader();
+      reader.onloadend = () => resolve(reader.result);
+      reader.onerror = () => resolve(URL.createObjectURL(targetFile));
+      reader.readAsDataURL(targetFile);
+    });
     setUploadedUrl(url);
     dispatch({ type: 'SET_BACK_IMAGE', payload: url });
     ensureBackSide();

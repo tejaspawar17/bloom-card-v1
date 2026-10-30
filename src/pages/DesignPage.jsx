@@ -81,6 +81,7 @@ export default function DesignPage({ isRecipientMode = false, onSetRecipientMode
     const url = new URL(window.location.href);
     url.searchParams.delete('preview');
     url.searchParams.delete('card');
+    url.searchParams.delete('d');
     const cleanHash = url.hash === '#preview' ? '' : url.hash;
     window.history.replaceState(null, '', url.pathname + (url.search ? url.search : '') + cleanHash);
     onSetRecipientMode?.(false);
