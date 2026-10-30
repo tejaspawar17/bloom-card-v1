@@ -4,6 +4,7 @@ import { X, UploadSimple, Prohibit, CircleNotch } from '@phosphor-icons/react';
 import { useCard } from '@/context/CardContext';
 import { FLOWERS, POKEMON_CARDS, EMOTE_EMOJIS } from '@/data/cardData';
 import { showToast } from '@/components/ui/AppleToast';
+import LiquidGlassIconButton from '@/components/ui/LiquidGlassIconButton';
 import { cn } from '@/lib/utils';
 
 const defaultPolaroid1 = '/assets/polaroid-defaults/image1.png';
@@ -360,7 +361,7 @@ export default function MobileQuickPickerPopover({ mode, onClose }) {
           exit={{ opacity: 0, y: 10, scale: 0.96 }}
           transition={{ type: 'spring', stiffness: 380, damping: 28, mass: 0.75 }}
           onClick={(e) => e.stopPropagation()}
-          className="w-full max-w-[340px] sm:max-w-[380px] rounded-[20px] bg-[#0E0E10]/95 backdrop-blur-2xl border border-white/[0.14] shadow-[0_18px_48px_rgba(0,0,0,0.85)] overflow-hidden select-none z-40"
+          className="w-[calc(100vw-24px)] max-w-[388px] sm:max-w-[436px] rounded-[20px] bg-[#0E0E10]/95 backdrop-blur-2xl border border-white/[0.14] shadow-[0_18px_48px_rgba(0,0,0,0.85)] overflow-hidden select-none z-40"
         >
           <input
             ref={fileInputRef}
@@ -374,30 +375,29 @@ export default function MobileQuickPickerPopover({ mode, onClose }) {
             }}
           />
 
-          {/* Header Bar matching Reference Image 4 */}
-          <div className="flex items-center justify-between px-4 py-2.5 bg-[#1C1C1E] border-b border-white/[0.08]">
-            <span className="text-[14.5px] font-semibold text-white/90 tracking-[-0.02em] font-sans">
+          {/* Unified Header Bar with equal optical spacing for the close button */}
+          <div className="flex items-center justify-between h-[48px] pl-4 pr-3.5 bg-[#1F1F1F] border-b border-white/[0.08]">
+            <span className="text-[15px] font-semibold text-white/85 tracking-[-0.02em] font-sans">
               {title}
             </span>
-            <button
-              type="button"
+            <LiquidGlassIconButton
+              size="sm"
+              label="Close picker"
               onClick={onClose}
-              aria-label="Close picker"
-              className="w-[26px] h-[26px] rounded-full bg-white/10 active:bg-white/20 flex items-center justify-center text-white/80 cursor-pointer transition-colors"
-            >
-              <X size={14} weight="bold" className="text-[#FF383C]" />
-            </button>
+              icon={<X size={17} weight="bold" className="text-[#FF383C]" />}
+              className="!w-[32px] !h-[32px]"
+            />
           </div>
 
           {/* Horizontal Swipe Carousel Strip */}
-          <div className="px-3 py-2.5 bg-[#0B0B0C]">
+          <div className="px-3.5 py-3 bg-[#0B0B0C]">
             <div
               ref={scrollRef}
               onScroll={updateScrollEdges}
               style={edgeMask ? { maskImage: edgeMask, WebkitMaskImage: edgeMask } : undefined}
               className={cn(
                 'flex flex-row items-center overflow-x-auto snap-x snap-mandatory no-scrollbar py-0.5',
-                mode === 'polaroid' ? 'justify-between px-1 gap-2' : 'gap-2.5 px-2'
+                mode === 'polaroid' ? 'justify-between px-1.5 gap-3' : 'gap-3 px-1.5'
               )}
             >
               {mode === 'frontArtwork' && renderFrontArtworkStrip()}

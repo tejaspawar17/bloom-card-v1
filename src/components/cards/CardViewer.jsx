@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Eye, ArrowClockwise, ArrowLeft } from '@phosphor-icons/react';
 import { useCard } from '@/context/CardContext';
 
@@ -109,13 +109,31 @@ export default function CardViewer({ onConfirm, onOpenEditTitle, onOpenEditMessa
 
   const isFlipped = state.activeSide === 'back';
 
-  // Close contextual quick picker when flipping sides
+  // Option A: Auto-fading contextual micro-hint pills on first view of Front & first flip to Back (Mobile/Tablet only)
+  const [showFrontHint, setShowFrontHint] = useState(true);
+  const [showBackHint, setShowBackHint] = useState(false);
+  const hasShownBackHintRef = useRef(false);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setShowFrontHint(false), 3800);
+    return () => clearTimeout(timer);
+  }, []);
+
+  // Close contextual quick picker when flipping sides & trigger 1-time Back hint
   useEffect(() => {
     setQuickPickerMode(null);
-  }, [state.activeSide]);
+    if (isFlipped && !hasShownBackHintRef.current) {
+      hasShownBackHintRef.current = true;
+      setShowBackHint(true);
+      const timer = setTimeout(() => setShowBackHint(false), 4000);
+      return () => clearTimeout(timer);
+    }
+  }, [isFlipped]);
 
   const handleOpenQuickPicker = (mode) => {
     if (typeof window !== 'undefined' && window.innerWidth >= 1024) return;
+    setShowFrontHint(false);
+    setShowBackHint(false);
     setQuickPickerMode((prev) => (prev === mode ? null : mode));
   };
 
@@ -341,6 +359,52 @@ export default function CardViewer({ onConfirm, onOpenEditTitle, onOpenEditMessa
                 {renderBack()}
               </div>
             </motion.div>
+
+          {/* Option A: Auto-fading Contextual Micro-Hint Pills (Mobile/Tablet only) */}
+          <AnimatePresence>
+            {!isFlipped && showFrontHint && !isAnimating && (
+              <motion.div
+                key="front-tap-hint"
+                initial={{ opacity: 0, y: 6, scale: 0.94 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: -4, scale: 0.94 }}
+                transition={{ duration: 0.25 }}
+                className="lg:hidden pointer-events-none absolute top-[42%] left-1/2 -translate-x-1/2 -translate-y-1/2 z-40 px-3.5 py-1.5 rounded-full bg-black/75 backdrop-blur-xl border border-white/25 shadow-[0_8px_24px_rgba(0,0,0,0.65)] flex items-center gap-1.5 whitespace-nowrap"
+              >
+                <span className="text-[12px] leading-none">✨</span>
+                <span className="text-[12px] font-medium text-white tracking-[-0.01em] font-sans">
+                  Tap artwork to swap
+                </span>
+              </motion.div>
+            )}
+
+            {isFlipped && showBackHint && !isAnimating && (
+              <motion.div
+                key="back-tap-hints"
+                initial={{ opacity: 0, scale: 0.94 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.94 }}
+                transition={{ duration: 0.25 }}
+                className="lg:hidden pointer-events-none absolute inset-0 z-40"
+              >
+                {/* Polaroid Hint Pill */}
+                <div className="absolute top-[25%] right-[9%] px-2.5 py-1 rounded-full bg-black/80 backdrop-blur-xl border border-white/25 shadow-[0_6px_20px_rgba(0,0,0,0.65)] flex items-center gap-1 whitespace-nowrap">
+                  <span className="text-[11px] leading-none">📷</span>
+                  <span className="text-[11px] font-medium text-white tracking-[-0.01em] font-sans">
+                    Tap photo
+                  </span>
+                </div>
+
+                {/* Stamp Hint Pill */}
+                <div className="absolute top-[41%] left-1/2 -translate-x-1/2 px-2.5 py-1 rounded-full bg-black/80 backdrop-blur-xl border border-white/25 shadow-[0_6px_20px_rgba(0,0,0,0.65)] flex items-center gap-1 whitespace-nowrap">
+                  <span className="text-[11px] leading-none">😊</span>
+                  <span className="text-[11px] font-medium text-white tracking-[-0.01em] font-sans">
+                    Tap stamp
+                  </span>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
 
         {/* 4. Right Controls (Floating Action Buttons type="circle") - Desktop Only */}
@@ -370,7 +434,7 @@ export default function CardViewer({ onConfirm, onOpenEditTitle, onOpenEditMessa
 
       <div className="relative flex flex-col items-center w-full lg:hidden">
         {quickPickerMode && (
-          <div className="absolute -bottom-1 inset-x-0 flex justify-center z-40 px-2">
+          <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 flex justify-center z-40">
             <MobileQuickPickerPopover
               mode={quickPickerMode}
               onClose={() => setQuickPickerMode(null)}
