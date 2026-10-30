@@ -110,7 +110,7 @@ export default function DesignPage({ isRecipientMode = false, onSetRecipientMode
             className="w-full flex-1 flex flex-col"
           >
             {/* Main 3-Column Studio matching reference screen — centered vertically below Navbar */}
-            <div className="w-full min-h-[calc(100dvh-60px)] xl:min-h-[calc(100dvh-74px)] flex flex-col justify-center pt-3 pb-1 xl:pt-4 xl:pb-2">
+            <div className="w-full min-h-[calc(100svh-64px)] lg:min-h-[calc(100dvh-60px)] xl:min-h-[calc(100dvh-74px)] flex flex-col justify-center pt-1 pb-2 lg:pt-3 lg:pb-1 xl:pt-4 xl:pb-2">
               <main 
                 className="w-full max-w-[1440px] mx-auto px-3 xl:px-8 grid grid-cols-1 lg:grid-cols-[auto_1fr_auto] items-start justify-center gap-3 xl:gap-8 z-10 translate-y-[2px] xl:translate-y-[4px]"
               >

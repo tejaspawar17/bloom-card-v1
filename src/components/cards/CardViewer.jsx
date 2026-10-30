@@ -257,7 +257,7 @@ export default function CardViewer({ onConfirm, onOpenEditTitle, onOpenEditMessa
   return (
     <div className="flex flex-col items-center select-none" role="region" aria-label="Card Studio Viewer">
       {/* 1. Top Switcher: Segmented Control (Glass) */}
-      <div className="mt-3.5 mb-2.5 sm:mt-2.5 sm:mb-2.5 lg:mt-0 lg:mb-1.5 xl:mb-2 flex justify-center relative z-30">
+      <div className="mt-1.5 mb-2 sm:mt-2.5 sm:mb-2.5 lg:mt-0 lg:mb-1.5 xl:mb-2 flex justify-center relative z-30">
         <GlassSegmentedControl 
           value={state.cardType}
           onValueChange={(val) => dispatch({ type: 'SET_CARD_TYPE', payload: val })}
@@ -282,7 +282,7 @@ export default function CardViewer({ onConfirm, onOpenEditTitle, onOpenEditMessa
       </div>
 
       {/* Main Center Stage */}
-      <div className="relative flex items-start justify-center mb-1.5 xl:mb-2 w-[min(300px,80vw,calc((100svh-248px)*688/960))] sm:w-[min(340px,75vw,calc((100svh-248px)*688/960))] lg:w-[min(280px,calc((100dvh-192px)*688/960))] xl:w-[min(360px,calc((100dvh-228px)*688/960))] 2xl:w-[min(380px,calc((100dvh-240px)*688/960))] mx-auto">
+      <div className="relative flex items-start justify-center mb-1.5 xl:mb-2 w-[min(300px,80vw,calc((100svh-284px)*688/960))] sm:w-[min(340px,75vw,calc((100svh-264px)*688/960))] lg:w-[min(280px,calc((100dvh-192px)*688/960))] xl:w-[min(360px,calc((100dvh-228px)*688/960))] 2xl:w-[min(380px,calc((100dvh-240px)*688/960))] mx-auto">
         {/* Mobile Ambient Aura Glow behind Card to eliminate empty dead space */}
         <div 
           className="absolute -inset-6 z-0 rounded-[40px] blur-[36px] pointer-events-none opacity-50 flex lg:hidden"
@@ -454,7 +454,7 @@ export default function CardViewer({ onConfirm, onOpenEditTitle, onOpenEditMessa
         )}
 
         {/* Mobile/Tablet Controls: Tier 1 Actions (Eye, Customize, Flip) */}
-        <div className={`flex items-center justify-center gap-2.5 sm:gap-3 mt-2 sm:mt-2.5 w-full max-w-[min(300px,80vw,calc((100svh-248px)*688/960))] sm:max-w-[min(340px,75vw,calc((100svh-248px)*688/960))] transition-opacity duration-200 ${quickPickerMode ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
+        <div className={`flex items-center justify-center gap-2.5 sm:gap-3 mt-1.5 sm:mt-2.5 w-full max-w-[min(300px,80vw,calc((100svh-284px)*688/960))] sm:max-w-[min(340px,75vw,calc((100svh-264px)*688/960))] transition-opacity duration-200 ${quickPickerMode ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
           <LiquidGlassIconButton
             label="Fullscreen Preview"
             aria-label="Fullscreen Preview"
@@ -483,7 +483,7 @@ export default function CardViewer({ onConfirm, onOpenEditTitle, onOpenEditMessa
         </div>
 
         {/* Mobile/Tablet Controls: Tier 2 Action (Confirm CTA) */}
-        <div className={`flex items-center justify-center mt-2 sm:mt-2.5 w-full max-w-[min(300px,80vw,calc((100svh-248px)*688/960))] sm:max-w-[min(340px,75vw,calc((100svh-248px)*688/960))] transition-opacity duration-200 ${quickPickerMode ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
+        <div className={`flex items-center justify-center mt-2 sm:mt-2.5 w-full max-w-[min(300px,80vw,calc((100svh-284px)*688/960))] sm:max-w-[min(340px,75vw,calc((100svh-264px)*688/960))] transition-opacity duration-200 ${quickPickerMode ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
           <LiquidGlassButton
             variant="primary"
             size="md"

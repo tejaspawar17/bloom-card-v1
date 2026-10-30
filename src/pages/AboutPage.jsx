@@ -117,7 +117,7 @@ export default function AboutPage({ onStartCrafting, onFeedback, onTerms, onPriv
         {/* ============================================================
             1. HERO SECTION: Brand Mark + Exact Apple Display Type Scale & Weights
            ============================================================ */}
-        <div className="min-h-[calc(100vh-100px)] w-full flex flex-col items-center justify-center text-center gap-6 relative max-w-[640px] -mt-6 sm:-mt-8">
+        <div className="min-h-[calc(100svh-76px)] sm:min-h-[calc(100svh-96px)] lg:min-h-[calc(100vh-100px)] w-full flex flex-col items-center justify-center text-center gap-6 relative max-w-[640px] -mt-4 sm:-mt-8">
 
           {/* Interactive Mouse Tracking Eyes */}
           <motion.div 
