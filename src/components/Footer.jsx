@@ -23,13 +23,13 @@ export default function Footer({ onFeedback, onTerms, onPrivacy }) {
     <footer 
       role="contentinfo" 
       aria-label="Footer"
-      className="w-full px-8 xl:px-14 pt-6 pb-6 flex flex-col md:flex-row items-center md:items-stretch justify-between z-20 text-neutral-400 select-none relative gap-6 md:gap-4 font-sans"
+      className="w-full px-6 sm:px-8 xl:px-14 pt-6 pb-8 lg:pb-6 flex flex-col lg:flex-row items-center lg:items-stretch justify-between z-20 text-neutral-400 select-none relative gap-8 lg:gap-4 font-sans"
     >
       {/* 1. Left Section - Bloom Logo & Description + Bottom-Aligned Legal Links */}
-      <div className="flex flex-col w-[326px] text-center md:text-left items-center md:items-start shrink-0 justify-between self-stretch">
-        <div>
-          {/* Header Block: Height calibrated to match right side (40px) */}
-          <div className="h-[40px] flex items-end gap-[3px] pb-1">
+      <div className="flex flex-col w-full max-w-[326px] lg:w-[326px] text-center lg:text-left items-center lg:items-start shrink-0 justify-between self-center lg:self-stretch">
+        <div className="w-full flex flex-col items-center lg:items-start">
+          {/* Header Block: Centered on mobile/tablet, left-aligned on desktop (40px) */}
+          <div className="h-[40px] flex items-end justify-center lg:justify-start gap-[3px] pb-1 w-full">
             {/* Logo matching Navbar typography exactly */}
             <span className="font-serif italic text-[30px] xl:text-[32px] tracking-[-0.05em] text-white leading-none">
               Bloom
@@ -40,16 +40,16 @@ export default function Footer({ onFeedback, onTerms, onPrivacy }) {
           </div>
 
           {/* Divider Line: exactly 326px */}
-          <div className="w-[326px] h-[1px] bg-white/[0.08] mt-2 mb-2" aria-hidden="true" />
+          <div className="w-full lg:w-[326px] h-[1px] bg-white/[0.08] mt-2 mb-2.5 lg:mb-2" aria-hidden="true" />
 
           {/* Description: Regular weight, 12px / 17px leading */}
-          <p className="text-[12px] text-[#999999] leading-[17px] font-sans font-normal w-[326px] tracking-[-0.01em]">
+          <p className="text-[12px] text-[#999999] leading-[17px] font-sans font-normal w-full lg:w-[326px] tracking-[-0.01em]">
             I built Bloom because getting a dry "HBD 🎂" text hurts my soul. Real people deserve more than a generic blue bubble.
           </p>
         </div>
 
-        {/* Legal Links (Flush on bottom baseline matching Coffee Button) */}
-        <nav aria-label="Legal Links" className="flex items-center gap-2.5 text-[11px] text-[#727272] font-sans font-normal mt-4 pb-3">
+        {/* Legal Links (Centered on mobile/tablet; flush on bottom baseline on desktop) */}
+        <nav aria-label="Legal Links" className="flex items-center justify-center lg:justify-start gap-2.5 text-[11px] text-[#727272] font-sans font-normal mt-3.5 lg:mt-4 pb-0 lg:pb-3">
           <button onClick={onTerms} className="hover:text-white transition-colors cursor-pointer outline-none">
             Terms of Use
           </button>
@@ -60,8 +60,8 @@ export default function Footer({ onFeedback, onTerms, onPrivacy }) {
         </nav>
       </div>
 
-      {/* 2. Center Section - Action Trio (Instagram, Feedback, Email) Bottom-Aligned */}
-      <div className="flex items-center gap-3 shrink-0 self-center md:self-end pb-0.5">
+      {/* 2. Center Section - Action Trio (Instagram, Feedback, Email) */}
+      <div className="flex items-center justify-center gap-3 shrink-0 self-center lg:self-end pb-0.5">
         <a 
           href="https://www.instagram.com/teja_vu._.archive?obrf=OGI4N3BkNGlyMnIz&utm_source=qr" 
           target="_blank"
@@ -77,7 +77,7 @@ export default function Footer({ onFeedback, onTerms, onPrivacy }) {
         <button 
           type="button"
           onClick={onFeedback} 
-          className="dark-liquid-glass-pill h-[50px] px-6 text-[#FFFFFF] hover:text-[#FFFFFF] text-[16px] xl:text-[17px] leading-[22px] font-medium cursor-pointer"
+          className="dark-liquid-glass-pill h-[44px] lg:h-[50px] px-6 text-[#FFFFFF] hover:text-[#FFFFFF] text-[15px] lg:text-[16px] xl:text-[17px] leading-[20px] lg:leading-[22px] font-medium font-sans cursor-pointer"
         >
           Feedback
         </button>
@@ -94,13 +94,13 @@ export default function Footer({ onFeedback, onTerms, onPrivacy }) {
         </button>
       </div>
 
-      {/* 3. Right Section - Buy Me a Coffee (Exact Height & Baseline Match) */}
-      <div className="flex flex-col w-[326px] text-center md:text-right items-center md:items-end shrink-0 justify-between self-stretch">
-        <div>
-          {/* Header Block: Exactly 40px height matching left logo, spanning 326px to anchor divider line */}
-          <div className="w-[326px] h-[40px] flex items-end justify-between pb-0.5">
-            {/* Decals Group: Die-cut Duck Sticker (36x34px) + Rotated Eyes (34px) anchored to left edge */}
-            <div className="flex items-center gap-1.5 shrink-0 pb-0.5">
+      {/* 3. Right Section - Buy Me a Coffee (Centered on mobile/tablet; right-aligned on desktop) */}
+      <div className="flex flex-col w-full max-w-[326px] lg:w-[326px] text-center lg:text-right items-center lg:items-end shrink-0 justify-between self-center lg:self-stretch">
+        <div className="w-full flex flex-col items-center lg:items-end">
+          {/* Header Block: Centered cohesive group on mobile/tablet; 326px space-between on desktop */}
+          <div className="w-full lg:w-[326px] min-h-[40px] lg:h-[40px] flex flex-col lg:flex-row items-center lg:items-end justify-center lg:justify-between gap-1.5 lg:gap-0 pb-0.5">
+            {/* Decals Group: Die-cut Duck Sticker (36x34px) + Rotated Eyes (34px) */}
+            <div className="flex items-center justify-center gap-1.5 shrink-0 pb-0.5">
               <img 
                 src="/assets/bloom/duck.png" 
                 alt="rubber duck sticker" 
@@ -113,24 +113,24 @@ export default function Footer({ onFeedback, onTerms, onPrivacy }) {
               />
             </div>
 
-            {/* Title: Sentence Case, 18px font-size, 17px line-height, text-right, text-white */}
-            <div className="text-[18px] leading-[17px] font-normal tracking-[-0.02em] text-right text-white select-none">
-              Thinking about buying me a<br />
+            {/* Title: Centered on mobile/tablet, right-aligned 2-line on desktop */}
+            <div className="text-[17px] lg:text-[18px] leading-[20px] lg:leading-[17px] font-normal tracking-[-0.02em] text-center lg:text-right text-white select-none">
+              Thinking about buying me a<br className="hidden lg:inline" />{' '}
               cup of coffee
             </div>
           </div>
 
-          {/* Divider Line: Exactly 326px, exactly mt-2 mb-2 matching left divider */}
-          <div className="w-[326px] h-[1px] bg-white/[0.08] mt-2 mb-2 ml-auto" aria-hidden="true" />
+          {/* Divider Line: Exactly 326px, mt-2 mb-2 matching left divider */}
+          <div className="w-full lg:w-[326px] h-[1px] bg-white/[0.08] mt-2 mb-2.5 lg:mb-2 mx-auto lg:ml-auto lg:mr-0" aria-hidden="true" />
 
           {/* Shortened Awkward Funny Text: 12px / 17px leading */}
-          <p className="text-[12px] text-[#999999] leading-[17px] font-sans font-normal w-[326px] tracking-[-0.01em]">
+          <p className="text-[12px] text-[#999999] leading-[17px] font-sans font-normal w-full lg:w-[326px] tracking-[-0.01em]">
             Umm... so, yeah. I never know how to ask this without sounding weird, haha. But if this card made someone smile today, you could, maybe, buy me a coffee?
           </p>
         </div>
 
-        {/* Scaled Coffee Button (Flush on bottom baseline) */}
-        <div className="mt-4 ml-auto">
+        {/* Scaled Coffee Button (Centered on mobile/tablet; flush on bottom-right baseline on desktop) */}
+        <div className="mt-4 mx-auto lg:ml-auto lg:mr-0">
           <CoffeeButton />
         </div>
       </div>

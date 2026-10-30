@@ -49,7 +49,7 @@ export default function LiquidGlassButton({
         whileTap={{ scale: 0.95 }}
         transition={springTransition}
         className={clsx(
-          'primary-liquid-glass-button group',
+          'primary-liquid-glass-button group font-sans font-medium text-white',
           primarySizeStyles[size] || primarySizeStyles.lg,
           isButtonDisabled && 'opacity-40 cursor-not-allowed pointer-events-none',
           className
@@ -58,13 +58,9 @@ export default function LiquidGlassButton({
       >
         <span 
           className={clsx(
-            "relative z-10 flex items-center justify-center select-none text-center",
+            "relative z-10 flex items-center justify-center select-none text-center font-sans font-medium text-white",
             size === 'sm' ? 'gap-1.5' : size === 'md' ? 'gap-2' : 'gap-2.5'
           )}
-          style={{
-            color: 'var(--Color-Primary-Button-Label-Default, #E5E5EA)',
-            fontFamily: 'Inter, sans-serif',
-          }}
         >
           {icon && <span className="flex-shrink-0">{icon}</span>}
           {content}
@@ -73,18 +69,18 @@ export default function LiquidGlassButton({
     );
   }
 
-  const baseStyles = 'relative inline-flex items-center justify-center font-medium select-none cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed outline-none';
+  const baseStyles = 'relative inline-flex items-center justify-center font-sans font-medium text-white select-none cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed outline-none';
 
   const variantStyles = {
     secondary: clsx(
-      'bg-[rgba(14,14,14,0.85)] backdrop-blur-md border border-[rgba(166,166,166,0.5)] text-neutral-200 hover:text-white',
+      'bg-[rgba(14,14,14,0.85)] backdrop-blur-md border border-[rgba(166,166,166,0.5)] text-white hover:text-white',
       'shadow-[0px_8px_15px_rgba(0,0,0,0.04)] [box-shadow:inset_0px_40px_30px_-40px_rgba(230,230,230,0.9),inset_0px_-40px_10px_-40px_rgba(26,26,26,1)]',
       'hover:border-white/60',
       isActive && 'border-white/70 text-white bg-white/10'
     ),
-    tertiary: 'bg-[rgba(14,14,14,0.85)] backdrop-blur-md border border-[rgba(166,166,166,0.4)] text-neutral-300 hover:text-white shadow-lg',
+    tertiary: 'bg-[rgba(14,14,14,0.85)] backdrop-blur-md border border-[rgba(166,166,166,0.4)] text-white hover:text-white shadow-lg',
     destructive: 'bg-[rgba(14,14,14,0.85)] backdrop-blur-md border border-red-500/40 text-red-400 hover:text-red-300 hover:border-red-400',
-    text: 'bg-transparent hover:bg-white/10 border border-transparent hover:border-white/20 text-neutral-300 hover:text-white',
+    text: 'bg-transparent hover:bg-white/10 border border-transparent hover:border-white/20 text-white hover:text-white',
     menu: clsx(
       'bg-[rgba(14,14,14,0.85)] backdrop-blur-md border border-[rgba(166,166,166,0.5)] [box-shadow:inset_0px_40px_30px_-40px_rgba(230,230,230,0.9)] transition-all',
       isActive ? 'text-white border-white/60 bg-white/15' : 'text-neutral-400 hover:text-white hover:border-white/30'

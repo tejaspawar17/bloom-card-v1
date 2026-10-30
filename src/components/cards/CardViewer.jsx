@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Eye, ArrowClockwise, ArrowLeft } from '@phosphor-icons/react';
+import { Eye, ArrowClockwise, ArrowLeft, Sparkle, Camera, Smiley } from '@phosphor-icons/react';
 import { useCard } from '@/context/CardContext';
 
 import { PokemonCardFront, PokemonCardBack } from './PokemonCard';
@@ -369,10 +369,10 @@ export default function CardViewer({ onConfirm, onOpenEditTitle, onOpenEditMessa
                 animate={{ opacity: 1, y: 0, scale: 1 }}
                 exit={{ opacity: 0, y: -4, scale: 0.94 }}
                 transition={{ duration: 0.25 }}
-                className="lg:hidden pointer-events-none absolute top-[42%] left-1/2 -translate-x-1/2 -translate-y-1/2 z-40 px-3.5 py-1.5 rounded-full bg-black/75 backdrop-blur-xl border border-white/25 shadow-[0_8px_24px_rgba(0,0,0,0.65)] flex items-center gap-1.5 whitespace-nowrap"
+                className="lg:hidden pointer-events-none absolute top-[42%] left-1/2 -translate-x-1/2 -translate-y-1/2 z-40 h-[28px] px-3 rounded-full bg-black/75 backdrop-blur-xl border border-white/25 shadow-[0_8px_24px_rgba(0,0,0,0.65)] inline-flex items-center justify-center gap-1.5 whitespace-nowrap"
               >
-                <span className="text-[12px] leading-none">✨</span>
-                <span className="text-[12px] font-medium text-white tracking-[-0.01em] font-sans">
+                <Sparkle size={14} weight="regular" className="text-white shrink-0" />
+                <span className="text-[12px] leading-none font-medium text-white tracking-[-0.01em] font-sans">
                   Tap artwork to swap
                 </span>
               </motion.div>
@@ -388,17 +388,17 @@ export default function CardViewer({ onConfirm, onOpenEditTitle, onOpenEditMessa
                 className="lg:hidden pointer-events-none absolute inset-0 z-40"
               >
                 {/* Polaroid Hint Pill */}
-                <div className="absolute top-[25%] right-[9%] px-2.5 py-1 rounded-full bg-black/80 backdrop-blur-xl border border-white/25 shadow-[0_6px_20px_rgba(0,0,0,0.65)] flex items-center gap-1 whitespace-nowrap">
-                  <span className="text-[11px] leading-none">📷</span>
-                  <span className="text-[11px] font-medium text-white tracking-[-0.01em] font-sans">
+                <div className="absolute top-[25%] right-[9%] h-[26px] px-2.5 rounded-full bg-black/80 backdrop-blur-xl border border-white/25 shadow-[0_6px_20px_rgba(0,0,0,0.65)] inline-flex items-center justify-center gap-1.5 whitespace-nowrap">
+                  <Camera size={13} weight="regular" className="text-white shrink-0" />
+                  <span className="text-[11px] leading-none font-medium text-white tracking-[-0.01em] font-sans">
                     Tap photo
                   </span>
                 </div>
 
                 {/* Stamp Hint Pill */}
-                <div className="absolute top-[41%] left-1/2 -translate-x-1/2 px-2.5 py-1 rounded-full bg-black/80 backdrop-blur-xl border border-white/25 shadow-[0_6px_20px_rgba(0,0,0,0.65)] flex items-center gap-1 whitespace-nowrap">
-                  <span className="text-[11px] leading-none">😊</span>
-                  <span className="text-[11px] font-medium text-white tracking-[-0.01em] font-sans">
+                <div className="absolute top-[41%] left-1/2 -translate-x-1/2 h-[26px] px-2.5 rounded-full bg-black/80 backdrop-blur-xl border border-white/25 shadow-[0_6px_20px_rgba(0,0,0,0.65)] inline-flex items-center justify-center gap-1.5 whitespace-nowrap">
+                  <Smiley size={13} weight="regular" className="text-white shrink-0" />
+                  <span className="text-[11px] leading-none font-medium text-white tracking-[-0.01em] font-sans">
                     Tap stamp
                   </span>
                 </div>
@@ -456,7 +456,7 @@ export default function CardViewer({ onConfirm, onOpenEditTitle, onOpenEditMessa
           <button
             type="button"
             onClick={onOpenCustomize}
-            className="dark-liquid-glass-pill flex-1 h-[44px] px-5 text-[#FFFFFF] hover:text-[#FFFFFF] text-[15px] font-semibold tracking-[-0.01em] cursor-pointer shadow-[0_3px_12px_rgba(0,0,0,0.3)] transition-transform active:scale-[0.98]"
+            className="dark-liquid-glass-pill flex-1 h-[44px] px-5 text-[#FFFFFF] hover:text-[#FFFFFF] text-[15px] font-medium tracking-[-0.01em] cursor-pointer shadow-[0_3px_12px_rgba(0,0,0,0.3)] transition-transform active:scale-[0.98] font-sans"
           >
             Customize
           </button>
@@ -476,7 +476,7 @@ export default function CardViewer({ onConfirm, onOpenEditTitle, onOpenEditMessa
           <LiquidGlassButton
             variant="primary"
             size="md"
-            className="w-full !h-[48px] !text-[16px] font-semibold tracking-[-0.01em] shadow-[0_4px_16px_rgba(0,136,255,0.3)]"
+            className="w-full !h-[48px] !text-[16px] font-medium tracking-[-0.01em] shadow-[0_4px_16px_rgba(0,136,255,0.3)] font-sans"
             onClick={onConfirm}
           >
             Confirm

@@ -375,8 +375,8 @@ export default function MobileQuickPickerPopover({ mode, onClose }) {
             }}
           />
 
-          {/* Unified Header Bar with equal optical spacing for the close button */}
-          <div className="flex items-center justify-between h-[48px] pl-4 pr-3.5 bg-[#1F1F1F] border-b border-white/[0.08]">
+          {/* Unified Header Bar with equal 8px top & right spacing for the 32px close button */}
+          <div className="flex items-center justify-between h-[48px] pl-4 pr-2 bg-[#1F1F1F] border-b border-white/[0.08]">
             <span className="text-[15px] font-semibold text-white/85 tracking-[-0.02em] font-sans">
               {title}
             </span>

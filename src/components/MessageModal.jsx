@@ -178,7 +178,7 @@ export default function MessageModal({ onClose }) {
           onClick={(e) => e.stopPropagation()}
         >
           {/* Header Bar */}
-          <div className="flex items-center justify-between h-[48px] sm:h-[60px] pl-4 sm:pl-5 pr-3.5 sm:pr-4 bg-[#1F1F1F] border-b border-white/[0.08] shrink-0">
+          <div className="flex items-center justify-between h-[48px] sm:h-[60px] pl-4 sm:pl-5 pr-2 sm:pr-[11px] bg-[#1F1F1F] border-b border-white/[0.08] shrink-0">
             <h2 className="text-[rgba(255,255,255,0.85)] font-semibold text-[15px] sm:text-[17px] leading-[20px] sm:leading-[22px] tracking-[-0.02em] font-sans">
               {isTrainer ? 'Trainer Details' : 'Your Personal Note'}
             </h2>

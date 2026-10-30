@@ -333,16 +333,16 @@ export default function ShareModal({ onClose, onOpenRecipientPreview }) {
           aria-modal="true"
           aria-label="Generate Link or Download"
           layout
-          className="relative z-10 w-[calc(100%-32px)] max-w-[466px] mx-auto flex flex-col select-none rounded-[24px] bg-[#0E0E0E] border border-white/[0.12] overflow-hidden shadow-[0_24px_60px_rgba(0,0,0,0.85)] font-sans"
+          className="relative z-10 w-[calc(100%-8px)] sm:w-[calc(100%-32px)] max-w-[420px] sm:max-w-[466px] mx-auto flex flex-col select-none rounded-[20px] sm:rounded-[24px] bg-[#0E0E0E] border border-white/[0.12] overflow-hidden shadow-[0_24px_60px_rgba(0,0,0,0.85)] font-sans"
           onClick={(e) => e.stopPropagation()}
           initial={{ opacity: 0, scale: 0.95, y: 8 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.95, y: 8 }}
           transition={springTransition}
         >
-          {/* Header Bar matching Figma Tablet Surface [466x60] */}
-          <div className="flex items-center justify-between h-[60px] pl-5 pr-3 bg-[#1F1F1F] border-b border-white/[0.08]">
-            <h2 className="text-[rgba(255,255,255,0.85)] font-medium text-[17px] leading-[22px] tracking-[-0.02em] font-sans">
+          {/* Header Bar matching Figma Tablet Surface with equal top & right close button gap */}
+          <div className="flex items-center justify-between h-[48px] sm:h-[60px] pl-4 sm:pl-5 pr-2 sm:pr-[11px] bg-[#1F1F1F] border-b border-white/[0.08]">
+            <h2 className="text-[rgba(255,255,255,0.85)] font-semibold sm:font-medium text-[15px] sm:text-[17px] leading-[20px] sm:leading-[22px] tracking-[-0.02em] font-sans">
               {step === 'choice'
               ? 'Seal & Send'
               : step === 'sealing'
@@ -359,7 +359,8 @@ export default function ShareModal({ onClose, onOpenRecipientPreview }) {
               size="sm"
               label="Close dialog"
               onClick={onClose}
-              icon={<X size={20} weight="bold" className="text-[#FF383C]" />}
+              icon={<X size={17} weight="bold" className="text-[#FF383C]" />}
+              className="!w-[32px] !h-[32px] sm:!w-[38px] sm:!h-[38px]"
             />
           </div>
 
@@ -393,7 +394,7 @@ export default function ShareModal({ onClose, onOpenRecipientPreview }) {
                     <button
                       type="button"
                       onClick={handleDownloadPDF}
-                      className="dark-liquid-glass-pill w-full h-[48px] sm:h-[44px] px-5 text-[15px] sm:text-[14px] leading-[20px] font-medium text-white flex items-center justify-center font-sans active:scale-[0.96] transition-transform cursor-pointer whitespace-nowrap"
+                      className="dark-liquid-glass-pill w-full h-[48px] sm:h-[44px] px-5 text-[15px] sm:text-[14px] leading-[20px] tracking-[-0.01em] font-medium text-white flex items-center justify-center font-sans active:scale-[0.96] transition-transform cursor-pointer whitespace-nowrap"
                     >
                       <span>{isGeneratingPdf ? 'Packaging...' : 'Download PDF'}</span>
                     </button>
@@ -403,7 +404,7 @@ export default function ShareModal({ onClose, onOpenRecipientPreview }) {
                     variant="primary"
                     size="md"
                     onClick={handleGenerateLink}
-                    className="w-full sm:flex-1 sm:max-w-[190px] h-[48px] sm:h-[44px] text-[15px] sm:text-[14px] font-sans"
+                    className="w-full sm:flex-1 sm:max-w-[190px] h-[48px] sm:h-[44px] text-[15px] sm:text-[14px] leading-[20px] tracking-[-0.01em] font-medium text-white font-sans"
                   >
                     Generate Link
                   </LiquidGlassButton>
@@ -487,7 +488,7 @@ export default function ShareModal({ onClose, onOpenRecipientPreview }) {
                     variant="primary"
                     size="md"
                     onClick={onClose}
-                    className="w-full h-[44px] font-sans"
+                    className="w-full h-[44px] font-medium text-white font-sans"
                   >
                     Continue
                   </LiquidGlassButton>
@@ -535,7 +536,7 @@ export default function ShareModal({ onClose, onOpenRecipientPreview }) {
                       variant="primary"
                       size="md"
                       onClick={handleCopy}
-                      className="h-[44px] px-5 font-sans"
+                      className="h-[44px] px-5 font-medium text-white font-sans"
                     >
                       <motion.span
                         key={copied ? 'copied' : 'copy'}

@@ -285,8 +285,8 @@ export default function FeedbackModal({ onClose }) {
         transition={modalSpring}
       >
         {/* Header Bar matching Figma Tablet Surface [466x60] */}
-        <div className="flex items-center justify-between h-[60px] pl-5 pr-3 bg-[#1F1F1F] border-b border-white/[0.08]">
-          <h2 className="text-[rgba(255,255,255,0.85)] font-medium text-[17px] leading-[22px] tracking-[-0.02em] font-sans">
+        <div className="flex items-center justify-between h-[48px] sm:h-[60px] pl-4 sm:pl-5 pr-2 sm:pr-[11px] bg-[#1F1F1F] border-b border-white/[0.08]">
+          <h2 className="text-[rgba(255,255,255,0.85)] font-semibold sm:font-medium text-[15px] sm:text-[17px] leading-[20px] sm:leading-[22px] tracking-[-0.02em] font-sans">
             {isSubmitted ? 'Feedback Sent' : 'Send Feedback'}
           </h2>
 
@@ -294,7 +294,8 @@ export default function FeedbackModal({ onClose }) {
             size="sm"
             label="Close dialog"
             onClick={onClose}
-            icon={<X size={22} weight="bold" className="text-[#FF383C]" />}
+            icon={<X size={17} weight="bold" className="text-[#FF383C]" />}
+            className="!w-[32px] !h-[32px] sm:!w-[38px] sm:!h-[38px]"
           />
         </div>
 
