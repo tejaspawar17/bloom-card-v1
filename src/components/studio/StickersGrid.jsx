@@ -1,5 +1,6 @@
 import React, { useRef, useState, useEffect, useCallback, useMemo } from 'react';
 import { motion } from 'framer-motion';
+import { Check } from '@phosphor-icons/react';
 import { cn } from '@/lib/utils';
 import { useCard } from '@/context/CardContext';
 import { STICKERS } from '@/data/cardData';
@@ -17,8 +18,17 @@ export default function StickersGrid({
   const stickerContainerRef = useRef(null);
   const [canScrollUp, setCanScrollUp] = useState(false);
   const [canScrollDown, setCanScrollDown] = useState(true);
-  const [selectedSticker, setSelectedSticker] = useState(null);
   const [activeStampTrigger, setActiveStampTrigger] = useState(null);
+
+  const currentSide = state.activeSide || 'front';
+  const sideStickers = useMemo(
+    () => (state.stickers || []).filter((s) => (s.side || 'front') === currentSide),
+    [state.stickers, currentSide]
+  );
+  const selectedIdsSet = useMemo(
+    () => new Set(sideStickers.map((s) => s.stickerId)),
+    [sideStickers]
+  );
 
   const hasOverflow = STICKERS.length > 4;
 
@@ -58,8 +68,19 @@ export default function StickersGrid({
   }, [hasOverflow, canScrollUp, canScrollDown]);
 
   const handleStickerClick = (sticker) => {
-    setSelectedSticker(sticker.id);
+    const existing = sideStickers.filter((s) => s.stickerId === sticker.id);
+    if (existing.length > 0) {
+      // Toggle off: remove placed instance(s) of this sticker on the current side
+      existing.forEach((s) => {
+        dispatch({ type: 'REMOVE_STICKER', payload: s.id });
+      });
+      return;
+    }
+
     setActiveStampTrigger(`sticker-${sticker.id}-${Date.now()}`);
+    const offsetIdx = sideStickers.length;
+    const staggerX = 64 + ((offsetIdx * 38) % 120);
+    const staggerY = 68 + ((offsetIdx * 32) % 110);
 
     dispatch({ 
       type: 'ADD_STICKER', 
@@ -68,9 +89,9 @@ export default function StickersGrid({
         stickerId: sticker.id, 
         src: sticker.image,
         name: sticker.name,
-        side: state.activeSide || 'front', 
-        x: 80, 
-        y: 80, 
+        side: currentSide, 
+        x: staggerX, 
+        y: staggerY, 
         r: (Math.random() * 20 - 10),
         rotation: (Math.random() * 20 - 10),
         scale: 1,
@@ -102,7 +123,7 @@ export default function StickersGrid({
           aria-label={title}
         >
           {STICKERS.map((sticker) => {
-            const isSelected = selectedSticker === sticker.id;
+            const isSelected = selectedIdsSet.has(sticker.id);
             const shortName = sticker.name.length > 9 ? sticker.name.substring(0, 8) + '…' : sticker.name;
             const isThisStickerActive = activeStampTrigger?.startsWith(`sticker-${sticker.id}`);
 
@@ -115,7 +136,8 @@ export default function StickersGrid({
                   transition={{ type: 'spring', stiffness: 450, damping: 20 }}
                   type="button"
                   role="listitem"
-                  aria-label={"Sticker: " + sticker.name}
+                  aria-pressed={isSelected}
+                  aria-label={"Sticker: " + sticker.name + (isSelected ? " (selected)" : "")}
                   onClick={() => handleStickerClick(sticker)}
                   className={cn(
                     "relative flex flex-col items-center cursor-pointer group outline-none font-sans",
@@ -155,6 +177,11 @@ export default function StickersGrid({
                       loading="lazy"
                       draggable={false}
                     />
+                    {isSelected && (
+                      <div className="absolute top-1 right-1 z-20 w-[16px] h-[16px] rounded-full bg-[#0088FF] border border-white/80 flex items-center justify-center shadow-sm pointer-events-none">
+                        <Check size={10} weight="bold" className="text-white" />
+                      </div>
+                    )}
                   </motion.div>
 
                   <div className={cn(
@@ -181,10 +208,17 @@ export default function StickersGrid({
     </div>
   );
 
+  const headerBadge = selectedIdsSet.size > 0 ? (
+    <span className="mr-2 px-2 py-0.5 rounded-full bg-[#0088FF]/20 border border-[#0088FF]/40 text-[#4DA8FF] text-[11px] font-medium leading-[14px] select-none font-sans">
+      {selectedIdsSet.size} selected
+    </span>
+  ) : null;
+
   return (
     <div className={cn("h-fit w-full", className)}>
       <WindowPanel 
         title={title} 
+        headerAction={headerBadge}
         bodyClassName="pt-[13px] pr-[4px] pb-[15px] pl-[15px] xl:pt-[15px] xl:pr-[4px] xl:pb-[17px] xl:pl-[17px] 2xl:pt-[16px] 2xl:pr-[4px] 2xl:pb-[18px] 2xl:pl-[18px] overflow-hidden"
       >
         {scrollContent}

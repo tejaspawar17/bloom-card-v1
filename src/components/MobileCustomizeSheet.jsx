@@ -73,6 +73,7 @@ export default function MobileCustomizeSheet({ isOpen, onClose }) {
   // Horizontal swipe touch tracking
   const touchStartX = useRef(null);
   const touchStartY = useRef(null);
+  const isDraggingSheetRef = useRef(false);
 
   // Sync card side with the active step
   useEffect(() => {
@@ -127,11 +128,11 @@ export default function MobileCustomizeSheet({ isOpen, onClose }) {
   const stepMeta = STEPS[step - 1] || STEPS[0];
   // Apple HIG Content-Aware Detents:
   // Step 3 (Stickers) fits its 11 items cleanly (~62dvh), keeping 3D card visible above
-  const currentHeightClass = isExpanded 
-    ? 'max-h-[92dvh] h-[92dvh]' 
+  const targetHeight = isExpanded
+    ? '92dvh'
     : step === 3
-      ? 'max-h-[62dvh] h-[62dvh]'
-      : 'max-h-[68dvh] h-[68dvh]';
+      ? '62dvh'
+      : '68dvh';
 
   if (typeof document === 'undefined') return null;
 
@@ -151,32 +152,47 @@ export default function MobileCustomizeSheet({ isOpen, onClose }) {
             aria-hidden="true"
           />
 
-          {/* Bottom Sheet Modal */}
+          {/* Bottom Sheet Modal (Apple UISheetPresentationController 3-Detent Physics) */}
           <motion.div
             key="mobile-sheet-panel"
-            initial={{ y: '100%' }}
-            animate={{ y: '0%' }}
+            initial={{ y: '100%', height: targetHeight }}
+            animate={{ y: '0%', height: targetHeight }}
             exit={{ y: '100%' }}
-            transition={{ type: 'spring', damping: 28, stiffness: 280, mass: 0.85 }}
+            transition={{ type: 'spring', damping: 32, stiffness: 340, mass: 0.8 }}
             drag="y"
             dragControls={dragControls}
             dragListener={false}
             dragConstraints={{ top: 0, bottom: 0 }}
-            dragElastic={{ top: 0, bottom: 0.5 }}
+            dragElastic={{ top: isExpanded ? 0.08 : 0.45, bottom: 0.65 }}
+            onDragStart={() => {
+              isDraggingSheetRef.current = true;
+            }}
             onDragEnd={(e, info) => {
+              setTimeout(() => {
+                isDraggingSheetRef.current = false;
+              }, 80);
+
+              const dy = info.offset.y;
+              const vy = info.velocity.y;
+
               if (isExpanded) {
-                if (info.offset.y > 60 || info.velocity.y > 250) {
+                // Long drag down (> 200px) or fast downward flick skips Medium and collapses completely
+                if (dy > 200 || (vy > 680 && dy > 55)) {
+                  onClose();
+                } else if (dy > 40 || vy > 200) {
+                  // Short/medium drag down snaps to Medium (50-68% detent)
                   setIsExpanded(false);
                 }
               } else {
-                if (info.offset.y < -30 || info.velocity.y < -200) {
+                // From Medium detent: drag up expands to Full; drag down collapses completely
+                if (dy < -35 || vy < -200) {
                   setIsExpanded(true);
-                } else if (info.offset.y > 80 || info.velocity.y > 350) {
+                } else if (dy > 65 || vy > 280) {
                   onClose();
                 }
               }
             }}
-            className={`relative w-full max-w-[460px] mx-auto bg-[#121214] backdrop-blur-3xl border-t border-white/15 rounded-t-[38px] shadow-[0_-16px_48px_rgba(0,0,0,0.85)] flex flex-col z-10 transition-[height,max-height] duration-300 ease-out ${currentHeightClass}`}
+            className="relative w-full max-w-[460px] mx-auto bg-[#121214] backdrop-blur-3xl border-t border-white/15 rounded-t-[38px] shadow-[0_-16px_48px_rgba(0,0,0,0.85)] flex flex-col z-10 will-change-[transform,height]"
             role="dialog"
             aria-modal="true"
             aria-label="Customize Card"
@@ -184,15 +200,19 @@ export default function MobileCustomizeSheet({ isOpen, onClose }) {
             {/* Grabber only - clean Apple HIG, interactive drag handle */}
             <div 
               onPointerDown={(e) => dragControls.start(e)}
-              onClick={() => setIsExpanded(prev => !prev)}
-              className="w-full pt-3 pb-2 flex flex-col items-center justify-center cursor-grab active:cursor-grabbing select-none touch-none active:opacity-70 transition-opacity"
+              onClick={() => {
+                if (!isDraggingSheetRef.current) {
+                  setIsExpanded(prev => !prev);
+                }
+              }}
+              className="w-full pt-3.5 pb-2 flex flex-col items-center justify-center cursor-grab active:cursor-grabbing select-none touch-none active:opacity-70 transition-opacity"
               aria-label={isExpanded ? "Collapse sheet to medium" : "Expand sheet to full height"}
             >
               <div className="w-[60px] h-[5px] rounded-full bg-white/25 hover:bg-white/40 active:bg-white/60 transition-colors" />
             </div>
 
             {/* Header Control Bar: Row 1 - Navigation & Title */}
-            <div className="px-4 pt-2.5 pb-2 flex items-center justify-between">
+            <div className="px-4 pt-2 pb-2 flex items-center justify-between">
               {/* Left action button (Circle 42px) */}
               {step === 1 ? (
                 <button
@@ -214,8 +234,11 @@ export default function MobileCustomizeSheet({ isOpen, onClose }) {
                 </button>
               )}
 
-              {/* Step Title - horizontally centered with buttons */}
-              <div className="flex-1 flex justify-center items-center select-none px-2">
+              {/* Step Title - horizontally centered with buttons; also acts as part of the top drag zone */}
+              <div 
+                onPointerDown={(e) => dragControls.start(e)}
+                className="flex-1 flex justify-center items-center select-none touch-none cursor-grab active:cursor-grabbing px-2 py-1"
+              >
                 <span className="text-[17px] font-semibold text-white tracking-tight">
                   {stepMeta.title}
                 </span>

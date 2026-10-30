@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useCard } from '@/context/CardContext';
@@ -14,11 +14,10 @@ export default function MessageModal({ onClose }) {
   const [trainerName, setTrainerName] = useState(state.trainerName || '');
   const [trainerBio, setTrainerBio] = useState(state.trainerBio || '');
 
-  // Mobile virtual keyboard & visual viewport tracking
-  const [viewportHeight, setViewportHeight] = useState(null);
-  const [viewportTop, setViewportTop] = useState(0);
+  // Mobile virtual keyboard state (boolean only - avoids 60fps visualViewport jitter & iOS transform caret bug)
   const [isKeyboardOpen, setIsKeyboardOpen] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
+  const blurTimeoutRef = useRef(null);
 
   // Prevent background scroll and maintain viewport stability on iOS
   useEffect(() => {
@@ -38,11 +37,8 @@ export default function MessageModal({ onClose }) {
     const updateViewport = () => {
       if (window.visualViewport) {
         const vv = window.visualViewport;
-        setViewportHeight(vv.height);
-        setViewportTop(vv.offsetTop);
-        // Mobile keyboard is open if visual viewport is significantly smaller than window height
-        const shrunk = vv.height < (window.innerHeight - 80);
-        setIsKeyboardOpen(shrunk);
+        const shrunk = vv.height < (window.innerHeight - 100);
+        setIsKeyboardOpen((prev) => (prev !== shrunk ? shrunk : prev));
       }
       if (window.scrollY !== 0) {
         window.scrollTo(0, 0);
@@ -58,6 +54,7 @@ export default function MessageModal({ onClose }) {
     window.addEventListener('scroll', updateViewport, { passive: false });
 
     return () => {
+      if (blurTimeoutRef.current) clearTimeout(blurTimeoutRef.current);
       document.body.style.position = prevPosition;
       document.body.style.top = prevTop;
       document.body.style.width = prevWidth;
@@ -72,10 +69,7 @@ export default function MessageModal({ onClose }) {
     };
   }, []);
 
-  // Smooth GPU-accelerated vertical offset to center modal above keyboard without layout jitter
-  const shiftY = isKeyboardOpen && viewportHeight && typeof window !== 'undefined'
-    ? Math.max(0, (window.innerHeight - viewportHeight) / 2 - viewportTop)
-    : 0;
+  const isKeyboardActive = isFocused || isKeyboardOpen;
 
   // Handle escape key
   useEffect(() => {
@@ -153,15 +147,22 @@ export default function MessageModal({ onClose }) {
 
   return createPortal(
     <AnimatePresence>
-      <div className="fixed inset-0 z-[100] flex items-center justify-center p-3 sm:p-4">
+      <div className="fixed inset-0 z-[100] flex flex-col items-center sm:justify-center p-3 sm:p-4">
         {/* Backdrop */}
         <motion.div
           className="fixed inset-0 bg-black/60 backdrop-blur-md"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          transition={{ duration: 0.25 }}
+          transition={{ duration: 0.2 }}
           onClick={onClose}
+        />
+
+        {/* Mobile Top Flex Spacer: smoothly glides modal up on focus without CSS transform (keeps iOS blue caret 100% locked) */}
+        <div
+          className={`w-full sm:hidden transition-[flex-grow,height] duration-300 ease-[cubic-bezier(0.32,0.72,0,1)] pointer-events-none ${
+            isKeyboardActive ? 'grow-0 h-[4px]' : 'grow'
+          }`}
         />
         
         {/* Modal Window matching Figma Tablets & Compact Mobile */}
@@ -169,15 +170,15 @@ export default function MessageModal({ onClose }) {
           role="dialog"
           aria-modal="true"
           aria-label={isTrainer ? "Edit Trainer Details" : "Edit Card Message"}
-          className="relative z-10 w-full max-w-[440px] sm:max-w-[480px] max-h-[calc(100svh-24px)] sm:max-h-[calc(100svh-32px)] bg-[#0E0E0E] rounded-[20px] sm:rounded-[24px] overflow-hidden flex flex-col shadow-[0_24px_60px_rgba(0,0,0,0.85)] border border-white/[0.12] select-none will-change-transform"
-          initial={{ opacity: 0, scale: 0.95, y: 8 }}
-          animate={{ opacity: 1, scale: 1, y: -shiftY }}
-          exit={{ opacity: 0, scale: 0.95, y: 8 }}
-          transition={{ type: "spring", stiffness: 320, damping: 32, mass: 0.8 }}
+          className="relative z-10 w-full max-w-[440px] sm:max-w-[480px] max-h-[calc(100svh-24px)] sm:max-h-[calc(100svh-32px)] bg-[#0E0E0E] rounded-[20px] sm:rounded-[24px] overflow-hidden flex flex-col shadow-[0_24px_60px_rgba(0,0,0,0.85)] border border-white/[0.12] select-none"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.18, ease: "easeOut" }}
           onClick={(e) => e.stopPropagation()}
         >
           {/* Header Bar */}
-          <div className="flex items-center justify-between h-[48px] sm:h-[60px] pl-4 sm:pl-5 pr-2.5 sm:pr-3 bg-[#1F1F1F] border-b border-white/[0.08] shrink-0">
+          <div className="flex items-center justify-between h-[44px] sm:h-[60px] pl-4 sm:pl-5 pr-2.5 sm:pr-3 bg-[#1F1F1F] border-b border-white/[0.08] shrink-0">
             <h2 className="text-[rgba(255,255,255,0.85)] font-semibold text-[15px] sm:text-[17px] leading-[20px] sm:leading-[22px] tracking-[-0.02em] font-sans">
               {isTrainer ? 'Trainer Details' : 'Your Personal Note'}
             </h2>
@@ -195,10 +196,15 @@ export default function MessageModal({ onClose }) {
           {/* Form Content Area */}
           <form 
             onSubmit={handleSubmit} 
-            onFocusCapture={() => setIsFocused(true)}
+            onFocusCapture={() => {
+              if (blurTimeoutRef.current) clearTimeout(blurTimeoutRef.current);
+              setIsFocused(true);
+            }}
             onBlurCapture={(e) => {
               if (!e.currentTarget.contains(e.relatedTarget)) {
-                setIsFocused(false);
+                blurTimeoutRef.current = setTimeout(() => {
+                  setIsFocused(false);
+                }, 80);
               }
             }}
             className="p-3 sm:p-6 flex flex-col gap-2 sm:gap-4 bg-[#0E0E0E] overflow-y-auto flex-1"
@@ -260,60 +266,69 @@ export default function MessageModal({ onClose }) {
               </>
             ) : (
               <>
-                {/* To Field */}
-                <div className="flex flex-col gap-1 sm:gap-1.5">
-                  <div className="flex items-center justify-between">
-                    <label htmlFor="card-to-input" className="text-[12px] sm:text-[13px] leading-[16px] sm:leading-[18px] font-semibold text-[#D9D9D9] font-sans">
-                      To:
-                    </label>
-                    <span className="text-[10px] sm:text-[11px] text-[#8E8E93] font-sans">
-                      Recipient
-                    </span>
+                {/* To & From Fields: Side-by-side on mobile (<640px) to save 70px height; stacked on sm+ (tablet/laptop/PC) */}
+                <div className="grid grid-cols-2 sm:grid-cols-1 gap-2.5 sm:gap-4">
+                  {/* To Field */}
+                  <div className="flex flex-col gap-1 sm:gap-1.5">
+                    <div className="flex items-center justify-between">
+                      <label htmlFor="card-to-input" className="text-[12px] sm:text-[13px] leading-[16px] sm:leading-[18px] font-semibold text-[#D9D9D9] font-sans">
+                        To:
+                      </label>
+                      <span className="hidden sm:inline text-[11px] text-[#8E8E93] font-sans">
+                        Recipient
+                      </span>
+                      <span className={`sm:hidden text-[10px] tabular-nums font-sans ${to.length >= 15 ? 'text-[#FF6961]/70' : 'text-[#8E8E93]'}`}>
+                        {to.length}/15
+                      </span>
+                    </div>
+                    <div className="relative rounded-[11px] bg-white/[0.05] hover:bg-white/[0.07] border border-white/[0.10] focus-within:border-[#0055D4]/60 transition-all duration-150">
+                      <input
+                        id="card-to-input"
+                        type="text"
+                        placeholder="e.g., Maya..."
+                        value={to}
+                        onChange={(e) => setTo(e.target.value)}
+                        maxLength={15}
+                        className="w-full bg-transparent px-3 sm:px-4 py-1.5 sm:py-3 text-[16px] sm:text-[15px] leading-[20px] text-white placeholder-[#727272] outline-none font-sans sm:pr-16"
+                        autoFocus={typeof window !== 'undefined' && window.innerWidth >= 640}
+                      />
+                      <div className={`hidden sm:block absolute right-3.5 top-1/2 -translate-y-1/2 text-[11px] font-normal tabular-nums font-sans ${to.length >= 15 ? 'text-[#FF6961]/70' : 'text-[#727272]'}`}>
+                        {to.length} / 15
+                      </div>
+                    </div>
                   </div>
-                  <div className="relative rounded-[11px] bg-white/[0.05] hover:bg-white/[0.07] border border-white/[0.10] focus-within:border-[#0055D4]/60 transition-all duration-150">
-                    <input
-                      id="card-to-input"
-                      type="text"
-                      placeholder="e.g., Maya, Bestie, Mom..."
-                      value={to}
-                      onChange={(e) => setTo(e.target.value)}
-                      maxLength={15}
-                      className="w-full bg-transparent px-3.5 sm:px-4 py-2 sm:py-3 text-[16px] sm:text-[15px] leading-[22px] sm:leading-[20px] text-white placeholder-[#727272] outline-none font-sans pr-14 sm:pr-16"
-                      autoFocus={typeof window !== 'undefined' && window.innerWidth >= 640}
-                    />
-                    <div className={`absolute right-3 sm:right-3.5 top-1/2 -translate-y-1/2 text-[10px] sm:text-[11px] font-normal tabular-nums font-sans ${to.length >= 15 ? 'text-[#FF6961]/70' : 'text-[#727272]'}`}>
-                      {to.length} / 15
+
+                  {/* From Field */}
+                  <div className="flex flex-col gap-1 sm:gap-1.5">
+                    <div className="flex items-center justify-between">
+                      <label htmlFor="card-from-input" className="text-[12px] sm:text-[13px] leading-[16px] sm:leading-[18px] font-semibold text-[#D9D9D9] font-sans">
+                        From:
+                      </label>
+                      <span className="hidden sm:inline text-[11px] text-[#8E8E93] font-sans">
+                        Sender
+                      </span>
+                      <span className={`sm:hidden text-[10px] tabular-nums font-sans ${from.length >= 15 ? 'text-[#FF6961]/70' : 'text-[#8E8E93]'}`}>
+                        {from.length}/15
+                      </span>
+                    </div>
+                    <div className="relative rounded-[11px] bg-white/[0.05] hover:bg-white/[0.07] border border-white/[0.10] focus-within:border-[#0055D4]/60 transition-all duration-150">
+                      <input
+                        id="card-from-input"
+                        type="text"
+                        placeholder="e.g., Alex..."
+                        value={from}
+                        onChange={(e) => setFrom(e.target.value)}
+                        maxLength={15}
+                        className="w-full bg-transparent px-3 sm:px-4 py-1.5 sm:py-3 text-[16px] sm:text-[15px] leading-[20px] text-white placeholder-[#727272] outline-none font-sans sm:pr-16"
+                      />
+                      <div className={`hidden sm:block absolute right-3.5 top-1/2 -translate-y-1/2 text-[11px] font-normal tabular-nums font-sans ${from.length >= 15 ? 'text-[#FF6961]/70' : 'text-[#727272]'}`}>
+                        {from.length} / 15
+                      </div>
                     </div>
                   </div>
                 </div>
 
-                {/* From Field */}
-                <div className="flex flex-col gap-1 sm:gap-1.5">
-                  <div className="flex items-center justify-between">
-                    <label htmlFor="card-from-input" className="text-[12px] sm:text-[13px] leading-[16px] sm:leading-[18px] font-semibold text-[#D9D9D9] font-sans">
-                      From:
-                    </label>
-                    <span className="text-[10px] sm:text-[11px] text-[#8E8E93] font-sans">
-                      Sender
-                    </span>
-                  </div>
-                  <div className="relative rounded-[11px] bg-white/[0.05] hover:bg-white/[0.07] border border-white/[0.10] focus-within:border-[#0055D4]/60 transition-all duration-150">
-                    <input
-                      id="card-from-input"
-                      type="text"
-                      placeholder="e.g., Alex, Secret Admirer..."
-                      value={from}
-                      onChange={(e) => setFrom(e.target.value)}
-                      maxLength={15}
-                      className="w-full bg-transparent px-3.5 sm:px-4 py-2 sm:py-3 text-[16px] sm:text-[15px] leading-[22px] sm:leading-[20px] text-white placeholder-[#727272] outline-none font-sans pr-14 sm:pr-16"
-                    />
-                    <div className={`absolute right-3 sm:right-3.5 top-1/2 -translate-y-1/2 text-[10px] sm:text-[11px] font-normal tabular-nums font-sans ${from.length >= 15 ? 'text-[#FF6961]/70' : 'text-[#727272]'}`}>
-                      {from.length} / 15
-                    </div>
-                  </div>
-                </div>
-
-                {/* Message Field: Height expanded to h-[138px] so full 194 chars are completely visible */}
+                {/* Message Field: Height fits full 194 chars completely without scroll */}
                 <div className="flex flex-col gap-1 sm:gap-1.5">
                   <div className="flex items-center justify-between">
                     <label htmlFor="card-message-input" className="text-[12px] sm:text-[13px] leading-[16px] sm:leading-[18px] font-semibold text-[#D9D9D9] font-sans">
@@ -324,16 +339,16 @@ export default function MessageModal({ onClose }) {
                     </span>
                   </div>
 
-                  <div className="relative rounded-[11px] bg-white/[0.05] hover:bg-white/[0.07] border border-white/[0.10] focus-within:border-[#0055D4]/60 transition-all duration-150">
+                  <div className="relative rounded-[11px] bg-white/[0.05] hover:bg-white/[0.07] border border-white/[0.10] focus-within:border-[#0055D4]/60 transition-all duration-150 pb-6 sm:pb-7">
                     <textarea
                       id="card-message-input"
                       placeholder={messagePlaceholder}
                       value={message}
                       onChange={(e) => setMessage(e.target.value)}
                       maxLength={194}
-                      className="w-full h-[142px] sm:h-[148px] bg-transparent px-3.5 sm:px-4 pt-2.5 sm:pt-3.5 pb-6 sm:pb-8 text-[16px] sm:text-[15px] leading-[21px] text-white placeholder-[#727272] outline-none resize-none font-sans overflow-y-auto"
+                      className="w-full h-[126px] sm:h-[124px] bg-transparent px-3.5 sm:px-4 pt-2.5 sm:pt-3.5 pb-0 text-[16px] sm:text-[15px] leading-[20px] sm:leading-[21px] text-white placeholder-[#727272] outline-none resize-none font-sans overflow-y-auto"
                     />
-                    <div className={`absolute bottom-2 sm:bottom-2.5 right-3 text-[10px] sm:text-[11px] font-normal tabular-nums font-sans ${message.length >= 194 ? 'text-[#FF6961]/70' : 'text-[#727272]'}`}>
+                    <div className={`absolute bottom-1.5 sm:bottom-2 right-3 text-[10px] sm:text-[11px] font-normal tabular-nums font-sans pointer-events-none ${message.length >= 194 ? 'text-[#FF6961]/70' : 'text-[#727272]'}`}>
                       {message.length} / 194
                     </div>
                   </div>
@@ -342,12 +357,12 @@ export default function MessageModal({ onClose }) {
             )}
 
             {/* Footer Action Buttons matching Figma Pills */}
-            <div className="flex items-center justify-end gap-2.5 sm:gap-3 pt-1 sm:pt-2 shrink-0">
+            <div className="flex items-center justify-end gap-2.5 sm:gap-3 pt-0.5 sm:pt-2 shrink-0">
               {/* Clear All Pill Button */}
               <button 
                 type="button" 
                 onClick={handleReset}
-                className="dark-liquid-glass-pill h-[38px] sm:h-[44px] px-4 sm:px-5 text-[14px] sm:text-[15px] leading-[18px] sm:leading-[20px] font-medium text-white font-sans"
+                className="dark-liquid-glass-pill h-[36px] sm:h-[44px] px-4 sm:px-5 text-[14px] sm:text-[15px] leading-[18px] sm:leading-[20px] font-medium text-white font-sans"
               >
                 Clear All
               </button>
@@ -357,13 +372,16 @@ export default function MessageModal({ onClose }) {
                 variant="primary" 
                 size="md" 
                 type="submit"
-                className="!h-[38px] sm:!h-[44px] !px-4 sm:!px-5 !text-[14px] sm:!text-[15px]"
+                className="!h-[36px] sm:!h-[44px] !px-4 sm:!px-5 !text-[14px] sm:!text-[15px]"
               >
                 Done
               </LiquidGlassButton>
             </div>
           </form>
         </motion.div>
+
+        {/* Mobile Bottom Flex Spacer: balances top spacer when keyboard is closed */}
+        <div className="w-full grow sm:hidden pointer-events-none" />
       </div>
     </AnimatePresence>,
     document.body

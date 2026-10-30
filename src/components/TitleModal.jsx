@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useCard } from '@/context/CardContext';
@@ -10,11 +10,10 @@ export default function TitleModal({ onClose }) {
   const { state, dispatch } = useCard();
   const [val, setVal] = useState(state.subject || '');
 
-  // Mobile virtual keyboard & visual viewport tracking
-  const [viewportHeight, setViewportHeight] = useState(null);
-  const [viewportTop, setViewportTop] = useState(0);
+  // Mobile virtual keyboard state (boolean only - avoids 60fps visualViewport jitter & iOS transform caret bug)
   const [isKeyboardOpen, setIsKeyboardOpen] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
+  const blurTimeoutRef = useRef(null);
 
   // Prevent background scroll and maintain viewport stability on iOS
   useEffect(() => {
@@ -34,11 +33,8 @@ export default function TitleModal({ onClose }) {
     const updateViewport = () => {
       if (window.visualViewport) {
         const vv = window.visualViewport;
-        setViewportHeight(vv.height);
-        setViewportTop(vv.offsetTop);
-        // Mobile keyboard is open if visual viewport is significantly smaller than window height
-        const shrunk = vv.height < (window.innerHeight - 80);
-        setIsKeyboardOpen(shrunk);
+        const shrunk = vv.height < (window.innerHeight - 100);
+        setIsKeyboardOpen((prev) => (prev !== shrunk ? shrunk : prev));
       }
       if (window.scrollY !== 0) {
         window.scrollTo(0, 0);
@@ -54,6 +50,7 @@ export default function TitleModal({ onClose }) {
     window.addEventListener('scroll', updateViewport, { passive: false });
 
     return () => {
+      if (blurTimeoutRef.current) clearTimeout(blurTimeoutRef.current);
       document.body.style.position = prevPosition;
       document.body.style.top = prevTop;
       document.body.style.width = prevWidth;
@@ -68,10 +65,7 @@ export default function TitleModal({ onClose }) {
     };
   }, []);
 
-  // Smooth GPU-accelerated vertical offset to center modal above keyboard without layout jitter
-  const shiftY = isKeyboardOpen && viewportHeight && typeof window !== 'undefined'
-    ? Math.max(0, (window.innerHeight - viewportHeight) / 2 - viewportTop)
-    : 0;
+  const isKeyboardActive = isFocused || isKeyboardOpen;
 
   // Handle ESC to close
   useEffect(() => {
@@ -139,15 +133,22 @@ export default function TitleModal({ onClose }) {
 
   return createPortal(
     <AnimatePresence>
-      <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4">
+      <div className="fixed inset-0 z-50 flex flex-col items-center sm:justify-center p-3 sm:p-4">
         {/* Backdrop */}
         <motion.div
           className="fixed inset-0 bg-black/60 backdrop-blur-md"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          transition={{ duration: 0.25 }}
+          transition={{ duration: 0.2 }}
           onClick={onClose}
+        />
+
+        {/* Mobile Top Flex Spacer: smoothly glides modal up on focus without CSS transform (keeps iOS blue caret 100% locked) */}
+        <div
+          className={`w-full sm:hidden transition-[flex-grow,height] duration-300 ease-[cubic-bezier(0.32,0.72,0,1)] pointer-events-none ${
+            isKeyboardActive ? 'grow-0 h-[28px]' : 'grow'
+          }`}
         />
 
         {/* Modal Window matching Figma Tablets & Compact Mobile */}
@@ -155,17 +156,12 @@ export default function TitleModal({ onClose }) {
           role="dialog"
           aria-modal="true"
           aria-label="Edit Card Title"
-          className="relative z-10 w-full max-w-[420px] sm:max-w-[466px] max-h-[calc(100svh-24px)] sm:max-h-[calc(100svh-32px)] flex flex-col select-none rounded-[20px] sm:rounded-[24px] bg-[#0E0E0E] border border-white/[0.12] overflow-hidden shadow-[0_24px_60px_rgba(0,0,0,0.85)] will-change-transform"
+          className="relative z-10 w-full max-w-[420px] sm:max-w-[466px] max-h-[calc(100svh-24px)] sm:max-h-[calc(100svh-32px)] flex flex-col select-none rounded-[20px] sm:rounded-[24px] bg-[#0E0E0E] border border-white/[0.12] overflow-hidden shadow-[0_24px_60px_rgba(0,0,0,0.85)]"
           onClick={(e) => e.stopPropagation()}
-          initial={{ opacity: 0, scale: 0.95, y: 8 }}
-          animate={{ opacity: 1, scale: 1, y: -shiftY }}
-          exit={{ opacity: 0, scale: 0.95, y: 8 }}
-          transition={{
-            type: "spring",
-            stiffness: 320,
-            damping: 32,
-            mass: 0.8
-          }}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.18, ease: "easeOut" }}
         >
           {/* Header Bar */}
           <div className="flex items-center justify-between h-[48px] sm:h-[60px] pl-4 sm:pl-5 pr-2.5 sm:pr-3 bg-[#1F1F1F] border-b border-white/[0.08] shrink-0">
@@ -186,10 +182,15 @@ export default function TitleModal({ onClose }) {
           {/* Form Content Area */}
           <form 
             onSubmit={handleSubmit} 
-            onFocusCapture={() => setIsFocused(true)}
+            onFocusCapture={() => {
+              if (blurTimeoutRef.current) clearTimeout(blurTimeoutRef.current);
+              setIsFocused(true);
+            }}
             onBlurCapture={(e) => {
               if (!e.currentTarget.contains(e.relatedTarget)) {
-                setIsFocused(false);
+                blurTimeoutRef.current = setTimeout(() => {
+                  setIsFocused(false);
+                }, 80);
               }
             }}
             className="flex flex-col p-4 sm:p-6 gap-4 sm:gap-6 bg-[#0E0E0E] overflow-y-auto"
@@ -209,21 +210,27 @@ export default function TitleModal({ onClose }) {
                 </span>
               </div>
 
-              <div className="relative rounded-[11px] bg-white/[0.05] hover:bg-white/[0.07] border border-white/[0.10] focus-within:border-[#0055D4]/60 transition-all duration-150">
+              <div className="relative rounded-[11px] bg-white/[0.05] hover:bg-white/[0.07] border border-white/[0.10] focus-within:border-[#0055D4]/60 transition-all duration-150 pb-6 sm:pb-7">
                 <textarea
                   id="card-title-input"
                   value={val}
-                  onChange={(e) => setVal(e.target.value)}
+                  onChange={(e) => {
+                    // Cap explicit newlines to 1 (strictly 2 lines max) so cursor never drops onto a phantom 3rd line
+                    const raw = e.target.value;
+                    const lines = raw.split('\n');
+                    const clamped = lines.length > 2 ? `${lines[0]}\n${lines.slice(1).join(' ')}` : raw;
+                    setVal(clamped.slice(0, maxLength));
+                  }}
                   placeholder={placeholder}
                   rows={2}
                   maxLength={maxLength}
-                  className="w-full bg-transparent px-3.5 sm:px-4 pt-3 pb-6 sm:pb-8 text-[16px] sm:text-[15px] leading-[22px] text-white placeholder-[#727272] outline-none resize-none font-sans"
+                  className="w-full h-[54px] bg-transparent px-3.5 sm:px-4 pt-2.5 pb-0 text-[16px] sm:text-[15px] leading-[22px] text-white placeholder-[#727272] outline-none resize-none overflow-hidden font-sans"
                   autoFocus={typeof window !== 'undefined' && window.innerWidth >= 640}
                 />
                 
                 {/* Character Counter */}
                 <div 
-                  className={`absolute bottom-2 sm:bottom-2.5 right-3 text-[10px] sm:text-[11px] font-normal tabular-nums tracking-[0.0055em] font-sans transition-colors ${
+                  className={`absolute bottom-2 sm:bottom-2.5 right-3 text-[10px] sm:text-[11px] font-normal tabular-nums tracking-[0.0055em] font-sans transition-colors pointer-events-none ${
                     isAtLimit ? 'text-[#FF6961]/70' : 'text-white/25'
                   }`}
                 >
@@ -255,6 +262,9 @@ export default function TitleModal({ onClose }) {
             </div>
           </form>
         </motion.div>
+
+        {/* Mobile Bottom Flex Spacer: balances top spacer when keyboard is closed */}
+        <div className="w-full grow sm:hidden pointer-events-none" />
       </div>
     </AnimatePresence>,
     document.body
