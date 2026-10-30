@@ -94,13 +94,13 @@ export default function Footer({ onFeedback, onTerms, onPrivacy }) {
         </button>
       </div>
 
-      {/* 3. Right Section - Buy Me a Coffee (Centered on mobile/tablet; right-aligned on desktop) */}
+      {/* 3. Right Section - Buy Me a Coffee (Option B on mobile/tablet; right-aligned on desktop) */}
       <div className="flex flex-col w-full max-w-[326px] lg:w-[326px] text-center lg:text-right items-center lg:items-end shrink-0 justify-between self-center lg:self-stretch">
         <div className="w-full flex flex-col items-center lg:items-end">
-          {/* Header Block: Centered cohesive group on mobile/tablet; 326px space-between on desktop */}
-          <div className="w-full lg:w-[326px] min-h-[40px] lg:h-[40px] flex flex-col lg:flex-row items-center lg:items-end justify-center lg:justify-between gap-1.5 lg:gap-0 pb-0.5">
-            {/* Decals Group: Die-cut Duck Sticker (36x34px) + Rotated Eyes (34px) */}
-            <div className="flex items-center justify-center gap-1.5 shrink-0 pb-0.5">
+          {/* Header Block: Clean centered title on mobile/tablet; 326px space-between with decals on desktop */}
+          <div className="w-full lg:w-[326px] h-[32px] lg:h-[40px] flex items-end justify-center lg:justify-between pb-0.5">
+            {/* Desktop-only Decals Group in Header: Die-cut Duck Sticker (36x34px) + Rotated Eyes (34px) */}
+            <div className="hidden lg:flex items-center gap-1.5 shrink-0 pb-0.5">
               <img 
                 src="/assets/bloom/duck.png" 
                 alt="rubber duck sticker" 
@@ -113,8 +113,8 @@ export default function Footer({ onFeedback, onTerms, onPrivacy }) {
               />
             </div>
 
-            {/* Title: Centered on mobile/tablet, right-aligned 2-line on desktop */}
-            <div className="text-[17px] lg:text-[18px] leading-[20px] lg:leading-[17px] font-normal tracking-[-0.02em] text-center lg:text-right text-white select-none">
+            {/* Title: Centered single-line on mobile/tablet, right-aligned 2-line on desktop */}
+            <div className="text-[16px] lg:text-[18px] leading-[20px] lg:leading-[17px] font-normal tracking-[-0.02em] text-center lg:text-right text-white select-none">
               Thinking about buying me a<br className="hidden lg:inline" />{' '}
               cup of coffee
             </div>
@@ -129,8 +129,20 @@ export default function Footer({ onFeedback, onTerms, onPrivacy }) {
           </p>
         </div>
 
-        {/* Scaled Coffee Button (Centered on mobile/tablet; flush on bottom-right baseline on desktop) */}
-        <div className="mt-4 mx-auto lg:ml-auto lg:mr-0">
+        {/* Option B: Mobile/Tablet Decals peeking right next to Coffee Button; Desktop flush bottom-right */}
+        <div className="mt-4 flex items-center justify-center gap-3 mx-auto lg:ml-auto lg:mr-0">
+          <div className="flex lg:hidden items-center gap-1 shrink-0">
+            <img 
+              src="/assets/bloom/duck.png" 
+              alt="rubber duck sticker" 
+              className="w-[34px] h-[32px] object-contain pointer-events-none drop-shadow-sm select-none" 
+            />
+            <img 
+              src="/assets/bloom/eyes.png" 
+              alt="eyes" 
+              className="w-[32px] h-[32px] object-contain pointer-events-none drop-shadow-sm select-none rotate-[-6deg]" 
+            />
+          </div>
           <CoffeeButton />
         </div>
       </div>

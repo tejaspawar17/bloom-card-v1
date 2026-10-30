@@ -91,7 +91,7 @@ export default function ScatteredKeepsakes() {
   return (
     <div 
       aria-hidden="true" 
-      className="absolute inset-0 w-full h-full pointer-events-none overflow-hidden z-20 select-none"
+      className="absolute inset-0 w-full h-full pointer-events-none overflow-hidden z-0 select-none"
     >
       {/* ============================================================
           BLOOM BRAND GREEN GRADIENT STARDUST (Soft Bokeh Blur)
@@ -112,7 +112,7 @@ export default function ScatteredKeepsakes() {
           y: yForeground,
           rotate: velocityTilt1,
         }}
-        className="absolute top-[180px] left-3 sm:left-[3%] md:left-[5%] lg:left-[8%] xl:left-[11%] 2xl:left-[14%] pointer-events-auto"
+        className="absolute top-[520px] lg:top-[180px] -left-6 sm:left-[2%] lg:left-[8%] xl:left-[11%] 2xl:left-[14%] opacity-20 sm:opacity-30 lg:opacity-100 scale-75 sm:scale-90 lg:scale-100 pointer-events-none lg:pointer-events-auto"
       >
         <KeepsakeFolder
           folderTitle="January"
@@ -133,7 +133,7 @@ export default function ScatteredKeepsakes() {
           y: yMidground,
           rotate: velocityTilt2,
         }}
-        className="absolute top-[340px] right-3 sm:right-[3%] md:right-[5%] lg:right-[8%] xl:right-[11%] 2xl:right-[14%] pointer-events-auto"
+        className="absolute top-[600px] lg:top-[340px] -right-6 sm:right-[2%] lg:right-[8%] xl:right-[11%] 2xl:right-[14%] opacity-20 sm:opacity-30 lg:opacity-100 scale-75 sm:scale-90 lg:scale-100 pointer-events-none lg:pointer-events-auto"
       >
         <KeepsakeFolder
           folderTitle="Spring"
@@ -154,7 +154,7 @@ export default function ScatteredKeepsakes() {
           y: yMidground,
           rotate: velocityTilt3,
         }}
-        className="absolute top-[890px] right-3 sm:right-[3%] md:right-[5%] lg:right-[8%] xl:right-[11%] 2xl:right-[14%] pointer-events-auto"
+        className="absolute top-[1020px] lg:top-[890px] -right-6 sm:right-[2%] lg:right-[8%] xl:right-[11%] 2xl:right-[14%] opacity-20 sm:opacity-30 lg:opacity-100 scale-75 sm:scale-90 lg:scale-100 pointer-events-none lg:pointer-events-auto"
       >
         <KeepsakeFolder
           folderTitle="Summer"
@@ -175,7 +175,7 @@ export default function ScatteredKeepsakes() {
           y: yDeepSpace,
           rotate: velocityTilt4,
         }}
-        className="absolute top-[1330px] left-3 sm:left-[3%] md:left-[5%] lg:left-[8%] xl:left-[11%] 2xl:left-[14%] pointer-events-auto"
+        className="absolute top-[1480px] lg:top-[1330px] -left-6 sm:left-[2%] lg:left-[8%] xl:left-[11%] 2xl:left-[14%] opacity-20 sm:opacity-30 lg:opacity-100 scale-75 sm:scale-90 lg:scale-100 pointer-events-none lg:pointer-events-auto"
       >
         <KeepsakeFolder
           folderTitle="Autumn"

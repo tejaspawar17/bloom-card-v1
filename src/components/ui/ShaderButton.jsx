@@ -151,102 +151,94 @@ vec3 paletteN(float t, int count) {
     return oklabToLinear(mixLch(lab0, lab1, localT));
 }
 
-float IGN(vec2 uv) {
-    return fract(52.9829189 * fract(dot(uv, vec2(0.06711056, 0.00583715))));
+vec3 applyContrastSaturation(vec3 c, float contrastVal, float satVal) {
+    vec3 lab = linearToOklab(max(c, vec3(0.0)));
+    lab.x = clamp((lab.x - 0.5) * contrastVal + 0.5, 0.0, 1.0);
+    lab.yz *= satVal;
+    return max(oklabToLinear(lab), vec3(0.0));
 }
 
-float quickNoise(vec2 I) {
-    return fract(sin(dot(I, vec2(12.9898, 78.233))) * 43758.5453);
-}
-
-float getDither(vec2 I, float mode) {
-    if (mode < 0.5) return 0.5;
-    if (mode < 1.5) return IGN(I);
-    return quickNoise(I);
-}
-
-vec3 softGamutMap(vec3 linearRgb) {
-    float maxC = max(linearRgb.r, max(linearRgb.g, linearRgb.b));
-    float minC = min(linearRgb.r, min(linearRgb.g, linearRgb.b));
-    
-    if (minC >= 0.0 && maxC <= 1.0) return linearRgb;
-    
-    vec3 lab = linearToOklab(max(linearRgb, 0.0));
+vec3 softGamutMap(vec3 c) {
+    float maxC = max(c.r, max(c.g, c.b));
+    if (maxC <= 1.0) return clamp(c, 0.0, 1.0);
+    vec3 lab = linearToOklab(max(c, vec3(0.0)));
     float L = clamp(lab.x, 0.0, 1.0);
     float C = length(lab.yz);
-    float h = atan(lab.z, lab.y);
-    
-    float maxChroma = 0.4 * (1.0 - pow(abs(2.0 * L - 1.0), 2.0));
-    
-    if (C > maxChroma * 0.7) {
-        float knee = maxChroma * 0.7;
-        C = knee + (maxChroma - knee) * tanh((C - knee) / (maxChroma - knee + 0.001));
+    if (C > 0.0001) {
+        vec2 dir = lab.yz / C;
+        float lo = 0.0;
+        float hi = C;
+        for (int i = 0; i < 6; i++) {
+            float mid = 0.5 * (lo + hi);
+            vec3 test = oklabToLinear(vec3(L, dir * mid));
+            if (max(test.r, max(test.g, test.b)) <= 1.0 && min(test.r, min(test.g, test.b)) >= 0.0) {
+                lo = mid;
+            } else {
+                hi = mid;
+            }
+        }
+        lab = vec3(L, dir * lo);
     }
-    
-    return clamp(oklabToLinear(vec3(L, C * cos(h), C * sin(h))), 0.0, 1.0);
+    return clamp(oklabToLinear(lab), 0.0, 1.0);
 }
 
-vec3 applyContrastSaturation(vec3 linearRgb, float contrast, float saturation) {
-    vec3 lab = linearToOklab(linearRgb);
-    float C = length(lab.yz);
-    float h = atan(lab.z, lab.y);
-    
-    lab.x = clamp((lab.x - 0.5) * contrast + 0.5, 0.0, 1.0);
-    C *= saturation;
-    lab.y = C * cos(h);
-    lab.z = C * sin(h);
-    
-    return oklabToLinear(lab);
+float bayer4x4(vec2 p) {
+    ivec2 ip = ivec2(mod(p, 4.0));
+    int index = ip.y * 4 + ip.x;
+    const float bayer[16] = float[16](
+         0.0/16.0,  8.0/16.0,  2.0/16.0, 10.0/16.0,
+        12.0/16.0,  4.0/16.0, 14.0/16.0,  6.0/16.0,
+         3.0/16.0, 11.0/16.0,  1.0/16.0,  9.0/16.0,
+        15.0/16.0,  7.0/16.0, 13.0/16.0,  5.0/16.0
+    );
+    return bayer[index];
+}
+
+float ign(vec2 p) {
+    vec3 magic = vec3(0.06711056, 0.00583715, 52.9829189);
+    return fract(magic.z * fract(dot(p, magic.xy)));
 }
 
 void main() {
     vec2 fragCoord = v_uv * u_resolution;
-    vec2 r = u_resolution;
-    vec2 p = (fragCoord * 2.0 - r) / r.y;
+    float minDim = max(min(u_resolution.x, u_resolution.y), 1.0);
+    vec2 uv = (fragCoord - 0.5 * u_resolution) / minDim;
     
-    int colorCount = u_colors_length;
-    if (colorCount < 1) {
-        fragColor = vec4(0.0, 0.0, 0.0, 1.0);
-        return;
-    }
-
-    float t = u_time * 0.3;
-    float looping = step(0.5, u_loop);
-    float phase = TAU * u_time / max(u_loop, 0.01);
-    float radius = u_loop * u_speed * 0.3 / TAU;
-    float tA = sin(phase) * radius;
-    float tB = (1.0 - cos(phase)) * radius;
-    
+    int colorCount = clamp(u_colors_length, 1, 4);
     vec3 seedOffset = seedRandom(u_seed);
-    vec3 seedOffset2 = seedRandom(u_seed + 100.0);
+    vec3 seedOffset2 = seedRandom(u_seed + 59.0);
     
-    float seedAngle = u_seed * GOLDEN_ANGLE;
-    vec2 seedPhase = (seedOffset2.xy - 0.5) * TAU;
+    float scaleVal = max(u_scale, 0.05);
+    vec2 p = uv / scaleVal + (seedOffset.xy - 0.5) * 8.0;
     
-    float cs = cos(seedAngle);
-    float sn = sin(seedAngle);
-    p = mat2(cs, -sn, sn, cs) * p;
+    float t = u_time;
+    float loopPeriod = 8.0;
+    float looping = step(0.5, u_loop);
     
-    float dither = getDither(floor(fragCoord / u_pixelRatio), u_ditherMode);
+    float dither = 0.5;
+    if (u_ditherMode > 0.5) {
+        dither = ign(floor(fragCoord / max(u_pixelRatio, 1.0)));
+    } else {
+        dither = bayer4x4(floor(fragCoord / max(u_pixelRatio, 1.0)));
+    }
     
     float totalVal = 0.0;
     float totalWeight = 0.0;
-    int turbIter = int(u_turbIter);
-    float freq = 1.0 / max(u_turbFreq, 0.01);
+    int turbIter = clamp(int(floor(u_turbIter + 0.5)), 1, 8);
+    float freq = max(u_turbFreq, 0.01);
     
-    for (float i = 0.0; i < 4.0; i++) {
-        float eph = i / 4.0;
-        vec2 q = p * u_scale;
-        float sq = eph * eph;
+    for (int i = 0; i < 2; i++) {
+        float fi = float(i);
+        float phase = fract(t / loopPeriod + fi * 0.5);
+        float eph = mix(0.5, phase, looping);
+        float tA = (eph - 0.5) * loopPeriod * u_speed;
+        float tB = (eph - 0.5) * TAU;
         
-        if (u_jellify > 0.5) {
-            q.yx *= mix(1.0, 0.5, 1.0 - exp(-sq));
-        }
+        vec2 q = p;
+        float a = 0.0;
+        float d = 0.0;
         
-        float a = seedPhase.x;
-        float d = seedPhase.y;
-        
-        for (int j = 2; j < 13; j++) {
+        for (int j = 1; j <= 8; j++) {
             if (j >= turbIter) break;
             float fj = float(j);
             float t1 = mix(t * u_speed, tA, looping);
@@ -278,8 +270,8 @@ void main() {
 `;
 
 const SIZE_CONFIGS = {
-  sm: 'px-6 py-2.5 text-[14px]',
-  md: 'px-8 py-3.5 text-[16px]',
+  sm: 'px-5 py-2 text-[14px]',
+  md: 'px-6 py-2.5 text-[14.5px] sm:px-8 sm:py-3.5 sm:text-[16px]',
   lg: 'px-10 py-4 text-[17px]',
 };
 
@@ -436,14 +428,16 @@ export default function ShaderButton({
       initial="initial"
       whileHover="hover"
       onClick={onClick}
-      className={`relative inline-flex items-center justify-center ${showArrow ? 'gap-3' : 'gap-0'} ${SIZE_CONFIGS[size] || SIZE_CONFIGS.lg} rounded-full overflow-hidden cursor-pointer select-none bg-[#0A1202] text-white outline-none hig-focus ${className}`}
+      className={`relative inline-flex items-center justify-center whitespace-nowrap ${showArrow ? 'gap-3' : 'gap-0'} ${SIZE_CONFIGS[size] || SIZE_CONFIGS.lg} rounded-full overflow-hidden cursor-pointer select-none bg-[#0A1202] text-white outline-none hig-focus ${className}`}
       style={{
+        isolation: 'isolate',
+        WebkitMaskImage: '-webkit-radial-gradient(white, black)',
         ...style,
       }}
     >
       {/* 1. WebGL Liquid Gradient Shader Canvas (Framer micro-animation: hover dims opacity to 0.4 via 0.4s tween) */}
       <motion.div
-        className="absolute inset-[-2px] pointer-events-none rounded-full overflow-hidden z-0"
+        className="absolute inset-0 pointer-events-none rounded-full overflow-hidden z-0"
         variants={{
           initial: { opacity: 1 },
           hover: { opacity: 0.4 },
@@ -452,19 +446,20 @@ export default function ShaderButton({
       >
         <canvas
           ref={canvasRef}
-          className="w-full h-full block"
-          style={{ width: '100%', height: '100%' }}
+          className="w-full h-full block rounded-full"
+          style={{ width: '100%', height: '100%', borderRadius: '9999px' }}
         />
       </motion.div>
 
       {/* 2. Inset Specular Border Glow (Framer micro-animation: hover dims opacity to 0.4 via 0.4s tween) */}
       <motion.div
         aria-hidden="true"
-        className="absolute inset-[-2px] pointer-events-none rounded-full z-0"
+        className="absolute inset-0 pointer-events-none rounded-full z-0"
         style={{
           backgroundColor: 'rgba(10, 18, 2, 0.02)',
           boxShadow: 'inset 0px 0px 14px 0px rgba(217, 249, 157, 0.42)',
           mixBlendMode: 'screen',
+          borderRadius: '9999px',
         }}
         variants={{
           initial: { opacity: 1 },
@@ -473,8 +468,8 @@ export default function ShaderButton({
         transition={{ duration: 0.4, ease: [0.4, 0, 0.6, 1] }}
       />
 
-      {/* 3. Button Text (Framer Typography: 300 weight, 17px, 0.016em tracking) */}
-      <span className="relative z-10 font-sans font-light leading-[1.6em] tracking-[0.016em] text-white">
+      {/* 3. Button Text */}
+      <span className="relative z-10 font-sans font-medium leading-[1.4em] tracking-[-0.01em] text-white">
         {children}
       </span>
 

@@ -128,10 +128,10 @@ export default function MobileQuickPickerPopover({ mode, onClose }) {
   const title =
     mode === 'frontArtwork'
       ? isPokemonMode
-        ? 'Select Pokémon for the Card'
-        : 'Select Flower for the Card'
+        ? 'Pick Your Pokémon'
+        : 'Pick Your Bloom'
       : mode === 'polaroid'
-        ? 'Select Polaroid Photo'
+        ? 'Back Cover Artwork'
         : 'Stamp an Emotion';
 
   const edgeMask = (() => {

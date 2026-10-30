@@ -6,7 +6,7 @@ const GLASS_SHADOW = "0px 8px 15px 0px rgba(0, 0, 0, 0.1), 0px 0px 0px 0.5px rgb
 
 function NavTab({ children, isActive, onClick }) {
   return (
-    <div className="relative flex items-center justify-center w-[86px] h-[44px] xl:w-[94px] xl:h-[50px] 2xl:w-[98px] 2xl:h-[54px]">
+    <div className="relative flex items-center justify-center w-[76px] h-[44px] xl:w-[86px] xl:h-[50px] 2xl:w-[90px] 2xl:h-[54px]">
       {/* The Glowing Gradient Background */}
       <div className="absolute -inset-x-2 -inset-y-1.5 z-0 rounded-[500px] blur-[10px] pointer-events-none opacity-85" style={{ background: "radial-gradient(ellipse at center, rgba(134, 183, 90, 0.90) 0%, rgba(113, 157, 83, 0.65) 45%, rgba(79, 121, 62, 0.35) 75%, transparent 100%)" }}></div>
       
@@ -38,7 +38,7 @@ function NavTab({ children, isActive, onClick }) {
 
 function BloomTab({ children, onClick }) {
   return (
-    <div className="relative flex items-center justify-center w-[124px] h-[50px] xl:w-[140px] xl:h-[60px] 2xl:w-[146px] 2xl:h-[63px]">
+    <div className="relative flex items-center justify-center w-[112px] h-[50px] xl:w-[130px] xl:h-[60px] 2xl:w-[136px] 2xl:h-[63px]">
       {/* The Glowing Gradient Background */}
       <div className="absolute -inset-x-2.5 -inset-y-2 z-0 rounded-[500px] blur-[12px] pointer-events-none opacity-90" style={{ background: "radial-gradient(ellipse at center, rgba(134, 183, 90, 0.95) 0%, rgba(113, 157, 83, 0.70) 45%, rgba(79, 121, 62, 0.40) 75%, transparent 100%)" }}></div>
       
@@ -64,14 +64,14 @@ export default function Navbar({ activeTab = 'design', onTabChange }) {
   return (
     <header role="banner" className="relative w-full pt-[2px] flex items-center justify-center z-30 select-none overflow-visible">
       
-      <nav role="tablist" aria-label="Navigation Tabs" className="relative flex flex-row items-center justify-center gap-[10px] w-full">
+      <nav role="tablist" aria-label="Navigation Tabs" className="relative flex flex-row items-center justify-center gap-[4px] sm:gap-[6px] w-full">
         
         {/* Menu Divider Line (exactly the width of the layout) */}
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 w-full max-w-[1440px] px-3 xl:px-8 h-[4px] -translate-y-1/2 z-0 pointer-events-none">
           <div className="w-full h-full rounded-[24px] blur-[8px] pointer-events-none figma-aura-gradient opacity-75"></div>
         </div>
 
-        <div className="relative z-10 flex flex-row items-center gap-[10px]">
+        <div className="relative z-10 flex flex-row items-center gap-[4px] sm:gap-[6px]">
           <NavTab isActive={activeTab === 'about'} onClick={() => onTabChange('about')}>
             About
           </NavTab>

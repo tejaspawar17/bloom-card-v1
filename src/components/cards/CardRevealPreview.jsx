@@ -253,24 +253,30 @@ export default function CardRevealPreview({ onCraftOwn }) {
       </div>
 
       {/* Center Radiant AnimatedAILoaderFX Orb + ShaderButton ("Reveal") */}
-      <div className="relative z-20 flex flex-col items-center justify-center my-auto">
+      <div 
+        className="relative z-20 flex flex-col items-center justify-center my-auto"
+        style={{ transformStyle: 'flat', isolation: 'isolate' }}
+      >
         <AnimatedAILoaderFX
           palette="bloom"
-          size={210} 
+          size={190}
+          className="sm:!w-[210px] sm:!h-[210px]"
           animationDuration={revealStage === 'charging' ? 1.2 : 6.5}
         >
-          <ShaderButton
-            type="button"
-            showArrow={false}
-            size="md"
-            className="shadow-[0_12px_28px_rgba(0,0,0,0.6)] active:scale-95 transition-transform font-medium tracking-tight z-10"
-            onClick={(e) => {
-              e.stopPropagation();
-              handleReveal();
-            }}
-          >
-            {revealStage === 'charging' ? 'Opening...' : 'Tap to Open'}
-          </ShaderButton>
+          <div className="relative z-20" style={{ transform: 'translateZ(4px)' }}>
+            <ShaderButton
+              type="button"
+              showArrow={false}
+              size="md"
+              className="shadow-[0_12px_28px_rgba(0,0,0,0.6)] active:scale-95 transition-transform font-medium tracking-tight z-20"
+              onClick={(e) => {
+                e.stopPropagation();
+                handleReveal();
+              }}
+            >
+              {revealStage === 'charging' ? 'Opening...' : 'Tap to Open'}
+            </ShaderButton>
+          </div>
         </AnimatedAILoaderFX>
       </div>
 
@@ -359,7 +365,7 @@ export default function CardRevealPreview({ onCraftOwn }) {
   );
 
   return (
-    <div className="w-full max-w-[1600px] mx-auto px-4 sm:px-6 min-h-[calc(100dvh-64px)] flex flex-col items-center justify-center select-none py-4 sm:py-5 z-10 relative">
+    <div className="w-full max-w-[1600px] mx-auto px-4 sm:px-6 min-h-[calc(100svh-56px)] lg:min-h-[calc(100dvh-64px)] flex flex-col items-center justify-center select-none py-3 sm:py-5 z-10 relative">
       {/* 3D Card Stage */}
       <div 
         className="relative flex flex-col items-center justify-center"
@@ -477,7 +483,7 @@ export default function CardRevealPreview({ onCraftOwn }) {
           </AnimatePresence>
 
           <div 
-            className="perspective-container relative w-[min(300px,80vw,calc((100svh-220px)*688/960))] sm:w-[min(355px,75vw,calc((100svh-220px)*688/960))] aspect-[688/960] touch-none"
+            className="perspective-container relative w-[min(318px,82vw,calc((100svh-195px)*688/960))] sm:w-[min(355px,75vw,calc((100svh-210px)*688/960))] lg:w-[min(355px,75vw,calc((100dvh-220px)*688/960))] aspect-[688/960] touch-none"
             style={{ perspective: '1200px' }}
             onTouchMove={handleTouchMove}
           >
@@ -623,7 +629,7 @@ export default function CardRevealPreview({ onCraftOwn }) {
           </motion.div>
         </div>
 
-                  {/* Mobile Tier 1: Card Interaction Controls [ ▶ Replay ] & [ 🔄 Flip ] side-by-side beneath card */}
+          {/* Mobile Tier 1: Card Interaction Controls [ ▶ Replay ] & [ 🔄 Flip ] side-by-side beneath card */}
           <motion.div 
             initial={{ opacity: 0, y: 8 }}
             animate={{ 
@@ -632,7 +638,11 @@ export default function CardRevealPreview({ onCraftOwn }) {
               pointerEvents: revealStage === 'revealed' ? 'auto' : 'none'
             }}
             transition={{ duration: 0.35 }}
-            className="flex lg:hidden items-center justify-center gap-4 sm:gap-6 mt-2.5 sm:mt-3 z-20"
+            className={`flex lg:hidden items-center justify-center gap-4 sm:gap-6 z-20 transition-all duration-300 ${
+              revealStage === 'revealed'
+                ? 'h-[44px] mt-3 sm:mt-3.5'
+                : 'h-0 mt-0 overflow-hidden'
+            }`}
           >
             <LiquidGlassIconButton
               size="md"
@@ -658,12 +668,12 @@ export default function CardRevealPreview({ onCraftOwn }) {
             y: 0
           }}
           transition={{ duration: 0.35 }}
-          className="flex items-center justify-center mt-2.5 sm:mt-3.5 z-20"
+          className="w-full sm:w-auto flex items-center justify-center mt-3 sm:mt-3.5 z-20"
         >
           <LiquidGlassButton
             variant="primary"
             size="md"
-            className="w-full max-w-[min(300px,80vw)] sm:max-w-none !h-[48px] lg:!h-[52px] !text-[16px] lg:!text-[17px] font-semibold tracking-[-0.01em] shadow-[0_4px_16px_rgba(0,136,255,0.3)]"
+            className="w-full sm:w-auto !h-[48px] lg:!h-[52px] !text-[16px] lg:!text-[17px] font-medium tracking-[-0.01em] shadow-[0_4px_16px_rgba(0,136,255,0.3)] font-sans"
             disabled={revealStage !== 'revealed'}
             onClick={revealStage === 'revealed' ? onCraftOwn : undefined}
           >
