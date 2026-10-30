@@ -181,7 +181,9 @@ export default function FeedbackModal({ onClose }) {
     };
   }, []);
 
-  const isShifted = isKeyboardOpen;
+  const shiftY = isKeyboardOpen && viewportHeight && typeof window !== 'undefined'
+    ? Math.max(0, (window.innerHeight - viewportHeight) / 2 - viewportTop)
+    : 0;
 
   // Close on ESC
   useEffect(() => {
@@ -259,14 +261,7 @@ export default function FeedbackModal({ onClose }) {
   if (typeof document === 'undefined') return null;
 
   return createPortal(
-    <div 
-      style={{
-        top: isShifted && viewportTop ? `${viewportTop}px` : 0,
-        height: isShifted && viewportHeight ? `${viewportHeight}px` : '100%',
-        maxHeight: isShifted && viewportHeight ? `${viewportHeight}px` : '100dvh',
-      }}
-      className="fixed inset-x-0 z-50 flex items-center justify-center p-3 sm:p-4 transition-[height,padding] duration-300 ease-out"
-    >
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4">
       {/* Backdrop matching ShareModal */}
       <motion.div
         className="fixed inset-0 bg-black/60 backdrop-blur-md"
@@ -282,11 +277,10 @@ export default function FeedbackModal({ onClose }) {
         role="dialog"
         aria-modal="true"
         aria-label="Send feedback"
-        layout
-        className="relative z-10 w-full max-w-[466px] flex flex-col select-none rounded-[24px] bg-[#0E0E0E] border border-white/[0.12] overflow-hidden shadow-[0_24px_60px_rgba(0,0,0,0.85)] font-sans"
+        className="relative z-10 w-full max-w-[466px] max-h-[calc(100svh-24px)] sm:max-h-[calc(100svh-32px)] flex flex-col select-none rounded-[24px] bg-[#0E0E0E] border border-white/[0.12] overflow-hidden shadow-[0_24px_60px_rgba(0,0,0,0.85)] font-sans will-change-transform"
         onClick={(e) => e.stopPropagation()}
         initial={{ opacity: 0, scale: 0.95, y: 8 }}
-        animate={{ opacity: 1, scale: 1, y: 0 }}
+        animate={{ opacity: 1, scale: 1, y: -shiftY }}
         exit={{ opacity: 0, scale: 0.95, y: 8 }}
         transition={modalSpring}
       >

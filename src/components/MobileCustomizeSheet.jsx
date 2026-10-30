@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, useDragControls } from 'framer-motion';
 import { Eye, CaretLeft, CaretRight, Check, X } from '@phosphor-icons/react';
 import { useCard } from '@/context/CardContext';
 import { OCCASIONS } from '@/data/cardData';
@@ -57,6 +57,7 @@ const stepVariants = {
 
 export default function MobileCustomizeSheet({ isOpen, onClose }) {
   const { state, dispatch } = useCard();
+  const dragControls = useDragControls();
   const [step, setStep] = useState(1);
   const [direction, setDirection] = useState(1);
   const [hasPickedOccasion, setHasPickedOccasion] = useState(false);
@@ -158,6 +159,8 @@ export default function MobileCustomizeSheet({ isOpen, onClose }) {
             exit={{ y: '100%' }}
             transition={{ type: 'spring', damping: 28, stiffness: 280, mass: 0.85 }}
             drag="y"
+            dragControls={dragControls}
+            dragListener={false}
             dragConstraints={{ top: 0, bottom: 0 }}
             dragElastic={{ top: 0, bottom: 0.5 }}
             onDragEnd={(e, info) => {
@@ -180,11 +183,12 @@ export default function MobileCustomizeSheet({ isOpen, onClose }) {
           >
             {/* Grabber only - clean Apple HIG, interactive drag handle */}
             <div 
+              onPointerDown={(e) => dragControls.start(e)}
               onClick={() => setIsExpanded(prev => !prev)}
-              className="w-full pt-3 pb-1 flex flex-col items-center justify-center cursor-pointer select-none active:opacity-70 transition-opacity"
+              className="w-full pt-3 pb-2 flex flex-col items-center justify-center cursor-grab active:cursor-grabbing select-none touch-none active:opacity-70 transition-opacity"
               aria-label={isExpanded ? "Collapse sheet to medium" : "Expand sheet to full height"}
             >
-              <div className="w-[60px] h-[4px] rounded-full bg-white/25 hover:bg-white/40 active:bg-white/60 transition-colors" />
+              <div className="w-[60px] h-[5px] rounded-full bg-white/25 hover:bg-white/40 active:bg-white/60 transition-colors" />
             </div>
 
             {/* Header Control Bar: Row 1 - Navigation & Title */}

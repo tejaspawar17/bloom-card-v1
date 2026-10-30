@@ -72,9 +72,10 @@ export default function MessageModal({ onClose }) {
     };
   }, []);
 
-  // When keyboard is open, modal adapts to the visible area above the keyboard;
-  // when collapsed, modal centers dead-center on the screen
-  const isShifted = isKeyboardOpen;
+  // Smooth GPU-accelerated vertical offset to center modal above keyboard without layout jitter
+  const shiftY = isKeyboardOpen && viewportHeight && typeof window !== 'undefined'
+    ? Math.max(0, (window.innerHeight - viewportHeight) / 2 - viewportTop)
+    : 0;
 
   // Handle escape key
   useEffect(() => {
@@ -152,14 +153,7 @@ export default function MessageModal({ onClose }) {
 
   return createPortal(
     <AnimatePresence>
-      <div 
-        style={{
-          top: isShifted && viewportTop ? `${viewportTop}px` : 0,
-          height: isShifted && viewportHeight ? `${viewportHeight}px` : '100%',
-          maxHeight: isShifted && viewportHeight ? `${viewportHeight}px` : '100dvh',
-        }}
-        className="fixed inset-x-0 z-[100] flex items-center justify-center p-3 sm:p-4 transition-[height,padding] duration-300 ease-out"
-      >
+      <div className="fixed inset-0 z-[100] flex items-center justify-center p-3 sm:p-4">
         {/* Backdrop */}
         <motion.div
           className="fixed inset-0 bg-black/60 backdrop-blur-md"
@@ -175,12 +169,11 @@ export default function MessageModal({ onClose }) {
           role="dialog"
           aria-modal="true"
           aria-label={isTrainer ? "Edit Trainer Details" : "Edit Card Message"}
-          layout
-          className="relative z-10 w-full max-w-[440px] sm:max-w-[480px] max-h-[calc(100%-16px)] sm:max-h-[calc(100svh-32px)] bg-[#0E0E0E] rounded-[20px] sm:rounded-[24px] overflow-hidden flex flex-col shadow-[0_24px_60px_rgba(0,0,0,0.85)] border border-white/[0.12] select-none"
+          className="relative z-10 w-full max-w-[440px] sm:max-w-[480px] max-h-[calc(100svh-24px)] sm:max-h-[calc(100svh-32px)] bg-[#0E0E0E] rounded-[20px] sm:rounded-[24px] overflow-hidden flex flex-col shadow-[0_24px_60px_rgba(0,0,0,0.85)] border border-white/[0.12] select-none will-change-transform"
           initial={{ opacity: 0, scale: 0.95, y: 8 }}
-          animate={{ opacity: 1, scale: 1, y: 0 }}
+          animate={{ opacity: 1, scale: 1, y: -shiftY }}
           exit={{ opacity: 0, scale: 0.95, y: 8 }}
-          transition={{ type: "spring", stiffness: 420, damping: 28, mass: 0.9 }}
+          transition={{ type: "spring", stiffness: 320, damping: 32, mass: 0.8 }}
           onClick={(e) => e.stopPropagation()}
         >
           {/* Header Bar */}
