@@ -1,10 +1,24 @@
-import React, { useRef, useState, useEffect } from 'react';
+import React, { useRef, useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, UploadSimple, Prohibit, CircleNotch } from '@phosphor-icons/react';
+import {
+  X,
+  UploadSimple,
+  Prohibit,
+  CircleNotch,
+  FlowerLotus,
+  Sparkle,
+  CalendarHeart,
+  Sticker,
+  Image as ImageIcon,
+  Smiley,
+  Check,
+} from '@phosphor-icons/react';
 import { useCard } from '@/context/CardContext';
-import { FLOWERS, POKEMON_CARDS, EMOTE_EMOJIS } from '@/data/cardData';
+import { FLOWERS, POKEMON_CARDS, EMOTE_EMOJIS, OCCASIONS, STICKERS } from '@/data/cardData';
 import { showToast } from '@/components/ui/AppleToast';
 import LiquidGlassIconButton from '@/components/ui/LiquidGlassIconButton';
+import GlassSegmentedControl from '@/components/ui/GlassSegmentedControl';
+import StampDustParticles from '@/components/ui/StampDustParticles';
 import { cn } from '@/lib/utils';
 
 const defaultPolaroid1 = '/assets/polaroid-defaults/image1.png';
@@ -84,21 +98,37 @@ async function optimizeImageForPolaroid(fileOrBlob, maxDimension = 1200) {
 
 /**
  * MobileQuickPickerPopover
- * Contextual horizontal swipe carousel (matching Reference Image 4) for Mobile & Tablet (< 1024px).
- * Modes:
- * - 'frontArtwork': Select Flower for the Card / Select Pokémon for the Card
- * - 'polaroid': Select Back Cover Artwork
+ * Unified Docked Segmented Bar + Floating Window for Mobile & Tablet (< 1024px).
+ * Front Tabs:
+ * - 'frontArtwork': Pick Your Bloom / Pick Your Pokémon
+ * - 'occasion': What’s the Occasion?
+ * - 'stickers': Decorate with Stickers
+ * Back Tabs:
+ * - 'polaroid': Back Cover Artwork
  * - 'stamp': Stamp an Emotion
+ * - 'stickers': Decorate with Stickers
  */
-export default function MobileQuickPickerPopover({ mode, onClose }) {
+export default function MobileQuickPickerPopover({ mode, onSelectMode, onClose }) {
   const { state, dispatch } = useCard();
   const scrollRef = useRef(null);
   const fileInputRef = useRef(null);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(true);
   const [isConverting, setIsConverting] = useState(false);
+  const [activeStampTrigger, setActiveStampTrigger] = useState(null);
 
   const isPokemonMode = state.cardType === 'pokemon';
+  const currentSide = state.activeSide || 'front';
+  const isFlipped = currentSide === 'back';
+
+  const sideStickers = useMemo(
+    () => (state.stickers || []).filter((s) => (s.side || 'front') === currentSide),
+    [state.stickers, currentSide]
+  );
+  const selectedStickerIdsSet = useMemo(
+    () => new Set(sideStickers.map((s) => s.stickerId)),
+    [sideStickers]
+  );
 
   const updateScrollEdges = () => {
     const el = scrollRef.current;
@@ -121,7 +151,7 @@ export default function MobileQuickPickerPopover({ mode, onClose }) {
       updateScrollEdges();
     }, 60);
     return () => clearTimeout(timer);
-  }, [mode, state.cardType]);
+  }, [mode, state.cardType, currentSide]);
 
   if (!mode) return null;
 
@@ -130,9 +160,13 @@ export default function MobileQuickPickerPopover({ mode, onClose }) {
       ? isPokemonMode
         ? 'Pick Your Pokémon'
         : 'Pick Your Bloom'
-      : mode === 'polaroid'
-        ? 'Back Cover Artwork'
-        : 'Stamp an Emotion';
+      : mode === 'occasion'
+        ? 'What’s the Occasion?'
+        : mode === 'stickers'
+          ? 'Decorate with Stickers'
+          : mode === 'polaroid'
+            ? 'Back Cover Artwork'
+            : 'Stamp an Emotion';
 
   const edgeMask = (() => {
     if (mode === 'polaroid') return undefined;
@@ -171,6 +205,37 @@ export default function MobileQuickPickerPopover({ mode, onClose }) {
     targetFile = await optimizeImageForPolaroid(targetFile, 1200);
     const url = URL.createObjectURL(targetFile);
     dispatch({ type: 'SET_BACK_IMAGE', payload: url });
+  };
+
+  const handleStickerClick = (sticker) => {
+    const existing = sideStickers.filter((s) => s.stickerId === sticker.id);
+    if (existing.length > 0) {
+      existing.forEach((s) => {
+        dispatch({ type: 'REMOVE_STICKER', payload: s.id });
+      });
+      return;
+    }
+
+    setActiveStampTrigger(`sticker-${sticker.id}-${Date.now()}`);
+    const offsetIdx = sideStickers.length;
+    const staggerX = 64 + ((offsetIdx * 38) % 120);
+    const staggerY = 68 + ((offsetIdx * 32) % 110);
+
+    dispatch({
+      type: 'ADD_STICKER',
+      payload: {
+        id: Date.now().toString() + Math.random().toString(),
+        stickerId: sticker.id,
+        src: sticker.image,
+        name: sticker.name,
+        side: currentSide,
+        x: staggerX,
+        y: staggerY,
+        r: Math.random() * 20 - 10,
+        rotation: Math.random() * 20 - 10,
+        scale: 1,
+      },
+    });
   };
 
   const renderFrontArtworkStrip = () => {
@@ -217,6 +282,95 @@ export default function MobileQuickPickerPopover({ mode, onClose }) {
             {shortName}
           </span>
         </button>
+      );
+    });
+  };
+
+  const renderOccasionStrip = () => {
+    return OCCASIONS.map((occ) => {
+      const isSelected = state.occasion === occ.label;
+      return (
+        <motion.button
+          whileTap={{ scale: 0.96 }}
+          transition={{ type: 'spring', stiffness: 400, damping: 25 }}
+          key={occ.id}
+          type="button"
+          data-active={isSelected}
+          onClick={() =>
+            dispatch({
+              type: 'SET_OCCASION',
+              payload: isSelected ? '' : occ.label,
+            })
+          }
+          className={cn(
+            'inline-flex items-center justify-center gap-1.5 h-[36px] px-3.5 py-1 rounded-full font-sans text-[12.5px] leading-[16px] tracking-[-0.015em] font-medium transition-all duration-150 cursor-pointer outline-none select-none whitespace-nowrap snap-center',
+            isSelected
+              ? 'bg-[#0088FF] text-white shadow-sm'
+              : 'bg-[rgba(114,114,114,0.14)] text-[rgba(229,229,234,0.78)] hover:bg-[rgba(153,153,153,0.22)] hover:text-white'
+          )}
+          style={{ WebkitTapHighlightColor: 'transparent' }}
+        >
+          <img
+            src={`/assets/emojis/${occ.emoji}.png`}
+            alt=""
+            className="w-[15px] h-[15px] object-contain shrink-0 pointer-events-none"
+          />
+          <span>{occ.label}</span>
+        </motion.button>
+      );
+    });
+  };
+
+  const renderStickersStrip = () => {
+    return STICKERS.map((sticker) => {
+      const isSelected = selectedStickerIdsSet.has(sticker.id);
+      const shortName = sticker.name.length > 10 ? sticker.name.substring(0, 9) + '…' : sticker.name;
+      const isThisStickerActive = activeStampTrigger?.startsWith(`sticker-${sticker.id}`);
+
+      return (
+        <div key={sticker.id} className="relative shrink-0 snap-center flex justify-center">
+          <StampDustParticles triggerKey={isThisStickerActive ? activeStampTrigger : null} color="#0088FF" />
+          <button
+            type="button"
+            data-active={isSelected}
+            onClick={() => handleStickerClick(sticker)}
+            className="relative flex flex-col items-center cursor-pointer outline-none active:scale-[0.95] transition-transform duration-150 w-[64px] h-[84px] font-sans"
+            style={{ WebkitTapHighlightColor: 'transparent' }}
+          >
+            <div
+              className={cn(
+                'absolute top-0 -left-[3px] w-[70px] h-[84px] rounded-[14px] transition-colors duration-200 pointer-events-none',
+                isSelected ? 'bg-[#0088FF]' : 'bg-transparent'
+              )}
+            />
+            <motion.div
+              animate={isThisStickerActive ? { scale: [1.18, 0.95, 1], rotate: [0, -7, 7, 0] } : {}}
+              transition={{ duration: 0.32, ease: 'easeOut' }}
+              className="relative mt-[3px] w-[64px] h-[62px] rounded-[11px] overflow-hidden bg-[#1A1A1A] z-10 flex items-center justify-center p-1.5 shadow-sm"
+            >
+              <img
+                src={sticker.image}
+                alt={sticker.name}
+                className="w-full h-full object-contain pointer-events-none drop-shadow-sm"
+                loading="lazy"
+                draggable={false}
+              />
+              {isSelected && (
+                <div className="absolute top-1 right-1 z-20 w-[16px] h-[16px] rounded-full bg-[#0088FF] border border-white/80 flex items-center justify-center shadow-sm pointer-events-none">
+                  <Check size={10} weight="bold" className="text-white" />
+                </div>
+              )}
+            </motion.div>
+            <span
+              className={cn(
+                'relative mt-[3px] text-[11px] leading-[13px] tracking-[-0.01em] truncate w-[64px] text-center z-10 font-sans',
+                isSelected ? 'text-white font-medium' : 'text-[rgba(229,229,234,0.75)] font-normal'
+              )}
+            >
+              {shortName}
+            </span>
+          </button>
+        </div>
       );
     });
   };
@@ -351,62 +505,178 @@ export default function MobileQuickPickerPopover({ mode, onClose }) {
     });
   };
 
+  // Side-aware 3-tab configuration with stable slotKeys so the segmented bar morphs smoothly between Front and Back
+  const dockSegments = isFlipped
+    ? [
+        {
+          slotKey: 'slot-0',
+          value: 'polaroid',
+          label: 'Back Cover Artwork',
+          iconKey: 'back-polaroid',
+          icon: <ImageIcon size={20} weight="regular" />,
+        },
+        {
+          slotKey: 'slot-1',
+          value: 'stamp',
+          label: 'Stamp an Emotion',
+          iconKey: 'back-stamp',
+          icon: <Smiley size={20} weight="regular" />,
+        },
+        {
+          slotKey: 'slot-2',
+          value: 'stickers',
+          label: 'Decorate with Stickers',
+          iconKey: 'shared-stickers',
+          icon: <Sticker size={20} weight="regular" />,
+        },
+      ]
+    : [
+        {
+          slotKey: 'slot-0',
+          value: 'frontArtwork',
+          label: isPokemonMode ? 'Pick Your Pokémon' : 'Pick Your Bloom',
+          iconKey: isPokemonMode ? 'front-pokemon' : 'front-bloom',
+          icon: isPokemonMode ? <Sparkle size={20} weight="regular" /> : <FlowerLotus size={20} weight="regular" />,
+        },
+        {
+          slotKey: 'slot-1',
+          value: 'occasion',
+          label: 'What’s the Occasion?',
+          iconKey: 'front-occasion',
+          icon: <CalendarHeart size={20} weight="regular" />,
+        },
+        {
+          slotKey: 'slot-2',
+          value: 'stickers',
+          label: 'Decorate with Stickers',
+          iconKey: 'shared-stickers',
+          icon: <Sticker size={20} weight="regular" />,
+        },
+      ];
+
   return (
-    <AnimatePresence>
-      {mode && (
-        <motion.div
-          key={`quick-picker-${mode}`}
-          initial={{ opacity: 0, y: 14, scale: 0.96 }}
-          animate={{ opacity: 1, y: 0, scale: 1 }}
-          exit={{ opacity: 0, y: 10, scale: 0.96 }}
-          transition={{ type: 'spring', stiffness: 380, damping: 28, mass: 0.75 }}
-          onClick={(e) => e.stopPropagation()}
-          className="w-[calc(100vw-24px)] max-w-[388px] sm:max-w-[436px] rounded-[20px] bg-[#0E0E10]/95 backdrop-blur-2xl border border-white/[0.14] shadow-[0_18px_48px_rgba(0,0,0,0.85)] overflow-hidden select-none z-40"
-        >
-          <input
-            ref={fileInputRef}
-            type="file"
-            accept="image/*,.heic,.heif"
-            className="sr-only"
-            onChange={(e) => {
-              const file = e.target.files?.[0];
-              if (file) handleUploadFile(file);
-              e.target.value = '';
-            }}
-          />
+    <motion.div
+      initial={{ opacity: 0, y: 14, scale: 0.96 }}
+      animate={{ opacity: 1, y: 0, scale: 1 }}
+      exit={{ opacity: 0, y: 10, scale: 0.96 }}
+      transition={{ type: 'spring', stiffness: 380, damping: 28, mass: 0.75 }}
+      onClick={(e) => e.stopPropagation()}
+      className="flex flex-col items-center select-none z-40"
+    >
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept="image/*,.heic,.heif"
+        className="sr-only"
+        onChange={(e) => {
+          const file = e.target.files?.[0];
+          if (file) handleUploadFile(file);
+          e.target.value = '';
+        }}
+      />
 
-          {/* Unified Header Bar with equal 8px top & right spacing for the 32px close button */}
-          <div className="flex items-center justify-between h-[48px] pl-4 pr-2 bg-[#1F1F1F] border-b border-white/[0.08]">
-            <span className="text-[15px] font-semibold text-white/85 tracking-[-0.02em] font-sans">
-              {title}
-            </span>
-            <LiquidGlassIconButton
-              size="sm"
-              label="Close picker"
-              onClick={onClose}
-              icon={<X size={17} weight="bold" className="text-[#FF383C]" />}
-              className="!w-[32px] !h-[32px]"
-            />
-          </div>
-
-          {/* Horizontal Swipe Carousel Strip */}
-          <div className="px-3.5 py-3 bg-[#0B0B0C]">
-            <div
-              ref={scrollRef}
-              onScroll={updateScrollEdges}
-              style={edgeMask ? { maskImage: edgeMask, WebkitMaskImage: edgeMask } : undefined}
-              className={cn(
-                'flex flex-row items-center overflow-x-auto snap-x snap-mandatory no-scrollbar py-0.5',
-                mode === 'polaroid' ? 'justify-between px-1.5 gap-3' : 'gap-3 px-1.5'
-              )}
+      {/* 1. Floating Window Above the Segmented Control */}
+      <div className="w-[calc(100vw-24px)] max-w-[388px] sm:max-w-[436px] rounded-[20px] bg-[#0E0E10]/95 backdrop-blur-2xl border border-white/[0.14] shadow-[0_18px_48px_rgba(0,0,0,0.85)] overflow-hidden">
+        {/* Clean Window Header Bar */}
+        <div className="flex items-center justify-between h-[44px] px-4 bg-[#1F1F1F] border-b border-white/[0.08]">
+          <AnimatePresence mode="wait" initial={false}>
+            <motion.span
+              key={title}
+              initial={{ opacity: 0, y: 4 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -4 }}
+              transition={{ duration: 0.16, ease: 'easeOut' }}
+              className="text-[15px] font-semibold text-white/85 tracking-[-0.02em] font-sans truncate"
             >
-              {mode === 'frontArtwork' && renderFrontArtworkStrip()}
-              {mode === 'polaroid' && renderPolaroidStrip()}
-              {mode === 'stamp' && renderStampStrip()}
+              {title}
+            </motion.span>
+          </AnimatePresence>
+
+          {/* Right Header Context: Sticker count badge + Front/Back quick side toggle */}
+          <div className="flex items-center gap-1.5 shrink-0">
+            {mode === 'stickers' && selectedStickerIdsSet.size > 0 && (
+              <span className="px-2 py-0.5 rounded-full bg-[#0088FF]/20 border border-[#0088FF]/40 text-[#4DA8FF] text-[11px] font-medium leading-[14px] select-none font-sans">
+                {selectedStickerIdsSet.size} selected
+              </span>
+            )}
+            <div className="flex items-center p-0.5 rounded-full bg-white/[0.08] border border-white/[0.1] text-[11px] font-medium font-sans">
+              <button
+                type="button"
+                onClick={() => dispatch({ type: 'SET_ACTIVE_SIDE', payload: 'front' })}
+                className={cn(
+                  'px-2.5 py-0.5 rounded-full transition-colors cursor-pointer',
+                  currentSide === 'front' ? 'bg-[#0088FF] text-white' : 'text-white/60 hover:text-white'
+                )}
+              >
+                Front
+              </button>
+              <button
+                type="button"
+                onClick={() => dispatch({ type: 'SET_ACTIVE_SIDE', payload: 'back' })}
+                className={cn(
+                  'px-2.5 py-0.5 rounded-full transition-colors cursor-pointer',
+                  currentSide === 'back' ? 'bg-[#0088FF] text-white' : 'text-white/60 hover:text-white'
+                )}
+              >
+                Back
+              </button>
             </div>
           </div>
-        </motion.div>
-      )}
-    </AnimatePresence>
+        </div>
+
+        {/* Horizontal Swipe Content Strip */}
+        <div className="px-3.5 py-3 bg-[#0B0B0C]">
+          <AnimatePresence mode="wait" initial={false}>
+            <motion.div
+              key={mode}
+              initial={{ opacity: 0, x: 10 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -10 }}
+              transition={{ duration: 0.16, ease: [0.22, 1, 0.36, 1] }}
+            >
+              <div
+                ref={scrollRef}
+                onScroll={updateScrollEdges}
+                style={edgeMask ? { maskImage: edgeMask, WebkitMaskImage: edgeMask } : undefined}
+                className={cn(
+                  'overflow-x-auto no-scrollbar py-0.5',
+                  mode === 'occasion'
+                    ? 'grid grid-rows-2 grid-flow-col auto-cols-max gap-2 px-1.5 snap-x snap-mandatory'
+                    : mode === 'polaroid'
+                      ? 'flex flex-row items-center justify-between px-1.5 gap-3 snap-x snap-mandatory'
+                      : 'flex flex-row items-center gap-3 px-1.5 snap-x snap-mandatory'
+                )}
+              >
+                {mode === 'frontArtwork' && renderFrontArtworkStrip()}
+                {mode === 'occasion' && renderOccasionStrip()}
+                {mode === 'stickers' && renderStickersStrip()}
+                {mode === 'polaroid' && renderPolaroidStrip()}
+                {mode === 'stamp' && renderStampStrip()}
+              </div>
+            </motion.div>
+          </AnimatePresence>
+        </div>
+      </div>
+
+      {/* 2. Bottom Segmented Control + Circular Red Cross Button */}
+      <div className="flex items-center justify-center gap-2.5 mt-2.5">
+        <GlassSegmentedControl
+          aria-label="Customize card options"
+          layoutId="customize-dock-segmented-bg"
+          value={mode}
+          onValueChange={(nextMode) => onSelectMode?.(nextMode)}
+          segments={dockSegments}
+        />
+
+        <LiquidGlassIconButton
+          size="md"
+          label="Close customize menu"
+          aria-label="Close customize menu"
+          onClick={onClose}
+          icon={<X size={20} weight="bold" className="text-[#FF383C]" />}
+          className="!w-[52px] !h-[52px]"
+        />
+      </div>
+    </motion.div>
   );
 }

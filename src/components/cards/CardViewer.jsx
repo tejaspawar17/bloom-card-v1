@@ -120,9 +120,20 @@ export default function CardViewer({ onConfirm, onOpenEditTitle, onOpenEditMessa
     return () => clearTimeout(timer);
   }, []);
 
-  // Close contextual quick picker when flipping sides & trigger 1-time Back hint
+  // Smoothly transition Customize Dock tabs when flipping sides & trigger 1-time Back hint
   useEffect(() => {
-    setQuickPickerMode(null);
+    setQuickPickerMode((prev) => {
+      if (!prev) return null;
+      if (isFlipped) {
+        if (prev === 'frontArtwork') return 'polaroid';
+        if (prev === 'occasion') return 'stamp';
+        return prev;
+      } else {
+        if (prev === 'polaroid') return 'frontArtwork';
+        if (prev === 'stamp') return 'occasion';
+        return prev;
+      }
+    });
     if (isFlipped && !hasShownBackHintRef.current) {
       hasShownBackHintRef.current = true;
       setShowBackHint(true);
@@ -444,14 +455,17 @@ export default function CardViewer({ onConfirm, onOpenEditTitle, onOpenEditMessa
       )}
 
       <div className="relative flex flex-col items-center w-full lg:hidden">
-        {quickPickerMode && (
-          <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 flex justify-center z-40">
-            <MobileQuickPickerPopover
-              mode={quickPickerMode}
-              onClose={() => setQuickPickerMode(null)}
-            />
-          </div>
-        )}
+        <AnimatePresence>
+          {quickPickerMode && (
+            <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 flex justify-center z-40">
+              <MobileQuickPickerPopover
+                mode={quickPickerMode}
+                onSelectMode={(nextMode) => setQuickPickerMode(nextMode)}
+                onClose={() => setQuickPickerMode(null)}
+              />
+            </div>
+          )}
+        </AnimatePresence>
 
         {/* Mobile/Tablet Controls: Tier 1 Actions (Eye, Customize, Flip) */}
         <div className={`flex items-center justify-center gap-2.5 sm:gap-3 mt-1.5 sm:mt-2.5 w-full max-w-[min(300px,80vw,calc((100svh-284px)*688/960))] sm:max-w-[min(340px,75vw,calc((100svh-264px)*688/960))] transition-opacity duration-200 ${quickPickerMode ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
@@ -466,7 +480,7 @@ export default function CardViewer({ onConfirm, onOpenEditTitle, onOpenEditMessa
 
           <button
             type="button"
-            onClick={onOpenCustomize}
+            onClick={() => handleOpenQuickPicker(isFlipped ? 'polaroid' : 'frontArtwork')}
             className="dark-liquid-glass-pill flex-1 h-[44px] px-5 text-[#FFFFFF] hover:text-[#FFFFFF] text-[15px] font-medium tracking-[-0.01em] cursor-pointer shadow-[0_3px_12px_rgba(0,0,0,0.3)] transition-transform active:scale-[0.98] font-sans"
           >
             Customize

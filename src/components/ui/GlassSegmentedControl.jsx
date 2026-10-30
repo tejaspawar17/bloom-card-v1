@@ -1,5 +1,5 @@
 import React, { useRef, useState } from "react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import "./GlassSegmentedControl.css";
 
 const springTransition = {
@@ -16,6 +16,7 @@ export default function GlassSegmentedControl({
   onValueChange,
   value,
   segments = [],
+  layoutId = "segmented-bg",
 }) {
   const [internalValue, setInternalValue] = useState(defaultValue);
   const buttonRefs = useRef([]);
@@ -61,7 +62,7 @@ export default function GlassSegmentedControl({
             <motion.button
               whileTap={{ scale: 0.92 }}
               transition={{ type: "spring", stiffness: 400, damping: 20 }}
-              key={segment.value}
+              key={segment.slotKey ?? segment.value}
               type="button"
               role="radio"
               aria-checked={isSelected}
@@ -76,16 +77,27 @@ export default function GlassSegmentedControl({
             >
               {isSelected && (
                 <motion.div 
-                  layoutId="segmented-bg"
+                  layoutId={layoutId}
                   className="absolute inset-0 rounded-[100px] bg-[#3a3a3c] pointer-events-none"
                   transition={springTransition}
                 />
               )}
               <div className="glass-tab__content z-10 relative">
                 {segment.icon ? (
-                  <span className={`flex items-center justify-center transition-opacity ${isSelected ? "opacity-100" : "opacity-20"}`}>
-                    {segment.icon}
-                  </span>
+                  <AnimatePresence mode="wait" initial={false}>
+                    <motion.span
+                      key={segment.iconKey ?? segment.value}
+                      initial={{ opacity: 0, scale: 0.72, filter: "blur(3px)" }}
+                      animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
+                      exit={{ opacity: 0, scale: 0.72, filter: "blur(3px)" }}
+                      transition={{ duration: 0.18, ease: [0.22, 1, 0.36, 1] }}
+                      className={`flex items-center justify-center transition-opacity ${
+                        isSelected ? "text-white opacity-100" : "text-white/80 opacity-75"
+                      }`}
+                    >
+                      {segment.icon}
+                    </motion.span>
+                  </AnimatePresence>
                 ) : (
                   <img
                     alt=""
