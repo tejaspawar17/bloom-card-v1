@@ -44,12 +44,14 @@ export default function CardSubjectBox({
         )}
         style={{
           WebkitTapHighlightColor: 'transparent',
-          backgroundImage: 'url(/assets/bloom/metallic_subject_front.png)',
-          backgroundSize: '100% 100%',
-          backgroundRepeat: 'no-repeat',
-          backgroundPosition: 'center',
         }}
       >
+        {/* Real <img> element guarantees 100% reliable capture in Mobile WebKit & PDF generation */}
+        <img
+          src="/assets/bloom/metallic_subject_front.png"
+          alt=""
+          className="absolute inset-0 w-full h-full object-contain pointer-events-none select-none"
+        />
         {!isPreview && (
             <div className="absolute bottom-1 right-1 z-40 pointer-events-auto">
               <TertiaryLiquidGlassButton 
@@ -61,7 +63,7 @@ export default function CardSubjectBox({
               />
             </div>
           )}
-        <div className="w-[66%] h-[50%] flex flex-col items-center justify-center transition-opacity group-hover:opacity-70">
+        <div className="w-[66%] h-[50%] flex flex-col items-center justify-center transition-opacity group-hover:opacity-70 relative z-10">
           {isEditing ? (
             <textarea
                 autoFocus

@@ -595,7 +595,56 @@ export async function generateKeychainPdf({
   // Add a clickable target bounding box covering the link for mobile & desktop touch/mouse targets
   pdf.link(linkX - 1, linkY - 3.5, linkW + 2, 5, { url: appUrl });
 
-  // 8. Save & trigger download
+  // 8. Save & trigger download cleanly (preserving mobile modal and preventing Safari page navigation)
   const sanitizedTitle = cardTitle.toLowerCase().replace(/[^a-z0-9_-]/g, '-');
-  pdf.save(`${sanitizedTitle}-keychain-print.pdf`);
+  const fileName = `${sanitizedTitle}-keychain-print.pdf`;
+
+  const pdfBlob = pdf.output('blob');
+
+  if (typeof window !== 'undefined') {
+    const isIOS =
+      /iPad|iPhone|iPod/.test(navigator.userAgent) ||
+      (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+
+    // If native sharing is supported on iOS, share file directly so user can "Save to Files" or AirDrop
+    const canShareFiles =
+      typeof navigator !== 'undefined' &&
+      navigator.canShare &&
+      typeof File !== 'undefined';
+
+    let shared = false;
+    if (isIOS && canShareFiles) {
+      try {
+        const file = new File([pdfBlob], fileName, { type: 'application/pdf' });
+        if (navigator.canShare({ files: [file] })) {
+          await navigator.share({
+            files: [file],
+            title: 'Bloom Keychain Keepsake',
+            text: 'Here is your print-ready keychain keepsake PDF.',
+          });
+          shared = true;
+        }
+      } catch (err) {
+        // User cancelled share or aborted, fallback to anchor download
+        if (err.name === 'AbortError') return;
+      }
+    }
+
+    if (!shared) {
+      // Standard reliable anchor download using object URL
+      const blobUrl = URL.createObjectURL(pdfBlob);
+      const link = document.createElement('a');
+      link.href = blobUrl;
+      link.download = fileName;
+      link.style.display = 'none';
+      document.body.appendChild(link);
+      link.click();
+      setTimeout(() => {
+        document.body.removeChild(link);
+        URL.revokeObjectURL(blobUrl);
+      }, 2000);
+    }
+  } else {
+    pdf.save(fileName);
+  }
 }

@@ -26,10 +26,16 @@ export function PostageStampNote({
   return (
     <div
       onClick={handleEditClick}
-      className={`relative flex flex-col items-center justify-center w-[clamp(222px,85cqw,325px)] h-[clamp(143px,55cqw,210px)] px-[clamp(16px,6.2cqw,23px)] py-[clamp(14px,5.2cqw,21px)] bg-contain bg-no-repeat bg-center z-30 ${isPreview ? '' : 'cursor-pointer group transition-transform active:scale-95'}`}
-      style={{ backgroundImage: "url('/assets/bloom/stamp-bg.png')" }}
+      className={`relative flex flex-col items-center justify-center w-[clamp(222px,85cqw,325px)] h-[clamp(143px,55cqw,210px)] px-[clamp(16px,6.2cqw,23px)] py-[clamp(14px,5.2cqw,21px)] z-30 ${isPreview ? '' : 'cursor-pointer group transition-transform active:scale-95'}`}
     >
-      <div className="w-full h-full flex flex-col items-center justify-center relative -translate-y-[0.4cqw]">
+      {/* Real <img> element ensures 100% reliable capture in Mobile WebKit & PDF generation */}
+      <img
+        src="/assets/bloom/stamp-bg.png"
+        alt=""
+        className="absolute inset-0 w-full h-full object-contain pointer-events-none select-none"
+      />
+
+      <div className="w-full h-full flex flex-col items-center justify-center relative -translate-y-[0.4cqw] z-10">
         <div 
           className="w-[90%] text-center text-[clamp(17.5px,7.1cqw,27px)] leading-[clamp(27px,11.2cqw,43px)] font-['Homemade_Apple',cursive] text-[#FF0000]"
         >
