@@ -125,12 +125,12 @@ export default function CardViewer({ onConfirm, onOpenEditTitle, onOpenEditMessa
     setQuickPickerMode((prev) => {
       if (!prev) return null;
       if (isFlipped) {
-        if (prev === 'frontArtwork') return 'polaroid';
-        if (prev === 'occasion') return 'stamp';
+        if (prev === 'occasion') return 'polaroid';
+        if (prev === 'frontArtwork') return 'stamp';
         return prev;
       } else {
-        if (prev === 'polaroid') return 'frontArtwork';
-        if (prev === 'stamp') return 'occasion';
+        if (prev === 'polaroid') return 'occasion';
+        if (prev === 'stamp') return 'frontArtwork';
         return prev;
       }
     });
@@ -480,7 +480,7 @@ export default function CardViewer({ onConfirm, onOpenEditTitle, onOpenEditMessa
 
           <button
             type="button"
-            onClick={() => handleOpenQuickPicker(isFlipped ? 'polaroid' : 'frontArtwork')}
+            onClick={() => handleOpenQuickPicker(isFlipped ? 'polaroid' : 'occasion')}
             className="dark-liquid-glass-pill flex-1 h-[44px] px-5 text-[#FFFFFF] hover:text-[#FFFFFF] text-[15px] font-medium tracking-[-0.01em] cursor-pointer shadow-[0_3px_12px_rgba(0,0,0,0.3)] transition-transform active:scale-[0.98] font-sans"
           >
             Customize

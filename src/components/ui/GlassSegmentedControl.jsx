@@ -82,17 +82,17 @@ export default function GlassSegmentedControl({
                   transition={springTransition}
                 />
               )}
-              <div className="glass-tab__content z-10 relative">
+              <div className={`glass-tab__content z-10 relative ${segment.icon ? "glass-tab__content--icon" : ""}`}>
                 {segment.icon ? (
-                  <AnimatePresence mode="wait" initial={false}>
+                  <AnimatePresence initial={false}>
                     <motion.span
                       key={segment.iconKey ?? segment.value}
-                      initial={{ opacity: 0, scale: 0.72, filter: "blur(3px)" }}
-                      animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
-                      exit={{ opacity: 0, scale: 0.72, filter: "blur(3px)" }}
-                      transition={{ duration: 0.18, ease: [0.22, 1, 0.36, 1] }}
-                      className={`flex items-center justify-center transition-opacity ${
-                        isSelected ? "text-white opacity-100" : "text-white/80 opacity-75"
+                      initial={{ opacity: 0, scale: 0.85 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      exit={{ opacity: 0, scale: 0.85 }}
+                      transition={{ duration: 0.16, ease: [0.22, 1, 0.36, 1] }}
+                      className={`absolute inset-0 flex items-center justify-center transition-colors ${
+                        isSelected ? "text-white" : "text-white/75"
                       }`}
                     >
                       {segment.icon}

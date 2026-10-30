@@ -5,9 +5,8 @@ import {
   UploadSimple,
   Prohibit,
   CircleNotch,
-  FlowerLotus,
-  Sparkle,
-  CalendarHeart,
+  HandHeart,
+  FlowerTulip,
   Sticker,
   Image as ImageIcon,
   Smiley,
@@ -100,13 +99,13 @@ async function optimizeImageForPolaroid(fileOrBlob, maxDimension = 1200) {
  * MobileQuickPickerPopover
  * Unified Docked Segmented Bar + Floating Window for Mobile & Tablet (< 1024px).
  * Front Tabs:
- * - 'frontArtwork': Pick Your Bloom / Pick Your Pokémon
- * - 'occasion': What’s the Occasion?
- * - 'stickers': Decorate with Stickers
+ * - Tab 1 ('occasion'): What’s the Occasion? (HandHeart regular)
+ * - Tab 2 ('frontArtwork'): Pick Your Bloom / Pick Your Pokémon (FlowerTulip regular)
+ * - Tab 3 ('stickers'): Decorate with Stickers (Sticker regular)
  * Back Tabs:
- * - 'polaroid': Back Cover Artwork
- * - 'stamp': Stamp an Emotion
- * - 'stickers': Decorate with Stickers
+ * - Tab 1 ('polaroid'): Back Cover Artwork (Image regular)
+ * - Tab 2 ('stamp'): Stamp an Emotion (Smiley regular)
+ * - Tab 3 ('stickers'): Decorate with Stickers (Sticker regular)
  */
 export default function MobileQuickPickerPopover({ mode, onSelectMode, onClose }) {
   const { state, dispatch } = useCard();
@@ -120,6 +119,19 @@ export default function MobileQuickPickerPopover({ mode, onSelectMode, onClose }
   const isPokemonMode = state.cardType === 'pokemon';
   const currentSide = state.activeSide || 'front';
   const isFlipped = currentSide === 'back';
+
+  // Synchronously resolve the active mode for the current side so there is zero 1-frame lag or selection flicker when flipping Front <-> Back
+  const effectiveMode = isFlipped
+    ? mode === 'occasion'
+      ? 'polaroid'
+      : mode === 'frontArtwork'
+        ? 'stamp'
+        : mode
+    : mode === 'polaroid'
+      ? 'occasion'
+      : mode === 'stamp'
+        ? 'frontArtwork'
+        : mode;
 
   const sideStickers = useMemo(
     () => (state.stickers || []).filter((s) => (s.side || 'front') === currentSide),
@@ -139,7 +151,7 @@ export default function MobileQuickPickerPopover({ mode, onSelectMode, onClose }
 
   // Auto-scroll selected item into center when popover opens or mode changes
   useEffect(() => {
-    if (!mode) return;
+    if (!effectiveMode) return;
     const timer = setTimeout(() => {
       const el = scrollRef.current;
       if (!el) return;
@@ -151,25 +163,25 @@ export default function MobileQuickPickerPopover({ mode, onSelectMode, onClose }
       updateScrollEdges();
     }, 60);
     return () => clearTimeout(timer);
-  }, [mode, state.cardType, currentSide]);
+  }, [effectiveMode, state.cardType, currentSide]);
 
-  if (!mode) return null;
+  if (!effectiveMode) return null;
 
   const title =
-    mode === 'frontArtwork'
+    effectiveMode === 'frontArtwork'
       ? isPokemonMode
         ? 'Pick Your Pokémon'
         : 'Pick Your Bloom'
-      : mode === 'occasion'
+      : effectiveMode === 'occasion'
         ? 'What’s the Occasion?'
-        : mode === 'stickers'
+        : effectiveMode === 'stickers'
           ? 'Decorate with Stickers'
-          : mode === 'polaroid'
+          : effectiveMode === 'polaroid'
             ? 'Back Cover Artwork'
             : 'Stamp an Emotion';
 
   const edgeMask = (() => {
-    if (mode === 'polaroid') return undefined;
+    if (effectiveMode === 'polaroid') return undefined;
     const leftStop = canScrollLeft ? 'transparent 0px, black 22px' : 'black 0px, black 22px';
     const rightStop = canScrollRight ? 'black calc(100% - 22px), transparent 100%' : 'black calc(100% - 22px), black 100%';
     return `linear-gradient(to right, ${leftStop}, ${rightStop})`;
@@ -505,7 +517,9 @@ export default function MobileQuickPickerPopover({ mode, onSelectMode, onClose }
     });
   };
 
-  // Side-aware 3-tab configuration with stable slotKeys so the segmented bar morphs smoothly between Front and Back
+  // Side-aware 3-tab configuration:
+  // Front: Tab 1 Occasion (HandHeart), Tab 2 Bloom (FlowerTulip), Tab 3 Stickers (Sticker)
+  // Back: Tab 1 Back Image (Image), Tab 2 Emoji Stamp (Smiley), Tab 3 Stickers (Sticker)
   const dockSegments = isFlipped
     ? [
         {
@@ -533,17 +547,17 @@ export default function MobileQuickPickerPopover({ mode, onSelectMode, onClose }
     : [
         {
           slotKey: 'slot-0',
-          value: 'frontArtwork',
-          label: isPokemonMode ? 'Pick Your Pokémon' : 'Pick Your Bloom',
-          iconKey: isPokemonMode ? 'front-pokemon' : 'front-bloom',
-          icon: isPokemonMode ? <Sparkle size={20} weight="regular" /> : <FlowerLotus size={20} weight="regular" />,
-        },
-        {
-          slotKey: 'slot-1',
           value: 'occasion',
           label: 'What’s the Occasion?',
           iconKey: 'front-occasion',
-          icon: <CalendarHeart size={20} weight="regular" />,
+          icon: <HandHeart size={20} weight="regular" />,
+        },
+        {
+          slotKey: 'slot-1',
+          value: 'frontArtwork',
+          label: isPokemonMode ? 'Pick Your Pokémon' : 'Pick Your Bloom',
+          iconKey: 'front-bloom',
+          icon: <FlowerTulip size={20} weight="regular" />,
         },
         {
           slotKey: 'slot-2',
@@ -594,7 +608,7 @@ export default function MobileQuickPickerPopover({ mode, onSelectMode, onClose }
 
           {/* Right Header Context: Sticker count badge + Front/Back quick side toggle */}
           <div className="flex items-center gap-1.5 shrink-0">
-            {mode === 'stickers' && selectedStickerIdsSet.size > 0 && (
+            {effectiveMode === 'stickers' && selectedStickerIdsSet.size > 0 && (
               <span className="px-2 py-0.5 rounded-full bg-[#0088FF]/20 border border-[#0088FF]/40 text-[#4DA8FF] text-[11px] font-medium leading-[14px] select-none font-sans">
                 {selectedStickerIdsSet.size} selected
               </span>
@@ -628,7 +642,7 @@ export default function MobileQuickPickerPopover({ mode, onSelectMode, onClose }
         <div className="px-3.5 py-3 bg-[#0B0B0C]">
           <AnimatePresence mode="wait" initial={false}>
             <motion.div
-              key={mode}
+              key={effectiveMode}
               initial={{ opacity: 0, x: 10 }}
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: -10 }}
@@ -640,18 +654,18 @@ export default function MobileQuickPickerPopover({ mode, onSelectMode, onClose }
                 style={edgeMask ? { maskImage: edgeMask, WebkitMaskImage: edgeMask } : undefined}
                 className={cn(
                   'overflow-x-auto no-scrollbar py-0.5',
-                  mode === 'occasion'
+                  effectiveMode === 'occasion'
                     ? 'grid grid-rows-2 grid-flow-col auto-cols-max gap-2 px-1.5 snap-x snap-mandatory'
-                    : mode === 'polaroid'
+                    : effectiveMode === 'polaroid'
                       ? 'flex flex-row items-center justify-between px-1.5 gap-3 snap-x snap-mandatory'
                       : 'flex flex-row items-center gap-3 px-1.5 snap-x snap-mandatory'
                 )}
               >
-                {mode === 'frontArtwork' && renderFrontArtworkStrip()}
-                {mode === 'occasion' && renderOccasionStrip()}
-                {mode === 'stickers' && renderStickersStrip()}
-                {mode === 'polaroid' && renderPolaroidStrip()}
-                {mode === 'stamp' && renderStampStrip()}
+                {effectiveMode === 'frontArtwork' && renderFrontArtworkStrip()}
+                {effectiveMode === 'occasion' && renderOccasionStrip()}
+                {effectiveMode === 'stickers' && renderStickersStrip()}
+                {effectiveMode === 'polaroid' && renderPolaroidStrip()}
+                {effectiveMode === 'stamp' && renderStampStrip()}
               </div>
             </motion.div>
           </AnimatePresence>
@@ -663,7 +677,7 @@ export default function MobileQuickPickerPopover({ mode, onSelectMode, onClose }
         <GlassSegmentedControl
           aria-label="Customize card options"
           layoutId="customize-dock-segmented-bg"
-          value={mode}
+          value={effectiveMode}
           onValueChange={(nextMode) => onSelectMode?.(nextMode)}
           segments={dockSegments}
         />
