@@ -422,22 +422,22 @@ export default function ShaderButton({
     };
   }, []);
 
+  const canHover = typeof window !== 'undefined' && window.matchMedia
+    ? window.matchMedia('(hover: hover) and (pointer: fine)').matches
+    : true;
+
   return (
     <motion.button
       type="button"
       initial="initial"
-      whileHover="hover"
+      whileHover={canHover ? "hover" : undefined}
       onClick={onClick}
       className={`relative inline-flex items-center justify-center whitespace-nowrap ${showArrow ? 'gap-3' : 'gap-0'} ${SIZE_CONFIGS[size] || SIZE_CONFIGS.lg} rounded-full overflow-hidden cursor-pointer select-none bg-[#0A1202] text-white outline-none hig-focus ${className}`}
-      style={{
-        isolation: 'isolate',
-        WebkitMaskImage: '-webkit-radial-gradient(white, black)',
-        ...style,
-      }}
+      style={style}
     >
       {/* 1. WebGL Liquid Gradient Shader Canvas (Framer micro-animation: hover dims opacity to 0.4 via 0.4s tween) */}
       <motion.div
-        className="absolute inset-0 pointer-events-none rounded-full overflow-hidden z-0"
+        className="absolute inset-0 pointer-events-none rounded-full overflow-hidden"
         variants={{
           initial: { opacity: 1 },
           hover: { opacity: 0.4 },
@@ -454,7 +454,7 @@ export default function ShaderButton({
       {/* 2. Inset Specular Border Glow (Framer micro-animation: hover dims opacity to 0.4 via 0.4s tween) */}
       <motion.div
         aria-hidden="true"
-        className="absolute inset-0 pointer-events-none rounded-full z-0"
+        className="absolute inset-0 pointer-events-none rounded-full"
         style={{
           backgroundColor: 'rgba(10, 18, 2, 0.02)',
           boxShadow: 'inset 0px 0px 14px 0px rgba(217, 249, 157, 0.42)',
@@ -469,13 +469,13 @@ export default function ShaderButton({
       />
 
       {/* 3. Button Text */}
-      <span className="relative z-10 font-sans font-medium leading-[1.4em] tracking-[-0.01em] text-white">
+      <span className="relative z-10 font-sans font-medium leading-[1.4em] tracking-[-0.01em] text-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.35)]">
         {children}
       </span>
 
       {/* 4. Simple Side Arrow (Phosphor Icons) */}
       {showArrow && (
-        <div className="relative z-10 flex items-center justify-center text-white">
+        <div className="relative z-10 flex items-center justify-center text-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.35)]">
           <ArrowRight size={18} weight="regular" />
         </div>
       )}

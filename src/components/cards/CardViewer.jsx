@@ -387,8 +387,13 @@ export default function CardViewer({ onConfirm, onOpenEditTitle, onOpenEditMessa
                 transition={{ duration: 0.25 }}
                 className="lg:hidden pointer-events-none absolute inset-0 z-40"
               >
-                {/* Polaroid Hint Pill */}
-                <div className="absolute top-[25%] right-[9%] h-[26px] px-2.5 rounded-full bg-black/80 backdrop-blur-xl border border-white/25 shadow-[0_6px_20px_rgba(0,0,0,0.65)] inline-flex items-center justify-center gap-1.5 whitespace-nowrap">
+                {/* Polaroid / Photo Hint Pill */}
+                <div className={clsx(
+                  "absolute h-[26px] px-2.5 rounded-full bg-black/80 backdrop-blur-xl border border-white/25 shadow-[0_6px_20px_rgba(0,0,0,0.65)] inline-flex items-center justify-center gap-1.5 whitespace-nowrap",
+                  state.cardType === 'pokemon' && state.pokemonSubtype === 'trainer'
+                    ? "top-[56%] left-1/2 -translate-x-1/2"
+                    : "top-[25%] right-[9%]"
+                )}>
                   <Camera size={13} weight="regular" className="text-white shrink-0" />
                   <span className="text-[11px] leading-none font-medium text-white tracking-[-0.01em] font-sans">
                     Tap photo
@@ -396,7 +401,12 @@ export default function CardViewer({ onConfirm, onOpenEditTitle, onOpenEditMessa
                 </div>
 
                 {/* Stamp Hint Pill */}
-                <div className="absolute top-[41%] left-1/2 -translate-x-1/2 h-[26px] px-2.5 rounded-full bg-black/80 backdrop-blur-xl border border-white/25 shadow-[0_6px_20px_rgba(0,0,0,0.65)] inline-flex items-center justify-center gap-1.5 whitespace-nowrap">
+                <div className={clsx(
+                  "absolute h-[26px] px-2.5 rounded-full bg-black/80 backdrop-blur-xl border border-white/25 shadow-[0_6px_20px_rgba(0,0,0,0.65)] inline-flex items-center justify-center gap-1.5 whitespace-nowrap",
+                  state.cardType === 'pokemon' && state.pokemonSubtype === 'trainer'
+                    ? "top-[35%] left-1/2 -translate-x-1/2"
+                    : "top-[41%] left-1/2 -translate-x-1/2"
+                )}>
                   <Smiley size={13} weight="regular" className="text-white shrink-0" />
                   <span className="text-[11px] leading-none font-medium text-white tracking-[-0.01em] font-sans">
                     Tap stamp

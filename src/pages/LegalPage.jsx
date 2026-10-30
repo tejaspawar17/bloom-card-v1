@@ -4,8 +4,6 @@ import {
   ArrowLeft, 
   ShieldCheck, 
   FileText, 
-  CheckCircle, 
-  WarningCircle, 
   Sparkle, 
   Copy,
   HardDrives,
@@ -68,18 +66,18 @@ export default function LegalPage({
       <ScatteredKeepsakes />
 
       {/* Main Narrative Column */}
-      <main className="w-full max-w-[760px] px-5 sm:px-8 pt-8 sm:pt-12 pb-24 sm:pb-28 flex flex-col items-center relative z-10">
+      <main className="w-full max-w-[760px] px-4 sm:px-8 pt-6 sm:pt-12 pb-20 sm:pb-28 flex flex-col items-center relative z-10">
 
         {/* Top Control Bar: Back Button (Feedback pill UI) + Segmented Tab (Form UI) */}
-        <div className="w-full flex items-center justify-between gap-4 mb-6 sm:mb-8">
+        <div className="w-full flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3.5 sm:gap-4 mb-5 sm:mb-8">
           
           {/* Back to Studio Button matching Feedback button UI */}
           <button
             type="button"
             onClick={onStartCrafting}
-            className="dark-liquid-glass-pill h-[42px] px-5 text-[14px] font-medium text-white font-sans cursor-pointer active:scale-95 transition-transform flex items-center gap-2"
+            className="dark-liquid-glass-pill h-[40px] sm:h-[42px] px-4 sm:px-5 text-[13.5px] sm:text-[14px] font-medium text-white font-sans cursor-pointer active:scale-95 transition-transform inline-flex items-center justify-center gap-2 whitespace-nowrap shrink-0"
           >
-            <ArrowLeft size={16} />
+            <ArrowLeft size={16} className="shrink-0" />
             <span>Back to Studio</span>
           </button>
 
@@ -87,7 +85,7 @@ export default function LegalPage({
           <div 
             role="tablist"
             aria-label="Legal Document Selection" 
-            className="flex items-center p-1 bg-[#161616] border border-white/[0.08] rounded-full relative"
+            className="grid grid-cols-2 w-full sm:w-auto sm:flex items-center p-1 bg-[#161616] border border-white/[0.08] rounded-full relative"
           >
             {TABS.map((tab) => {
               const Icon = tab.icon;
@@ -100,7 +98,7 @@ export default function LegalPage({
                   id={`tab-${tab.id}`}
                   aria-selected={isActive}
                   onClick={() => handleSwitchTab(tab.id)}
-                  className="relative z-10 flex items-center justify-center gap-1.5 h-[34px] px-4 sm:px-5 rounded-full text-[13px] font-medium transition-colors cursor-pointer outline-none select-none"
+                  className="relative z-10 flex items-center justify-center gap-1.5 h-[36px] sm:h-[34px] px-3 sm:px-5 rounded-full text-[13px] font-medium transition-colors cursor-pointer outline-none select-none whitespace-nowrap w-full sm:w-auto"
                 >
                   {isActive && (
                     <motion.div
@@ -117,7 +115,7 @@ export default function LegalPage({
                   <Icon 
                     size={15} 
                     weight={isActive ? 'duotone' : 'regular'} 
-                    className={`transition-colors ${isActive ? 'text-[#FFFFFF]' : 'text-[#999999]'}`} 
+                    className={`shrink-0 transition-colors ${isActive ? 'text-[#FFFFFF]' : 'text-[#999999]'}`} 
                   />
                   <span className={`transition-colors ${isActive ? 'text-[#FFFFFF] font-medium' : 'text-[#999999] hover:text-[#FFFFFF]'}`}>
                     {tab.label}
@@ -143,14 +141,14 @@ export default function LegalPage({
               <div className="w-full rounded-[24px] bg-[#0E0E0E] border border-white/[0.10] overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.7)] text-left">
                 
                 {/* macOS Stoplights Header Bar with Clean Title */}
-                <div className="h-[48px] px-5 flex items-center justify-between bg-[#1A1A1A] border-b border-white/[0.08] select-none">
+                <div className="h-[46px] sm:h-[48px] px-4 sm:px-5 flex items-center justify-between bg-[#1A1A1A] border-b border-white/[0.08] select-none">
                   <div className="flex items-center gap-2">
                     <div className="w-3 h-3 rounded-full bg-[#FF5F56] border border-[#E0443E]/50 shadow-sm" />
                     <div className="w-3 h-3 rounded-full bg-[#FFBD2E] border border-[#DEA123]/50 shadow-sm" />
                     <div className="w-3 h-3 rounded-full bg-[#27C93F] border border-[#1AAB29]/50 shadow-sm" />
                   </div>
 
-                  <span className="text-[#999999] font-medium text-[13px] leading-[16px] tracking-tight">
+                  <span className="text-[#999999] font-medium text-[13px] leading-[16px] tracking-tight whitespace-nowrap">
                     Terms of Use
                   </span>
 
@@ -158,7 +156,7 @@ export default function LegalPage({
                 </div>
 
                 {/* Body Content */}
-                <div className="p-6 sm:p-9 flex flex-col gap-7 text-[#E5E5EA] text-[14px] sm:text-[14.5px] leading-[23px]">
+                <div className="p-5 sm:p-9 flex flex-col gap-6 sm:gap-7 text-[#E5E5EA] text-[13.5px] sm:text-[14.5px] leading-[21px] sm:leading-[23px]">
                   
                   {/* Clean Timestamp */}
                   <div className="text-[12px] text-[#727272] tracking-wide -mb-2">
@@ -167,11 +165,11 @@ export default function LegalPage({
 
                   {/* Section 1 */}
                   <section className="flex flex-col gap-2">
-                    <div className="flex items-center gap-2">
-                      <span className="font-mono text-[11px] text-[#86B75A] font-semibold px-2 py-0.5 rounded bg-[#86B75A]/10 border border-[#86B75A]/20">
+                    <div className="flex flex-col sm:flex-row items-start sm:items-center gap-1.5 sm:gap-2.5">
+                      <span className="font-mono text-[10.5px] sm:text-[11px] leading-none text-[#86B75A] font-semibold px-2.5 py-1 rounded-md bg-[#86B75A]/10 border border-[#86B75A]/20 shrink-0 whitespace-nowrap w-fit">
                         SECTION 01
                       </span>
-                      <h2 className="text-white font-semibold text-[17px] tracking-tight">
+                      <h2 className="text-white font-semibold text-[16px] sm:text-[17px] leading-[22px] sm:leading-[24px] tracking-tight">
                         Non-Commercial Portfolio & Fan Project Disclaimer
                       </h2>
                     </div>
@@ -187,11 +185,11 @@ export default function LegalPage({
 
                   {/* Section 2 */}
                   <section className="flex flex-col gap-3">
-                    <div className="flex items-center gap-2">
-                      <span className="font-mono text-[11px] text-[#CFC531] font-semibold px-2 py-0.5 rounded bg-[#CFC531]/10 border border-[#CFC531]/20">
+                    <div className="flex flex-col sm:flex-row items-start sm:items-center gap-1.5 sm:gap-2.5">
+                      <span className="font-mono text-[10.5px] sm:text-[11px] leading-none text-[#CFC531] font-semibold px-2.5 py-1 rounded-md bg-[#CFC531]/10 border border-[#CFC531]/20 shrink-0 whitespace-nowrap w-fit">
                         SECTION 02
                       </span>
-                      <h2 className="text-white font-semibold text-[17px] tracking-tight">
+                      <h2 className="text-white font-semibold text-[16px] sm:text-[17px] leading-[22px] sm:leading-[24px] tracking-tight">
                         Intellectual Property & Fair Use Parody Notice
                       </h2>
                     </div>
@@ -200,7 +198,7 @@ export default function LegalPage({
                       {/* Original UI */}
                       <div className="p-4 rounded-[14px] bg-white/[0.03] border border-white/[0.08] flex flex-col gap-1">
                         <div className="flex items-center gap-2 text-white font-medium text-[13.5px]">
-                          <Sparkle size={15} className="text-[#86B75A]" />
+                          <Sparkle size={15} className="text-[#86B75A] shrink-0" />
                           <span>Original UI & Code Architecture</span>
                         </div>
                         <p className="text-[#999999] text-[13px] leading-[20px]">
@@ -211,7 +209,7 @@ export default function LegalPage({
                       {/* Pokemon Parody */}
                       <div className="p-4 rounded-[14px] bg-white/[0.03] border border-white/[0.08] flex flex-col gap-1">
                         <div className="flex items-center gap-2 text-white font-medium text-[13.5px]">
-                          <span className="text-[12px] font-bold text-[#CFC531]">⚡</span>
+                          <span className="text-[12px] font-bold text-[#CFC531] shrink-0">⚡</span>
                           <span>Pokémon TCG Parody Templates</span>
                         </div>
                         <p className="text-[#999999] text-[13px] leading-[20px]">
@@ -222,7 +220,7 @@ export default function LegalPage({
                       {/* Music Stickers */}
                       <div className="p-4 rounded-[14px] bg-white/[0.03] border border-white/[0.08] flex flex-col gap-1">
                         <div className="flex items-center gap-2 text-white font-medium text-[13.5px]">
-                          <span className="text-[12px] font-bold text-[#7CE0DC]">💿</span>
+                          <span className="text-[12px] font-bold text-[#7CE0DC] shrink-0">💿</span>
                           <span>Music & Cultural Stickers</span>
                         </div>
                         <p className="text-[#999999] text-[13px] leading-[20px]">
@@ -233,7 +231,7 @@ export default function LegalPage({
                       {/* Microsoft Fluent UI Emojis MIT Notice */}
                       <div className="p-4 rounded-[14px] bg-white/[0.03] border border-white/[0.08] flex flex-col gap-1.5">
                         <div className="flex items-center gap-2 text-white font-medium text-[13.5px]">
-                          <span className="text-[12px] font-bold text-white">🪪</span>
+                          <span className="text-[12px] font-bold text-white shrink-0">🪪</span>
                           <span>3D Emojis & Botanical Art</span>
                         </div>
                         <p className="text-[#999999] text-[13px] leading-[20px]">
@@ -250,11 +248,11 @@ export default function LegalPage({
 
                   {/* Section 3 */}
                   <section className="flex flex-col gap-2.5">
-                    <div className="flex items-center gap-2">
-                      <span className="font-mono text-[11px] text-[#7CE0DC] font-semibold px-2 py-0.5 rounded bg-[#7CE0DC]/10 border border-[#7CE0DC]/20">
+                    <div className="flex flex-col sm:flex-row items-start sm:items-center gap-1.5 sm:gap-2.5">
+                      <span className="font-mono text-[10.5px] sm:text-[11px] leading-none text-[#7CE0DC] font-semibold px-2.5 py-1 rounded-md bg-[#7CE0DC]/10 border border-[#7CE0DC]/20 shrink-0 whitespace-nowrap w-fit">
                         SECTION 03
                       </span>
-                      <h2 className="text-white font-semibold text-[17px] tracking-tight">
+                      <h2 className="text-white font-semibold text-[16px] sm:text-[17px] leading-[22px] sm:leading-[24px] tracking-tight">
                         Takedown Requests
                       </h2>
                     </div>
@@ -266,25 +264,25 @@ export default function LegalPage({
                     <div className="p-4 rounded-[14px] bg-white/[0.03] border border-white/[0.08] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
                       <div className="flex flex-col gap-0.5">
                         <span className="text-white font-medium text-[13px]">Creator Contact Inbox</span>
-                        <span className="text-[#999999] text-[12px]">Direct takedown email: pawartejas517@gmail.com</span>
+                        <span className="text-[#999999] text-[12px] break-all">Direct takedown email: pawartejas517@gmail.com</span>
                       </div>
 
-                      <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-2 shrink-0">
                         <button
                           type="button"
                           onClick={handleCopyEmail}
-                          className="dark-liquid-glass-pill h-[36px] px-3.5 text-[12.5px] font-medium text-white flex items-center gap-1.5 cursor-pointer active:scale-95 transition-transform"
+                          className="dark-liquid-glass-pill h-[36px] px-3.5 text-[12.5px] font-medium text-white flex items-center gap-1.5 cursor-pointer active:scale-95 transition-transform whitespace-nowrap"
                         >
-                          <Copy size={13} />
+                          <Copy size={13} className="shrink-0" />
                           <span>Copy Email</span>
                         </button>
                         <a
                           href="https://www.instagram.com/teja_vu._.archive?obrf=OGI4N3BkNGlyMnIz&utm_source=qr"
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="dark-liquid-glass-pill h-[36px] px-3.5 text-[12.5px] font-medium text-white flex items-center gap-1.5 cursor-pointer active:scale-95 transition-transform"
+                          className="dark-liquid-glass-pill h-[36px] px-3.5 text-[12.5px] font-medium text-white flex items-center gap-1.5 cursor-pointer active:scale-95 transition-transform whitespace-nowrap"
                         >
-                          <InstagramLogo size={13} />
+                          <InstagramLogo size={13} className="shrink-0" />
                           <span>Instagram</span>
                         </a>
                       </div>
@@ -295,11 +293,11 @@ export default function LegalPage({
 
                   {/* Section 4 */}
                   <section className="flex flex-col gap-2">
-                    <div className="flex items-center gap-2">
-                      <span className="font-mono text-[11px] text-[#FFBD2E] font-semibold px-2 py-0.5 rounded bg-[#FFBD2E]/10 border border-[#FFBD2E]/20">
+                    <div className="flex flex-col sm:flex-row items-start sm:items-center gap-1.5 sm:gap-2.5">
+                      <span className="font-mono text-[10.5px] sm:text-[11px] leading-none text-[#FFBD2E] font-semibold px-2.5 py-1 rounded-md bg-[#FFBD2E]/10 border border-[#FFBD2E]/20 shrink-0 whitespace-nowrap w-fit">
                         SECTION 04
                       </span>
-                      <h2 className="text-white font-semibold text-[17px] tracking-tight">
+                      <h2 className="text-white font-semibold text-[16px] sm:text-[17px] leading-[22px] sm:leading-[24px] tracking-tight">
                         User-Generated Content & Conduct
                       </h2>
                     </div>
@@ -323,11 +321,11 @@ export default function LegalPage({
 
                   {/* Section 5 */}
                   <section className="flex flex-col gap-2">
-                    <div className="flex items-center gap-2">
-                      <span className="font-mono text-[11px] text-[#999999] font-semibold px-2 py-0.5 rounded bg-white/[0.08] border border-white/[0.12]">
+                    <div className="flex flex-col sm:flex-row items-start sm:items-center gap-1.5 sm:gap-2.5">
+                      <span className="font-mono text-[10.5px] sm:text-[11px] leading-none text-[#999999] font-semibold px-2.5 py-1 rounded-md bg-white/[0.08] border border-white/[0.12] shrink-0 whitespace-nowrap w-fit">
                         SECTION 05
                       </span>
-                      <h2 className="text-white font-semibold text-[17px] tracking-tight">
+                      <h2 className="text-white font-semibold text-[16px] sm:text-[17px] leading-[22px] sm:leading-[24px] tracking-tight">
                         Disclaimer of Warranties (&ldquo;As-Is&rdquo;)
                       </h2>
                     </div>
@@ -353,14 +351,14 @@ export default function LegalPage({
               <div className="w-full rounded-[24px] bg-[#0E0E0E] border border-white/[0.10] overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.7)] text-left">
                 
                 {/* macOS Stoplights Header Bar with Clean Title */}
-                <div className="h-[48px] px-5 flex items-center justify-between bg-[#1A1A1A] border-b border-white/[0.08] select-none">
+                <div className="h-[46px] sm:h-[48px] px-4 sm:px-5 flex items-center justify-between bg-[#1A1A1A] border-b border-white/[0.08] select-none">
                   <div className="flex items-center gap-2">
                     <div className="w-3 h-3 rounded-full bg-[#FF5F56] border border-[#E0443E]/50 shadow-sm" />
                     <div className="w-3 h-3 rounded-full bg-[#FFBD2E] border border-[#DEA123]/50 shadow-sm" />
                     <div className="w-3 h-3 rounded-full bg-[#27C93F] border border-[#1AAB29]/50 shadow-sm" />
                   </div>
 
-                  <span className="text-[#999999] font-medium text-[13px] leading-[16px] tracking-tight">
+                  <span className="text-[#999999] font-medium text-[13px] leading-[16px] tracking-tight whitespace-nowrap">
                     Privacy Policy
                   </span>
 
@@ -368,7 +366,7 @@ export default function LegalPage({
                 </div>
 
                 {/* Body Content */}
-                <div className="p-6 sm:p-9 flex flex-col gap-7 text-[#E5E5EA] text-[14px] sm:text-[14.5px] leading-[23px]">
+                <div className="p-5 sm:p-9 flex flex-col gap-6 sm:gap-7 text-[#E5E5EA] text-[13.5px] sm:text-[14.5px] leading-[21px] sm:leading-[23px]">
                   
                   {/* Clean Timestamp */}
                   <div className="text-[12px] text-[#727272] tracking-wide -mb-2">
@@ -377,11 +375,11 @@ export default function LegalPage({
 
                   {/* Section 1 */}
                   <section className="flex flex-col gap-2">
-                    <div className="flex items-center gap-2">
-                      <span className="font-mono text-[11px] text-[#86B75A] font-semibold px-2 py-0.5 rounded bg-[#86B75A]/10 border border-[#86B75A]/20">
+                    <div className="flex flex-col sm:flex-row items-start sm:items-center gap-1.5 sm:gap-2.5">
+                      <span className="font-mono text-[10.5px] sm:text-[11px] leading-none text-[#86B75A] font-semibold px-2.5 py-1 rounded-md bg-[#86B75A]/10 border border-[#86B75A]/20 shrink-0 whitespace-nowrap w-fit">
                         SECTION 01
                       </span>
-                      <h2 className="text-white font-semibold text-[17px] tracking-tight">
+                      <h2 className="text-white font-semibold text-[16px] sm:text-[17px] leading-[22px] sm:leading-[24px] tracking-tight">
                         Overview (Zero-Database Architecture)
                       </h2>
                     </div>
@@ -397,11 +395,11 @@ export default function LegalPage({
 
                   {/* Section 2 */}
                   <section className="flex flex-col gap-3">
-                    <div className="flex items-center gap-2">
-                      <span className="font-mono text-[11px] text-[#7CE0DC] font-semibold px-2 py-0.5 rounded bg-[#7CE0DC]/10 border border-[#7CE0DC]/20">
+                    <div className="flex flex-col sm:flex-row items-start sm:items-center gap-1.5 sm:gap-2.5">
+                      <span className="font-mono text-[10.5px] sm:text-[11px] leading-none text-[#7CE0DC] font-semibold px-2.5 py-1 rounded-md bg-[#7CE0DC]/10 border border-[#7CE0DC]/20 shrink-0 whitespace-nowrap w-fit">
                         SECTION 02
                       </span>
-                      <h2 className="text-white font-semibold text-[17px] tracking-tight">
+                      <h2 className="text-white font-semibold text-[16px] sm:text-[17px] leading-[22px] sm:leading-[24px] tracking-tight">
                         Local Processing & Custom Image Uploads
                       </h2>
                     </div>
@@ -409,7 +407,7 @@ export default function LegalPage({
                     <div className="grid grid-cols-1 gap-3 pt-0.5">
                       <div className="p-4 rounded-[14px] bg-white/[0.03] border border-white/[0.08] flex flex-col gap-1">
                         <div className="flex items-center gap-2 text-white font-medium text-[13.5px]">
-                          <HardDrives size={15} className="text-[#7CE0DC]" />
+                          <HardDrives size={15} className="text-[#7CE0DC] shrink-0" />
                           <span>Text & Customization</span>
                         </div>
                         <p className="text-[#999999] text-[13px] leading-[20px]">
@@ -419,7 +417,7 @@ export default function LegalPage({
 
                       <div className="p-4 rounded-[14px] bg-white/[0.03] border border-white/[0.08] flex flex-col gap-1">
                         <div className="flex items-center gap-2 text-white font-medium text-[13.5px]">
-                          <ShieldCheck size={15} className="text-[#86B75A]" />
+                          <ShieldCheck size={15} className="text-[#86B75A] shrink-0" />
                           <span>Uploaded Photos</span>
                         </div>
                         <p className="text-[#999999] text-[13px] leading-[20px]">
@@ -433,11 +431,11 @@ export default function LegalPage({
 
                   {/* Section 3 */}
                   <section className="flex flex-col gap-2.5">
-                    <div className="flex items-center gap-2">
-                      <span className="font-mono text-[11px] text-[#CFC531] font-semibold px-2 py-0.5 rounded bg-[#CFC531]/10 border border-[#CFC531]/20">
+                    <div className="flex flex-col sm:flex-row items-start sm:items-center gap-1.5 sm:gap-2.5">
+                      <span className="font-mono text-[10.5px] sm:text-[11px] leading-none text-[#CFC531] font-semibold px-2.5 py-1 rounded-md bg-[#CFC531]/10 border border-[#CFC531]/20 shrink-0 whitespace-nowrap w-fit">
                         SECTION 03
                       </span>
-                      <h2 className="text-white font-semibold text-[17px] tracking-tight">
+                      <h2 className="text-white font-semibold text-[16px] sm:text-[17px] leading-[22px] sm:leading-[24px] tracking-tight">
                         Shared Card Links (&ldquo;/view&rdquo; Route)
                       </h2>
                     </div>
@@ -448,7 +446,7 @@ export default function LegalPage({
 
                     <div className="p-4 rounded-[14px] bg-white/[0.03] border border-white/[0.08] flex flex-col gap-1.5">
                       <div className="flex items-center gap-2 text-white font-medium text-[13.5px]">
-                        <ShareNetwork size={15} className="text-[#CFC531]" />
+                        <ShareNetwork size={15} className="text-[#CFC531] shrink-0" />
                         <span>Private & Unguessable Direct Links</span>
                       </div>
                       <p className="text-[#999999] text-[13px] leading-[20px]">
@@ -461,11 +459,11 @@ export default function LegalPage({
 
                   {/* Section 4 */}
                   <section className="flex flex-col gap-2">
-                    <div className="flex items-center gap-2">
-                      <span className="font-mono text-[11px] text-[#999999] font-semibold px-2 py-0.5 rounded bg-white/[0.08] border border-white/[0.12]">
+                    <div className="flex flex-col sm:flex-row items-start sm:items-center gap-1.5 sm:gap-2.5">
+                      <span className="font-mono text-[10.5px] sm:text-[11px] leading-none text-[#999999] font-semibold px-2.5 py-1 rounded-md bg-white/[0.08] border border-white/[0.12] shrink-0 whitespace-nowrap w-fit">
                         SECTION 04
                       </span>
-                      <h2 className="text-white font-semibold text-[17px] tracking-tight">
+                      <h2 className="text-white font-semibold text-[16px] sm:text-[17px] leading-[22px] sm:leading-[24px] tracking-tight">
                         Analytics & Local Storage
                       </h2>
                     </div>
@@ -484,11 +482,11 @@ export default function LegalPage({
 
                   {/* Section 5 */}
                   <section className="flex flex-col gap-2.5">
-                    <div className="flex items-center gap-2">
-                      <span className="font-mono text-[11px] text-[#86B75A] font-semibold px-2 py-0.5 rounded bg-[#86B75A]/10 border border-[#86B75A]/20">
+                    <div className="flex flex-col sm:flex-row items-start sm:items-center gap-1.5 sm:gap-2.5">
+                      <span className="font-mono text-[10.5px] sm:text-[11px] leading-none text-[#86B75A] font-semibold px-2.5 py-1 rounded-md bg-[#86B75A]/10 border border-[#86B75A]/20 shrink-0 whitespace-nowrap w-fit">
                         SECTION 05
                       </span>
-                      <h2 className="text-white font-semibold text-[17px] tracking-tight">
+                      <h2 className="text-white font-semibold text-[16px] sm:text-[17px] leading-[22px] sm:leading-[24px] tracking-tight">
                         Contact & Inquiries
                       </h2>
                     </div>
@@ -500,25 +498,25 @@ export default function LegalPage({
                     <div className="p-4 rounded-[14px] bg-white/[0.03] border border-white/[0.08] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
                       <div className="flex flex-col gap-0.5">
                         <span className="text-white font-medium text-[13px]">Creator Contact Inbox</span>
-                        <span className="text-[#999999] text-[12px]">Direct email: pawartejas517@gmail.com</span>
+                        <span className="text-[#999999] text-[12px] break-all">Direct email: pawartejas517@gmail.com</span>
                       </div>
 
-                      <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-2 shrink-0">
                         <button
                           type="button"
                           onClick={handleCopyEmail}
-                          className="dark-liquid-glass-pill h-[36px] px-3.5 text-[12.5px] font-medium text-white flex items-center gap-1.5 cursor-pointer active:scale-95 transition-transform"
+                          className="dark-liquid-glass-pill h-[36px] px-3.5 text-[12.5px] font-medium text-white flex items-center gap-1.5 cursor-pointer active:scale-95 transition-transform whitespace-nowrap"
                         >
-                          <Copy size={13} />
+                          <Copy size={13} className="shrink-0" />
                           <span>Copy Email</span>
                         </button>
                         <a
                           href="https://www.instagram.com/teja_vu._.archive?obrf=OGI4N3BkNGlyMnIz&utm_source=qr"
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="dark-liquid-glass-pill h-[36px] px-3.5 text-[12.5px] font-medium text-white flex items-center gap-1.5 cursor-pointer active:scale-95 transition-transform"
+                          className="dark-liquid-glass-pill h-[36px] px-3.5 text-[12.5px] font-medium text-white flex items-center gap-1.5 cursor-pointer active:scale-95 transition-transform whitespace-nowrap"
                         >
-                          <InstagramLogo size={13} />
+                          <InstagramLogo size={13} className="shrink-0" />
                           <span>Instagram</span>
                         </a>
                       </div>

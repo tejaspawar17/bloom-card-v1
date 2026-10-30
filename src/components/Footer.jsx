@@ -19,14 +19,17 @@ export default function Footer({ onFeedback, onTerms, onPrivacy }) {
     }
     showToast({ title: 'Email copied to clipboard', description: email, duration: 2600 });
   };
+
   return (
     <footer 
       role="contentinfo" 
       aria-label="Footer"
-      className="w-full px-6 sm:px-8 xl:px-14 pt-6 pb-8 lg:pb-6 flex flex-col lg:flex-row items-center lg:items-stretch justify-between z-20 text-neutral-400 select-none relative gap-8 lg:gap-4 font-sans"
+      className="w-full px-6 sm:px-8 xl:px-14 pt-6 pb-8 lg:pb-6 flex flex-col lg:flex-row items-center lg:items-stretch justify-between z-20 text-neutral-400 select-none relative gap-10 lg:gap-4 font-sans"
     >
-      {/* 1. Left Section - Bloom Logo & Description + Bottom-Aligned Legal Links */}
-      <div className="flex flex-col w-full max-w-[326px] lg:w-[326px] text-center lg:text-left items-center lg:items-start shrink-0 justify-between self-center lg:self-stretch">
+      {/* 1. Bloom Logo & Description + Social Actions (Mobile/Tablet) + Legal Links
+          - Mobile/Tablet: Second block (order-2) at the bottom of the page with Social Trio grouped directly under description, followed by Legal Links at the bottom baseline.
+          - Desktop (lg+): First column (lg:order-1) on the left. */}
+      <div className="order-2 lg:order-1 flex flex-col w-full max-w-[326px] lg:w-[326px] text-center lg:text-left items-center lg:items-start shrink-0 justify-between self-center lg:self-stretch">
         <div className="w-full flex flex-col items-center lg:items-start">
           {/* Header Block: Centered on mobile/tablet, left-aligned on desktop (40px) */}
           <div className="h-[40px] flex items-end justify-center lg:justify-start gap-[3px] pb-1 w-full">
@@ -46,10 +49,44 @@ export default function Footer({ onFeedback, onTerms, onPrivacy }) {
           <p className="text-[12px] text-[#999999] leading-[17px] font-sans font-normal w-full lg:w-[326px] tracking-[-0.01em]">
             I built Bloom because getting a dry "HBD 🎂" text hurts my soul. Real people deserve more than a generic blue bubble.
           </p>
+
+          {/* Mobile & Tablet Grouped Action Trio (Instagram, Feedback, Email) directly attached to Bloom section */}
+          <div className="flex lg:hidden items-center justify-center gap-3 shrink-0 mt-4">
+            <a 
+              href="https://www.instagram.com/teja_vu._.archive?obrf=OGI4N3BkNGlyMnIz&utm_source=qr" 
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Instagram"
+              className="liquid-glass-icon-button text-[#FFFFFF] hover:text-[#FFFFFF]"
+            >
+              <span className="liquid-glass-icon-button__glass">
+                <InstagramLogo size={30} />
+              </span>
+            </a>
+
+            <button 
+              type="button"
+              onClick={onFeedback} 
+              className="dark-liquid-glass-pill h-[44px] px-6 text-[#FFFFFF] hover:text-[#FFFFFF] text-[15px] leading-[20px] font-medium font-sans cursor-pointer"
+            >
+              Feedback
+            </button>
+
+            <button 
+              type="button"
+              onClick={handleCopyEmail}
+              aria-label="Copy Email"
+              className="liquid-glass-icon-button text-[#FFFFFF] hover:text-[#FFFFFF] cursor-pointer outline-none"
+            >
+              <span className="liquid-glass-icon-button__glass">
+                <EnvelopeSimple size={30} />
+              </span>
+            </button>
+          </div>
         </div>
 
-        {/* Legal Links (Centered on mobile/tablet; flush on bottom baseline on desktop) */}
-        <nav aria-label="Legal Links" className="flex items-center justify-center lg:justify-start gap-2.5 text-[11px] text-[#727272] font-sans font-normal mt-3.5 lg:mt-4 pb-0 lg:pb-3">
+        {/* Legal Links (Anchored at very bottom of page on mobile/tablet; flush on bottom baseline on desktop) */}
+        <nav aria-label="Legal Links" className="flex items-center justify-center lg:justify-start gap-2.5 text-[11px] text-[#727272] font-sans font-normal mt-5 lg:mt-4 pb-0 lg:pb-3">
           <button onClick={onTerms} className="hover:text-white transition-colors cursor-pointer outline-none">
             Terms of Use
           </button>
@@ -60,8 +97,8 @@ export default function Footer({ onFeedback, onTerms, onPrivacy }) {
         </nav>
       </div>
 
-      {/* 2. Center Section - Action Trio (Instagram, Feedback, Email) */}
-      <div className="flex items-center justify-center gap-3 shrink-0 self-center lg:self-end pb-0.5">
+      {/* 2. Desktop-Only Center Section - Action Trio (Instagram, Feedback, Email) */}
+      <div className="hidden lg:flex lg:order-2 items-center justify-center gap-3 shrink-0 self-end pb-0.5">
         <a 
           href="https://www.instagram.com/teja_vu._.archive?obrf=OGI4N3BkNGlyMnIz&utm_source=qr" 
           target="_blank"
@@ -77,7 +114,7 @@ export default function Footer({ onFeedback, onTerms, onPrivacy }) {
         <button 
           type="button"
           onClick={onFeedback} 
-          className="dark-liquid-glass-pill h-[44px] lg:h-[50px] px-6 text-[#FFFFFF] hover:text-[#FFFFFF] text-[15px] lg:text-[16px] xl:text-[17px] leading-[20px] lg:leading-[22px] font-medium font-sans cursor-pointer"
+          className="dark-liquid-glass-pill h-[50px] px-6 text-[#FFFFFF] hover:text-[#FFFFFF] text-[16px] xl:text-[17px] leading-[22px] font-medium font-sans cursor-pointer"
         >
           Feedback
         </button>
@@ -94,8 +131,10 @@ export default function Footer({ onFeedback, onTerms, onPrivacy }) {
         </button>
       </div>
 
-      {/* 3. Right Section - Buy Me a Coffee (Option B on mobile/tablet; right-aligned on desktop) */}
-      <div className="flex flex-col w-full max-w-[326px] lg:w-[326px] text-center lg:text-right items-center lg:items-end shrink-0 justify-between self-center lg:self-stretch">
+      {/* 3. Buy Me a Coffee Section
+          - Mobile/Tablet: First block (order-1) with Option B decals beside button.
+          - Desktop (lg+): Third column (lg:order-3) on the right. */}
+      <div className="order-1 lg:order-3 flex flex-col w-full max-w-[326px] lg:w-[326px] text-center lg:text-right items-center lg:items-end shrink-0 justify-between self-center lg:self-stretch">
         <div className="w-full flex flex-col items-center lg:items-end">
           {/* Header Block: Clean centered title on mobile/tablet; 326px space-between with decals on desktop */}
           <div className="w-full lg:w-[326px] h-[32px] lg:h-[40px] flex items-end justify-center lg:justify-between pb-0.5">
