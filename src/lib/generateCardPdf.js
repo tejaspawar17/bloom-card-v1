@@ -1,6 +1,244 @@
 import { toPng } from 'html-to-image';
 import { jsPDF } from 'jspdf';
 
+const GOOGLE_FONTS_CSS_URL =
+  'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Homemade+Apple&family=Vampiro+One&family=Syne+Tactile&family=Instrument+Serif:ital@0;1&display=swap';
+
+let cachedFontEmbedCSS = null;
+
+function blobToDataUrl(blob) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onloadend = () => resolve(reader.result);
+    reader.onerror = reject;
+    reader.readAsDataURL(blob);
+  });
+}
+
+/**
+ * Fetches and embeds studio webfonts (Vampiro One, Homemade Apple, Syne Tactile, Instrument Serif, Inter)
+ * as base64 @font-face rules so isolated <svg><foreignObject> renders authentic typography on mobile & desktop.
+ */
+async function getStudioFontEmbedCSS() {
+  if (cachedFontEmbedCSS !== null) return cachedFontEmbedCSS;
+  try {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 3500);
+    const res = await fetch(GOOGLE_FONTS_CSS_URL, { signal: controller.signal });
+    clearTimeout(timeoutId);
+    if (!res.ok) return '';
+    let cssText = await res.text();
+
+    const urlRegex = /url\((['"]?)(https?:\/\/[^)'"]+)\1\)/g;
+    const matches = [...cssText.matchAll(urlRegex)];
+
+    await Promise.all(
+      matches.map(async (match) => {
+        const fullMatch = match[0];
+        const fontUrl = match[2];
+        try {
+          const fontRes = await fetch(fontUrl);
+          if (!fontRes.ok) return;
+          const fontBlob = await fontRes.blob();
+          const dataUrl = await blobToDataUrl(fontBlob);
+          cssText = cssText.split(fullMatch).join(`url("${dataUrl}")`);
+        } catch {
+          // Ignore individual font fetch failure
+        }
+      })
+    );
+
+    cachedFontEmbedCSS = cssText;
+    return cssText;
+  } catch {
+    return '';
+  }
+}
+
+/**
+ * Loads an image URL and waits for full bitmap decoding.
+ */
+function loadDecodedImage(src) {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.crossOrigin = 'anonymous';
+    img.decoding = 'sync';
+    img.onload = async () => {
+      try {
+        if (img.decode) await img.decode();
+      } catch {
+        // Proceed even if decode() warns
+      }
+      resolve(img);
+    };
+    img.onerror = reject;
+    img.src = src;
+  });
+}
+
+/**
+ * Pre-renders an <img> element onto an offscreen canvas with its exact object-fit (cover/contain)
+ * so mobile WebKit <svg><foreignObject> never drops large card artwork or mis-crops aspect ratios.
+ */
+async function rasterizeImgToDataUrl(imgEl, scale = 2.5) {
+  const src = imgEl.currentSrc || imgEl.src;
+  if (!src) return null;
+
+  const decodedImg = await loadDecodedImage(src);
+  const nw = decodedImg.naturalWidth || decodedImg.width || 688;
+  const nh = decodedImg.naturalHeight || decodedImg.height || 960;
+
+  const computed = window.getComputedStyle(imgEl);
+  const cssW = imgEl.offsetWidth || imgEl.clientWidth || parseFloat(computed.width) || 350;
+  const cssH = imgEl.offsetHeight || imgEl.clientHeight || parseFloat(computed.height) || 488;
+  const targetW = Math.max(1, Math.round(cssW * scale));
+  const targetH = Math.max(1, Math.round(cssH * scale));
+
+  const canvas = document.createElement('canvas');
+  canvas.width = targetW;
+  canvas.height = targetH;
+  const ctx = canvas.getContext('2d');
+  if (!ctx) return null;
+
+  const objectFit = computed.objectFit || 'fill';
+
+  let drawX = 0;
+  let drawY = 0;
+  let drawW = targetW;
+  let drawH = targetH;
+
+  if (objectFit === 'cover') {
+    const scaleFactor = Math.max(targetW / nw, targetH / nh);
+    drawW = nw * scaleFactor;
+    drawH = nh * scaleFactor;
+    drawX = (targetW - drawW) / 2;
+    drawY = (targetH - drawH) / 2;
+  } else if (objectFit === 'contain') {
+    const scaleFactor = Math.min(targetW / nw, targetH / nh);
+    drawW = nw * scaleFactor;
+    drawH = nh * scaleFactor;
+    drawX = (targetW - drawW) / 2;
+    drawY = (targetH - drawH) / 2;
+  }
+
+  ctx.drawImage(decodedImg, drawX, drawY, drawW, drawH);
+  return canvas.toDataURL('image/png', 0.98);
+}
+
+const TRANSPARENT_PIXEL_GIF =
+  'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
+
+/**
+ * Prepares a card DOM subtree for mobile-safe <svg><foreignObject> capture:
+ * 1. Locks resolved pixel values for all cqw / container-query properties from the live 350x488 stage.
+ * 2. Pre-rasterizes all <img> tags into sized data URLs rendered via CSS background-image so
+ *    Mobile WebKit <foreignObject> never drops large card artwork or suffers async <img> decode blanks.
+ * Returns a cleanup callback to restore original DOM attributes/styles.
+ */
+async function prepareElementForMobileCapture(rootElement) {
+  const restoreCallbacks = [];
+
+  // 1. Snapshot resolved computed pixel styles on all descendants before disabling @container
+  const allElements = [rootElement, ...Array.from(rootElement.querySelectorAll('*'))];
+  const styleSnapshots = allElements.map((el) => {
+    const cs = window.getComputedStyle(el);
+    return {
+      el,
+      originalStyleAttr: el.getAttribute('style'),
+      computed: {
+        width: cs.width,
+        height: cs.height,
+        fontSize: cs.fontSize,
+        lineHeight: cs.lineHeight,
+        letterSpacing: cs.letterSpacing,
+        borderTopWidth: cs.borderTopWidth,
+        borderRightWidth: cs.borderRightWidth,
+        borderBottomWidth: cs.borderBottomWidth,
+        borderLeftWidth: cs.borderLeftWidth,
+        borderTopLeftRadius: cs.borderTopLeftRadius,
+        borderTopRightRadius: cs.borderTopRightRadius,
+        borderBottomRightRadius: cs.borderBottomRightRadius,
+        borderBottomLeftRadius: cs.borderBottomLeftRadius,
+        paddingTop: cs.paddingTop,
+        paddingRight: cs.paddingRight,
+        paddingBottom: cs.paddingBottom,
+        paddingLeft: cs.paddingLeft,
+      },
+      isContainer: cs.containerType && cs.containerType !== 'normal',
+    };
+  });
+
+  // Apply locked pixel metrics so cqw units never collapse inside <foreignObject>
+  styleSnapshots.forEach(({ el, originalStyleAttr, computed, isContainer }) => {
+    if (!(el instanceof HTMLElement)) return;
+    restoreCallbacks.push(() => {
+      if (originalStyleAttr === null) {
+        el.removeAttribute('style');
+      } else {
+        el.setAttribute('style', originalStyleAttr);
+      }
+    });
+
+    Object.entries(computed).forEach(([prop, val]) => {
+      if (val && val !== '0px' && val !== 'normal' && val !== 'auto') {
+        el.style[prop] = val;
+      }
+    });
+
+    if (isContainer) {
+      el.style.containerType = 'normal';
+    }
+  });
+
+  // 2. Pre-rasterize every <img> into a decoded data URL and paint via CSS background-image
+  // so Mobile Safari / Chrome <svg><foreignObject> renders 100% of card backgrounds synchronously.
+  const imgElements = Array.from(rootElement.querySelectorAll('img'));
+  await Promise.all(
+    imgElements.map(async (imgEl) => {
+      try {
+        const originalSrc = imgEl.getAttribute('src');
+        const originalSrcset = imgEl.getAttribute('srcset');
+        const originalLoading = imgEl.getAttribute('loading');
+        const originalDecoding = imgEl.getAttribute('decoding');
+
+        const dataUrl = await rasterizeImgToDataUrl(imgEl, 2.5);
+        if (!dataUrl) return;
+
+        restoreCallbacks.push(() => {
+          if (originalSrc !== null) imgEl.setAttribute('src', originalSrc);
+          if (originalSrcset !== null) imgEl.setAttribute('srcset', originalSrcset);
+          else imgEl.removeAttribute('srcset');
+          if (originalLoading !== null) imgEl.setAttribute('loading', originalLoading);
+          else imgEl.removeAttribute('loading');
+          if (originalDecoding !== null) imgEl.setAttribute('decoding', originalDecoding);
+          else imgEl.removeAttribute('decoding');
+        });
+
+        imgEl.removeAttribute('srcset');
+        imgEl.setAttribute('loading', 'eager');
+        imgEl.setAttribute('decoding', 'sync');
+        imgEl.src = TRANSPARENT_PIXEL_GIF;
+        imgEl.style.backgroundImage = `url("${dataUrl}")`;
+        imgEl.style.backgroundSize = '100% 100%';
+        imgEl.style.backgroundPosition = 'center';
+        imgEl.style.backgroundRepeat = 'no-repeat';
+      } catch (err) {
+        console.warn('Image pre-rasterize fallback:', err);
+      }
+    })
+  );
+
+  return () => {
+    for (let i = restoreCallbacks.length - 1; i >= 0; i--) {
+      try {
+        restoreCallbacks[i]();
+      } catch {
+        // Ignore cleanup errors
+      }
+    }
+  };
+}
+
 /**
  * Generates an elevated, gallery-grade 300+ DPI PDF for printing keychain keepsakes.
  * Configured specifically for standard 54mm x 75.35mm aspect-accurate keychain cards.
@@ -27,17 +265,17 @@ export async function generateKeychainPdf({
     }
   }
 
+  const fontEmbedCSS = await getStudioFontEmbedCSS();
+
   // 1. Capture Front and Back DOM nodes at high pixel density (~800+ DPI at 54mm keychain scale)
-  // cacheBust is set to false so blob: and data: URLs are never corrupted with query params.
-  // skipFonts is set to true to isolate cross-origin Google Fonts stylesheets from ad/tracker blockers.
-  // Note: We deliberately do NOT force borderRadius: '0px' here so that cards with native corner radii
-  // (e.g. Pokemon cards) preserve their authentic rounded corners with clean alpha transparency.
   const imageCaptureOptions = {
+    width: 350,
+    height: 488,
     pixelRatio: 2.5,
     quality: 0.98,
     cacheBust: false,
     skipFonts: true,
-    fontEmbedCSS: '',
+    fontEmbedCSS,
     includeQueryParams: false,
     onImageErrorHandler: (err) => {
       console.warn('PDF image capture warning:', err);
@@ -45,18 +283,28 @@ export async function generateKeychainPdf({
     style: {
       transform: 'none',
       backgroundColor: 'transparent',
+      opacity: '1',
     },
   };
 
   const captureCard = async (element) => {
+    const cleanup = await prepareElementForMobileCapture(element);
     try {
-      return await toPng(element, imageCaptureOptions);
-    } catch (err) {
-      console.warn('Initial PDF capture attempt encountered an issue, retrying with fallback...', err);
-      return await toPng(element, {
-        ...imageCaptureOptions,
-        pixelRatio: 2,
-      });
+      // Warm-up pass forces Mobile Safari/WebKit to decode all <foreignObject> resources into cache
+      await toPng(element, { ...imageCaptureOptions, pixelRatio: 1 }).catch(() => {});
+      await new Promise((r) => setTimeout(r, 60));
+
+      try {
+        return await toPng(element, imageCaptureOptions);
+      } catch (err) {
+        console.warn('Initial PDF capture attempt encountered an issue, retrying with fallback...', err);
+        return await toPng(element, {
+          ...imageCaptureOptions,
+          pixelRatio: 2,
+        });
+      }
+    } finally {
+      cleanup();
     }
   };
 

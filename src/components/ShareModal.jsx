@@ -578,15 +578,15 @@ export default function ShareModal({ onClose, onOpenRecipientPreview }) {
           </AnimatePresence>
         </motion.div>
       </div>
-    {/* Offscreen 350x488 Render Canvas for Keychain PDF Capture (Studio-Calibrated Proportions) */}
+    {/* In-Viewport Hidden 350x488 Render Stage for Keychain PDF Capture (Studio-Calibrated Proportions) */}
       <div 
         aria-hidden="true"
-        className="fixed -left-[9999px] top-0 pointer-events-none opacity-100 flex gap-10"
-        style={{ zIndex: -100 }}
+        className="fixed left-0 top-0 pointer-events-none flex flex-col gap-4 overflow-visible"
+        style={{ zIndex: -1, opacity: 0.003 }}
       >
         <div 
           ref={frontRef} 
-          style={{ width: '350px', height: '488px', position: 'relative', overflow: 'hidden', borderRadius: (state.cardType === 'pokemon' || state.cardType === 'metallic') ? '16px' : '0px', backgroundColor: 'transparent' }}
+          style={{ width: '350px', height: '488px', minWidth: '350px', maxWidth: '350px', minHeight: '488px', maxHeight: '488px', flexShrink: 0, position: 'relative', overflow: 'hidden', borderRadius: (state.cardType === 'pokemon' || state.cardType === 'metallic') ? '16px' : '0px', backgroundColor: 'transparent' }}
         >
           {state.cardType === 'pokemon' ? (
             <PokemonCardFront isPreview={true} />
@@ -599,7 +599,7 @@ export default function ShareModal({ onClose, onOpenRecipientPreview }) {
 
         <div 
           ref={backRef} 
-          style={{ width: '350px', height: '488px', position: 'relative', overflow: 'hidden', borderRadius: (state.cardType === 'pokemon' || state.cardType === 'metallic') ? '16px' : '0px', backgroundColor: 'transparent' }}
+          style={{ width: '350px', height: '488px', minWidth: '350px', maxWidth: '350px', minHeight: '488px', maxHeight: '488px', flexShrink: 0, position: 'relative', overflow: 'hidden', borderRadius: (state.cardType === 'pokemon' || state.cardType === 'metallic') ? '16px' : '0px', backgroundColor: 'transparent' }}
         >
           {state.cardType === 'pokemon' ? (
             <PokemonCardBack isPreview={true} />

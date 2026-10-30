@@ -58,39 +58,44 @@ export default function CardRevealPreview({ onCraftOwn }) {
   useEffect(() => {
     if (revealStage !== 'revealed') return;
 
-    let animId;
-    let targetX = 0;
-    let targetY = 0;
-    let currentX = 0;
-    let currentY = 0;
-    let hasGyroData = false;
+    let rafId = null;
+    let baseGamma = null;
+    let baseBeta = null;
+    let lastX = 0;
+    let lastY = 0;
 
     const handleOrientation = (e) => {
       if (e.gamma === null || e.beta === null) return;
-      hasGyroData = true;
-      // gamma: left-to-right tilt [-30deg, 30deg]
-      const clampedGamma = Math.max(-30, Math.min(30, e.gamma));
-      // beta: front-to-back tilt centered at natural 45deg holding angle
-      const clampedBeta = Math.max(-30, Math.min(30, e.beta - 45));
 
-      targetX = (clampedGamma / 30) * 0.75;
-      targetY = (clampedBeta / 30) * 0.75;
-    };
-
-    const smoothLoop = () => {
-      if (hasGyroData) {
-        currentX += (targetX - currentX) * 0.12;
-        currentY += (targetY - currentY) * 0.12;
-        setMousePos({ x: currentX, y: currentY });
+      // Calibrate to user's natural holding posture on first sensor reading
+      if (baseGamma === null || baseBeta === null) {
+        baseGamma = e.gamma;
+        baseBeta = e.beta;
       }
-      animId = requestAnimationFrame(smoothLoop);
+
+      // Responsive [-22deg, 22deg] wrist-tilt window relative to initial posture
+      const deltaGamma = Math.max(-22, Math.min(22, e.gamma - baseGamma));
+      const deltaBeta = Math.max(-22, Math.min(22, e.beta - baseBeta));
+
+      const nextX = (deltaGamma / 22) * 0.85;
+      const nextY = (deltaBeta / 22) * 0.85;
+
+      if (Math.abs(nextX - lastX) < 0.003 && Math.abs(nextY - lastY) < 0.003) return;
+      lastX = nextX;
+      lastY = nextY;
+
+      if (rafId === null) {
+        rafId = requestAnimationFrame(() => {
+          rafId = null;
+          setMousePos({ x: lastX, y: lastY });
+        });
+      }
     };
 
-    animId = requestAnimationFrame(smoothLoop);
     window.addEventListener('deviceorientation', handleOrientation, { passive: true });
 
     return () => {
-      cancelAnimationFrame(animId);
+      if (rafId !== null) cancelAnimationFrame(rafId);
       window.removeEventListener('deviceorientation', handleOrientation);
     };
   }, [revealStage]);
@@ -550,8 +555,8 @@ export default function CardRevealPreview({ onCraftOwn }) {
                     }
                   : {
                       scale: { type: 'spring', stiffness: 280, damping: 24 },
-                      rotateY: { type: 'spring', stiffness: 320, damping: 26 },
-                      rotateX: { type: 'spring', stiffness: 320, damping: 26 },
+                      rotateY: { type: 'spring', stiffness: 460, damping: 28, mass: 0.6 },
+                      rotateX: { type: 'spring', stiffness: 460, damping: 28, mass: 0.6 },
                     }
               }
               onClick={() => {
