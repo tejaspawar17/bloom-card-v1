@@ -145,13 +145,17 @@ export default function CardViewer({ onConfirm, onOpenEditTitle, onOpenEditMessa
         return prev;
       }
     });
+
+    // Only show back micro-hints if Customize popover is not currently open
     if (isFlipped && !hasShownBackHintRef.current) {
       hasShownBackHintRef.current = true;
-      setShowBackHint(true);
-      const timer = setTimeout(() => setShowBackHint(false), 4000);
-      return () => clearTimeout(timer);
+      if (!quickPickerMode) {
+        setShowBackHint(true);
+        const timer = setTimeout(() => setShowBackHint(false), 4000);
+        return () => clearTimeout(timer);
+      }
     }
-  }, [isFlipped]);
+  }, [isFlipped, quickPickerMode]);
 
   const handleOpenQuickPicker = (mode) => {
     if (typeof window !== 'undefined' && window.innerWidth >= 1024) return;
@@ -410,18 +414,20 @@ export default function CardViewer({ onConfirm, onOpenEditTitle, onOpenEditMessa
                 transition={{ duration: 0.25 }}
                 className="lg:hidden pointer-events-none absolute inset-0 z-40"
               >
-                {/* Polaroid / Photo Hint Pill */}
-                <div className={clsx(
-                  "absolute h-[26px] px-2.5 rounded-full bg-black/80 backdrop-blur-xl border border-white/25 shadow-[0_6px_20px_rgba(0,0,0,0.65)] inline-flex items-center justify-center gap-1.5 whitespace-nowrap",
-                  state.cardType === 'pokemon' && state.pokemonSubtype === 'trainer'
-                    ? "top-[56%] left-1/2 -translate-x-1/2"
-                    : "top-[25%] right-[9%]"
-                )}>
-                  <Camera size={13} weight="regular" className="text-white shrink-0" />
-                  <span className="text-[11px] leading-none font-medium text-white tracking-[-0.01em] font-sans">
-                    Tap photo
-                  </span>
-                </div>
+                {/* Polaroid / Photo Hint Pill - Only show if back cover image is not "none" */}
+                {state.selectedBackImage && state.selectedBackImage !== 'none' && (
+                  <div className={clsx(
+                    "absolute h-[26px] px-2.5 rounded-full bg-black/80 backdrop-blur-xl border border-white/25 shadow-[0_6px_20px_rgba(0,0,0,0.65)] inline-flex items-center justify-center gap-1.5 whitespace-nowrap",
+                    state.cardType === 'pokemon' && state.pokemonSubtype === 'trainer'
+                      ? "top-[56%] left-1/2 -translate-x-1/2"
+                      : "top-[25%] right-[9%]"
+                  )}>
+                    <Camera size={13} weight="regular" className="text-white shrink-0" />
+                    <span className="text-[11px] leading-none font-medium text-white tracking-[-0.01em] font-sans">
+                      Tap photo
+                    </span>
+                  </div>
+                )}
 
                 {/* Stamp Hint Pill */}
                 <div className={clsx(

@@ -300,12 +300,16 @@ export async function generateKeychainPdf({
 
   const fontEmbedCSS = await getStudioFontEmbedCSS();
 
-  // 1. Capture Front and Back DOM nodes at 330+ DPI (700x976px at 54mm keychain scale)
+  // 1. Capture Front and Back DOM nodes at crisp print density (54mm x 75.4mm keychain scale)
+  const isMobileDevice =
+    typeof window !== 'undefined' &&
+    (window.innerWidth < 1024 || /Android|iPhone|iPad|iPod/i.test(navigator.userAgent));
+
   const imageCaptureOptions = {
     width: 350,
     height: 488,
-    pixelRatio: 2,
-    quality: 0.96,
+    pixelRatio: isMobileDevice ? 2 : 2.5,
+    quality: 0.95,
     cacheBust: false,
     skipFonts: true,
     fontEmbedCSS,
@@ -337,17 +341,18 @@ export async function generateKeychainPdf({
     }
   };
 
-  // Capture Front and Back in parallel to cut total export time in half
-  const [frontDataUrl, backDataUrl] = await Promise.all([
-    captureCard(frontElement),
-    captureCard(backElement),
-  ]);
+  // Yield frames sequentially to avoid single-thread mobile CPU bottlenecks
+  const frontDataUrl = await captureCard(frontElement);
+  await new Promise((resolve) => requestAnimationFrame(() => setTimeout(resolve, 16)));
+  const backDataUrl = await captureCard(backElement);
+  await new Promise((resolve) => requestAnimationFrame(() => setTimeout(resolve, 16)));
 
   // 2. Create A4 Document (210mm x 297mm)
   const pdf = new jsPDF({
     orientation: 'portrait',
     unit: 'mm',
     format: 'a4',
+    compress: true,
   });
 
   const pageWidth = 210;
@@ -485,10 +490,10 @@ export async function generateKeychainPdf({
   pdf.text('FOLD / CUT', centerGuideX, startY - 4.5, { align: 'center' });
 
   // -------------------------------------------------------------
-  // 5. EMBED HIGH-RES CARD IMAGES (300+ DPI)
+  // 5. EMBED HIGH-RES CARD IMAGES (With 'FAST' hardware compression to eliminate main-thread freeze)
   // -------------------------------------------------------------
-  pdf.addImage(frontDataUrl, 'PNG', frontX, startY, cardW, cardH);
-  pdf.addImage(backDataUrl, 'PNG', backX, startY, cardW, cardH);
+  pdf.addImage(frontDataUrl, 'PNG', frontX, startY, cardW, cardH, undefined, 'FAST');
+  pdf.addImage(backDataUrl, 'PNG', backX, startY, cardW, cardH, undefined, 'FAST');
 
   // -------------------------------------------------------------
   // 6. MODERN 3-STEP ASSEMBLY GUIDE (Clean Editorial Columns)

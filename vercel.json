@@ -1,6 +1,36 @@
 {
   "rewrites": [
     { "source": "/api/(.*)", "destination": "/api/$1" },
+    {
+      "source": "/",
+      "has": [
+        {
+          "type": "query",
+          "key": "card"
+        }
+      ],
+      "destination": "/api/card-preview"
+    },
+    {
+      "source": "/",
+      "has": [
+        {
+          "type": "query",
+          "key": "d"
+        }
+      ],
+      "destination": "/api/card-preview"
+    },
+    {
+      "source": "/",
+      "has": [
+        {
+          "type": "query",
+          "key": "preview"
+        }
+      ],
+      "destination": "/api/card-preview"
+    },
     { "source": "/(.*)", "destination": "/index.html" }
   ],
   "headers": [

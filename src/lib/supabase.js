@@ -1,21 +1,17 @@
 import { createClient } from '@supabase/supabase-js';
 
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+const DEFAULT_SUPABASE_URL = 'https://ssxskxgwmvecfmjhjrfj.supabase.co';
+const DEFAULT_SUPABASE_ANON_KEY = 'sb_publishable_6Fq9MqjVa-X0UaibdbWnWQ_u-DQq3pA';
 
-if (!supabaseUrl || !supabaseAnonKey) {
-  if (import.meta.env.DEV) {
-    console.warn(
-      'Missing Supabase environment variables: VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY. Please verify your .env file.'
-    );
-  }
-}
+const supabaseUrl =
+  (typeof import.meta !== 'undefined' && import.meta.env?.VITE_SUPABASE_URL) ||
+  DEFAULT_SUPABASE_URL;
+const supabaseAnonKey =
+  (typeof import.meta !== 'undefined' && import.meta.env?.VITE_SUPABASE_ANON_KEY) ||
+  DEFAULT_SUPABASE_ANON_KEY;
 
-// Client initialized strictly from environment configurations
-export const supabase = createClient(
-  supabaseUrl || 'https://placeholder.supabase.co',
-  supabaseAnonKey || 'placeholder-anon-key'
-);
+// Client initialized strictly from environment configurations with public anon client fallback
+export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 function generateShortId(length = 8) {
   const chars = 'abcdefghijkmnpqrstuvwxyz23456789';
@@ -69,33 +65,50 @@ async function compressBlobToDataUrl(blob, maxDim = 720, quality = 0.82) {
 }
 
 /**
- * Encodes card state into a URL-safe base64 string for 100% offline/fallback resilience.
+ * Encodes card state into an ultra-compact URL-safe base64 string for offline/fallback resilience.
+ * Eliminates full image paths, rounds floats, strips defaults, and avoids %XX URI expansion.
  */
 export function encodeCardStateParam(state) {
   try {
-    const compact = {
-      o: state.occasion,
-      ct: state.cardType,
-      ps: state.pokemonSubtype,
-      sp: state.selectedPokemon,
-      sf: state.selectedFlower,
-      bi:
-        state.selectedBackImage && state.selectedBackImage.startsWith('data:')
-          ? 'landscape'
-          : state.selectedBackImage,
-      sb: state.subject,
-      m: state.message,
-      t: state.to,
-      f: state.from,
-      tn: state.trainerName,
-      tb: state.trainerBio,
-      se: state.stampEmoji,
-      d: state.date,
-      tm: state.time,
-      st: state.stickers,
-    };
+    const compactStickers = Array.isArray(state.stickers)
+      ? state.stickers.map((s) => ({
+          i: s.stickerId || s.id,
+          x: Math.round(s.x ?? 0),
+          y: Math.round(s.y ?? 0),
+          r: Math.round(s.rotation ?? 0),
+          s: Number((s.scale ?? 1).toFixed(2)),
+          d: s.side === 'back' ? 1 : 0,
+        }))
+      : [];
+
+    const compact = {};
+    if (state.occasion && state.occasion !== 'sorry') compact.o = state.occasion;
+    if (state.cardType && state.cardType !== 'paper') compact.ct = state.cardType;
+    if (state.pokemonSubtype && state.pokemonSubtype !== 'base') compact.ps = state.pokemonSubtype;
+    if (state.selectedPokemon && state.selectedPokemon !== 'gengar') compact.sp = state.selectedPokemon;
+    if (state.selectedFlower && state.selectedFlower !== 'flower_1') compact.sf = state.selectedFlower;
+    if (state.selectedBackImage && state.selectedBackImage !== 'landscape') {
+      compact.bi = state.selectedBackImage.startsWith('data:') ? 'landscape' : state.selectedBackImage;
+    }
+    if (state.subject) compact.sb = state.subject;
+    if (state.message) compact.m = state.message;
+    if (state.to) compact.t = state.to;
+    if (state.from) compact.f = state.from;
+    if (state.trainerName) compact.tn = state.trainerName;
+    if (state.trainerBio) compact.tb = state.trainerBio;
+    if (state.stampEmoji && state.stampEmoji !== 'pleading-face') compact.se = state.stampEmoji;
+    if (state.date) compact.d = state.date;
+    if (state.time) compact.tm = state.time;
+    if (compactStickers.length > 0) compact.st = compactStickers;
+
     const json = JSON.stringify(compact);
-    return btoa(encodeURIComponent(json));
+    const bytes = new TextEncoder().encode(json);
+    let binary = '';
+    for (let i = 0; i < bytes.length; i++) {
+      binary += String.fromCharCode(bytes[i]);
+    }
+    // URL-safe Base64 (+ -> -, / -> _, trim =)
+    return btoa(binary).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
   } catch {
     return '';
   }
@@ -107,8 +120,44 @@ export function encodeCardStateParam(state) {
 export function decodeCardStateParam(encoded) {
   try {
     if (!encoded) return null;
-    const json = decodeURIComponent(atob(encoded));
+    // Restore base64 standard padding and chars
+    let b64 = encoded.replace(/-/g, '+').replace(/_/g, '/');
+    while (b64.length % 4) b64 += '=';
+
+    let json = '';
+    try {
+      const binary = atob(b64);
+      const bytes = new Uint8Array(binary.length);
+      for (let i = 0; i < binary.length; i++) {
+        bytes[i] = binary.charCodeAt(i);
+      }
+      json = new TextDecoder().decode(bytes);
+    } catch {
+      // Fallback for legacy decodeURIComponent(atob)
+      json = decodeURIComponent(atob(b64));
+    }
+
     const c = JSON.parse(json);
+
+    // Expand compact stickers back into standard studio stickers
+    const expandedStickers = Array.isArray(c.st)
+      ? c.st.map((s, idx) => {
+          // If already legacy expanded format
+          if (s.image) return s;
+          const stickerId = s.i || 'apples';
+          return {
+            id: `stk_${idx}_${Date.now()}`,
+            stickerId,
+            x: s.x ?? 0,
+            y: s.y ?? 0,
+            r: s.r ?? s.rotation ?? 0,
+            rotation: s.r ?? s.rotation ?? 0,
+            scale: s.s ?? 1,
+            side: s.d === 1 ? 'back' : 'front',
+          };
+        })
+      : [];
+
     return {
       occasion: c.o || 'sorry',
       cardType: c.ct || 'paper',
@@ -125,7 +174,7 @@ export function decodeCardStateParam(encoded) {
       stampEmoji: c.se || 'pleading-face',
       date: c.d || '',
       time: c.tm || '',
-      stickers: Array.isArray(c.st) ? c.st : [],
+      stickers: expandedStickers,
       activeSide: 'front',
     };
   } catch {
