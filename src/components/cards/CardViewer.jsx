@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
+import clsx from 'clsx';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Eye, ArrowClockwise, ArrowLeft, Sparkle, Camera, Smiley } from '@phosphor-icons/react';
 import { useCard } from '@/context/CardContext';
