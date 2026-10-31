@@ -65,9 +65,11 @@ function AppShell() {
       if (typeof window !== 'undefined' && window.location.search.includes('og=1')) {
         return false;
       }
+      const pathname = typeof window !== 'undefined' ? window.location.pathname : '';
       if (
-        typeof window !== 'undefined' &&
-        (window.location.search.includes('card=') || window.location.search.includes('d='))
+        (pathname && /^\/(?:c|s)\/[^/?#]+/.test(pathname)) ||
+        (typeof window !== 'undefined' &&
+          (window.location.search.includes('card=') || window.location.search.includes('d=')))
       ) {
         return true;
       }
@@ -82,8 +84,12 @@ function AppShell() {
   const [globalModal, setGlobalModal] = useState(null);
 
   const syncFromUrl = useCallback(async () => {
+    const pathname = window.location.pathname || '';
+    const pathMatch = pathname.match(/^\/(?:c|s)\/([^/?#]+)/);
+    const pathCardId = pathMatch ? pathMatch[1] : null;
+
     const params = new URLSearchParams(window.location.search);
-    const sharedCardId = params.get('card');
+    const sharedCardId = pathCardId || params.get('card');
     const encodedData = params.get('d');
     const hash = window.location.hash;
     const hasPreview =

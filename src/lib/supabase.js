@@ -262,12 +262,12 @@ export async function saveSharedCard(state) {
     // Fallback to self-contained encoded URL so the shared link still works 100% for the recipient
     const encoded = encodeCardStateParam(payloadState);
     const fallbackUrl = encoded
-      ? `${window.location.origin}/?card=${id}&d=${encoded}`
+      ? `${window.location.origin}/c/${id}?d=${encoded}`
       : `${window.location.origin}/?preview=recipient`;
     return { id, shareUrl: fallbackUrl, state: payloadState };
   }
 
-  const shareUrl = `${window.location.origin}/?card=${id}`;
+  const shareUrl = `${window.location.origin}/c/${id}`;
   return { id, shareUrl, state: payloadState };
 }
 

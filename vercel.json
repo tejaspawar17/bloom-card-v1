@@ -1,6 +1,8 @@
 {
   "rewrites": [
     { "source": "/api/(.*)", "destination": "/api/$1" },
+    { "source": "/c/(.*)", "destination": "/api/card-preview?card=$1" },
+    { "source": "/s/(.*)", "destination": "/api/card-preview?card=$1" },
     {
       "source": "/",
       "has": [
