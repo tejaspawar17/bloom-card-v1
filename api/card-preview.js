@@ -24,9 +24,9 @@ export default async function handler(req, res) {
     let html = fs.readFileSync(htmlPath, 'utf8');
 
     if (hasCardParam) {
-      const recipientTitle = 'A Sealed Keepsake For You 💌 | Bloom';
-      const recipientDesc = 'Someone crafted a personal 3D keepsake card for you. Tap to tear open the pack and reveal your card.';
-      const recipientImage = `${baseUrl}/og-receiver.png`;
+      const recipientTitle = 'A Sealed Keepsake For You 💌';
+      const recipientDesc = 'A personal 3D keepsake created for you. Tap to open.';
+      const recipientImage = `${baseUrl}/og-receiver.png?v=2`;
 
       // Replace Open Graph title, description, and image
       html = html

@@ -284,9 +284,9 @@ export default function ShareModal({ onClose, onOpenRecipientPreview }) {
     setCopied(true);
     setCopyConfettiKey((prev) => prev + 1);
     showToast({
-      title: 'Link copied to clipboard',
-      description: 'Ready to paste in WhatsApp, Instagram, or iMessage.',
-      duration: 3000,
+      title: 'Link copied!',
+      description: 'Ready to send',
+      duration: 2500,
     });
     setTimeout(() => setCopied(false), 2000);
   };

@@ -317,9 +317,9 @@ export default function CardViewer({ onConfirm, onOpenEditTitle, onOpenEditMessa
           }}
         />
 
-        {/* Mobile/Tablet: Left Vertical Switcher overlay (Shifted up on back so it never covers "To:") */}
+        {/* Mobile/Tablet: Left Vertical Switcher positioned cleanly outside the card boundary so it never collides with stickers or card artwork */}
         {state.cardType === 'pokemon' && (
-          <div className={`absolute -translate-y-1/2 left-2.5 z-30 flex lg:hidden shadow-xl transition-all duration-300 ${isFlipped ? 'top-[26%]' : 'top-1/2'}`}>
+          <div className="absolute top-1/2 -translate-y-1/2 -left-[54px] z-30 flex lg:hidden shadow-xl">
             <VerticalCardSelector
               value={state.pokemonSubtype === 'trainer' ? 'trainer' : 'base'}
               onValueChange={(val) => {
