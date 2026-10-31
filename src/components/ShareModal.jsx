@@ -241,10 +241,53 @@ export default function ShareModal({ onClose, onOpenRecipientPreview }) {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [onClose]);
 
-  const handleCopy = () => {
-    navigator.clipboard.writeText(shareUrl);
+  const handleCopy = async () => {
+    let success = false;
+
+    // 1. Try modern asynchronous Clipboard API
+    if (typeof navigator !== 'undefined' && navigator.clipboard && window.isSecureContext) {
+      try {
+        await navigator.clipboard.writeText(shareUrl);
+        success = true;
+      } catch (err) {
+        console.warn('navigator.clipboard.writeText failed, falling back:', err);
+      }
+    }
+
+    // 2. Fallback for iOS Safari / Mobile WebKit touch handlers using hidden textarea + execCommand
+    if (!success && typeof document !== 'undefined') {
+      try {
+        const textarea = document.createElement('textarea');
+        textarea.value = shareUrl;
+        // Avoid scrolling to bottom on mobile
+        textarea.style.position = 'fixed';
+        textarea.style.top = '0';
+        textarea.style.left = '0';
+        textarea.style.width = '2em';
+        textarea.style.height = '2em';
+        textarea.style.padding = '0';
+        textarea.style.border = 'none';
+        textarea.style.outline = 'none';
+        textarea.style.boxShadow = 'none';
+        textarea.style.background = 'transparent';
+        textarea.setAttribute('readonly', '');
+        document.body.appendChild(textarea);
+        textarea.focus();
+        textarea.setSelectionRange(0, textarea.value.length);
+        success = document.execCommand('copy');
+        document.body.removeChild(textarea);
+      } catch (err) {
+        console.warn('execCommand copy fallback failed:', err);
+      }
+    }
+
     setCopied(true);
-    setCopyConfettiKey(prev => prev + 1);
+    setCopyConfettiKey((prev) => prev + 1);
+    showToast({
+      title: 'Link copied to clipboard',
+      description: 'Ready to paste in WhatsApp, Instagram, or iMessage.',
+      duration: 3000,
+    });
     setTimeout(() => setCopied(false), 2000);
   };
 
