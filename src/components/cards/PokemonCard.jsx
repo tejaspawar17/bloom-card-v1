@@ -104,7 +104,7 @@ export function PokemonCardBack({ onOpenEditMessage, onOpenQuickPicker, isPrevie
               </div>
               <div className="w-full h-full bg-white border-[0.87cqw] border-[#FF0000] ring-[0.8cqw] ring-white rounded-[4cqw] flex flex-col shadow-[1cqw_1cqw_0.5cqw_rgba(0,0,0,0.4)] overflow-hidden">
                <div className="w-full h-[37.11%] bg-[#FF0000] flex items-center justify-center">
-                 <span className="font-sans font-semibold text-white text-[5.23cqw]">HELLO, My name is</span>
+                 <span className="font-sans font-semibold text-white text-[5.23cqw]">Bio & Stats</span>
                </div>
                <div className="flex-1 w-full flex items-center justify-center px-[4.65cqw] bg-white/90 backdrop-blur-sm">
                  <span className="font-sans text-[4.07cqw] text-black whitespace-pre truncate max-w-full block px-[2cqw]">
@@ -175,7 +175,7 @@ export function PokemonCardBack({ onOpenEditMessage, onOpenQuickPicker, isPrevie
           <div className="w-full h-full border-[3px] border-[#FF0000] rounded-[12px] bg-white flex flex-col overflow-hidden relative">
             {/* Header */}
             <div className="w-full h-[17.9%] bg-[#FF0000] flex items-center justify-center shrink-0">
-              <span className="font-sans font-semibold text-[5.23cqw] text-white tracking-wide whitespace-nowrap">HELLO, YOU'VE GOT MAIL</span>
+              <span className="font-sans font-semibold text-[5.23cqw] text-white tracking-wide whitespace-nowrap">HELLO, You've Got Mail</span>
             </div>
 
             {/* Content Body */}
