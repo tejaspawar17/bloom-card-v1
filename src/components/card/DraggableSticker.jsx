@@ -187,16 +187,16 @@ export function DraggableSticker({ stickerData, isPreview = false }) {
   const isAlbum = ["igor", "blond", "sos", "pink_floyd", "brat"].includes(stickerData.stickerId);
   const isApples = stickerData.stickerId === "apples";
 
-  let sizeClass = "w-[clamp(82px,27cqw,120px)] h-[clamp(82px,27cqw,120px)]";
+  let sizeClass = "w-[clamp(96px,31cqw,140px)] h-[clamp(96px,31cqw,140px)]";
   if (isCmiygl) {
     // Landscape passport ticket ratio (~1.84:1)
-    sizeClass = "w-[clamp(114px,37cqw,165px)] h-[clamp(62px,20cqw,90px)]";
+    sizeClass = "w-[clamp(134px,42.5cqw,192px)] h-[clamp(73px,23cqw,105px)]";
   } else if (isAlbum) {
     // Vinyl sleeve + peeking disc ratio (1.11:1)
-    sizeClass = "w-[clamp(86px,28cqw,124px)] h-[clamp(78px,25cqw,112px)]";
+    sizeClass = "w-[clamp(100px,32.2cqw,144px)] h-[clamp(90px,29cqw,130px)]";
   } else if (isApples) {
     // Apples quote badge (prominent hand lettering)
-    sizeClass = "w-[clamp(84px,27cqw,122px)] h-[clamp(86px,28cqw,126px)]";
+    sizeClass = "w-[clamp(98px,31cqw,142px)] h-[clamp(100px,32.2cqw,146px)]";
   }
 
   return (

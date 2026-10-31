@@ -97,7 +97,7 @@ export function PokemonCardBack({ onOpenEditMessage, onOpenQuickPicker, isPrevie
             <span className="font-['Vampiro_One'] text-[4.65cqw] text-[#000000] leading-none pt-[0.4cqw] tracking-wide text-center truncate max-w-[95%] block">{state.trainerName || state.to || ""}</span>
           </div>
 
-          {/* "HELLO, My name is" Label (Bottom, z-20) */}
+          {/* "BIO & STATS" Label (Bottom, z-20) */}
           <div className="absolute bottom-[0.5%] left-[0.1%] w-[99.67%] h-[29.57%] z-30">
               <div className="absolute -bottom-[12px] -right-[12px] z-50 pointer-events-auto flex items-center justify-center">
                 {onOpenEditMessage && <TertiaryLiquidGlassButton onClick={onOpenEditMessage} />}
@@ -175,7 +175,7 @@ export function PokemonCardBack({ onOpenEditMessage, onOpenQuickPicker, isPrevie
           <div className="w-full h-full border-[3px] border-[#FF0000] rounded-[12px] bg-white flex flex-col overflow-hidden relative">
             {/* Header */}
             <div className="w-full h-[17.9%] bg-[#FF0000] flex items-center justify-center shrink-0">
-              <span className="font-sans font-semibold text-[4.4cqw] text-white tracking-wide whitespace-nowrap">HELLO, I wanna say...</span>
+              <span className="font-sans font-semibold text-[5.23cqw] text-white tracking-wide whitespace-nowrap">HELLO, YOU'VE GOT MAIL</span>
             </div>
 
             {/* Content Body */}
