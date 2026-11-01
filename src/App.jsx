@@ -82,6 +82,7 @@ function AppShell() {
 
   const [activeTab, setActiveTab] = useState('design');
   const [isRecipientMode, setIsRecipientMode] = useState(false);
+  const [isCreatorPreview, setIsCreatorPreview] = useState(false);
   const [globalModal, setGlobalModal] = useState(null);
 
   const syncFromUrl = useCallback(async () => {
@@ -100,6 +101,7 @@ function AppShell() {
       Boolean(encodedData);
 
     setIsRecipientMode(hasPreview);
+    setIsCreatorPreview(false);
 
     if (hash === '#terms') {
       setActiveTab('terms');
@@ -211,20 +213,19 @@ function AppShell() {
     setActiveTab(tab);
     window.scrollTo({ top: 0, behavior: 'smooth' });
     if (tab === 'design') {
-      const isComingFromPreview =
-        isRecipientMode ||
-        window.location.hash === '#preview' ||
+      const isComingFromSharedLink =
         window.location.search.includes('card=') ||
         window.location.search.includes('d=') ||
         /^\/(?:c|s)\//.test(window.location.pathname);
 
-      if (isComingFromPreview) {
+      if (isComingFromSharedLink && !isCreatorPreview) {
         window.history.replaceState(null, '', '/');
         dispatch({ type: 'RESET_CARD' });
       } else if (window.location.hash) {
         window.history.replaceState(null, '', window.location.pathname);
       }
       setIsRecipientMode(false);
+      setIsCreatorPreview(false);
     } else if (tab === 'terms') {
       window.history.replaceState(null, '', '#terms');
     } else if (tab === 'privacy') {
@@ -289,6 +290,8 @@ function AppShell() {
                     <DesignPage 
                       isRecipientMode={isRecipientMode} 
                       onSetRecipientMode={setIsRecipientMode} 
+                      isCreatorPreview={isCreatorPreview}
+                      onSetCreatorPreview={setIsCreatorPreview}
                       onNavigateTab={handleTabChange}
                     />
                   ) : activeTab === 'terms' ? (

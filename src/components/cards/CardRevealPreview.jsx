@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Play, ArrowClockwise } from '@phosphor-icons/react';
+import { Play, ArrowClockwise, ArrowLeft, Copy, Check } from '@phosphor-icons/react';
+import { showToast } from '@/components/ui/AppleToast';
 import { useCard } from '@/context/CardContext';
 
 import { PokemonCardFront, PokemonCardBack } from './PokemonCard';
@@ -39,7 +40,12 @@ const SHOWER_PARTICLES = [
   { id: 16, x: -205, y: -200, rotate: 30, size: 26, delay: 0.04 },
 ];
 
-export default function CardRevealPreview({ onCraftOwn }) {
+export default function CardRevealPreview({ 
+  onCraftOwn, 
+  isCreatorPreview = false, 
+  onBackToDesign, 
+  shareUrl = '' 
+}) {
   const { state, flower } = useCard();
   const [revealStage, setRevealStage] = useState('idle'); // 'idle' | 'charging' | 'slamming' | 'revealed'
   const [isShockwave, setIsShockwave] = useState(false);
@@ -47,6 +53,51 @@ export default function CardRevealPreview({ onCraftOwn }) {
   const [isHeroSeal, setIsHeroSeal] = useState(false);
   const [isShower, setIsShower] = useState(false);
   const isRevealed = revealStage === 'revealed';
+  const [copied, setCopied] = useState(false);
+
+  const handleCopyLink = async () => {
+    const urlToCopy = shareUrl || (typeof window !== 'undefined' ? window.location.href : '');
+    if (!urlToCopy) return;
+
+    let success = false;
+    if (typeof navigator !== 'undefined' && navigator.clipboard && window.isSecureContext) {
+      try {
+        await navigator.clipboard.writeText(urlToCopy);
+        success = true;
+      } catch (err) {
+        console.warn('navigator.clipboard.writeText failed, falling back:', err);
+      }
+    }
+
+    if (!success && typeof document !== 'undefined') {
+      try {
+        const textarea = document.createElement('textarea');
+        textarea.value = urlToCopy;
+        textarea.style.position = 'fixed';
+        textarea.style.top = '0';
+        textarea.style.left = '0';
+        textarea.style.opacity = '0';
+        document.body.appendChild(textarea);
+        textarea.focus();
+        textarea.select();
+        success = document.execCommand('copy');
+        document.body.removeChild(textarea);
+      } catch (err) {
+        console.error('Fallback execCommand failed:', err);
+      }
+    }
+
+    if (success) {
+      setCopied(true);
+      showToast({
+        title: 'Link copied!',
+        description: 'Ready to send to recipient',
+        duration: 2500,
+      });
+      setTimeout(() => setCopied(false), 2000);
+    }
+  };
+
   const [isFlipped, setIsFlipped] = useState(false);
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
 
@@ -671,7 +722,7 @@ export default function CardRevealPreview({ onCraftOwn }) {
             />
           </motion.div>
 
-        {/* Bottom Button: Tier 2 Conversion Action (Anchored safely below) */}
+        {/* Bottom Button Area: Dual buttons for Creator Preview, Single button for True Recipient */}
         <motion.div 
           initial={{ opacity: 0, y: 10 }}
           animate={{ 
@@ -679,17 +730,43 @@ export default function CardRevealPreview({ onCraftOwn }) {
             y: 0
           }}
           transition={{ duration: 0.35 }}
-          className="w-full sm:w-auto flex items-center justify-center mt-3 sm:mt-3.5 z-20"
+          className="w-full flex items-center justify-center mt-3 sm:mt-3.5 z-20 px-3"
         >
-          <LiquidGlassButton
-            variant="primary"
-            size="md"
-            className="w-full sm:w-auto !h-[48px] lg:!h-[52px] !text-[16px] lg:!text-[17px] font-medium tracking-[-0.01em] shadow-[0_4px_16px_rgba(0,136,255,0.3)] font-sans"
-            disabled={revealStage !== 'revealed'}
-            onClick={revealStage === 'revealed' ? onCraftOwn : undefined}
-          >
-            Craft Your Bloom
-          </LiquidGlassButton>
+          {isCreatorPreview ? (
+            <div className="flex flex-row items-center justify-center gap-2.5 sm:gap-3 w-full max-w-[360px] sm:max-w-none sm:w-auto">
+              <LiquidGlassButton
+                variant="secondary"
+                size="md"
+                className="flex-1 sm:flex-initial !h-[44px] sm:!h-[48px] lg:!h-[52px] !px-4 sm:!px-6 !text-[13.5px] sm:!text-[15px] lg:!text-[16px] font-medium tracking-[-0.01em] font-sans"
+                disabled={revealStage !== 'revealed'}
+                onClick={revealStage === 'revealed' ? onBackToDesign : undefined}
+                icon={<ArrowLeft size={18} weight="bold" />}
+              >
+                Back to Design
+              </LiquidGlassButton>
+
+              <LiquidGlassButton
+                variant="primary"
+                size="md"
+                className="flex-1 sm:flex-initial !h-[44px] sm:!h-[48px] lg:!h-[52px] !px-4 sm:!px-6 !text-[13.5px] sm:!text-[15px] lg:!text-[16px] font-medium tracking-[-0.01em] shadow-[0_4px_16px_rgba(0,136,255,0.3)] font-sans"
+                disabled={revealStage !== 'revealed'}
+                onClick={revealStage === 'revealed' ? handleCopyLink : undefined}
+                icon={copied ? <Check size={18} weight="bold" /> : <Copy size={18} weight="bold" />}
+              >
+                {copied ? 'Copied!' : 'Copy Link'}
+              </LiquidGlassButton>
+            </div>
+          ) : (
+            <LiquidGlassButton
+              variant="primary"
+              size="md"
+              className="w-full sm:w-auto !h-[48px] lg:!h-[52px] !text-[16px] lg:!text-[17px] font-medium tracking-[-0.01em] shadow-[0_4px_16px_rgba(0,136,255,0.3)] font-sans"
+              disabled={revealStage !== 'revealed'}
+              onClick={revealStage === 'revealed' ? onCraftOwn : undefined}
+            >
+              Craft Your Bloom
+            </LiquidGlassButton>
+          )}
         </motion.div>
       </div>
     </div>

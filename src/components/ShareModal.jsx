@@ -617,7 +617,7 @@ export default function ShareModal({ onClose, onOpenRecipientPreview }) {
                           }
                         });
                       }
-                      onOpenRecipientPreview?.();
+                      onOpenRecipientPreview?.(shareUrl);
                     }}
                     className="dark-liquid-glass-pill w-full h-[40px] px-5 text-[13.5px] leading-[20px] font-medium text-[#FFFFFF] hover:text-[#FFFFFF] flex items-center justify-center font-sans cursor-pointer active:scale-[0.98] transition-transform"
                   >

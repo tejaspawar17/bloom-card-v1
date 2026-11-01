@@ -36,9 +36,10 @@ const pageVariants = {
   },
 };
 
-export default function DesignPage({ isRecipientMode = false, onSetRecipientMode, onNavigateTab }) {
+export default function DesignPage({ isRecipientMode = false, onSetRecipientMode, isCreatorPreview = false, onSetCreatorPreview, onNavigateTab }) {
   const { dispatch } = useCard();
   const [modal, setModal] = useState(null);
+  const [lastShareUrl, setLastShareUrl] = useState('');
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -82,6 +83,12 @@ export default function DesignPage({ isRecipientMode = false, onSetRecipientMode
   const handleCraftOwn = () => {
     window.history.replaceState(null, '', '/');
     dispatch({ type: 'RESET_CARD' });
+    onSetCreatorPreview?.(false);
+    onSetRecipientMode?.(false);
+  };
+
+  const handleBackToDesign = () => {
+    onSetCreatorPreview?.(false);
     onSetRecipientMode?.(false);
   };
 
@@ -97,7 +104,12 @@ export default function DesignPage({ isRecipientMode = false, onSetRecipientMode
             exit="exit"
             className="w-full flex-1 flex flex-col"
           >
-            <CardRevealPreview onCraftOwn={handleCraftOwn} />
+            <CardRevealPreview 
+              onCraftOwn={handleCraftOwn} 
+              isCreatorPreview={isCreatorPreview}
+              onBackToDesign={handleBackToDesign}
+              shareUrl={lastShareUrl}
+            />
           </motion.div>
         ) : (
           <motion.div
@@ -169,10 +181,12 @@ export default function DesignPage({ isRecipientMode = false, onSetRecipientMode
       {modal === 'share' && (
         <ShareModal 
           onClose={() => setModal(null)} 
-          onOpenRecipientPreview={() => {
+          onOpenRecipientPreview={(url) => {
             setModal(null);
+            onSetCreatorPreview?.(true);
+            if (url) setLastShareUrl(url);
             onSetRecipientMode?.(true);
-          }} 
+          }}
         />
       )}
 
