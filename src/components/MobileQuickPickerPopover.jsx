@@ -290,7 +290,7 @@ export default function MobileQuickPickerPopover({ mode, onSelectMode, onClose }
               src={item.thumb || item.image}
               alt={item.name}
               className="w-full h-full object-cover pointer-events-none select-none no-callout"
-              loading="lazy"
+              decoding="async"
               draggable={false}
             />
           </div>
@@ -373,7 +373,7 @@ export default function MobileQuickPickerPopover({ mode, onSelectMode, onClose }
                 src={sticker.image}
                 alt={sticker.name}
                 className="w-full h-full object-contain pointer-events-none drop-shadow-sm"
-                loading="lazy"
+                decoding="async"
                 draggable={false}
               />
               {isSelected && (

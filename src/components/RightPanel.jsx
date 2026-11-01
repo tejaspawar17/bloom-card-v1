@@ -219,7 +219,7 @@ export default function RightPanel({ className = '' }) {
                               alt=""
                               className="w-full h-full object-contain pointer-events-none drop-shadow-sm select-none no-callout"
                               aria-hidden="true"
-                              loading="lazy"
+                              decoding="async"
                               draggable={false}
                             />
                           </motion.div>

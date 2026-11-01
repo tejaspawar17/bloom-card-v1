@@ -7,6 +7,7 @@ import Navbar from './components/Navbar';
 import DesignPage from './pages/DesignPage';
 import FeedbackModal from './components/FeedbackModal';
 import AnimatedAILoaderFX from '@/components/ui/AnimatedAILoaderFX';
+import { FLOWERS, POKEMON_CARDS } from './data/cardData';
 
 // Route-level code-splitting: secondary pages loaded asynchronously in background
 const AboutPage = React.lazy(() => import('./pages/AboutPage'));
@@ -157,6 +158,8 @@ function AppShell() {
         '/assets/pokemon-back/trainer-card-frame.png',
         '/assets/pokemon-back/trainer-card-textures.png',
         '/textures/paper_back_blank_labels.png',
+        ...FLOWERS.map((f) => f.thumb).filter(Boolean),
+        ...POKEMON_CARDS.map((p) => p.thumb).filter(Boolean),
       ];
 
       const preloadImagesPromise = Promise.all(

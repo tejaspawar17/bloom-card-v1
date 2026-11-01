@@ -133,7 +133,6 @@ export default function FlowerPokemonGrid({ heightClassName, className = '', isM
                         alt=""
                         className="w-full h-full object-cover"
                         aria-hidden="true"
-                        loading="lazy"
                         decoding="async"
                       />
                     </div>
@@ -215,7 +214,6 @@ export default function FlowerPokemonGrid({ heightClassName, className = '', isM
                         alt=""
                         className="w-full h-full object-cover"
                         aria-hidden="true"
-                        loading="lazy"
                         decoding="async"
                       />
                     </div>
