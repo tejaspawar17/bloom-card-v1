@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Play, ArrowClockwise, ArrowLeft, Copy, Check } from '@phosphor-icons/react';
+import { Play, ArrowClockwise } from '@phosphor-icons/react';
 import { showToast } from '@/components/ui/AppleToast';
 import { useCard } from '@/context/CardContext';
 
@@ -733,14 +733,13 @@ export default function CardRevealPreview({
           className="w-full flex items-center justify-center mt-3 sm:mt-3.5 z-20 px-3"
         >
           {isCreatorPreview ? (
-            <div className="flex flex-row items-center justify-center gap-2.5 sm:gap-3 w-full max-w-[360px] sm:max-w-none sm:w-auto">
+            <div className="flex flex-row items-center justify-center gap-2.5 sm:gap-3 w-full max-w-[340px] sm:max-w-none sm:w-auto">
               <LiquidGlassButton
-                variant="secondary"
+                variant="dark-pill"
                 size="md"
-                className="flex-1 sm:flex-initial !h-[44px] sm:!h-[48px] lg:!h-[52px] !px-4 sm:!px-6 !text-[13.5px] sm:!text-[15px] lg:!text-[16px] font-medium tracking-[-0.01em] font-sans"
+                className="flex-1 sm:flex-initial !h-[44px] sm:!h-[48px] lg:!h-[52px] !px-4 sm:!px-6 lg:!px-7 !text-[13.5px] sm:!text-[15px] lg:!text-[16px] font-medium tracking-[-0.01em] font-sans"
                 disabled={revealStage !== 'revealed'}
                 onClick={revealStage === 'revealed' ? onBackToDesign : undefined}
-                icon={<ArrowLeft size={18} weight="bold" />}
               >
                 Back to Design
               </LiquidGlassButton>
@@ -748,10 +747,9 @@ export default function CardRevealPreview({
               <LiquidGlassButton
                 variant="primary"
                 size="md"
-                className="flex-1 sm:flex-initial !h-[44px] sm:!h-[48px] lg:!h-[52px] !px-4 sm:!px-6 !text-[13.5px] sm:!text-[15px] lg:!text-[16px] font-medium tracking-[-0.01em] shadow-[0_4px_16px_rgba(0,136,255,0.3)] font-sans"
+                className="flex-1 sm:flex-initial !h-[44px] sm:!h-[48px] lg:!h-[52px] !px-4 sm:!px-6 lg:!px-7 !text-[13.5px] sm:!text-[15px] lg:!text-[16px] font-medium tracking-[-0.01em] shadow-[0_4px_16px_rgba(0,136,255,0.3)] font-sans"
                 disabled={revealStage !== 'revealed'}
                 onClick={revealStage === 'revealed' ? handleCopyLink : undefined}
-                icon={copied ? <Check size={18} weight="bold" /> : <Copy size={18} weight="bold" />}
               >
                 {copied ? 'Copied!' : 'Copy Link'}
               </LiquidGlassButton>

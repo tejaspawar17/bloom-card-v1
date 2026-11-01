@@ -2,6 +2,7 @@ import React from 'react';
 import clsx from 'clsx';
 import { motion } from 'framer-motion';
 import './PrimaryLiquidGlassButton.css';
+import './LiquidGlassIconButton.css';
 
 const springTransition = {
   type: "spring",
@@ -32,6 +33,42 @@ export default function LiquidGlassButton({
 }) {
   const content = children || label;
   const isButtonDisabled = Boolean(isDisabled || disabled || rest.disabled);
+
+  if (variant === 'dark-pill' || variant === 'dark') {
+    const pillSizeStyles = {
+      sm: 'h-[36px] px-4 text-[13px] leading-[18px]',
+      md: 'h-[44px] px-5 text-[15px] leading-[20px]',
+      lg: 'h-[52px] px-6 text-[17px] leading-[22px]',
+    };
+
+    return (
+      <motion.button
+        type={type}
+        disabled={isButtonDisabled}
+        onClick={onClick}
+        title={title}
+        whileTap={{ scale: 0.95 }}
+        transition={springTransition}
+        className={clsx(
+          'dark-liquid-glass-pill font-sans font-medium text-white select-none',
+          pillSizeStyles[size] || pillSizeStyles.md,
+          isButtonDisabled && 'opacity-40 cursor-not-allowed pointer-events-none',
+          className
+        )}
+        {...rest}
+      >
+        <span 
+          className={clsx(
+            "relative z-10 flex items-center justify-center select-none text-center font-sans font-medium text-white",
+            size === 'sm' ? 'gap-1.5' : size === 'md' ? 'gap-2' : 'gap-2.5'
+          )}
+        >
+          {icon && <span className="flex-shrink-0">{icon}</span>}
+          {content}
+        </span>
+      </motion.button>
+    );
+  }
 
   if (variant === 'primary' || variant === 'ios27') {
     const primarySizeStyles = {
