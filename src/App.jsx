@@ -153,6 +153,10 @@ function AppShell() {
         '/assets/flower-illustrations/sunflower.png',
         '/assets/cards/pokemon-frame.png',
         '/assets/bloom/sample-cards/sample-card-1.png',
+        '/assets/pokemon-back/base-card-back.png',
+        '/assets/pokemon-back/trainer-card-frame.png',
+        '/assets/pokemon-back/trainer-card-textures.png',
+        '/textures/paper_back_blank_labels.png',
       ];
 
       const preloadImagesPromise = Promise.all(
@@ -161,8 +165,12 @@ function AppShell() {
             new Promise((resolve) => {
               const img = new Image();
               img.src = src;
-              img.onload = resolve;
-              img.onerror = resolve;
+              if (img.decode) {
+                img.decode().then(resolve).catch(resolve);
+              } else {
+                img.onload = resolve;
+                img.onerror = resolve;
+              }
             })
         )
       );

@@ -391,10 +391,11 @@ export default function ShaderButton({
     gl.uniform1f(uJellify, 0.0);
 
     let animationFrameId;
+    let isRunning = true;
     const startTime = performance.now();
 
-    const resize = () => {
-      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    const updateSize = () => {
+      const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
       const width = canvas.clientWidth;
       const height = canvas.clientHeight;
       if (width === 0 || height === 0) return;
@@ -411,18 +412,42 @@ export default function ShaderButton({
       }
     };
 
+    // Calculate dimensions once on mount and observe changes with ResizeObserver (zero per-frame reflow)
+    updateSize();
+    const resizeObserver = typeof ResizeObserver !== 'undefined'
+      ? new ResizeObserver(() => updateSize())
+      : null;
+    resizeObserver?.observe(canvas);
+
     const render = (now) => {
-      resize();
+      if (!isRunning) return;
       const elapsed = (now - startTime) / 1000;
       gl.uniform1f(uTime, elapsed);
       gl.drawArrays(gl.TRIANGLES, 0, 6);
       animationFrameId = requestAnimationFrame(render);
     };
 
+    const handleVisibility = () => {
+      if (document.hidden) {
+        if (animationFrameId) {
+          cancelAnimationFrame(animationFrameId);
+          animationFrameId = null;
+        }
+      } else {
+        if (!animationFrameId && isRunning) {
+          animationFrameId = requestAnimationFrame(render);
+        }
+      }
+    };
+
+    document.addEventListener('visibilitychange', handleVisibility);
     animationFrameId = requestAnimationFrame(render);
 
     return () => {
-      cancelAnimationFrame(animationFrameId);
+      isRunning = false;
+      if (animationFrameId) cancelAnimationFrame(animationFrameId);
+      document.removeEventListener('visibilitychange', handleVisibility);
+      resizeObserver?.disconnect();
       gl.deleteProgram(program);
       gl.deleteShader(vertShader);
       gl.deleteShader(fragShader);

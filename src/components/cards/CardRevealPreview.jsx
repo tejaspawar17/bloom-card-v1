@@ -501,7 +501,7 @@ export default function CardRevealPreview({ onCraftOwn }) {
             {/* Card Presentation Container (Pure 3D without flattening filter) */}
             <motion.div
               className="w-full h-full relative cursor-pointer"
-              style={{ transformStyle: 'preserve-3d' }}
+              style={{ transformStyle: 'preserve-3d', willChange: isRevealed ? 'transform' : 'auto' }}
               animate={
                 revealStage === 'idle'
                   ? {

@@ -41,6 +41,19 @@ export default function CardViewer({ onConfirm, onOpenEditTitle, onOpenEditMessa
     }
   }, [state.cardType, visualCardType]);
 
+  // Pre-decode opposing back textures in background idle thread to ensure 0-jank 3D flips
+  useEffect(() => {
+    const texturesToWarm = visualCardType === 'pokemon'
+      ? ['/assets/pokemon-back/base-card-back.png', '/assets/pokemon-back/trainer-card-frame.png', '/assets/pokemon-back/trainer-card-textures.png']
+      : ['/textures/paper_back_blank_labels.png'];
+
+    texturesToWarm.forEach((src) => {
+      const img = new Image();
+      img.src = src;
+      img.decode?.().catch(() => {});
+    });
+  }, [visualCardType]);
+
   // ESC key to close fullscreen preview
   useEffect(() => {
     if (!isFullscreen) return;
@@ -370,7 +383,7 @@ export default function CardViewer({ onConfirm, onOpenEditTitle, onOpenEditMessa
         <div className="perspective-container relative w-full h-full aspect-[688/960]">
           <motion.div 
               className="w-full h-full relative"
-              style={{ transformStyle: 'preserve-3d', willChange: 'auto' }}
+              style={{ transformStyle: 'preserve-3d', willChange: isAnimating ? 'transform' : 'auto' }}
               animate={{ 
                 rotateY: (isFlipped ? 180 : 0) + spinDegrees,
                 scale: isSwapping ? 0.88 : 1
@@ -567,7 +580,7 @@ export default function CardViewer({ onConfirm, onOpenEditTitle, onOpenEditMessa
             >
               <motion.div 
                   className="w-full h-full relative"
-                  style={{ transformStyle: 'preserve-3d', willChange: 'auto' }}
+                  style={{ transformStyle: 'preserve-3d', willChange: 'transform' }}
                   animate={{ 
                       rotateY: (isFlipped ? 180 : 0) + (mousePos.x * 28) + spinDegrees, // Tilt horizontally based on gyro/mouse
                       rotateX: -(mousePos.y * 28), // Tilt vertically based on gyro/mouse
