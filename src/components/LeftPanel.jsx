@@ -136,10 +136,11 @@ export default function LeftPanel() {
                           <img
                             src={item.thumb || item.image}
                             alt=""
-                            className="w-full h-full object-cover"
+                            className="w-full h-full object-cover pointer-events-none select-none no-callout"
                             aria-hidden="true"
                             loading="lazy"
                             decoding="async"
+                            draggable={false}
                           />
                         </div>
 
@@ -203,9 +204,10 @@ export default function LeftPanel() {
                           <img
                             src={item.image}
                             alt=""
-                            className="w-full h-full object-cover"
+                            className="w-full h-full object-cover pointer-events-none select-none no-callout"
                             aria-hidden="true"
                             loading="lazy"
+                            draggable={false}
                           />
                         </div>
 

@@ -289,7 +289,7 @@ export default function MobileQuickPickerPopover({ mode, onSelectMode, onClose }
             <img
               src={item.thumb || item.image}
               alt={item.name}
-              className="w-full h-full object-cover pointer-events-none"
+              className="w-full h-full object-cover pointer-events-none select-none no-callout"
               loading="lazy"
               draggable={false}
             />
@@ -462,12 +462,12 @@ export default function MobileQuickPickerPopover({ mode, onSelectMode, onClose }
               isConverting ? (
                 <CircleNotch className="w-[24px] h-[24px] text-[#0088FF] animate-spin" weight="bold" />
               ) : item.isUploadedCustom ? (
-                <img className="size-full object-cover" src={state.selectedBackImage} alt="Uploaded" />
+                <img className="size-full object-cover pointer-events-none select-none no-callout" src={state.selectedBackImage} alt="Uploaded" draggable={false} />
               ) : (
                 <UploadSimple className="w-[24px] h-[24px] text-[#F5F5F5]" weight="bold" />
               )
             ) : item.image ? (
-              <img className="size-full object-cover" src={item.image} alt={item.label} />
+              <img className="size-full object-cover pointer-events-none select-none no-callout" src={item.image} alt={item.label} draggable={false} />
             ) : (
               <Prohibit className="w-[24px] h-[24px] text-[#F5F5F5]" weight="bold" />
             )}

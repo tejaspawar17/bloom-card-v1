@@ -217,7 +217,7 @@ export default function RightPanel({ className = '' }) {
                             <img
                               src={sticker.image}
                               alt=""
-                              className="w-full h-full object-contain pointer-events-none drop-shadow-sm"
+                              className="w-full h-full object-contain pointer-events-none drop-shadow-sm select-none no-callout"
                               aria-hidden="true"
                               loading="lazy"
                               draggable={false}

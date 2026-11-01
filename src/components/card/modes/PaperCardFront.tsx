@@ -11,7 +11,7 @@ export function PaperCardFront({ state: propState, flower: propFlower, onOpenEdi
   const selectedFlower = flower || { name: 'Blue Hydrangea', image: '/assets/flower-illustrations/hydrangea.png' };
 
   return (
-    <div className="relative bg-white p-[clamp(10px,3.3cqw,12px)] shadow-2xl aspect-[688/960] w-full h-full rounded-none overflow-hidden select-none @container" style={{ containerType: "inline-size" }}>
+    <div onContextMenu={(e) => e.preventDefault()} className="relative bg-white p-[clamp(10px,3.3cqw,12px)] shadow-2xl aspect-[688/960] w-full h-full rounded-none overflow-hidden select-none no-callout @container" style={{ containerType: "inline-size" }}>
       <FlowerInfoPill variant="front" />
       <div 
         onClick={!isPreview && onOpenQuickPicker ? () => onOpenQuickPicker('frontArtwork') : undefined}
@@ -19,7 +19,8 @@ export function PaperCardFront({ state: propState, flower: propFlower, onOpenEdi
       >
         <img src={selectedFlower.image} 
           alt={selectedFlower.name} 
-          className="w-full h-full object-cover" 
+          className="w-full h-full object-cover pointer-events-none select-none no-callout" 
+          draggable={false}
         />
 
         {/* Bottom Stamp Overlay (Figma: y=300 inside 456px inner image -> 18px from bottom of flower image, minus 6px built-in PNG shadow margin = 12px) */}

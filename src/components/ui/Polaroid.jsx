@@ -23,7 +23,8 @@ export default function Polaroid({
           <img
             src={image}
             alt={label || 'Polaroid Image'}
-            className="w-full h-full object-cover"
+            className="w-full h-full object-cover pointer-events-none select-none no-callout"
+            draggable={false}
           />
         ) : (
           <span className="text-3xl text-neutral-600">📸</span>

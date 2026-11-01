@@ -33,7 +33,8 @@ export function PolaroidFrame({ imageSrc, className = '', style, onClick }: Pola
         <img 
           src={imageSrc} 
           alt="Polaroid Memory" 
-          className="w-full h-full object-cover block" 
+          className="w-full h-full object-cover block pointer-events-none select-none no-callout" 
+          draggable={false}
         />
 
         {/* Film grain layer (procedural SVG turbulence noise) */}

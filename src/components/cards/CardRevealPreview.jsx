@@ -493,8 +493,8 @@ export default function CardRevealPreview({ onCraftOwn }) {
             )}
           </AnimatePresence>
 
-          <div 
-            className="perspective-container relative w-[min(318px,82vw,calc((100svh-195px)*688/960))] sm:w-[min(355px,75vw,calc((100svh-210px)*688/960))] lg:w-[min(355px,75vw,calc((100dvh-220px)*688/960))] aspect-[688/960] touch-none"
+          <div onContextMenu={(e) => e.preventDefault()} 
+            className="perspective-container relative w-[min(318px,82vw,calc((100svh-195px)*688/960))] sm:w-[min(355px,75vw,calc((100svh-210px)*688/960))] lg:w-[min(355px,75vw,calc((100dvh-220px)*688/960))] aspect-[688/960] touch-none no-callout"
             style={{ perspective: '1200px' }}
             onTouchMove={handleTouchMove}
           >

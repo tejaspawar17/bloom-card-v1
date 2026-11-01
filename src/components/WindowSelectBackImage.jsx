@@ -280,12 +280,12 @@ export default function WindowSelectBackImage({ isMobile = false }) {
                     isConverting ? (
                       <CircleNotch className="w-[22px] h-[22px] text-[#0088FF] animate-spin" weight="bold" />
                     ) : item.isUploadedCustom ? (
-                      <img className="size-full object-cover" src={state.selectedBackImage} alt="Uploaded back" />
+                      <img className="size-full object-cover pointer-events-none select-none no-callout" src={state.selectedBackImage} alt="Uploaded back" draggable={false} />
                     ) : (
                       <UploadSimple className="w-[22px] h-[22px] text-[#F5F5F5] group-hover:text-white transition-colors" weight="bold" />
                     )
                   ) : item.image ? (
-                    <img className="size-full object-cover" src={item.image} alt={item.label} />
+                    <img className="size-full object-cover pointer-events-none select-none no-callout" src={item.image} alt={item.label} draggable={false} />
                   ) : (
                     <Prohibit className="w-[22px] h-[22px] text-[#F5F5F5] group-hover:text-white transition-colors" weight="bold" />
                   )}

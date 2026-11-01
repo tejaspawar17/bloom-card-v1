@@ -380,7 +380,7 @@ export default function CardViewer({ onConfirm, onOpenEditTitle, onOpenEditMessa
         </div>
 
         {/* 3. Interactive Card */}
-        <div className="perspective-container relative w-full h-full aspect-[688/960]">
+        <div onContextMenu={(e) => e.preventDefault()} className="perspective-container relative w-full h-full aspect-[688/960] no-callout">
           <motion.div 
               className="w-full h-full relative"
               style={{ transformStyle: 'preserve-3d', willChange: isAnimating ? 'transform' : 'auto' }}
@@ -573,7 +573,7 @@ export default function CardViewer({ onConfirm, onOpenEditTitle, onOpenEditMessa
 
             {/* Card (Slightly larger, dynamic viewport safe) */}
             <div 
-              className="perspective-container relative w-[min(300px,80vw,calc((100svh-130px)*688/960))] sm:w-[min(340px,75vw,calc((100dvh-110px)*688/960))] lg:w-[min(340px,calc((100dvh-110px)*688/960))] xl:w-[min(380px,calc((100dvh-120px)*688/960))] 2xl:w-[min(405px,calc((100dvh-130px)*688/960))] aspect-[688/960] touch-none" 
+              onContextMenu={(e) => e.preventDefault()} className="perspective-container relative w-[min(300px,80vw,calc((100svh-130px)*688/960))] sm:w-[min(340px,75vw,calc((100dvh-110px)*688/960))] lg:w-[min(340px,calc((100dvh-110px)*688/960))] xl:w-[min(380px,calc((100dvh-120px)*688/960))] 2xl:w-[min(405px,calc((100dvh-130px)*688/960))] aspect-[688/960] touch-none no-callout" 
               style={{ perspective: '1200px' }}
               onClick={e => e.stopPropagation()}
               onTouchMove={handlePreviewTouchMove}

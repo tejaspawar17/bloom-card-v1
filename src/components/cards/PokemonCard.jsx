@@ -12,14 +12,15 @@ export function PokemonCardFront({ onOpenEditTitle, onOpenQuickPicker, isPreview
   return (
     <div 
       onClick={!isPreview && onOpenQuickPicker ? () => onOpenQuickPicker('frontArtwork') : undefined}
-      className={`relative w-full h-full aspect-[688/960] rounded-[16px] ${isPreview ? 'border-none' : 'border border-[#95a0a6]/60'} overflow-hidden shadow-2xl select-none bg-transparent @container ${!isPreview && onOpenQuickPicker ? 'cursor-pointer lg:cursor-default' : ''}`} 
+      onContextMenu={(e) => e.preventDefault()} className={`relative w-full h-full aspect-[688/960] rounded-[16px] ${isPreview ? 'border-none' : 'border border-[#95a0a6]/60'} overflow-hidden shadow-2xl select-none no-callout bg-transparent @container ${!isPreview && onOpenQuickPicker ? 'cursor-pointer lg:cursor-default' : ''}`} 
       style={{ containerType: "inline-size" }}
     >
       {/* Real Pokemon Card Image from Reference (Squirtle with sunglasses) */}
       <img
         src={pokemonCard?.image || '/pokemon/001-003-squirtle.png'}
         alt={pokemonCard?.name || 'Pokemon Card Front'}
-        className="absolute inset-0 w-full h-full object-cover pointer-events-none"
+        className="absolute inset-0 w-full h-full object-cover pointer-events-none select-none no-callout"
+        draggable={false}
       />
 
       {/* Equipped Sticker if selected */}
@@ -60,11 +61,12 @@ export function PokemonCardBack({ onOpenEditMessage, onOpenQuickPicker, isPrevie
 
   if (state.pokemonSubtype === 'trainer') {
     return (
-      <div className={`relative w-full h-full aspect-[688/960] rounded-[16px] overflow-hidden shadow-2xl select-none bg-transparent @container`} style={{ containerType: "inline-size" }}>
+      <div onContextMenu={(e) => e.preventDefault()} className={`relative w-full h-full aspect-[688/960] rounded-[16px] overflow-hidden shadow-2xl select-none no-callout bg-transparent @container`} style={{ containerType: "inline-size" }}>
         <img
           src="/assets/pokemon-back/base-card-back.png"
           alt="Pokemon Card Back"
-          className="absolute inset-0 w-full h-full object-cover pointer-events-none"
+          className="absolute inset-0 w-full h-full object-cover pointer-events-none select-none no-callout"
+          draggable={false}
         />
 
         <EmojiStamp 
@@ -83,14 +85,14 @@ export function PokemonCardBack({ onOpenEditMessage, onOpenQuickPicker, isPrevie
             className={`absolute top-[17.38%] left-[4.29%] w-[92.41%] h-[69.82%] overflow-hidden rounded-[4.6cqw] z-0 ${!isPreview && onOpenQuickPicker ? 'cursor-pointer' : ''}`}
           >
             {backPhoto || pokemonCard?.image ? (
-              <img src={backPhoto || pokemonCard?.image} className="w-full h-full object-cover" alt="Trainer" />
+              <img src={backPhoto || pokemonCard?.image} className="w-full h-full object-cover pointer-events-none select-none no-callout" alt="Trainer" draggable={false} />
             ) : (
-              <img src="/assets/pokemon-back/trainer-user-image.png" className="w-full h-full object-cover" alt="Trainer Default" />
+              <img src="/assets/pokemon-back/trainer-user-image.png" className="w-full h-full object-cover pointer-events-none select-none no-callout" alt="Trainer Default" draggable={false} />
             )}
           </div>
 
           {/* Clean Silver Frame (z-10, sits on top of photo) */}
-          <img src="/assets/pokemon-back/trainer-card-frame.png" alt="Silver Frame" className="absolute inset-0 w-full h-full object-contain pointer-events-none z-10" />
+          <img src="/assets/pokemon-back/trainer-card-frame.png" alt="Silver Frame" className="absolute inset-0 w-full h-full object-contain pointer-events-none select-none no-callout z-10" draggable={false} />
 
           {/* Name Pill (Top Left, z-20) */}
           <div className="absolute top-[13.5%] left-[4.5%] bg-white border-[0.87cqw] border-[#FF0000] ring-[0.8cqw] ring-white rounded-[2.9cqw] min-w-[48%] px-[4%] h-[10.37%] flex items-center justify-center shadow-[1cqw_1cqw_0.5cqw_rgba(0,0,0,0.4)] z-30 transform -rotate-3">
@@ -118,7 +120,7 @@ export function PokemonCardBack({ onOpenEditMessage, onOpenQuickPicker, isPrevie
 
           
           {/* Reflection / Glare Layer (z-30, on top of frame and photo) */}
-          <img src="/assets/pokemon-back/trainer-card-textures.png" alt="Card Textures" className="absolute inset-0 w-full h-full object-contain pointer-events-none z-20 opacity-70 mix-blend-hard-light" />
+          <img src="/assets/pokemon-back/trainer-card-textures.png" alt="Card Textures" className="absolute inset-0 w-full h-full object-contain pointer-events-none select-none no-callout z-20 opacity-70 mix-blend-hard-light" draggable={false} />
         </div>
         )}
 
@@ -133,7 +135,8 @@ export function PokemonCardBack({ onOpenEditMessage, onOpenQuickPicker, isPrevie
       <img
         src="/assets/pokemon-back/base-card-back.png"
         alt="Pokemon Card Back"
-        className="absolute inset-0 w-full h-full object-cover pointer-events-none"
+        className="absolute inset-0 w-full h-full object-cover pointer-events-none select-none no-callout"
+        draggable={false}
       />
 
         {backPhoto && backPhoto !== 'none' && (

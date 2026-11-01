@@ -20,7 +20,8 @@ export function MetallicCardFront({ onOpenEditTitle, onOpenQuickPicker, isPrevie
       <img
         src={flower?.image || '/assets/flower-illustrations/flower_1.png'}
         alt="Metallic Card Flower"
-        className="absolute inset-0 w-full h-full object-cover pointer-events-none"
+        className="absolute inset-0 w-full h-full object-cover pointer-events-none select-none no-callout"
+        draggable={false}
       />
 
       <FlowerInfoPill variant="front" />
@@ -37,7 +38,8 @@ export function MetallicCardFront({ onOpenEditTitle, onOpenQuickPicker, isPrevie
       <img 
         src="/assets/polaroid-defaults/metallic_frame.png" 
         alt="" 
-        className="absolute inset-0 w-full h-full pointer-events-none z-20" 
+        className="absolute inset-0 w-full h-full pointer-events-none select-none no-callout z-20" 
+        draggable={false}
       />
 
       {state?.stickers?.filter(s => s.side === 'front').map(sticker => ( <DraggableSticker key={sticker.id} stickerData={sticker} isPreview={isPreview} /> ))} 
@@ -70,7 +72,8 @@ export function MetallicCardBack({ onOpenEditMessage, onOpenQuickPicker, isPrevi
       <img
         src="/assets/bloom/metallic_back.png"
         alt="Metallic Card Back"
-        className="absolute inset-0 w-full h-full object-cover pointer-events-none"
+        className="absolute inset-0 w-full h-full object-cover pointer-events-none select-none no-callout"
+        draggable={false}
       />
 
       <FlowerInfoPill variant="back" />

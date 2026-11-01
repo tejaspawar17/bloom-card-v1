@@ -46,12 +46,13 @@ export function PaperCardBack({ onOpenEditMessage, onOpenQuickPicker, isPreview 
   const backImageSrc = getBackImageSrc();
 
   return (
-    <div className="relative w-full h-full aspect-[688/960] rounded-none overflow-hidden shadow-2xl select-none bg-[#E5E1D6] @container" style={{ containerType: "inline-size" }}>
+    <div onContextMenu={(e) => e.preventDefault()} className="relative w-full h-full aspect-[688/960] rounded-none overflow-hidden shadow-2xl select-none no-callout bg-[#E5E1D6] @container" style={{ containerType: "inline-size" }}>
       <FlowerInfoPill variant="back" />
       <img
         src="/assets/bloom/paper_back_blank_labels.png"
         alt="Paper Card Back"
-        className="absolute inset-0 w-full h-full object-cover pointer-events-none"
+        className="absolute inset-0 w-full h-full object-cover pointer-events-none select-none no-callout"
+        draggable={false}
       />
 
       <div className="absolute inset-0 pointer-events-none translate-y-[clamp(10px,2.8%,15px)] z-10">
