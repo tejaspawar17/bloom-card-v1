@@ -290,7 +290,7 @@ export default function AboutPage({ onStartCrafting, onFeedback, onTerms, onPriv
               <div className="flex flex-col gap-0.5">
                 {/* Headline: 16px, line-height 21px, font-semibold 600 */}
                 <span className="text-white font-semibold text-[16px] leading-[21px] tracking-tight">
-                  One human. Zero committees.
+                  Tejavu. Zero adult supervision.
                 </span>
                 {/* Caption: 12.5px, line-height 16px, font-normal 400 */}
                 <span className="text-[#727272] font-normal text-[12.5px] leading-[16px]">
@@ -302,12 +302,10 @@ export default function AboutPage({ onStartCrafting, onFeedback, onTerms, onPriv
             {/* Story Paragraphs: 14px, line-height 22px, font-normal 400 */}
             <div className="flex flex-col gap-2.5 text-[#E5E5EA] font-normal text-[14px] sm:text-[14.5px] leading-[22px] pt-1">
               <p>
-                Hi. I built Bloom because getting a dry <span className="text-[#FFFFFF] font-medium text-[13px] bg-white/[0.06] px-1.5 py-0.5 rounded">&ldquo;hbd 🎂&rdquo;</span> text hurts my soul. 
-                People deserve something tactile that feels like it took more than two seconds of effort.
+                Hey, I'm Tejas, an industrial designer turned product designer. I built Bloom because getting a dry <span className="text-[#FFFFFF] font-medium text-[13px] bg-white/[0.06] px-1.5 py-0.5 rounded">&ldquo;hbd 🎂&rdquo;</span> or <span className="text-[#FFFFFF] font-medium text-[13px] bg-white/[0.06] px-1.5 py-0.5 rounded">&ldquo;i am sorry&rdquo;</span> text hurts my soul. People deserve something tactile that feels like it took more than two seconds of effort.
               </p>
               <p>
-                I spent an embarrassing amount of time simulating real paper grain, foil bevels, and drawing silly stickers. 
-                Bloom is completely free, open, and has no accounts to remember.
+                This whole app is basically my awkward way of expressing love and emotion. Bloom is completely free with no accounts to remember, mostly because I already forget my own passwords and refuse to be responsible for yours.
               </p>
             </div>
 
