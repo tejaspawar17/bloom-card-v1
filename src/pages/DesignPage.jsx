@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import LeftPanel from '@/components/LeftPanel';
 import RightPanel from '@/components/RightPanel';
 import CardViewer from '@/components/cards/CardViewer';
@@ -11,30 +11,6 @@ import CardRevealPreview from '@/components/cards/CardRevealPreview';
 import FeedbackModal from '@/components/FeedbackModal';
 import Footer from '@/components/Footer';
 import { useCard } from '@/context/CardContext';
-
-// Atmospheric page transition: pure optical opacity + blur dissolve (matching About ↔ Design)
-const pageVariants = {
-  initial: {
-    opacity: 0,
-    filter: 'blur(10px)',
-  },
-  animate: {
-    opacity: 1,
-    filter: 'blur(0px)',
-    transition: {
-      opacity: { duration: 0.46, ease: [0.22, 1, 0.36, 1] },
-      filter: { duration: 0.54, ease: [0.16, 1, 0.3, 1] },
-    },
-  },
-  exit: {
-    opacity: 0,
-    filter: 'blur(8px)',
-    transition: {
-      opacity: { duration: 0.22, ease: [0.36, 0, 0.66, 0] },
-      filter: { duration: 0.22, ease: [0.36, 0, 0.66, 0] },
-    },
-  },
-};
 
 export default function DesignPage({ isRecipientMode = false, onSetRecipientMode, isCreatorPreview = false, onSetCreatorPreview, onNavigateTab }) {
   const { dispatch } = useCard();
@@ -88,71 +64,68 @@ export default function DesignPage({ isRecipientMode = false, onSetRecipientMode
   };
 
   const handleBackToDesign = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
     onSetCreatorPreview?.(false);
     onSetRecipientMode?.(false);
   };
 
   return (
     <div className="flex flex-col flex-1">
-      <AnimatePresence mode="wait" initial={false}>
-        {isRecipientMode ? (
-          <motion.div
-            key="recipient-view"
-            variants={pageVariants}
-            initial="initial"
-            animate="animate"
-            exit="exit"
-            className="w-full flex-1 flex flex-col"
-          >
-            <CardRevealPreview 
-              onCraftOwn={handleCraftOwn} 
-              isCreatorPreview={isCreatorPreview}
-              onBackToDesign={handleBackToDesign}
-              shareUrl={lastShareUrl}
-            />
-          </motion.div>
-        ) : (
-          <motion.div
-            key="studio-view"
-            variants={pageVariants}
-            initial="initial"
-            animate="animate"
-            exit="exit"
-            className="w-full flex-1 flex flex-col"
-          >
-            {/* Main 3-Column Studio matching reference screen — centered vertically below Navbar */}
-            <div className="w-full min-h-[calc(100svh-64px)] lg:min-h-[calc(100dvh-60px)] xl:min-h-[calc(100dvh-74px)] flex flex-col justify-center pt-1 pb-2 lg:pt-3 lg:pb-1 xl:pt-4 xl:pb-2">
-              <main 
-                className="w-full max-w-[1440px] mx-auto px-3 xl:px-8 grid grid-cols-1 lg:grid-cols-[auto_1fr_auto] items-start justify-center gap-3 xl:gap-8 z-10 translate-y-[2px] xl:translate-y-[4px]"
+      {isRecipientMode ? (
+        <motion.div
+          key="recipient-view"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.32, ease: [0.22, 1, 0.36, 1] }}
+          className="w-full flex-1 flex flex-col"
+        >
+          <CardRevealPreview 
+            onCraftOwn={handleCraftOwn} 
+            isCreatorPreview={isCreatorPreview}
+            onBackToDesign={handleBackToDesign}
+            shareUrl={lastShareUrl}
+          />
+        </motion.div>
+      ) : (
+        <motion.div
+          key="studio-view"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.32, ease: [0.22, 1, 0.36, 1] }}
+          className="w-full flex-1 flex flex-col"
+        >
+          {/* Main 3-Column Studio matching reference screen — centered vertically below Navbar */}
+          <div className="w-full min-h-[calc(100svh-64px)] lg:min-h-[calc(100dvh-60px)] xl:min-h-[calc(100dvh-74px)] flex flex-col justify-center pt-1 pb-2 lg:pt-3 lg:pb-1 xl:pt-4 xl:pb-2">
+            <main 
+              className="w-full max-w-[1440px] mx-auto px-3 xl:px-8 grid grid-cols-1 lg:grid-cols-[auto_1fr_auto] items-start justify-center gap-3 xl:gap-8 z-10 translate-y-[2px] xl:translate-y-[4px]"
+            >
+              {/* Left Window (Occasion & Pokemon Selection) - Desktop Only */}
+              <div ref={leftPanelCallback} className="hidden lg:block"><LeftPanel /></div>
+
+              {/* Center Canvas (Switchers, Card, Actions, Confirm Button) */}
+              <motion.div 
+                animate={{
+                  scale: isCustomizeOpen ? 0.96 : 1,
+                  y: isCustomizeOpen ? -8 : 0,
+                  opacity: isCustomizeOpen ? 0.88 : 1,
+                }}
+                transition={{ type: 'spring', damping: 28, stiffness: 280 }}
+                className="flex flex-col items-center justify-center max-h-full"
               >
-                {/* Left Window (Occasion & Pokemon Selection) - Desktop Only */}
-                <div ref={leftPanelCallback} className="hidden lg:block"><LeftPanel /></div>
+                <CardViewer 
+                  onOpenEditTitle={() => setModal('title')}
+                  onOpenEditMessage={() => setModal('message')}
+                  onConfirm={() => setModal('share')}
+                  onOpenCustomize={() => setIsCustomizeOpen(true)}
+                />
+              </motion.div>
 
-                {/* Center Canvas (Switchers, Card, Actions, Confirm Button) */}
-                <motion.div 
-                  animate={{
-                    scale: isCustomizeOpen ? 0.96 : 1,
-                    y: isCustomizeOpen ? -8 : 0,
-                    opacity: isCustomizeOpen ? 0.88 : 1,
-                  }}
-                  transition={{ type: 'spring', damping: 28, stiffness: 280 }}
-                  className="flex flex-col items-center justify-center max-h-full"
-                >
-                  <CardViewer 
-                    onOpenEditTitle={() => setModal('title')}
-                    onOpenEditMessage={() => setModal('message')}
-                    onConfirm={() => setModal('share')}
-                    onOpenCustomize={() => setIsCustomizeOpen(true)}
-                  />
-                </motion.div>
-
-                {/* Right Window (Back Image, Emote Emojis, Stickers) - Desktop Only */}
-                <div className="hidden lg:block"><RightPanel /></div>
-              </main>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+              {/* Right Window (Back Image, Emote Emojis, Stickers) - Desktop Only */}
+              <div className="hidden lg:block"><RightPanel /></div>
+            </main>
+          </div>
+        </motion.div>
+      )}
 
       {/* Mobile/Tablet Customization Bottom Sheet */}
       <MobileCustomizeSheet 
