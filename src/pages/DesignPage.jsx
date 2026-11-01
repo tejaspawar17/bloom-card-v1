@@ -10,6 +10,7 @@ import ShareModal from '@/components/ShareModal';
 import CardRevealPreview from '@/components/cards/CardRevealPreview';
 import FeedbackModal from '@/components/FeedbackModal';
 import Footer from '@/components/Footer';
+import { useCard } from '@/context/CardContext';
 
 // Atmospheric page transition: pure optical opacity + blur dissolve (matching About ↔ Design)
 const pageVariants = {
@@ -36,6 +37,7 @@ const pageVariants = {
 };
 
 export default function DesignPage({ isRecipientMode = false, onSetRecipientMode, onNavigateTab }) {
+  const { dispatch } = useCard();
   const [modal, setModal] = useState(null);
 
   useEffect(() => {
@@ -78,12 +80,8 @@ export default function DesignPage({ isRecipientMode = false, onSetRecipientMode
   }, []);
 
   const handleCraftOwn = () => {
-    const url = new URL(window.location.href);
-    url.searchParams.delete('preview');
-    url.searchParams.delete('card');
-    url.searchParams.delete('d');
-    const cleanHash = url.hash === '#preview' ? '' : url.hash;
-    window.history.replaceState(null, '', url.pathname + (url.search ? url.search : '') + cleanHash);
+    window.history.replaceState(null, '', '/');
+    dispatch({ type: 'RESET_CARD' });
     onSetRecipientMode?.(false);
   };
 

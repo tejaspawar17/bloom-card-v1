@@ -208,12 +208,16 @@ function AppShell() {
     setActiveTab(tab);
     window.scrollTo({ top: 0, behavior: 'smooth' });
     if (tab === 'design') {
-      if (
+      const isComingFromPreview =
+        isRecipientMode ||
         window.location.hash === '#preview' ||
         window.location.search.includes('card=') ||
-        window.location.search.includes('d=')
-      ) {
-        window.history.replaceState(null, '', window.location.pathname);
+        window.location.search.includes('d=') ||
+        /^\/(?:c|s)\//.test(window.location.pathname);
+
+      if (isComingFromPreview) {
+        window.history.replaceState(null, '', '/');
+        dispatch({ type: 'RESET_CARD' });
       } else if (window.location.hash) {
         window.history.replaceState(null, '', window.location.pathname);
       }

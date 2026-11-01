@@ -46,6 +46,10 @@ async function optimizeImageForPolaroid(fileOrBlob, maxDimension = 1200) {
     }
     const img = new Image();
     const tempUrl = URL.createObjectURL(fileOrBlob);
+    img.onerror = () => {
+      URL.revokeObjectURL(tempUrl);
+      resolve(fileOrBlob);
+    };
     img.onload = () => {
       URL.revokeObjectURL(tempUrl);
       const width = img.naturalWidth || img.width;

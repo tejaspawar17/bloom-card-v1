@@ -52,11 +52,16 @@ function cardReducer(state, action) {
     case 'SET_BG_IMAGE_CHOICE':
       return { ...state, bgImageChoice: action.payload };
     case 'SET_STICKER_POS': return { ...state, stickerPos: action.payload };
-        case 'ADD_STICKER':
+    case 'ADD_STICKER':
+      if ((state.stickers || []).length >= 8) {
+        return state;
+      }
       return { 
         ...state, 
         stickers: [...(state.stickers || []), action.payload] 
       };
+    case 'RESET_CARD':
+      return { ...DEFAULT_STATE, activeSide: 'front' };
     case 'UPDATE_STICKER_POS':
       return {
         ...state,

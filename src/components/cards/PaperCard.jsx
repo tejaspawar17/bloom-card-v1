@@ -87,7 +87,7 @@ export function PaperCardBack({ onOpenEditMessage, onOpenQuickPicker, isPreview 
       </div>
 
       <div 
-        className={"absolute z-30 top-[58%] left-[22.8%] right-[12.8%] font-['Source_Serif_4','Source_Serif_Pro',serif] text-[3.33cqw] leading-[4.17cqw] text-[#141413] font-normal tracking-normal text-left rounded p-1 -ml-1 outline-none min-w-[50px] min-h-[20px] break-words whitespace-pre-wrap antialiased " + (isEditing ? 'bg-black/5 ring-1 ring-black/10 cursor-text' : (isPreview ? '' : 'cursor-pointer hover:bg-black/5'))}
+        className={"absolute z-30 top-[58%] left-[22.8%] right-[12.8%] max-h-[25%] overflow-hidden font-['Source_Serif_4','Source_Serif_Pro',serif] text-[3.33cqw] leading-[4.17cqw] text-[#141413] font-normal tracking-normal text-left rounded p-1 -ml-1 outline-none min-w-[50px] min-h-[20px] break-words whitespace-pre-wrap antialiased " + (isEditing ? 'bg-black/5 ring-1 ring-black/10 cursor-text' : (isPreview ? '' : 'cursor-pointer hover:bg-black/5'))}
         onClick={() => !isPreview && !isEditing && onOpenEditMessage?.()}
         contentEditable={isEditing}
         suppressContentEditableWarning={true}
