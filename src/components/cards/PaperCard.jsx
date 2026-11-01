@@ -71,13 +71,13 @@ export function PaperCardBack({ onOpenEditMessage, onOpenQuickPicker, isPreview 
       
       
         {/* Labels added as real text for crisp rendering */}
-        <div className="absolute z-30 top-[50.8%] left-[23.5%] font-['Instrument_Serif',serif] text-[4.44cqw] leading-[5.33cqw] antialiased text-[#141413] font-normal tracking-wide" style={{ WebkitTextStroke: '0.2px currentColor' }}>To:</div>
-        <div className="absolute z-30 bottom-[13.9%] left-[44%] font-['Instrument_Serif',serif] text-[4.44cqw] leading-[5.33cqw] antialiased text-[#141413] font-normal tracking-wide" style={{ WebkitTextStroke: '0.2px currentColor' }}>From:</div>
+        <div className="absolute z-30 top-[50.4%] left-[23.5%] font-['Instrument_Serif',serif] text-[4.44cqw] leading-[5.33cqw] antialiased text-[#141413] font-normal tracking-wide" style={{ WebkitTextStroke: '0.2px currentColor' }}>To:</div>
+        <div className="absolute z-30 bottom-[14.3%] left-[44%] font-['Instrument_Serif',serif] text-[4.44cqw] leading-[5.33cqw] antialiased text-[#141413] font-normal tracking-wide" style={{ WebkitTextStroke: '0.2px currentColor' }}>From:</div>
         <div className="absolute z-30 bottom-[4.3%] left-[4%] font-['Instrument_Serif',serif] text-[4.2cqw] leading-[5.2cqw] antialiased text-[#141413] font-normal tracking-wide" style={{ WebkitTextStroke: '0.2px currentColor' }}>Date :</div>
         <div className="absolute z-30 bottom-[4.3%] left-[53%] font-['Instrument_Serif',serif] text-[4.2cqw] leading-[5.2cqw] antialiased text-[#141413] font-normal tracking-wide" style={{ WebkitTextStroke: '0.2px currentColor' }}>Time :</div>
 
         <div 
-        className={"absolute z-30 top-[50.3%] left-[30.8%] font-['Syne_Tactile',cursive] text-[4.44cqw] leading-[5.33cqw] text-[#141413] tracking-normal rounded px-1 -ml-1 outline-none min-w-[50px] truncate max-w-[55%] block antialiased " + (isEditing ? 'ring-1 ring-black/10 cursor-text' : (isPreview ? '' : 'cursor-pointer'))}
+        className={"absolute z-30 top-[49.9%] left-[30.8%] font-['Syne_Tactile',cursive] text-[4.44cqw] leading-[5.33cqw] text-[#141413] tracking-normal rounded px-1 -ml-1 outline-none min-w-[50px] truncate max-w-[55%] block antialiased " + (isEditing ? 'ring-1 ring-black/10 cursor-text' : (isPreview ? '' : 'cursor-pointer'))}
         onClick={() => !isPreview && !isEditing && onOpenEditMessage?.()}
         contentEditable={isEditing}
         suppressContentEditableWarning={true}
@@ -99,7 +99,7 @@ export function PaperCardBack({ onOpenEditMessage, onOpenQuickPicker, isPreview 
       </div>
 
       <div 
-        className={"absolute z-30 bottom-[14.1%] left-[56.2%] font-['Syne_Tactile',cursive] text-[4.44cqw] leading-[5.33cqw] text-[#141413] tracking-normal rounded px-1 -ml-1 outline-none min-w-[50px] truncate max-w-[40%] block antialiased " + (isEditing ? 'ring-1 ring-black/10 cursor-text' : (isPreview ? '' : 'cursor-pointer'))}
+        className={"absolute z-30 bottom-[14.5%] left-[56.2%] font-['Syne_Tactile',cursive] text-[4.44cqw] leading-[5.33cqw] text-[#141413] tracking-normal rounded px-1 -ml-1 outline-none min-w-[50px] truncate max-w-[40%] block antialiased " + (isEditing ? 'ring-1 ring-black/10 cursor-text' : (isPreview ? '' : 'cursor-pointer'))}
         onClick={() => !isPreview && !isEditing && onOpenEditMessage?.()}
         contentEditable={isEditing}
         suppressContentEditableWarning={true}
