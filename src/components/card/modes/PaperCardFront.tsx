@@ -11,11 +11,10 @@ export function PaperCardFront({ state: propState, flower: propFlower, onOpenEdi
   const selectedFlower = flower || { name: 'Blue Hydrangea', image: '/assets/flower-illustrations/hydrangea.png' };
 
   return (
-    <div onContextMenu={(e) => e.preventDefault()} className="relative bg-white p-[clamp(10px,3.3cqw,12px)] shadow-2xl aspect-[688/960] w-full h-full rounded-none overflow-hidden select-none no-callout @container" style={{ containerType: "inline-size" }}>
-      <FlowerInfoPill variant="front" />
+    <div onContextMenu={(e) => e.preventDefault()} className="relative bg-white shadow-2xl aspect-[688/960] w-full h-full rounded-none overflow-hidden select-none no-callout @container" style={{ containerType: "inline-size" }}>
       <div 
         onClick={!isPreview && onOpenQuickPicker ? () => onOpenQuickPicker('frontArtwork') : undefined}
-        className={`relative w-full h-full overflow-hidden rounded-none ${!isPreview && onOpenQuickPicker ? 'cursor-pointer lg:cursor-default' : ''}`}
+        className={`absolute inset-[clamp(10px,3.3cqw,12px)] overflow-hidden rounded-none ${!isPreview && onOpenQuickPicker ? 'cursor-pointer lg:cursor-default' : ''}`}
       >
         <img src={selectedFlower.image} 
           alt={selectedFlower.name} 
@@ -36,6 +35,8 @@ export function PaperCardFront({ state: propState, flower: propFlower, onOpenEdi
           />
         </div>
       </div>
+
+      <FlowerInfoPill variant="front" />
 
       {state?.stickers?.filter(s => s.side === 'front').map(sticker => (
         <DraggableSticker key={sticker.id} stickerData={sticker} isPreview={isPreview} />
