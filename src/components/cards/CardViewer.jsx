@@ -19,7 +19,6 @@ import MobileQuickPickerPopover from '@/components/MobileQuickPickerPopover';
 export default function CardViewer({ onConfirm, onOpenEditTitle, onOpenEditMessage, onOpenCustomize }) {
   const { state, dispatch, flower } = useCard();
   const [isFullscreen, setIsFullscreen] = useState(false);
-  const [isAnimating, setIsAnimating] = useState(false);
   const [isSwapping, setIsSwapping] = useState(false);
   const [quickPickerMode, setQuickPickerMode] = useState(null);
   // Mouse tracking for Pokemon TCG style tilt in preview
@@ -383,26 +382,24 @@ export default function CardViewer({ onConfirm, onOpenEditTitle, onOpenEditMessa
         <div onContextMenu={(e) => e.preventDefault()} className="perspective-container relative w-full h-full aspect-[688/960] no-callout">
           <motion.div 
               className="w-full h-full relative"
-              style={{ transformStyle: 'preserve-3d', willChange: isAnimating ? 'transform' : 'auto' }}
+              style={{ transformStyle: 'preserve-3d' }}
               animate={{ 
                 rotateY: (isFlipped ? 180 : 0) + spinDegrees,
                 scale: isSwapping ? 0.88 : 1
               }} 
               initial={false} transition={{ type: "spring", stiffness: 280, damping: 22, mass: 0.9 }}
-              onAnimationStart={() => setIsAnimating(true)}
-              onAnimationComplete={() => setIsAnimating(false)}
             >
-              <div className={`absolute inset-0 ${isFlipped ? "pointer-events-none z-0" : "pointer-events-auto z-10"}`} style={{ backfaceVisibility: "hidden", WebkitBackfaceVisibility: "hidden", transform: isAnimating ? "rotateY(0deg) translateZ(1px)" : "rotateY(0deg)" }}>
+              <div className={`absolute inset-0 ${isFlipped ? "pointer-events-none z-0" : "pointer-events-auto z-10"}`} style={{ backfaceVisibility: "hidden", WebkitBackfaceVisibility: "hidden", transform: "rotateY(0deg)" }}>
                 {renderFront()}
               </div>
-              <div className={`absolute inset-0 ${isFlipped ? "pointer-events-auto z-10" : "pointer-events-none z-0"}`} style={{ backfaceVisibility: "hidden", WebkitBackfaceVisibility: "hidden", transform: isAnimating ? "rotateY(180deg) translateZ(1px)" : "rotateY(180deg)" }}>
+              <div className={`absolute inset-0 ${isFlipped ? "pointer-events-auto z-10" : "pointer-events-none z-0"}`} style={{ backfaceVisibility: "hidden", WebkitBackfaceVisibility: "hidden", transform: "rotateY(180deg)" }}>
                 {renderBack()}
               </div>
             </motion.div>
 
           {/* Option A: Auto-fading Contextual Micro-Hint Pills (Mobile/Tablet only) */}
           <AnimatePresence>
-            {!isFlipped && showFrontHint && !isAnimating && (
+            {!isFlipped && showFrontHint && (
               <motion.div
                 key="front-tap-hint"
                 initial={{ opacity: 0, y: 6, scale: 0.94 }}
@@ -418,13 +415,13 @@ export default function CardViewer({ onConfirm, onOpenEditTitle, onOpenEditMessa
               </motion.div>
             )}
 
-            {isFlipped && showBackHint && !isAnimating && (
+            {isFlipped && showBackHint && (
               <motion.div
                 key="back-tap-hints"
                 initial={{ opacity: 0, scale: 0.94 }}
                 animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.94 }}
-                transition={{ duration: 0.25 }}
+                exit={{ opacity: 0, scale: 0.94, transition: { duration: 0.15 } }}
+                transition={{ delay: 0.35, duration: 0.2 }}
                 className="lg:hidden pointer-events-none absolute inset-0 z-40"
               >
                 {/* Polaroid / Photo Hint Pill - Only show if back cover image is not "none" */}
@@ -580,7 +577,7 @@ export default function CardViewer({ onConfirm, onOpenEditTitle, onOpenEditMessa
             >
               <motion.div 
                   className="w-full h-full relative"
-                  style={{ transformStyle: 'preserve-3d', willChange: isAnimating ? 'transform' : 'auto' }}
+                  style={{ transformStyle: 'preserve-3d' }}
                   animate={{ 
                       rotateY: (isFlipped ? 180 : 0) + (mousePos.x * 28) + spinDegrees, // Tilt horizontally based on gyro/mouse
                       rotateX: -(mousePos.y * 28), // Tilt vertically based on gyro/mouse
@@ -593,8 +590,6 @@ export default function CardViewer({ onConfirm, onOpenEditTitle, onOpenEditMessa
                     rotateX: { type: "spring", stiffness: 650, damping: 22, mass: 0.42 },
                     scale: { type: "spring", stiffness: 320, damping: 26, mass: 0.9 }
                   }}
-                  onAnimationStart={() => setIsAnimating(true)}
-                  onAnimationComplete={() => setIsAnimating(false)}
                 >
                   {/* Dynamic Lighting Glare matching the tilt (Pokemon TCG effect) */}
                   <div 
@@ -605,8 +600,8 @@ export default function CardViewer({ onConfirm, onOpenEditTitle, onOpenEditMessa
                     }}
                   />
 
-                  <div className={`absolute inset-0 ${isFlipped ? "pointer-events-none z-0" : "pointer-events-auto z-10"}`} style={{ backfaceVisibility: "hidden", WebkitBackfaceVisibility: "hidden", transform: isAnimating ? "rotateY(0deg) translateZ(1px)" : "rotateY(0deg)" }}>{renderFront(true)}</div>
-                  <div className={`absolute inset-0 ${isFlipped ? "pointer-events-auto z-10" : "pointer-events-none z-0"}`} style={{ backfaceVisibility: "hidden", WebkitBackfaceVisibility: "hidden", transform: isAnimating ? "rotateY(180deg) translateZ(1px)" : "rotateY(180deg)" }}>{renderBack(true)}</div>
+                  <div className={`absolute inset-0 ${isFlipped ? "pointer-events-none z-0" : "pointer-events-auto z-10"}`} style={{ backfaceVisibility: "hidden", WebkitBackfaceVisibility: "hidden", transform: "rotateY(0deg)" }}>{renderFront(true)}</div>
+                  <div className={`absolute inset-0 ${isFlipped ? "pointer-events-auto z-10" : "pointer-events-none z-0"}`} style={{ backfaceVisibility: "hidden", WebkitBackfaceVisibility: "hidden", transform: "rotateY(180deg)" }}>{renderBack(true)}</div>
                 </motion.div>
             </div>
 
