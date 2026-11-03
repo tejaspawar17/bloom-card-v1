@@ -387,12 +387,16 @@ export default function CardViewer({ onConfirm, onOpenEditTitle, onOpenEditMessa
                 rotateY: (isFlipped ? 180 : 0) + spinDegrees,
                 scale: isSwapping ? 0.88 : 1
               }} 
-              initial={false} transition={{ type: "spring", stiffness: 280, damping: 22, mass: 0.9 }}
+              initial={false} 
+              transition={{ 
+                rotateY: { type: "spring", stiffness: 450, damping: 30, mass: 0.5 },
+                scale: { type: "spring", stiffness: 320, damping: 26, mass: 0.9 }
+              }}
             >
-              <div className={`absolute inset-0 ${isFlipped ? "pointer-events-none z-0" : "pointer-events-auto z-10"}`} style={{ backfaceVisibility: "hidden", WebkitBackfaceVisibility: "hidden", transform: "rotateY(0deg)" }}>
+              <div className={`absolute inset-0 ${isFlipped ? "pointer-events-none" : "pointer-events-auto"}`} style={{ backfaceVisibility: "hidden", WebkitBackfaceVisibility: "hidden", transform: "rotateY(0deg)" }}>
                 {renderFront()}
               </div>
-              <div className={`absolute inset-0 ${isFlipped ? "pointer-events-auto z-10" : "pointer-events-none z-0"}`} style={{ backfaceVisibility: "hidden", WebkitBackfaceVisibility: "hidden", transform: "rotateY(180deg)" }}>
+              <div className={`absolute inset-0 ${isFlipped ? "pointer-events-auto" : "pointer-events-none"}`} style={{ backfaceVisibility: "hidden", WebkitBackfaceVisibility: "hidden", transform: "rotateY(180deg)" }}>
                 {renderBack()}
               </div>
             </motion.div>
@@ -586,8 +590,8 @@ export default function CardViewer({ onConfirm, onOpenEditTitle, onOpenEditMessa
                     }} 
                   initial={{ scale: 1, rotateY: isFlipped ? 180 : 0, rotateX: 0, y: 0 }} 
                   transition={{
-                    rotateY: { type: "spring", stiffness: 650, damping: 22, mass: 0.42 },
-                    rotateX: { type: "spring", stiffness: 650, damping: 22, mass: 0.42 },
+                    rotateY: { type: "spring", stiffness: 450, damping: 30, mass: 0.5 },
+                    rotateX: { type: "spring", stiffness: 450, damping: 30, mass: 0.5 },
                     scale: { type: "spring", stiffness: 320, damping: 26, mass: 0.9 }
                   }}
                 >
@@ -600,8 +604,8 @@ export default function CardViewer({ onConfirm, onOpenEditTitle, onOpenEditMessa
                     }}
                   />
 
-                  <div className={`absolute inset-0 ${isFlipped ? "pointer-events-none z-0" : "pointer-events-auto z-10"}`} style={{ backfaceVisibility: "hidden", WebkitBackfaceVisibility: "hidden", transform: "rotateY(0deg)" }}>{renderFront(true)}</div>
-                  <div className={`absolute inset-0 ${isFlipped ? "pointer-events-auto z-10" : "pointer-events-none z-0"}`} style={{ backfaceVisibility: "hidden", WebkitBackfaceVisibility: "hidden", transform: "rotateY(180deg)" }}>{renderBack(true)}</div>
+                  <div className={`absolute inset-0 ${isFlipped ? "pointer-events-none" : "pointer-events-auto"}`} style={{ backfaceVisibility: "hidden", WebkitBackfaceVisibility: "hidden", transform: "rotateY(0deg)" }}>{renderFront(true)}</div>
+                  <div className={`absolute inset-0 ${isFlipped ? "pointer-events-auto" : "pointer-events-none"}`} style={{ backfaceVisibility: "hidden", WebkitBackfaceVisibility: "hidden", transform: "rotateY(180deg)" }}>{renderBack(true)}</div>
                 </motion.div>
             </div>
 
