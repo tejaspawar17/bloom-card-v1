@@ -26,7 +26,7 @@ export function PostageStampNote({
   return (
     <div
       onClick={handleEditClick}
-      className={`relative flex flex-col items-center justify-center w-[clamp(222px,85cqw,325px)] h-[clamp(143px,55cqw,210px)] px-[clamp(16px,6.2cqw,23px)] py-[clamp(14px,5.2cqw,21px)] z-30 ${isPreview ? '' : 'cursor-pointer group transition-transform active:scale-95'}`}
+      className={`relative flex flex-col items-center justify-center w-[clamp(222px,85cqw,325px)] h-[clamp(143px,55cqw,210px)] px-[clamp(16px,6.2cqw,23px)] py-[clamp(14px,5.2cqw,21px)] z-30 ${isPreview ? '' : 'cursor-pointer group active:scale-95'}`}
     >
       {/* Real <img> element ensures 100% reliable capture in Mobile WebKit & PDF generation */}
       <img

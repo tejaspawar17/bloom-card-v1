@@ -252,14 +252,14 @@ export default function MessageModal({ onClose }) {
                     <textarea
                       id="trainer-bio-input"
                       value={trainerBio}
-                      placeholder="e.g., Level 99 Coffee Lover • HT: 5'8&quot; WT: 150 lbs"
+                      placeholder="e.g., Lvl 99 • Coffee summoner ☕"
                       onChange={(e) => setTrainerBio(e.target.value)}
-                      maxLength={80}
+                      maxLength={35}
                       rows={2}
                       className="w-full bg-transparent px-3.5 sm:px-4 pt-2.5 sm:pt-3.5 pb-6 sm:pb-7 text-[16px] sm:text-[15px] leading-[22px] text-white placeholder-[#727272] outline-none resize-none font-sans h-[80px] sm:h-[96px] overflow-y-auto"
                     />
-                    <div className={`absolute bottom-2 sm:bottom-2.5 right-3 text-[10px] sm:text-[11px] font-normal tabular-nums font-sans ${trainerBio.length >= 80 ? 'text-[#FF6961]/70' : 'text-[#727272]'}`}>
-                      {trainerBio.length} / 80
+                    <div className={`absolute bottom-2 sm:bottom-2.5 right-3 text-[10px] sm:text-[11px] font-normal tabular-nums font-sans ${trainerBio.length >= 35 ? 'text-[#FF6961]/70' : 'text-[#727272]'}`}>
+                      {trainerBio.length} / 35
                     </div>
                   </div>
                 </div>

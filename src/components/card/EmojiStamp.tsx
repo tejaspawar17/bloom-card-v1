@@ -16,7 +16,7 @@ export function EmojiStamp({ emoji, className = '', onClick }: EmojiStampProps) 
       onClick={onClick ? (e) => { e.stopPropagation(); onClick(e); } : undefined}
       className={cn(
         "absolute z-20 flex items-center justify-center w-[clamp(62px,23.1cqw,95px)] h-[clamp(62px,23.1cqw,95px)] select-none aspect-square",
-        onClick ? "pointer-events-auto cursor-pointer active:scale-95 transition-transform" : "",
+        onClick ? "pointer-events-auto cursor-pointer active:scale-95" : "",
         className
       )}
     >

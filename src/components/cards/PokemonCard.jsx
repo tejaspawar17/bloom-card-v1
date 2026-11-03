@@ -29,7 +29,7 @@ export function PokemonCardFront({ onOpenEditTitle, onOpenQuickPicker, isPreview
       {/* Subject Box matching reference: white box with red border and magenta edit pencil */}
         <div 
           onClick={isPreview ? undefined : (e) => { e.stopPropagation(); onOpenEditTitle?.(); }}
-          className={`absolute bottom-[5%] left-1/2 -translate-x-1/2 w-[73.1%] h-[21%] -rotate-[2deg] z-20 group ${isPreview ? '' : 'cursor-pointer hover:scale-[1.02] transition-transform'}`}
+          className={`absolute bottom-[5%] left-1/2 -translate-x-1/2 w-[73.1%] h-[21%] -rotate-[2deg] z-20 group ${isPreview ? '' : 'cursor-pointer active:scale-[0.98]'}`}
         >
           {/* Outer White Box with Shadow (Matches Figma exact structure) */}
             <div className="w-full h-full bg-white p-[1.2cqw] rounded-[4cqw] shadow-[2px_2px_2px_0.5px_rgba(0,0,0,0.25)]">
@@ -95,8 +95,10 @@ export function PokemonCardBack({ onOpenEditMessage, onOpenQuickPicker, isPrevie
           <img src="/assets/pokemon-back/trainer-card-frame.png" alt="Silver Frame" className="absolute inset-0 w-full h-full object-contain pointer-events-none select-none no-callout z-10" draggable={false} />
 
           {/* Name Pill (Top Left, z-20) */}
-          <div className="absolute top-[13.5%] left-[4.5%] bg-white border-[0.87cqw] border-[#FF0000] ring-[0.8cqw] ring-white rounded-[2.9cqw] min-w-[48%] px-[4%] h-[10.37%] flex items-center justify-center shadow-[1cqw_1cqw_0.5cqw_rgba(0,0,0,0.4)] z-30 transform -rotate-3">
-            <span className="font-['Vampiro_One'] text-[4.65cqw] text-[#000000] leading-none pt-[0.4cqw] tracking-wide text-center truncate max-w-[95%] block">{state.trainerName || state.to || ""}</span>
+          <div className="absolute top-[13.5%] left-[4.5%] bg-white p-[0.9cqw] rounded-[3.2cqw] min-w-[48%] h-[10.37%] shadow-[1cqw_1cqw_0.5cqw_rgba(0,0,0,0.4)] z-30 transform -rotate-3">
+            <div className="w-full h-full border-[1.1cqw] border-[#FF0000] rounded-[2.5cqw] px-[4%] flex items-center justify-center overflow-hidden">
+              <span className="font-['Vampiro_One'] text-[4.65cqw] text-[#000000] leading-none pt-[0.4cqw] tracking-wide text-center truncate max-w-[95%] block">{state.trainerName || state.to || ""}</span>
+            </div>
           </div>
 
           {/* "BIO & STATS" Label (Bottom, z-20) */}
@@ -104,15 +106,17 @@ export function PokemonCardBack({ onOpenEditMessage, onOpenQuickPicker, isPrevie
               <div className="absolute -bottom-[12px] -right-[12px] z-50 pointer-events-auto flex items-center justify-center">
                 {onOpenEditMessage && <TertiaryLiquidGlassButton onClick={onOpenEditMessage} />}
               </div>
-              <div className="w-full h-full bg-white border-[0.87cqw] border-[#FF0000] ring-[0.8cqw] ring-white rounded-[4cqw] flex flex-col shadow-[1cqw_1cqw_0.5cqw_rgba(0,0,0,0.4)] overflow-hidden">
-               <div className="w-full h-[37.11%] bg-[#FF0000] flex items-center justify-center">
-                 <span className="font-sans font-semibold text-white text-[5.23cqw]">Bio & Stats</span>
-               </div>
-               <div className="flex-1 w-full flex items-center justify-center px-[4.65cqw] bg-white/90 backdrop-blur-sm">
-                 <span className="font-sans text-[4.07cqw] text-black whitespace-pre truncate max-w-full block px-[2cqw]">
-                     {state.trainerBio || ""}
-                   </span>
-               </div>
+              <div className="w-full h-full bg-white p-[0.9cqw] rounded-[4.5cqw] shadow-[1cqw_1cqw_0.5cqw_rgba(0,0,0,0.4)]">
+              <div className="w-full h-full border-[1.1cqw] border-[#FF0000] rounded-[3.8cqw] flex flex-col overflow-hidden bg-white">
+                <div className="w-full h-[37.11%] bg-[#FF0000] flex items-center justify-center">
+                  <span className="font-sans font-semibold text-white text-[5.23cqw]">Bio & Stats</span>
+                </div>
+                <div className="flex-1 w-full flex items-center justify-center px-[3cqw] bg-white">
+                  <span className="font-sans font-medium text-[3.8cqw] text-black whitespace-nowrap truncate max-w-full block tracking-[-0.01em]">
+                    {state.trainerBio || ""}
+                  </span>
+                </div>
+              </div>
             </div>
             
             
@@ -142,7 +146,7 @@ export function PokemonCardBack({ onOpenEditMessage, onOpenQuickPicker, isPrevie
         {backPhoto && backPhoto !== 'none' && (
           <div 
             onClick={!isPreview && onOpenQuickPicker ? (e) => { e.stopPropagation(); onOpenQuickPicker('polaroid'); } : undefined}
-            className={`absolute top-[14.1%] right-[6.4%] z-10 w-[40.2%] h-[33.2%] drop-shadow-[2px_4px_6px_rgba(0,0,0,0.5)] rounded-[8px] overflow-hidden -rotate-[4.8deg] ${!isPreview && onOpenQuickPicker ? 'cursor-pointer active:scale-[0.97] transition-transform' : ''}`}
+            className={`absolute top-[14.1%] right-[6.4%] z-10 w-[40.2%] h-[33.2%] drop-shadow-[2px_4px_6px_rgba(0,0,0,0.5)] rounded-[8px] overflow-hidden -rotate-[4.8deg] ${!isPreview && onOpenQuickPicker ? 'cursor-pointer active:scale-[0.97]' : ''}`}
           >
             <Polaroid image={backPhoto} className="w-full h-full !shadow-none" />
             
