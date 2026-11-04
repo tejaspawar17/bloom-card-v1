@@ -61,8 +61,8 @@ export function DraggableSticker({ stickerData, isPreview = false }) {
     const cardWidth = stickerRef.current?.parentElement?.clientWidth || 360;
     const cardHeight = stickerRef.current?.parentElement?.clientHeight || 500;
     const isCmiyglSticker = stickerData.stickerId === "cmiygl";
-    const stickerWidth = stickerRef.current?.offsetWidth || (isCmiyglSticker ? 190 : 140);
-    const stickerHeight = stickerRef.current?.offsetHeight || (isCmiyglSticker ? 108 : stickerWidth);
+    const stickerWidth = stickerRef.current?.offsetWidth || (isCmiyglSticker ? 214 : 160);
+    const stickerHeight = stickerRef.current?.offsetHeight || (isCmiyglSticker ? 118 : stickerWidth);
 
     // Clamp position so sticker stays on card and never overlaps the top segmented control
     const clampedX = Math.max(-stickerWidth * 0.4, Math.min(cardWidth - stickerWidth * 0.6, stickerData.x + info.offset.x));
@@ -187,16 +187,16 @@ export function DraggableSticker({ stickerData, isPreview = false }) {
   const isAlbum = ["igor", "blond", "sos", "pink_floyd", "brat"].includes(stickerData.stickerId);
   const isApples = stickerData.stickerId === "apples";
 
-  let sizeClass = "w-[clamp(96px,31cqw,140px)] h-[clamp(96px,31cqw,140px)]";
+  let sizeClass = "w-[clamp(108px,34.5cqw,155px)] h-[clamp(108px,34.5cqw,155px)]";
   if (isCmiygl) {
     // Landscape passport ticket ratio (~1.84:1)
-    sizeClass = "w-[clamp(134px,42.5cqw,192px)] h-[clamp(73px,23cqw,105px)]";
+    sizeClass = "w-[clamp(150px,47.5cqw,214px)] h-[clamp(82px,26cqw,118px)]";
   } else if (isAlbum) {
     // Vinyl sleeve + peeking disc ratio (1.11:1)
-    sizeClass = "w-[clamp(100px,32.2cqw,144px)] h-[clamp(90px,29cqw,130px)]";
+    sizeClass = "w-[clamp(112px,36cqw,160px)] h-[clamp(100px,32.5cqw,145px)]";
   } else if (isApples) {
     // Apples quote badge (prominent hand lettering)
-    sizeClass = "w-[clamp(98px,31cqw,142px)] h-[clamp(100px,32.2cqw,146px)]";
+    sizeClass = "w-[clamp(110px,34.5cqw,158px)] h-[clamp(112px,36cqw,163px)]";
   }
 
   return (
