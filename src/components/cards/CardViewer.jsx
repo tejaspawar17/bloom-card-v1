@@ -19,26 +19,13 @@ import MobileQuickPickerPopover from '@/components/MobileQuickPickerPopover';
 export default function CardViewer({ onConfirm, onOpenEditTitle, onOpenEditMessage, onOpenCustomize }) {
   const { state, dispatch, flower } = useCard();
   const [isFullscreen, setIsFullscreen] = useState(false);
-  const [isSwapping, setIsSwapping] = useState(false);
   const [quickPickerMode, setQuickPickerMode] = useState(null);
   // Mouse tracking for Pokemon TCG style tilt in preview
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
 
   // Magic Spin Decoy State
   const [spinDegrees, setSpinDegrees] = useState(0);
-  const [visualCardType, setVisualCardType] = useState(state.cardType);
-
-  useEffect(() => {
-    if (state.cardType !== visualCardType) {
-      setIsSwapping(true); // Apple Shrink!
-      setTimeout(() => {
-        setVisualCardType(state.cardType); // Instant swap while tiny
-      }, 160);
-      setTimeout(() => {
-        setIsSwapping(false); // Spring back up!
-      }, 270);
-    }
-  }, [state.cardType, visualCardType]);
+  const visualCardType = state.cardType;
 
   // Pre-decode opposing back textures in background idle thread to ensure 0-jank 3D flips
   useEffect(() => {
@@ -384,13 +371,11 @@ export default function CardViewer({ onConfirm, onOpenEditTitle, onOpenEditMessa
               className="w-full h-full relative"
               style={{ transformStyle: 'preserve-3d' }}
               animate={{ 
-                rotateY: (isFlipped ? 180 : 0) + spinDegrees,
-                scale: isSwapping ? 0.88 : 1
+                rotateY: (isFlipped ? 180 : 0) + spinDegrees
               }} 
               initial={false} 
               transition={{ 
-                rotateY: { type: "spring", stiffness: 450, damping: 30, mass: 0.5 },
-                scale: { type: "spring", stiffness: 320, damping: 26, mass: 0.9 }
+                rotateY: { type: "spring", stiffness: 450, damping: 30, mass: 0.5 }
               }}
             >
               <div className={`absolute inset-0 ${isFlipped ? "pointer-events-none" : "pointer-events-auto"}`} style={{ backfaceVisibility: "hidden", WebkitBackfaceVisibility: "hidden", transform: "rotateY(0deg)" }}>
@@ -585,14 +570,12 @@ export default function CardViewer({ onConfirm, onOpenEditTitle, onOpenEditMessa
                   animate={{ 
                       rotateY: (isFlipped ? 180 : 0) + (mousePos.x * 28) + spinDegrees, // Tilt horizontally based on gyro/mouse
                       rotateX: -(mousePos.y * 28), // Tilt vertically based on gyro/mouse
-                      scale: isSwapping ? 0.98 : 1.02, // Apple bounce
                       y: 0
                     }} 
-                  initial={{ scale: 1, rotateY: isFlipped ? 180 : 0, rotateX: 0, y: 0 }} 
+                  initial={{ rotateY: isFlipped ? 180 : 0, rotateX: 0, y: 0 }} 
                   transition={{
                     rotateY: { type: "spring", stiffness: 450, damping: 30, mass: 0.5 },
-                    rotateX: { type: "spring", stiffness: 450, damping: 30, mass: 0.5 },
-                    scale: { type: "spring", stiffness: 320, damping: 26, mass: 0.9 }
+                    rotateX: { type: "spring", stiffness: 450, damping: 30, mass: 0.5 }
                   }}
                 >
                   {/* Dynamic Lighting Glare matching the tilt (Pokemon TCG effect) */}

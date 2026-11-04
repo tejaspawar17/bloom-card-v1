@@ -17,12 +17,14 @@ export function MetallicCardFront({ onOpenEditTitle, onOpenQuickPicker, isPrevie
       style={{ containerType: "inline-size" }}
     >
       {/* Background artwork */}
-      <img
-        src={flower?.image || '/assets/flower-illustrations/flower_1.png'}
-        alt="Metallic Card Flower"
-        className="absolute inset-0 w-full h-full object-cover pointer-events-none select-none no-callout"
-        draggable={false}
-      />
+      <div className="absolute inset-[clamp(10px,3.3cqw,12px)] overflow-hidden rounded-none">
+        <img
+          src={flower?.image || '/assets/flower-illustrations/flower_1.png'}
+          alt="Metallic Card Flower"
+          className="w-full h-full object-cover pointer-events-none select-none no-callout"
+          draggable={false}
+        />
+      </div>
 
       <FlowerInfoPill variant="front" />
 
