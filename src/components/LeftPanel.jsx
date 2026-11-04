@@ -43,18 +43,40 @@ export default function LeftPanel() {
   }, [hasOverflow]);
 
   React.useEffect(() => {
+    const vp = containerRef.current?.querySelector('[data-slot="scroll-area-viewport"]');
+    if (vp) {
+      vp.scrollTop = 0;
+    }
+
     if (!hasOverflow) {
       setCanScrollUp(false);
       setCanScrollDown(false);
       return;
     }
-    const vp = containerRef.current?.querySelector('[data-slot="scroll-area-viewport"]');
+
+    // Instantly activate bottom blur from frame 0 when entering an overflowing list
+    setCanScrollUp(false);
+    setCanScrollDown(true);
+
     if (!vp) return;
     vp.addEventListener('scroll', handleScroll, { passive: true });
-    const timer = setTimeout(handleScroll, 50);
+
+    let ro = null;
+    if (typeof ResizeObserver !== 'undefined') {
+      ro = new ResizeObserver(() => {
+        handleScroll();
+      });
+      ro.observe(vp);
+    }
+
+    const t1 = setTimeout(handleScroll, 50);
+    const t2 = setTimeout(handleScroll, 260); // Re-measure after AnimatePresence 220ms exit
+
     return () => {
       vp.removeEventListener('scroll', handleScroll);
-      clearTimeout(timer);
+      if (ro) ro.disconnect();
+      clearTimeout(t1);
+      clearTimeout(t2);
     };
   }, [listData, hasOverflow, handleScroll]);
 
@@ -167,6 +189,7 @@ export default function LeftPanel() {
                   animate={{ opacity: 1, filter: 'blur(0px)', y: 0 }}
                   exit={{ opacity: 0, filter: 'blur(4px)', y: -3 }}
                   transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
+                  onAnimationComplete={handleScroll}
                   className="w-[268px] xl:w-[305px] 2xl:w-[328px] px-[3px] pb-3 grid grid-cols-[repeat(4,54px)] xl:grid-cols-[repeat(4,61px)] 2xl:grid-cols-[repeat(4,66px)] justify-between gap-y-[12px] xl:gap-y-[13px] 2xl:gap-y-[14px]"
                   role="radiogroup"
                   aria-label={listTitle}
