@@ -20,6 +20,8 @@ export function PaperCardFront({ state: propState, flower: propFlower, onOpenEdi
           alt={selectedFlower.name} 
           className="w-full h-full object-cover pointer-events-none select-none no-callout" 
           draggable={false}
+          decoding="async"
+          loading="eager"
         />
 
         {/* Bottom Stamp Overlay (Figma: y=300 inside 456px inner image -> 18px from bottom of flower image, minus 6px built-in PNG shadow margin = 12px) */}

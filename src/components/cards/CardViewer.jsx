@@ -15,6 +15,7 @@ import LiquidGlassIconButton from '@/components/ui/LiquidGlassIconButton';
 import GlassSegmentedControl from '@/components/ui/GlassSegmentedControl';
 import VerticalCardSelector from '@/components/ui/VerticalCardSelector';
 import MobileQuickPickerPopover from '@/components/MobileQuickPickerPopover';
+import { FLOWERS, POKEMON_CARDS } from '@/data/cardData';
 
 export default function CardViewer({ onConfirm, onOpenEditTitle, onOpenEditMessage, onOpenCustomize }) {
   const { state, dispatch, flower } = useCard();
@@ -26,6 +27,20 @@ export default function CardViewer({ onConfirm, onOpenEditTitle, onOpenEditMessa
   // Magic Spin Decoy State
   const [spinDegrees, setSpinDegrees] = useState(0);
   const visualCardType = state.cardType;
+
+  // Pre-decode all front artworks on mount to ensure 0ms instant switching between flowers/pokemons
+  useEffect(() => {
+    const frontArtworks = [
+      ...FLOWERS.map((f) => f.image).filter(Boolean),
+      ...POKEMON_CARDS.map((p) => p.image).filter(Boolean),
+    ];
+
+    frontArtworks.forEach((src) => {
+      const img = new Image();
+      img.src = src;
+      img.decode?.().catch(() => {});
+    });
+  }, []);
 
   // Pre-decode opposing back textures in background idle thread to ensure 0-jank 3D flips
   useEffect(() => {

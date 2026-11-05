@@ -21,6 +21,8 @@ export function PokemonCardFront({ onOpenEditTitle, onOpenQuickPicker, isPreview
         alt={pokemonCard?.name || 'Pokemon Card Front'}
         className="absolute inset-0 w-full h-full object-cover pointer-events-none select-none no-callout"
         draggable={false}
+        decoding="async"
+        loading="eager"
       />
 
       {/* Equipped Sticker if selected */}

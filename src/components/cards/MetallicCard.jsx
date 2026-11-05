@@ -23,6 +23,8 @@ export function MetallicCardFront({ onOpenEditTitle, onOpenQuickPicker, isPrevie
           alt="Metallic Card Flower"
           className="w-full h-full object-cover pointer-events-none select-none no-callout"
           draggable={false}
+          decoding="async"
+          loading="eager"
         />
       </div>
 

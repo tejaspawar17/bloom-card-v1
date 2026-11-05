@@ -194,6 +194,24 @@ function AppShell() {
             sessionStorage.setItem('bloom_has_loaded', 'true');
           } catch {}
           setIsAppLoading(false);
+
+          // Idle pre-warm all full-resolution front artworks so switching between cards is 0ms instant
+          const frontArtworks = [
+            ...FLOWERS.map((f) => f.image).filter(Boolean),
+            ...POKEMON_CARDS.map((p) => p.image).filter(Boolean),
+          ];
+          const warmQueue = () => {
+            frontArtworks.forEach((src) => {
+              const img = new Image();
+              img.src = src;
+              img.decode?.().catch(() => {});
+            });
+          };
+          if (typeof window !== 'undefined' && 'requestIdleCallback' in window) {
+            window.requestIdleCallback(warmQueue, { timeout: 2000 });
+          } else {
+            setTimeout(warmQueue, 150);
+          }
         }
       }, remaining);
     };
