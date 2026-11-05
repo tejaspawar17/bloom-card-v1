@@ -16,20 +16,20 @@ export function PokemonCardFront({ onOpenEditTitle, onOpenQuickPicker, isPreview
       onContextMenu={(e) => e.preventDefault()} className={`relative w-full h-full aspect-[688/960] rounded-[16px] ${isPreview ? 'border-none' : 'border border-[#95a0a6]/60'} overflow-hidden shadow-2xl select-none no-callout bg-transparent @container ${!isPreview && onOpenQuickPicker ? 'cursor-pointer lg:cursor-default' : ''}`} 
       style={{ containerType: "inline-size" }}
     >
-      {/* Real Pokemon Card Image - Optical Blur-Dissolve (Apple quintic preset) */}
+      {/* Real Pokemon Card Image - Isolated Pure-Opacity Crossfade (180ms) */}
       <div 
-        className="relative w-full h-full overflow-hidden isolate [contain:paint]"
+        className="absolute inset-0 w-full h-full overflow-hidden isolate"
         style={{ isolation: 'isolate', contain: 'paint' }}
       >
-        <AnimatePresence initial={false} mode="popLayout">
+        <AnimatePresence initial={false}>
           <motion.img
             key={pokemonCard?.image || '/pokemon/001-003-squirtle.png'}
             src={pokemonCard?.image || '/pokemon/001-003-squirtle.png'}
             alt={pokemonCard?.name || 'Pokemon Card Front'}
-            initial={{ opacity: 0, filter: 'blur(8px)', scale: 1.03 }}
-            animate={{ opacity: 1, filter: 'blur(0px)', scale: 1 }}
-            exit={{ opacity: 0, filter: 'blur(6px)', scale: 0.985 }}
-            transition={{ duration: 0.24, ease: [0.22, 1, 0.36, 1] }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.18, ease: "easeOut" }}
             className="absolute inset-0 w-full h-full object-cover pointer-events-none select-none no-callout"
             draggable={false}
             decoding="async"
@@ -212,7 +212,7 @@ export function PokemonCardBack({ onOpenEditMessage, onOpenQuickPicker, isPrevie
               </div>
 
               {/* Message */}
-              <div className="w-full mt-[8%] mb-auto max-h-[124px] overflow-hidden">
+              <div className="w-full mt-[8%] mb-auto">
                  <p className="font-['Arial',sans-serif] text-[3.49cqw] leading-[4.36cqw] font-normal text-[#000] whitespace-pre-line text-left break-words">
                    {state.message || ""}
                  </p>

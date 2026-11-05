@@ -46,9 +46,7 @@ export default function CardViewer({ onConfirm, onOpenEditTitle, onOpenEditMessa
   useEffect(() => {
     const texturesToWarm = visualCardType === 'pokemon'
       ? ['/assets/pokemon-back/base-card-back.png', '/assets/pokemon-back/trainer-card-frame.png', '/assets/pokemon-back/trainer-card-textures.png']
-      : visualCardType === 'metallic'
-      ? ['/assets/bloom/metallic_back.png']
-      : ['/assets/bloom/paper_back_blank_labels.png'];
+      : ['/textures/paper_back_blank_labels.png'];
 
     texturesToWarm.forEach((src) => {
       const img = new Image();
@@ -335,7 +333,7 @@ export default function CardViewer({ onConfirm, onOpenEditTitle, onOpenEditMessa
 
         {/* Mobile/Tablet: Left Vertical Switcher positioned cleanly outside the card boundary so it never collides with stickers or card artwork */}
         {state.cardType === 'pokemon' && (
-          <div className="absolute top-1/2 -translate-y-1/2 -left-[38px] sm:-left-[54px] scale-90 sm:scale-100 origin-right z-30 flex lg:hidden shadow-xl">
+          <div className="absolute top-1/2 -translate-y-1/2 -left-[54px] z-30 flex lg:hidden shadow-xl">
             <VerticalCardSelector
               value={state.pokemonSubtype === 'trainer' ? 'trainer' : 'base'}
               onValueChange={(val) => {
@@ -392,7 +390,7 @@ export default function CardViewer({ onConfirm, onOpenEditTitle, onOpenEditMessa
               }} 
               initial={false} 
               transition={{ 
-                rotateY: { duration: 0.62, ease: [0.22, 1, 0.36, 1] }
+                rotateY: { type: "spring", stiffness: 450, damping: 30, mass: 0.5 }
               }}
             >
               <div className={`absolute inset-0 ${isFlipped ? "pointer-events-none" : "pointer-events-auto"}`} style={{ backfaceVisibility: "hidden", WebkitBackfaceVisibility: "hidden", transform: "rotateY(0deg)" }}>
@@ -408,10 +406,10 @@ export default function CardViewer({ onConfirm, onOpenEditTitle, onOpenEditMessa
             {!isFlipped && showFrontHint && (
               <motion.div
                 key="front-tap-hint"
-                initial={{ opacity: 0, y: 4 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+                initial={{ opacity: 0, y: 6, scale: 0.94 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: -4, scale: 0.94 }}
+                transition={{ duration: 0.25 }}
                 className="lg:hidden pointer-events-none absolute top-[42%] left-1/2 -translate-x-1/2 -translate-y-1/2 z-40 h-[28px] px-3 rounded-full bg-black/75 backdrop-blur-xl border border-white/25 shadow-[0_8px_24px_rgba(0,0,0,0.65)] inline-flex items-center justify-center gap-1.5 whitespace-nowrap"
               >
                 <Sparkle size={14} weight="regular" className="text-white shrink-0" />

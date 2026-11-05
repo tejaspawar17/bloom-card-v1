@@ -11,7 +11,6 @@ export function DraggableSticker({ stickerData, isPreview = false }) {
   const [isRotating, setIsRotating] = useState(false);
   const [hasLanded, setHasLanded] = useState(false);
   const [landKey, setLandKey] = useState(0);
-  const [isDragging, setIsDragging] = useState(false);
   const stickerRef = useRef(null);
   const dragControls = useDragControls();
 
@@ -58,7 +57,6 @@ export function DraggableSticker({ stickerData, isPreview = false }) {
   }, [isEditingSticker]);
 
   const handleDragEnd = (event, info) => {
-    setIsDragging(false);
     setLandKey(Date.now());
     const cardWidth = stickerRef.current?.parentElement?.clientWidth || 360;
     const cardHeight = stickerRef.current?.parentElement?.clientHeight || 500;
@@ -209,7 +207,6 @@ export function DraggableSticker({ stickerData, isPreview = false }) {
       dragControls={dragControls}
       dragListener={false}
       dragMomentum={false}
-      onDragStart={() => setIsDragging(true)}
       style={{ rotate }}
       onTouchStart={!isPreview ? handleTouchStart : undefined}
       onTouchMove={!isPreview ? handleTouchMove : undefined}
@@ -219,11 +216,15 @@ export function DraggableSticker({ stickerData, isPreview = false }) {
         x: stickerData.x, 
         y: stickerData.y - 14, 
         scale: 1.28,
+        filter: "drop-shadow(0 16px 20px rgba(0,0,0,0.50))"
       }}
       animate={{ 
         x: stickerData.x, 
         y: stickerData.y,
-        scale: isDragging ? 1.08 : 1,
+        scale: 1,
+        filter: hasLanded 
+          ? "drop-shadow(0 2px 3px rgba(0,0,0,0.45))" 
+          : "drop-shadow(0 14px 18px rgba(0,0,0,0.45))"
       }}
       transition={{ 
         type: "spring", 
@@ -252,13 +253,7 @@ export function DraggableSticker({ stickerData, isPreview = false }) {
           }
         }}
       >
-        <img 
-          src={imageUrl} 
-          alt="Sticker" 
-          className="w-full h-full object-contain pointer-events-none select-none" 
-          style={{ filter: "drop-shadow(0 4px 8px rgba(0,0,0,0.20))" }}
-          draggable={false} 
-        />
+        <img src={imageUrl} alt="Sticker" className="w-full h-full object-contain pointer-events-none select-none" draggable={false} />
       </div>
       
       <AnimatePresence>

@@ -11,7 +11,7 @@ export default function FigmaWindow({
   return (
     <aside
       className={clsx(
-        'relative w-[298px] xl:w-[340px] 2xl:w-[364px] flex-shrink-0 select-none max-h-[calc(100dvh-89px)] overflow-y-auto scrollbar-none',
+        'relative w-[298px] xl:w-[340px] 2xl:w-[364px] flex-shrink-0 select-none',
         fullHeight ? 'h-full' : 'h-fit',
         className
       )}

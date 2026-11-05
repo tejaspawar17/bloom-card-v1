@@ -306,6 +306,8 @@ export default function ShareModal({ onClose, onOpenRecipientPreview }) {
         dispatch({ type: 'SET_BACK_IMAGE', payload: result.state.selectedBackImage });
       }
       setShareUrl(result.shareUrl);
+      const urlObj = new URL(result.shareUrl);
+      window.history.replaceState(null, '', urlObj.pathname + urlObj.search);
     } catch (err) {
       console.error('Failed to save card to Supabase, using self-contained URL fallback:', err);
       const encoded = encodeCardStateParam(state);
@@ -364,34 +366,31 @@ export default function ShareModal({ onClose, onOpenRecipientPreview }) {
   if (typeof document === 'undefined') return null;
 
   return createPortal(
-    <>
-      <AnimatePresence>
-        <div key="share-modal-wrapper" className="fixed inset-0 z-50 flex items-center justify-center p-4">
-          {/* Backdrop matching TitleModal & MessageModal */}
-          <motion.div
-            key="share-modal-backdrop"
-            className="absolute inset-0 bg-black/60 backdrop-blur-md"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.2, ease: [0.22, 1, 0.36, 1] }}
-            onClick={onClose}
-          />
+    <AnimatePresence>
+      <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+        {/* Backdrop matching TitleModal & MessageModal */}
+        <motion.div
+          className="absolute inset-0 bg-black/60 backdrop-blur-md"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.25 }}
+          onClick={onClose}
+        />
 
-          {/* Modal Window matching Figma Tablets & Form Modals */}
-          <motion.div
-            key="share-modal-panel"
-            role="dialog"
-            aria-modal="true"
-            aria-label="Generate Link or Download"
-            layout
-            className="relative z-10 w-[calc(100%-8px)] sm:w-[calc(100%-32px)] max-w-[420px] sm:max-w-[466px] mx-auto flex flex-col select-none rounded-[20px] sm:rounded-[24px] bg-[#0E0E0E] border border-white/[0.12] overflow-hidden shadow-[0_24px_60px_rgba(0,0,0,0.85)] font-sans"
-            onClick={(e) => e.stopPropagation()}
-            initial={{ opacity: 0, scale: 0.97, y: 6 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.98, y: 4 }}
-            transition={{ duration: 0.24, ease: [0.22, 1, 0.36, 1] }}
-          >
+        {/* Modal Window matching Figma Tablets & Form Modals */}
+        <motion.div
+          role="dialog"
+          aria-modal="true"
+          aria-label="Generate Link or Download"
+          layout
+          className="relative z-10 w-[calc(100%-8px)] sm:w-[calc(100%-32px)] max-w-[420px] sm:max-w-[466px] mx-auto flex flex-col select-none rounded-[20px] sm:rounded-[24px] bg-[#0E0E0E] border border-white/[0.12] overflow-hidden shadow-[0_24px_60px_rgba(0,0,0,0.85)] font-sans"
+          onClick={(e) => e.stopPropagation()}
+          initial={{ opacity: 0, scale: 0.95, y: 8 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          exit={{ opacity: 0, scale: 0.95, y: 8 }}
+          transition={springTransition}
+        >
           {/* Header Bar matching Figma Tablet Surface with equal top & right close button gap */}
           <div className="flex items-center justify-between h-[48px] sm:h-[60px] pl-4 sm:pl-5 pr-2 sm:pr-[11px] bg-[#1F1F1F] border-b border-white/[0.08]">
             <h2 className="text-[rgba(255,255,255,0.85)] font-semibold sm:font-medium text-[15px] sm:text-[17px] leading-[20px] sm:leading-[22px] tracking-[-0.02em] font-sans">
@@ -630,41 +629,39 @@ export default function ShareModal({ onClose, onOpenRecipientPreview }) {
           </AnimatePresence>
         </motion.div>
       </div>
-    </AnimatePresence>
-
     {/* In-Viewport Hidden 350x488 Render Stage for Keychain PDF Capture (Studio-Calibrated Proportions) */}
-    <div 
-      aria-hidden="true"
-      className="fixed left-0 top-0 pointer-events-none flex flex-col gap-4 overflow-visible"
-      style={{ zIndex: -1, opacity: 0.003 }}
-    >
       <div 
-        ref={frontRef} 
-        style={{ width: '350px', height: '488px', minWidth: '350px', maxWidth: '350px', minHeight: '488px', maxHeight: '488px', flexShrink: 0, position: 'relative', overflow: 'hidden', borderRadius: (state.cardType === 'pokemon' || state.cardType === 'metallic') ? '16px' : '0px', backgroundColor: 'transparent' }}
+        aria-hidden="true"
+        className="fixed left-0 top-0 pointer-events-none flex flex-col gap-4 overflow-visible"
+        style={{ zIndex: -1, opacity: 0.003 }}
       >
-        {state.cardType === 'pokemon' ? (
-          <PokemonCardFront isPreview={true} />
-        ) : state.cardType === 'metallic' ? (
-          <MetallicCardFront isPreview={true} />
-        ) : (
-          <PaperCardFront state={state} flower={flower} isPreview={true} />
-        )}
-      </div>
+        <div 
+          ref={frontRef} 
+          style={{ width: '350px', height: '488px', minWidth: '350px', maxWidth: '350px', minHeight: '488px', maxHeight: '488px', flexShrink: 0, position: 'relative', overflow: 'hidden', borderRadius: (state.cardType === 'pokemon' || state.cardType === 'metallic') ? '16px' : '0px', backgroundColor: 'transparent' }}
+        >
+          {state.cardType === 'pokemon' ? (
+            <PokemonCardFront isPreview={true} />
+          ) : state.cardType === 'metallic' ? (
+            <MetallicCardFront isPreview={true} />
+          ) : (
+            <PaperCardFront state={state} flower={flower} isPreview={true} />
+          )}
+        </div>
 
-      <div 
-        ref={backRef} 
-        style={{ width: '350px', height: '488px', minWidth: '350px', maxWidth: '350px', minHeight: '488px', maxHeight: '488px', flexShrink: 0, position: 'relative', overflow: 'hidden', borderRadius: (state.cardType === 'pokemon' || state.cardType === 'metallic') ? '16px' : '0px', backgroundColor: 'transparent' }}
-      >
-        {state.cardType === 'pokemon' ? (
-          <PokemonCardBack isPreview={true} />
-        ) : state.cardType === 'metallic' ? (
-          <MetallicCardBack isPreview={true} />
-        ) : (
-          <PaperCardBack isPreview={true} />
-        )}
+        <div 
+          ref={backRef} 
+          style={{ width: '350px', height: '488px', minWidth: '350px', maxWidth: '350px', minHeight: '488px', maxHeight: '488px', flexShrink: 0, position: 'relative', overflow: 'hidden', borderRadius: (state.cardType === 'pokemon' || state.cardType === 'metallic') ? '16px' : '0px', backgroundColor: 'transparent' }}
+        >
+          {state.cardType === 'pokemon' ? (
+            <PokemonCardBack isPreview={true} />
+          ) : state.cardType === 'metallic' ? (
+            <MetallicCardBack isPreview={true} />
+          ) : (
+            <PaperCardBack isPreview={true} />
+          )}
+        </div>
       </div>
-    </div>
-  </>,
+    </AnimatePresence>,
     document.body
   );
 }

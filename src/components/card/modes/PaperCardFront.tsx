@@ -17,20 +17,20 @@ export function PaperCardFront({ state: propState, flower: propFlower, onOpenEdi
         onClick={!isPreview && onOpenQuickPicker ? () => onOpenQuickPicker('frontArtwork') : undefined}
         className={`absolute inset-[clamp(10px,3.3cqw,12px)] overflow-hidden rounded-none ${!isPreview && onOpenQuickPicker ? 'cursor-pointer lg:cursor-default' : ''}`}
       >
-        {/* Optical Blur-Dissolve Artwork Container (Apple quintic preset) */}
+        {/* Isolated Pure-Opacity Crossfade Artwork Container (180ms) */}
         <div 
-          className="relative w-full h-full overflow-hidden isolate [contain:paint]"
+          className="absolute inset-0 w-full h-full overflow-hidden isolate"
           style={{ isolation: 'isolate', contain: 'paint' }}
         >
-          <AnimatePresence initial={false} mode="popLayout">
+          <AnimatePresence initial={false}>
             <motion.img 
               key={selectedFlower.image}
               src={selectedFlower.image} 
               alt={selectedFlower.name} 
-              initial={{ opacity: 0, filter: 'blur(8px)', scale: 1.03 }}
-              animate={{ opacity: 1, filter: 'blur(0px)', scale: 1 }}
-              exit={{ opacity: 0, filter: 'blur(6px)', scale: 0.985 }}
-              transition={{ duration: 0.24, ease: [0.22, 1, 0.36, 1] }}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.18, ease: "easeOut" }}
               className="absolute inset-0 w-full h-full object-cover pointer-events-none select-none no-callout" 
               draggable={false}
               decoding="async"

@@ -163,21 +163,6 @@ export default function CardRevealPreview({
     }
   };
 
-  const timersRef = useRef([]);
-  const addTimeout = (fn, delay) => {
-    const id = setTimeout(fn, delay);
-    timersRef.current.push(id);
-    return id;
-  };
-  const clearAllTimers = () => {
-    timersRef.current.forEach(clearTimeout);
-    timersRef.current = [];
-  };
-
-  useEffect(() => {
-    return () => clearAllTimers();
-  }, []);
-
   const handleReveal = () => {
     if (revealStage !== 'idle') return;
 
@@ -187,37 +172,36 @@ export default function CardRevealPreview({
     setRevealStage('charging');
 
     // Phase 1: Tension Shake & Charging (650ms)
-    addTimeout(() => {
+    setTimeout(() => {
       setRevealStage('slamming');
       setIsFlashing(true);
       // Step A: Hero Wax Seal pops in sharp 4K focus front-and-center
       setIsHeroSeal(true);
 
       // Light flash dissipates in 380ms
-      addTimeout(() => setIsFlashing(false), 380);
+      setTimeout(() => setIsFlashing(false), 380);
 
       // Step B: At 270ms, Hero Seal shatters into organic floating shower
-      addTimeout(() => {
+      setTimeout(() => {
         setIsHeroSeal(false);
         setIsShower(true);
-        addTimeout(() => setIsShower(false), 1400);
+        setTimeout(() => setIsShower(false), 1400);
       }, 270);
 
       // Step C: At 320ms, card slams down and shockwave ring fires
-      addTimeout(() => {
+      setTimeout(() => {
         setIsShockwave(true);
-        addTimeout(() => setIsShockwave(false), 600);
+        setTimeout(() => setIsShockwave(false), 600);
       }, 320);
 
       // Enter interactive revealed state
-      addTimeout(() => {
+      setTimeout(() => {
         setRevealStage('revealed');
       }, 700);
     }, 650);
   };
 
   const handleReplay = () => {
-    clearAllTimers();
     requestGyroPermission();
     setIsFlipped(false);
     setIsShockwave(false);

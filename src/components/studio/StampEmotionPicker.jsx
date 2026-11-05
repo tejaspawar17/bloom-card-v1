@@ -6,7 +6,7 @@ import { EMOTE_EMOJIS } from '@/data/cardData';
 import WindowPanel from '@/components/ui/WindowPanel';
 import StampDustParticles from '@/components/ui/StampDustParticles';
 
-function StampEmotionPicker({ title = "Stamp an Emotion", className = "", isMobile = false }) {
+export default function StampEmotionPicker({ title = "Stamp an Emotion", className = "", isMobile = false }) {
   const { state, dispatch } = useCard();
   const [activeStampTrigger, setActiveStampTrigger] = useState(null);
 
@@ -119,5 +119,3 @@ function StampEmotionPicker({ title = "Stamp an Emotion", className = "", isMobi
     </div>
   );
 }
-
-export default React.memo(StampEmotionPicker);

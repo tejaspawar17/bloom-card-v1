@@ -7,11 +7,10 @@ import MobileCustomizeSheet from '@/components/MobileCustomizeSheet';
 import TitleModal from '@/components/TitleModal';
 import MessageModal from '@/components/MessageModal';
 import ShareModal from '@/components/ShareModal';
+import CardRevealPreview from '@/components/cards/CardRevealPreview';
 import FeedbackModal from '@/components/FeedbackModal';
 import Footer from '@/components/Footer';
 import { useCard } from '@/context/CardContext';
-
-const CardRevealPreview = React.lazy(() => import('@/components/cards/CardRevealPreview'));
 
 export default function DesignPage({ isRecipientMode = false, onSetRecipientMode, isCreatorPreview = false, onSetCreatorPreview, onNavigateTab }) {
   const { dispatch } = useCard();
@@ -65,7 +64,6 @@ export default function DesignPage({ isRecipientMode = false, onSetRecipientMode
   };
 
   const handleBackToDesign = () => {
-    window.history.replaceState(null, '', '/');
     window.scrollTo({ top: 0, behavior: 'smooth' });
     onSetCreatorPreview?.(false);
     onSetRecipientMode?.(false);
@@ -81,14 +79,12 @@ export default function DesignPage({ isRecipientMode = false, onSetRecipientMode
           transition={{ duration: 0.32, ease: [0.22, 1, 0.36, 1] }}
           className="w-full flex-1 flex flex-col"
         >
-          <React.Suspense fallback={null}>
-            <CardRevealPreview 
-              onCraftOwn={handleCraftOwn} 
-              isCreatorPreview={isCreatorPreview}
-              onBackToDesign={handleBackToDesign}
-              shareUrl={lastShareUrl}
-            />
-          </React.Suspense>
+          <CardRevealPreview 
+            onCraftOwn={handleCraftOwn} 
+            isCreatorPreview={isCreatorPreview}
+            onBackToDesign={handleBackToDesign}
+            shareUrl={lastShareUrl}
+          />
         </motion.div>
       ) : (
         <motion.div
@@ -137,16 +133,14 @@ export default function DesignPage({ isRecipientMode = false, onSetRecipientMode
         onClose={() => setIsCustomizeOpen(false)} 
       />
 
-      {/* Footer matching reference - Rendered only in recipient view so Studio remains clean and unscrollable */}
-      {isRecipientMode && (
-        <div className="mt-8 pb-12 w-full z-10 relative">
-          <Footer 
-            onFeedback={() => setModal('feedback')} 
-            onTerms={() => onNavigateTab?.('terms')}
-            onPrivacy={() => onNavigateTab?.('privacy')} 
-          />
-        </div>
-      )}
+      {/* Footer matching reference */}
+      <div className={isRecipientMode ? "mt-8 pb-12 w-full z-10 relative" : "mt-8 xl:mt-24 pt-8 xl:pt-16 pb-12 w-full z-10 relative"}>
+        <Footer 
+          onFeedback={() => setModal('feedback')} 
+          onTerms={() => onNavigateTab?.('terms')}
+          onPrivacy={() => onNavigateTab?.('privacy')} 
+        />
+      </div>
 
       {/* Modals */}
       {modal === 'title' && (

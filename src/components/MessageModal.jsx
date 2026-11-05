@@ -154,7 +154,7 @@ export default function MessageModal({ onClose }) {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          transition={{ duration: 0.2, ease: [0.22, 1, 0.36, 1] }}
+          transition={{ duration: 0.2 }}
           onClick={onClose}
         />
 
@@ -171,10 +171,10 @@ export default function MessageModal({ onClose }) {
           aria-modal="true"
           aria-label={isTrainer ? "Edit Trainer Details" : "Edit Card Message"}
           className="relative z-10 w-full max-w-[440px] sm:max-w-[480px] max-h-[calc(100svh-24px)] sm:max-h-[calc(100svh-32px)] bg-[#0E0E0E] rounded-[20px] sm:rounded-[24px] overflow-hidden flex flex-col shadow-[0_24px_60px_rgba(0,0,0,0.85)] border border-white/[0.12] select-none"
-          initial={{ opacity: 0, scale: 0.97, y: 6 }}
-          animate={{ opacity: 1, scale: 1, y: 0 }}
-          exit={{ opacity: 0, scale: 0.98, y: 4 }}
-          transition={{ duration: 0.24, ease: [0.22, 1, 0.36, 1] }}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.18, ease: "easeOut" }}
           onClick={(e) => e.stopPropagation()}
         >
           {/* Header Bar */}
@@ -344,12 +344,7 @@ export default function MessageModal({ onClose }) {
                       id="card-message-input"
                       placeholder={messagePlaceholder}
                       value={message}
-                      onChange={(e) => {
-                        const val = e.target.value;
-                        if (val.split('\n').length <= 6) {
-                          setMessage(val);
-                        }
-                      }}
+                      onChange={(e) => setMessage(e.target.value)}
                       maxLength={194}
                       className="w-full h-[126px] sm:h-[124px] bg-transparent px-3.5 sm:px-4 pt-2.5 sm:pt-3.5 pb-0 text-[16px] sm:text-[15px] leading-[20px] sm:leading-[21px] text-white placeholder-[#727272] outline-none resize-none font-sans overflow-y-auto"
                     />
