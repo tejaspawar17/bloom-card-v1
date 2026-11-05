@@ -20,7 +20,14 @@ export function MetallicCardFront({ onOpenEditTitle, onOpenQuickPicker, isPrevie
       {/* Background artwork - Isolated Pure-Opacity Crossfade (180ms) */}
       <div 
         className="absolute inset-[clamp(10px,3.3cqw,12px)] overflow-hidden rounded-none isolate"
-        style={{ isolation: 'isolate', contain: 'paint' }}
+        style={{ 
+          isolation: 'isolate', 
+          contain: 'paint layout',
+          transform: 'translate3d(0, 0, 0)',
+          WebkitTransform: 'translate3d(0, 0, 0)',
+          backfaceVisibility: 'hidden',
+          WebkitBackfaceVisibility: 'hidden'
+        }}
       >
         <AnimatePresence initial={false}>
           <motion.img
@@ -32,6 +39,12 @@ export function MetallicCardFront({ onOpenEditTitle, onOpenQuickPicker, isPrevie
             exit={{ opacity: 0 }}
             transition={{ duration: 0.18, ease: "easeOut" }}
             className="absolute inset-0 w-full h-full object-cover pointer-events-none select-none no-callout"
+            style={{
+              transform: 'translate3d(0, 0, 0)',
+              WebkitTransform: 'translate3d(0, 0, 0)',
+              backfaceVisibility: 'hidden',
+              WebkitBackfaceVisibility: 'hidden'
+            }}
             draggable={false}
             decoding="async"
             loading="eager"
@@ -39,7 +52,20 @@ export function MetallicCardFront({ onOpenEditTitle, onOpenQuickPicker, isPrevie
         </AnimatePresence>
       </div>
 
-      <FlowerInfoPill variant="front" />
+      {/* Anchored Title Pill Layer with Transform Containment */}
+      <div 
+        className="absolute inset-0 pointer-events-none z-50 overflow-visible isolate"
+        style={{
+          isolation: 'isolate',
+          contain: 'layout paint',
+          transform: 'translate3d(0, 0, 0)',
+          WebkitTransform: 'translate3d(0, 0, 0)',
+          backfaceVisibility: 'hidden',
+          WebkitBackfaceVisibility: 'hidden',
+        }}
+      >
+        <FlowerInfoPill variant="front" />
+      </div>
 
       {/* Metallic Sheen Overlay */}
       <div 
@@ -91,7 +117,20 @@ export function MetallicCardBack({ onOpenEditMessage, onOpenQuickPicker, isPrevi
         draggable={false}
       />
 
-      <FlowerInfoPill variant="back" />
+      {/* Anchored Title Pill Layer with Transform Containment */}
+      <div 
+        className="absolute inset-0 pointer-events-none z-50 overflow-visible isolate"
+        style={{
+          isolation: 'isolate',
+          contain: 'layout paint',
+          transform: 'translate3d(0, 0, 0)',
+          WebkitTransform: 'translate3d(0, 0, 0)',
+          backfaceVisibility: 'hidden',
+          WebkitBackfaceVisibility: 'hidden',
+        }}
+      >
+        <FlowerInfoPill variant="back" />
+      </div>
 
       <div className="absolute inset-0 pointer-events-none translate-y-[clamp(10px,2.8%,15px)] z-10">
         {state.selectedBackImage && state.selectedBackImage !== 'none' && backImageSrc && (
