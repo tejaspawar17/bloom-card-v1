@@ -56,7 +56,46 @@ export function DraggableSticker({ stickerData, isPreview = false }) {
     return () => window.removeEventListener('pointerdown', handlePointerDownOutside);
   }, [isEditingSticker]);
 
+  // Strict non-passive touchmove listener to forbid mobile viewport scrolling during sticker interaction
+  useEffect(() => {
+    if (isPreview) return;
+    const el = stickerRef.current;
+    if (!el) return;
+
+    const handleNativeTouchMove = (e) => {
+      if (e.cancelable) {
+        e.preventDefault();
+      }
+    };
+
+    el.addEventListener('touchmove', handleNativeTouchMove, { passive: false });
+    return () => {
+      el.removeEventListener('touchmove', handleNativeTouchMove);
+    };
+  }, [isPreview]);
+
+  // Clean up body scroll lock on unmount
+  useEffect(() => {
+    return () => {
+      try {
+        document.body.style.overflow = '';
+        document.body.style.touchAction = '';
+      } catch (err) {}
+    };
+  }, []);
+
+  const handleDragStart = () => {
+    try {
+      document.body.style.overflow = 'hidden';
+      document.body.style.touchAction = 'none';
+    } catch (err) {}
+  };
+
   const handleDragEnd = (event, info) => {
+    try {
+      document.body.style.overflow = '';
+      document.body.style.touchAction = '';
+    } catch (err) {}
     setLandKey(Date.now());
     const cardWidth = stickerRef.current?.parentElement?.clientWidth || 360;
     const cardHeight = stickerRef.current?.parentElement?.clientHeight || 500;
@@ -202,13 +241,13 @@ export function DraggableSticker({ stickerData, isPreview = false }) {
   return (
     <motion.div 
       ref={stickerRef}
-      className={`absolute ${isPreview ? 'pointer-events-none' : 'pointer-events-auto'} top-0 left-0 ${sizeClass} z-40 ${(!isPreview && isEditingSticker) ? 'cursor-grab active:cursor-grabbing touch-none' : (isPreview ? '' : 'cursor-pointer')}`}
-      drag={!isPreview && isEditingSticker}
+      className={`absolute ${isPreview ? 'pointer-events-none' : 'pointer-events-auto'} top-0 left-0 ${sizeClass} z-40 ${!isPreview ? 'cursor-grab active:cursor-grabbing touch-none' : ''}`}
+      drag={!isPreview}
       dragControls={dragControls}
       dragListener={false}
       dragMomentum={false}
       whileDrag={{ scale: 1.08 }}
-      style={{ rotate, touchAction: (!isPreview && isEditingSticker) ? 'none' : 'auto' }}
+      style={{ rotate, touchAction: !isPreview ? 'none' : 'auto' }}
       onTouchStart={!isPreview ? handleTouchStart : undefined}
       onTouchMove={!isPreview ? handleTouchMove : undefined}
       onTouchEnd={!isPreview ? handleTouchEnd : undefined}
@@ -229,11 +268,14 @@ export function DraggableSticker({ stickerData, isPreview = false }) {
         damping: 24,
         mass: 0.8
       }}
+      onDragStart={handleDragStart}
       onDragEnd={handleDragEnd}
       onClick={(e) => {
-        if (!isPreview && !isEditingSticker) {
+        if (!isPreview) {
           e.stopPropagation();
-          setIsEditingSticker(true);
+          if (!isEditingSticker) {
+            setIsEditingSticker(true);
+          }
         }
       }}
     >
@@ -245,8 +287,11 @@ export function DraggableSticker({ stickerData, isPreview = false }) {
       <div 
         className="w-full h-full relative touch-none select-none" 
         onPointerDown={(e) => { 
-          if (!isPreview && isEditingSticker && e.isPrimary) {
+          if (!isPreview && e.isPrimary) {
             e.stopPropagation();
+            if (!isEditingSticker) {
+              setIsEditingSticker(true);
+            }
             dragControls.start(e); 
           }
         }}
