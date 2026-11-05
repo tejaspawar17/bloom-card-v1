@@ -389,6 +389,7 @@ export default function CardViewer({ onConfirm, onOpenEditTitle, onOpenEditMessa
                 rotateY: (isFlipped ? 180 : 0) + spinDegrees
               }} 
               initial={false} 
+              transformTemplate={({ rotateY }) => `rotateY(${rotateY || '0deg'})`}
               transition={{ 
                 rotateY: { duration: 0.62, ease: [0.22, 1, 0.36, 1] }
               }}

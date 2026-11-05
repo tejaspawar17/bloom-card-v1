@@ -74,28 +74,12 @@ export function DraggableSticker({ stickerData, isPreview = false }) {
     };
   }, [isPreview]);
 
-  // Clean up body scroll lock on unmount
-  useEffect(() => {
-    return () => {
-      try {
-        document.body.style.overflow = '';
-        document.body.style.touchAction = '';
-      } catch (err) {}
-    };
-  }, []);
-
   const handleDragStart = () => {
-    try {
-      document.body.style.overflow = 'hidden';
-      document.body.style.touchAction = 'none';
-    } catch (err) {}
+    // Mobile touch scrolling is strictly prevented via native non-passive touchmove listener;
+    // body scrollbar is preserved to eliminate desktop layout shift.
   };
 
   const handleDragEnd = (event, info) => {
-    try {
-      document.body.style.overflow = '';
-      document.body.style.touchAction = '';
-    } catch (err) {}
     setLandKey(Date.now());
     const cardWidth = stickerRef.current?.parentElement?.clientWidth || 360;
     const cardHeight = stickerRef.current?.parentElement?.clientHeight || 500;

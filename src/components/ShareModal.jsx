@@ -328,8 +328,8 @@ export default function ShareModal({ onClose, onOpenRecipientPreview }) {
       setPreflightIndex((prev) => (prev < PNG_PREFLIGHT_STEPS.length - 1 ? prev + 1 : prev));
     }, 280);
 
-    // Give browser 1 frame to paint packaging state before heavy canvas work
-    await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
+    // Let the packaging envelope animation enter smoothly before heavy canvas work begins
+    await new Promise((r) => setTimeout(r, 320));
 
     try {
       await exportCardImages({
@@ -380,8 +380,7 @@ export default function ShareModal({ onClose, onOpenRecipientPreview }) {
             role="dialog"
             aria-modal="true"
             aria-label="Generate Link or Download"
-            layout
-            className="relative z-10 w-[calc(100%-8px)] sm:w-[calc(100%-32px)] max-w-[420px] sm:max-w-[466px] mx-auto flex flex-col select-none rounded-[20px] sm:rounded-[24px] bg-[#0E0E0E] border border-white/[0.12] overflow-hidden shadow-[0_24px_60px_rgba(0,0,0,0.85)] font-sans"
+            className="relative z-10 w-[calc(100%-8px)] sm:w-[calc(100%-32px)] max-w-[420px] sm:max-w-[466px] mx-auto flex flex-col select-none rounded-[20px] sm:rounded-[24px] bg-[#0E0E0E] border border-white/[0.12] overflow-hidden shadow-[0_24px_60px_rgba(0,0,0,0.85)] font-sans transition-all duration-200"
             onClick={(e) => e.stopPropagation()}
             initial={{ opacity: 0, scale: 0.95, y: 8 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}

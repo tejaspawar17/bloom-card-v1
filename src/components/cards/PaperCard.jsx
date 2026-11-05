@@ -75,12 +75,7 @@ export function PaperCardBack({ onOpenEditMessage, onOpenQuickPicker, isPreview 
         src="/assets/bloom/paper_back_blank_labels.png"
         alt="Paper Card Back"
         className="absolute inset-0 w-full h-full object-cover pointer-events-none select-none no-callout"
-        style={{
-          transform: 'translate3d(0, 0, 0)',
-          WebkitTransform: 'translate3d(0, 0, 0)',
-          backfaceVisibility: 'hidden',
-          WebkitBackfaceVisibility: 'hidden',
-        }}
+
         draggable={false}
       />
 
