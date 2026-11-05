@@ -12,7 +12,16 @@ export function PaperCardFront({ state: propState, flower: propFlower, onOpenEdi
   const selectedFlower = flower || { name: 'Blue Hydrangea', image: '/assets/flower-illustrations/hydrangea.png' };
 
   return (
-    <div onContextMenu={(e) => e.preventDefault()} className="relative bg-white shadow-2xl aspect-[688/960] w-full h-full rounded-none overflow-hidden select-none no-callout @container" style={{ containerType: "inline-size" }}>
+    <div onContextMenu={(e) => e.preventDefault()} className="relative bg-[#E5E1D6] shadow-2xl aspect-[688/960] w-full h-full rounded-none overflow-hidden select-none no-callout @container" style={{ containerType: "inline-size" }}>
+      {/* Authentic Textured Paper Front Base */}
+      <img
+        src="/assets/bloom/paper_front.png"
+        alt="Paper Card Front"
+        className="absolute inset-0 w-full h-full object-cover pointer-events-none select-none no-callout"
+        draggable={false}
+        decoding="async"
+        loading="eager"
+      />
       <div 
         onClick={!isPreview && onOpenQuickPicker ? () => onOpenQuickPicker('frontArtwork') : undefined}
         className={`absolute inset-[clamp(10px,3.3cqw,12px)] overflow-hidden rounded-none ${!isPreview && onOpenQuickPicker ? 'cursor-pointer lg:cursor-default' : ''}`}
