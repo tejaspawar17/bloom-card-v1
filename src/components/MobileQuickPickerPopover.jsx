@@ -582,7 +582,7 @@ export default function MobileQuickPickerPopover({ mode, onSelectMode, onClose }
       initial={{ opacity: 0, y: 14, scale: 0.96 }}
       animate={{ opacity: 1, y: 0, scale: 1 }}
       exit={{ opacity: 0, y: 10, scale: 0.96 }}
-      transition={{ type: 'spring', stiffness: 380, damping: 28, mass: 0.75 }}
+      transition={{ type: 'spring', stiffness: 360, damping: 32, mass: 0.75 }}
       onClick={(e) => e.stopPropagation()}
       className="flex flex-col items-center select-none z-40"
     >

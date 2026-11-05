@@ -427,8 +427,10 @@ export default function ShaderButton({
       animationFrameId = requestAnimationFrame(render);
     };
 
-    const handleVisibility = () => {
-      if (document.hidden) {
+    let isIntersecting = false;
+
+    const checkAndAnimate = () => {
+      if (document.hidden || !isIntersecting) {
         if (animationFrameId) {
           cancelAnimationFrame(animationFrameId);
           animationFrameId = null;
@@ -440,13 +442,26 @@ export default function ShaderButton({
       }
     };
 
+    const intersectionObserver = typeof IntersectionObserver !== 'undefined'
+      ? new IntersectionObserver((entries) => {
+          isIntersecting = Boolean(entries[0]?.isIntersecting && entries[0]?.intersectionRatio > 0);
+          checkAndAnimate();
+        }, { threshold: 0.05 })
+      : null;
+    intersectionObserver?.observe(canvas);
+
+    const handleVisibility = () => {
+      checkAndAnimate();
+    };
+
     document.addEventListener('visibilitychange', handleVisibility);
-    animationFrameId = requestAnimationFrame(render);
+    checkAndAnimate();
 
     return () => {
       isRunning = false;
       if (animationFrameId) cancelAnimationFrame(animationFrameId);
       document.removeEventListener('visibilitychange', handleVisibility);
+      intersectionObserver?.disconnect();
       resizeObserver?.disconnect();
       gl.deleteProgram(program);
       gl.deleteShader(vertShader);

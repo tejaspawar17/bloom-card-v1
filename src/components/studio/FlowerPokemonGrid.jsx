@@ -5,7 +5,7 @@ import { useCard } from '@/context/CardContext';
 import { FLOWERS, POKEMON_CARDS } from '@/data/cardData';
 import { ScrollArea } from '@/components/ui/scroll-area';
 
-export default function FlowerPokemonGrid({ heightClassName, className = '', isMobile = false }) {
+function FlowerPokemonGrid({ heightClassName, className = '', isMobile = false }) {
   const { state, dispatch } = useCard();
   const containerRef = useRef(null);
   const [canScrollUp, setCanScrollUp] = useState(false);
@@ -241,3 +241,5 @@ export default function FlowerPokemonGrid({ heightClassName, className = '', isM
     </div>
   );
 }
+
+export default React.memo(FlowerPokemonGrid);

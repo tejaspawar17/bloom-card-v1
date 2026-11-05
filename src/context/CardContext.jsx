@@ -1,4 +1,4 @@
-import { createContext, useContext, useReducer } from 'react';
+import { createContext, useContext, useReducer, useMemo } from 'react';
 import { DEFAULT_STATE, OCCASIONS, FLOWERS, POKEMON_CARDS } from '../data/cardData';
 
 const CardContext = createContext(null);
@@ -80,7 +80,7 @@ function cardReducer(state, action) {
     case 'SET_TIMESTAMP':
       return { ...state, date: action.payload.date, time: action.payload.time };
     case 'HYDRATE_CARD':
-      return { ...state, ...action.payload, activeSide: 'front' };
+      return { ...DEFAULT_STATE, ...action.payload, activeSide: 'front' };
     default:
       return state;
   }
@@ -89,11 +89,22 @@ function cardReducer(state, action) {
 export function CardProvider({ children }) {
   const [state, dispatch] = useReducer(cardReducer, DEFAULT_STATE);
 
-  const flower = FLOWERS.find((f) => f.id === state.selectedFlower) || FLOWERS[0];
-  const pokemonCard = POKEMON_CARDS.find((p) => p.id === state.selectedPokemon) || POKEMON_CARDS[0];
+  const flower = useMemo(
+    () => FLOWERS.find((f) => f.id === state.selectedFlower) || FLOWERS[0],
+    [state.selectedFlower]
+  );
+  const pokemonCard = useMemo(
+    () => POKEMON_CARDS.find((p) => p.id === state.selectedPokemon) || POKEMON_CARDS[0],
+    [state.selectedPokemon]
+  );
+
+  const value = useMemo(
+    () => ({ state, dispatch, flower, pokemonCard }),
+    [state, dispatch, flower, pokemonCard]
+  );
 
   return (
-    <CardContext.Provider value={{ state, dispatch, flower, pokemonCard }}>
+    <CardContext.Provider value={value}>
       {children}
     </CardContext.Provider>
   );

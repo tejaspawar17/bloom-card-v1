@@ -109,6 +109,8 @@ function AppShell() {
       setActiveTab('privacy');
     } else if (hash === '#about') {
       setActiveTab('about');
+    } else {
+      setActiveTab('design');
     }
 
     if (encodedData) {
@@ -154,12 +156,12 @@ function AppShell() {
       const criticalImages = [
         '/assets/flower-illustrations/white_tulip.png',
         '/assets/flower-illustrations/sunflower.png',
-        '/assets/cards/pokemon-frame.png',
         '/assets/bloom/sample-cards/sample-card-1.png',
         '/assets/pokemon-back/base-card-back.png',
         '/assets/pokemon-back/trainer-card-frame.png',
         '/assets/pokemon-back/trainer-card-textures.png',
-        '/textures/paper_back_blank_labels.png',
+        '/assets/bloom/paper_back_blank_labels.png',
+        '/assets/bloom/metallic_back.png',
         ...FLOWERS.map((f) => f.thumb).filter(Boolean),
         ...POKEMON_CARDS.map((p) => p.thumb).filter(Boolean),
       ];
@@ -184,9 +186,9 @@ function AppShell() {
 
       await Promise.all([syncFromUrl(), fontsPromise, preloadImagesPromise]);
 
-      // Complete 1 natural wave cycle across "Generating" (~1600ms)
+      // Complete natural wave cycle (~450ms)
       const elapsed = Date.now() - startTime;
-      const remaining = Math.max(0, 1600 - elapsed);
+      const remaining = Math.max(0, 450 - elapsed);
 
       setTimeout(() => {
         if (isMounted) {
@@ -246,17 +248,13 @@ function AppShell() {
       if (isComingFromSharedLink && !isCreatorPreview) {
         window.history.replaceState(null, '', '/');
         dispatch({ type: 'RESET_CARD' });
-      } else if (window.location.hash) {
-        window.history.replaceState(null, '', window.location.pathname);
+      } else {
+        window.history.replaceState(null, '', '/');
       }
       setIsRecipientMode(false);
       setIsCreatorPreview(false);
-    } else if (tab === 'terms') {
-      window.history.replaceState(null, '', '#terms');
-    } else if (tab === 'privacy') {
-      window.history.replaceState(null, '', '#privacy');
-    } else if (tab === 'about') {
-      window.history.replaceState(null, '', '#about');
+    } else {
+      window.history.pushState(null, '', `/#${tab}`);
     }
   };
 

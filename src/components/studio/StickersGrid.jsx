@@ -8,7 +8,7 @@ import WindowPanel from '@/components/ui/WindowPanel';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import StampDustParticles from '@/components/ui/StampDustParticles';
 
-export default function StickersGrid({ 
+function StickersGrid({ 
   title = "Decorate with Stickers", 
   heightClassName, 
   className = "",
@@ -254,3 +254,5 @@ export default function StickersGrid({
     </div>
   );
 }
+
+export default React.memo(StickersGrid);
