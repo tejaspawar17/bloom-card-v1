@@ -12,12 +12,28 @@ export function PaperCardFront({ state: propState, flower: propFlower, onOpenEdi
   const selectedFlower = flower || { name: 'Blue Hydrangea', image: '/assets/flower-illustrations/hydrangea.png' };
 
   return (
-    <div onContextMenu={(e) => e.preventDefault()} className="relative bg-[#E5E1D6] shadow-2xl aspect-[688/960] w-full h-full rounded-none overflow-hidden select-none no-callout @container" style={{ containerType: "inline-size" }}>
+    <div 
+      onContextMenu={(e) => e.preventDefault()} 
+      className="relative bg-[#E5E1D6] shadow-2xl aspect-[688/960] w-full h-full rounded-none overflow-hidden select-none no-callout @container" 
+      style={{ 
+        containerType: "inline-size",
+        transform: 'translate3d(0, 0, 0)',
+        WebkitTransform: 'translate3d(0, 0, 0)',
+        backfaceVisibility: 'hidden',
+        WebkitBackfaceVisibility: 'hidden',
+      }}
+    >
       {/* Authentic Textured Paper Front Base */}
       <img
         src="/assets/bloom/paper_front.png"
         alt="Paper Card Front"
         className="absolute inset-0 w-full h-full object-cover pointer-events-none select-none no-callout"
+        style={{
+          transform: 'translate3d(0, 0, 0)',
+          WebkitTransform: 'translate3d(0, 0, 0)',
+          backfaceVisibility: 'hidden',
+          WebkitBackfaceVisibility: 'hidden',
+        }}
         draggable={false}
         decoding="async"
         loading="eager"

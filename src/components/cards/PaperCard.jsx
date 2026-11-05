@@ -46,7 +46,17 @@ export function PaperCardBack({ onOpenEditMessage, onOpenQuickPicker, isPreview 
   const backImageSrc = getBackImageSrc();
 
   return (
-    <div onContextMenu={(e) => e.preventDefault()} className="relative w-full h-full aspect-[688/960] rounded-none overflow-hidden shadow-2xl select-none no-callout bg-[#E5E1D6] @container" style={{ containerType: "inline-size" }}>
+    <div 
+      onContextMenu={(e) => e.preventDefault()} 
+      className="relative w-full h-full aspect-[688/960] rounded-none overflow-hidden shadow-2xl select-none no-callout bg-[#E5E1D6] @container" 
+      style={{ 
+        containerType: "inline-size",
+        transform: 'translate3d(0, 0, 0)',
+        WebkitTransform: 'translate3d(0, 0, 0)',
+        backfaceVisibility: 'hidden',
+        WebkitBackfaceVisibility: 'hidden',
+      }}
+    >
       {/* Anchored Title Pill Layer with Transform Containment */}
       <div 
         className="absolute inset-0 pointer-events-none z-50 overflow-visible isolate"
@@ -65,6 +75,12 @@ export function PaperCardBack({ onOpenEditMessage, onOpenQuickPicker, isPreview 
         src="/assets/bloom/paper_back_blank_labels.png"
         alt="Paper Card Back"
         className="absolute inset-0 w-full h-full object-cover pointer-events-none select-none no-callout"
+        style={{
+          transform: 'translate3d(0, 0, 0)',
+          WebkitTransform: 'translate3d(0, 0, 0)',
+          backfaceVisibility: 'hidden',
+          WebkitBackfaceVisibility: 'hidden',
+        }}
         draggable={false}
       />
 
