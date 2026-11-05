@@ -306,8 +306,6 @@ export default function ShareModal({ onClose, onOpenRecipientPreview }) {
         dispatch({ type: 'SET_BACK_IMAGE', payload: result.state.selectedBackImage });
       }
       setShareUrl(result.shareUrl);
-      const urlObj = new URL(result.shareUrl);
-      window.history.replaceState(null, '', urlObj.pathname + urlObj.search);
     } catch (err) {
       console.error('Failed to save card to Supabase, using self-contained URL fallback:', err);
       const encoded = encodeCardStateParam(state);
@@ -366,31 +364,34 @@ export default function ShareModal({ onClose, onOpenRecipientPreview }) {
   if (typeof document === 'undefined') return null;
 
   return createPortal(
-    <AnimatePresence>
-      <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-        {/* Backdrop matching TitleModal & MessageModal */}
-        <motion.div
-          className="absolute inset-0 bg-black/60 backdrop-blur-md"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.25 }}
-          onClick={onClose}
-        />
+    <>
+      <AnimatePresence>
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          {/* Backdrop matching TitleModal & MessageModal */}
+          <motion.div
+            key="share-modal-backdrop"
+            className="absolute inset-0 bg-black/60 backdrop-blur-md"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.24, ease: [0.22, 1, 0.36, 1] }}
+            onClick={onClose}
+          />
 
-        {/* Modal Window matching Figma Tablets & Form Modals */}
-        <motion.div
-          role="dialog"
-          aria-modal="true"
-          aria-label="Generate Link or Download"
-          layout
-          className="relative z-10 w-[calc(100%-8px)] sm:w-[calc(100%-32px)] max-w-[420px] sm:max-w-[466px] mx-auto flex flex-col select-none rounded-[20px] sm:rounded-[24px] bg-[#0E0E0E] border border-white/[0.12] overflow-hidden shadow-[0_24px_60px_rgba(0,0,0,0.85)] font-sans"
-          onClick={(e) => e.stopPropagation()}
-          initial={{ opacity: 0, scale: 0.95, y: 8 }}
-          animate={{ opacity: 1, scale: 1, y: 0 }}
-          exit={{ opacity: 0, scale: 0.95, y: 8 }}
-          transition={springTransition}
-        >
+          {/* Modal Window matching Figma Tablets & Form Modals */}
+          <motion.div
+            key="share-modal-window"
+            role="dialog"
+            aria-modal="true"
+            aria-label="Generate Link or Download"
+            layout
+            className="relative z-10 w-[calc(100%-8px)] sm:w-[calc(100%-32px)] max-w-[420px] sm:max-w-[466px] mx-auto flex flex-col select-none rounded-[20px] sm:rounded-[24px] bg-[#0E0E0E] border border-white/[0.12] overflow-hidden shadow-[0_24px_60px_rgba(0,0,0,0.85)] font-sans"
+            onClick={(e) => e.stopPropagation()}
+            initial={{ opacity: 0, scale: 0.95, y: 8 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.95, y: 8 }}
+            transition={{ duration: 0.24, ease: [0.22, 1, 0.36, 1] }}
+          >
           {/* Header Bar matching Figma Tablet Surface with equal top & right close button gap */}
           <div className="flex items-center justify-between h-[48px] sm:h-[60px] pl-4 sm:pl-5 pr-2 sm:pr-[11px] bg-[#1F1F1F] border-b border-white/[0.08]">
             <h2 className="text-[rgba(255,255,255,0.85)] font-semibold sm:font-medium text-[15px] sm:text-[17px] leading-[20px] sm:leading-[22px] tracking-[-0.02em] font-sans">
@@ -629,6 +630,7 @@ export default function ShareModal({ onClose, onOpenRecipientPreview }) {
           </AnimatePresence>
         </motion.div>
       </div>
+    </AnimatePresence>
     {/* In-Viewport Hidden 350x488 Render Stage for Keychain PDF Capture (Studio-Calibrated Proportions) */}
       <div 
         aria-hidden="true"
@@ -661,7 +663,7 @@ export default function ShareModal({ onClose, onOpenRecipientPreview }) {
           )}
         </div>
       </div>
-    </AnimatePresence>,
+    </>,
     document.body
   );
 }

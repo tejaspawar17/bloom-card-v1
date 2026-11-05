@@ -19,6 +19,16 @@ export default function RightPanel({ className = '' }) {
   const [selectedSticker, setSelectedSticker] = useState(null);
   const [activeStampTrigger, setActiveStampTrigger] = useState(null);
 
+  const currentSide = state.activeSide || 'front';
+  const sideStickers = React.useMemo(
+    () => (state.stickers || []).filter((s) => (s.side || 'front') === currentSide),
+    [state.stickers, currentSide]
+  );
+  const selectedIdsSet = React.useMemo(
+    () => new Set(sideStickers.map((s) => s.stickerId)),
+    [sideStickers]
+  );
+
   const hasOverflow = STICKERS.length > 4;
 
   const handleStickerScroll = useCallback(() => {
@@ -55,17 +65,34 @@ export default function RightPanel({ className = '' }) {
   };
 
   const handleStickerClick = (sticker) => {
+    const existing = sideStickers.filter((s) => s.stickerId === sticker.id);
+    if (existing.length > 0) {
+      existing.forEach((s) => {
+        dispatch({ type: 'REMOVE_STICKER', payload: s.id });
+      });
+      setSelectedSticker(null);
+      return;
+    }
+
     setSelectedSticker(sticker.id);
     setActiveStampTrigger(`sticker-${sticker.id}-${Date.now()}`);
+    const offsetIdx = sideStickers.length;
+    const staggerX = 64 + ((offsetIdx * 38) % 120);
+    const staggerY = 68 + ((offsetIdx * 32) % 110);
+
     dispatch({ 
       type: 'ADD_STICKER', 
       payload: { 
         id: Date.now().toString() + Math.random().toString(), 
         stickerId: sticker.id, 
-        side: state.activeSide, 
-        x: 100, 
-        y: 100, 
-        r: (Math.random() * 20 - 10) 
+        src: sticker.image,
+        name: sticker.name,
+        side: currentSide, 
+        x: staggerX, 
+        y: staggerY, 
+        r: (Math.random() * 20 - 10),
+        rotation: (Math.random() * 20 - 10),
+        scale: 1,
       } 
     });
   };
@@ -178,7 +205,7 @@ export default function RightPanel({ className = '' }) {
                   aria-label="Stickers Selector"
                 >
                   {STICKERS.map((sticker) => {
-                    const isSelected = selectedSticker === sticker.id;
+                    const isSelected = selectedIdsSet.has(sticker.id) || selectedSticker === sticker.id;
                     const isStickerActive = activeStampTrigger?.startsWith(`sticker-${sticker.id}`);
                     const shortName =
                       sticker.name.length > 10

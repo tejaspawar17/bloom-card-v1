@@ -40,10 +40,10 @@ export function EmojiStamp({ emoji, className = '', onClick }: EmojiStampProps) 
         <AnimatePresence mode="popLayout">
           <motion.div
             key={emoji}
-            initial={{ scale: 0.2, opacity: 0, rotate: -20 }}
+            initial={{ scale: 1.35, opacity: 0, rotate: -10 }}
             animate={{ scale: 1, opacity: 1, rotate: 0 }}
-            exit={{ scale: 0.2, opacity: 0, rotate: 20 }}
-            transition={{ type: "spring", stiffness: 400, damping: 20 }}
+            exit={{ scale: 0.8, opacity: 0, rotate: 10 }}
+            transition={{ type: "spring", stiffness: 380, damping: 26 }}
             className="absolute z-10 w-[64%] h-[64%] flex items-center justify-center leading-none drop-shadow-[0_2px_3px_rgba(0,0,0,0.3)] pointer-events-none"
           >
             <img 

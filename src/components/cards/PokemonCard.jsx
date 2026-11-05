@@ -212,9 +212,13 @@ export function PokemonCardBack({ onOpenEditMessage, onOpenQuickPicker, isPrevie
               </div>
 
               {/* Message */}
-              <div className="w-full mt-[8%] mb-auto">
+              <div className="w-full mt-[8%] mb-auto max-h-[124px] overflow-hidden group">
                  <p className="font-['Arial',sans-serif] text-[3.49cqw] leading-[4.36cqw] font-normal text-[#000] whitespace-pre-line text-left break-words">
-                   {state.message || ""}
+                   {state.message || (!isPreview ? (
+                     <span className="opacity-75 group-hover:opacity-100 transition-opacity duration-300">
+                       Write your message...
+                     </span>
+                   ) : "")}
                  </p>
               </div>
 

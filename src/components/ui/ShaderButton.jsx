@@ -427,26 +427,49 @@ export default function ShaderButton({
       animationFrameId = requestAnimationFrame(render);
     };
 
+    let isIntersecting = true;
+
+    const startLoop = () => {
+      if (!animationFrameId && isRunning && isIntersecting && !document.hidden) {
+        animationFrameId = requestAnimationFrame(render);
+      }
+    };
+
+    const stopLoop = () => {
+      if (animationFrameId) {
+        cancelAnimationFrame(animationFrameId);
+        animationFrameId = null;
+      }
+    };
+
+    const intersectionObserver = typeof IntersectionObserver !== 'undefined'
+      ? new IntersectionObserver(([entry]) => {
+          isIntersecting = entry.isIntersecting;
+          if (isIntersecting) {
+            startLoop();
+          } else {
+            stopLoop();
+          }
+        }, { threshold: 0.05 })
+      : null;
+    intersectionObserver?.observe(canvas);
+
     const handleVisibility = () => {
       if (document.hidden) {
-        if (animationFrameId) {
-          cancelAnimationFrame(animationFrameId);
-          animationFrameId = null;
-        }
+        stopLoop();
       } else {
-        if (!animationFrameId && isRunning) {
-          animationFrameId = requestAnimationFrame(render);
-        }
+        startLoop();
       }
     };
 
     document.addEventListener('visibilitychange', handleVisibility);
-    animationFrameId = requestAnimationFrame(render);
+    startLoop();
 
     return () => {
       isRunning = false;
-      if (animationFrameId) cancelAnimationFrame(animationFrameId);
+      stopLoop();
       document.removeEventListener('visibilitychange', handleVisibility);
+      intersectionObserver?.disconnect();
       resizeObserver?.disconnect();
       gl.deleteProgram(program);
       gl.deleteShader(vertShader);

@@ -24,8 +24,8 @@ export function MetallicCardFront({ onOpenEditTitle, onOpenQuickPicker, isPrevie
       >
         <AnimatePresence initial={false}>
           <motion.img
-            key={flower?.image || '/assets/flower-illustrations/flower_1.png'}
-            src={flower?.image || '/assets/flower-illustrations/flower_1.png'}
+            key={flower?.image || '/assets/flower-illustrations/white_tulip.png'}
+            src={flower?.image || '/assets/flower-illustrations/white_tulip.png'}
             alt="Metallic Card Flower"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -120,11 +120,15 @@ export function MetallicCardBack({ onOpenEditMessage, onOpenQuickPicker, isPrevi
       </div>
 
       <div 
-        className={`absolute z-30 top-[60.5%] left-[16%] right-[16%] max-h-[24%] overflow-hidden font-['Source_Serif_4','Source_Serif_Pro',serif] text-[3.33cqw] leading-[4.17cqw] text-[#141413] font-normal tracking-normal text-left rounded p-1 -ml-1 outline-none min-w-[50px] min-h-[20px] break-words whitespace-pre-wrap antialiased ${isPreview ? '' : 'cursor-pointer hover:bg-black/5'}`}
+        className={`absolute z-30 top-[60.5%] left-[16%] right-[16%] max-h-[24%] overflow-hidden font-['Source_Serif_4','Source_Serif_Pro',serif] text-[3.33cqw] leading-[4.17cqw] text-[#141413] font-normal tracking-normal text-left rounded p-1 -ml-1 outline-none min-w-[50px] min-h-[20px] break-words whitespace-pre-wrap antialiased group ${isPreview ? '' : 'cursor-pointer hover:bg-black/5'}`}
         onClick={() => !isPreview && onOpenEditMessage?.()}
         style={{ WebkitTextStroke: '0.2px currentColor' }}
       >
-        {state.message}
+        {state.message || (!isPreview ? (
+          <span className="opacity-75 group-hover:opacity-100 transition-opacity duration-300">
+            Write your message...
+          </span>
+        ) : null)}
       </div>
 
       <div 

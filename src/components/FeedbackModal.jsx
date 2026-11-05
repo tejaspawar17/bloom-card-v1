@@ -264,7 +264,7 @@ export default function FeedbackModal({ onClose }) {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
-        transition={{ duration: 0.2 }}
+        transition={{ duration: 0.24, ease: [0.22, 1, 0.36, 1] }}
         onClick={onClose}
       />
 
@@ -285,7 +285,7 @@ export default function FeedbackModal({ onClose }) {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
-        transition={{ duration: 0.18, ease: "easeOut" }}
+        transition={{ duration: 0.24, ease: [0.22, 1, 0.36, 1] }}
       >
         {/* Header Bar matching Figma Tablet Surface [466x60] */}
         <div className="flex items-center justify-between h-[48px] sm:h-[60px] pl-4 sm:pl-5 pr-2 sm:pr-[11px] bg-[#1F1F1F] border-b border-white/[0.08] shrink-0">

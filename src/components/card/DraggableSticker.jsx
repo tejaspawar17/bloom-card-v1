@@ -207,6 +207,7 @@ export function DraggableSticker({ stickerData, isPreview = false }) {
       dragControls={dragControls}
       dragListener={false}
       dragMomentum={false}
+      whileDrag={{ scale: 1.08 }}
       style={{ rotate }}
       onTouchStart={!isPreview ? handleTouchStart : undefined}
       onTouchMove={!isPreview ? handleTouchMove : undefined}
@@ -215,16 +216,12 @@ export function DraggableSticker({ stickerData, isPreview = false }) {
       initial={{ 
         x: stickerData.x, 
         y: stickerData.y - 14, 
-        scale: 1.28,
-        filter: "drop-shadow(0 16px 20px rgba(0,0,0,0.50))"
+        scale: 1.15,
       }}
       animate={{ 
         x: stickerData.x, 
         y: stickerData.y,
         scale: 1,
-        filter: hasLanded 
-          ? "drop-shadow(0 2px 3px rgba(0,0,0,0.45))" 
-          : "drop-shadow(0 14px 18px rgba(0,0,0,0.45))"
       }}
       transition={{ 
         type: "spring", 
@@ -253,7 +250,13 @@ export function DraggableSticker({ stickerData, isPreview = false }) {
           }
         }}
       >
-        <img src={imageUrl} alt="Sticker" className="w-full h-full object-contain pointer-events-none select-none" draggable={false} />
+        <img 
+          src={imageUrl} 
+          alt="Sticker" 
+          className="w-full h-full object-contain pointer-events-none select-none" 
+          style={{ filter: 'drop-shadow(0 4px 8px rgba(0,0,0,0.20))' }}
+          draggable={false} 
+        />
       </div>
       
       <AnimatePresence>
