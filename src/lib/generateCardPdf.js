@@ -272,6 +272,95 @@ async function prepareElementForMobileCapture(rootElement) {
   };
 }
 
+function downloadDataUrl(dataUrl, filename) {
+  const link = document.createElement('a');
+  link.download = filename;
+  link.href = dataUrl;
+  link.style.display = 'none';
+  document.body.appendChild(link);
+  link.click();
+  setTimeout(() => {
+    if (link.parentNode) link.parentNode.removeChild(link);
+  }, 200);
+}
+
+/**
+ * High-Res Dual PNG Exporter for PAN/PVC Card Printing:
+ * Captures front & back faces at pixelRatio: 3 (high-DPI print resolution, solid rectangular bleed)
+ * and sequentially triggers downloads for <slug>-front.png and <slug>-back.png with a 250ms gap.
+ */
+export async function exportCardImages({
+  frontElement,
+  backElement,
+  cardTitle = 'bloom-card',
+}) {
+  if (!frontElement || !backElement) {
+    throw new Error('Front and Back elements are required to export images');
+  }
+
+  const slug = (cardTitle || 'bloom-card')
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/(^-|-$)/g, '') || 'bloom-card';
+
+  if (typeof document !== 'undefined' && document.fonts) {
+    try {
+      await document.fonts.ready;
+    } catch {
+      // Fallback gracefully
+    }
+  }
+
+  const fontEmbedCSS = await getStudioFontEmbedCSS().catch(() => '');
+
+  const imageCaptureOptions = {
+    pixelRatio: 3,
+    quality: 1.0,
+    cacheBust: false,
+    skipFonts: false,
+    fontEmbedCSS: fontEmbedCSS || undefined,
+    includeQueryParams: false,
+    onImageErrorHandler: (err) => {
+      console.warn('Image capture warning:', err);
+    },
+    style: {
+      transform: 'none',
+      opacity: '1',
+      margin: '0',
+    },
+  };
+
+  const captureCard = async (element) => {
+    const cleanup = await prepareElementForMobileCapture(element);
+    try {
+      try {
+        return await toPng(element, imageCaptureOptions);
+      } catch (err) {
+        console.warn('Initial 3x capture failed, falling back to 2x...', err);
+        return await toPng(element, {
+          ...imageCaptureOptions,
+          pixelRatio: 2,
+        });
+      }
+    } finally {
+      cleanup();
+    }
+  };
+
+  // 1. Capture and download Front PNG
+  const frontDataUrl = await captureCard(frontElement);
+  downloadDataUrl(frontDataUrl, `${slug}-front.png`);
+
+  // 2. 250ms gap so Chrome / Safari never throttles the second download
+  await new Promise((resolve) => setTimeout(resolve, 250));
+
+  // 3. Capture and download Back PNG
+  const backDataUrl = await captureCard(backElement);
+  downloadDataUrl(backDataUrl, `${slug}-back.png`);
+
+  return { frontDataUrl, backDataUrl };
+}
+
 /**
  * Generates an elevated, gallery-grade 300+ DPI PDF for printing keychain keepsakes.
  * Configured specifically for standard 54mm x 75.35mm aspect-accurate keychain cards.

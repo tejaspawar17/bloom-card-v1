@@ -11,6 +11,7 @@ import { MetallicCardFront, MetallicCardBack } from './cards/MetallicCard';
 import { PaperCardBack } from './cards/PaperCard';
 import { PaperCardFront } from '@/components/card/modes/PaperCardFront';
 import { showToast } from '@/components/ui/AppleToast';
+import { exportCardImages } from '@/lib/generateCardPdf';
 
 // Exact spring physics matching TitleModal and MessageModal
 const springTransition = {
@@ -210,10 +211,10 @@ const LINK_PREFLIGHT_STEPS = [
   "Sealing virtual envelope..."
 ];
 
-const PDF_PREFLIGHT_STEPS = [
-  "Rasterizing 300+ DPI card faces...",
-  "Aligning double-sided punch holes...",
-  "Packaging keychain keepsake PDF..."
+const PNG_PREFLIGHT_STEPS = [
+  "Rasterizing 300+ DPI front print bleed...",
+  "Rasterizing 300+ DPI back print bleed...",
+  "Downloading front & back PNGs..."
 ];
 
 export default function ShareModal({ onClose, onOpenRecipientPreview }) {
@@ -228,12 +229,8 @@ export default function ShareModal({ onClose, onOpenRecipientPreview }) {
   const [pdfConfettiKey, setPdfConfettiKey] = useState(0);
   const [shareUrl, setShareUrl] = useState(`${window.location.origin}/?preview=recipient`);
 
-  // Handle ESC to close & pre-warm PDF font cache in background on modal open
+  // Handle ESC to close dialog
   useEffect(() => {
-    import('@/lib/generateCardPdf')
-      .then((m) => m.getStudioFontEmbedCSS?.())
-      .catch(() => {});
-
     const handleKeyDown = (e) => {
       if (e.key === 'Escape') onClose();
     };
@@ -328,18 +325,17 @@ export default function ShareModal({ onClose, onOpenRecipientPreview }) {
     setPreflightIndex(0);
 
     const stepInterval = setInterval(() => {
-      setPreflightIndex((prev) => (prev < PDF_PREFLIGHT_STEPS.length - 1 ? prev + 1 : prev));
-    }, 300);
+      setPreflightIndex((prev) => (prev < PNG_PREFLIGHT_STEPS.length - 1 ? prev + 1 : prev));
+    }, 280);
 
     // Give browser 1 frame to paint packaging state before heavy canvas work
     await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
 
     try {
-      const { generateKeychainPdf } = await import('@/lib/generateCardPdf');
-      await generateKeychainPdf({
+      await exportCardImages({
         frontElement: frontRef.current,
         backElement: backRef.current,
-        cardTitle: state.subject || state.title || 'bloom-keychain-keepsake',
+        cardTitle: state.subject || state.title || 'bloom-card',
       });
 
       setTimeout(() => {
@@ -352,9 +348,9 @@ export default function ShareModal({ onClose, onOpenRecipientPreview }) {
       clearInterval(stepInterval);
       setIsGeneratingPdf(false);
       setStep('choice');
-      console.error('Failed to generate keychain PDF:', err);
+      console.error('Failed to export print PNGs:', err);
       showToast({
-        title: 'Could not generate PDF keepsake',
+        title: 'Could not export print PNGs',
         description: 'Please try again or check browser permissions.',
         duration: 3500,
       });
@@ -400,9 +396,9 @@ export default function ShareModal({ onClose, onOpenRecipientPreview }) {
               : step === 'sealing'
               ? 'Sealing Your Bloom'
               : step === 'packaging'
-              ? 'Packaging Print Keepsake'
+              ? 'Rendering Print PNGs'
               : step === 'pdf-success'
-              ? 'Keepsake Ready'
+              ? 'Print PNGs Ready'
               : 'Share Your Card'}
             </h2>
 
@@ -448,7 +444,7 @@ export default function ShareModal({ onClose, onOpenRecipientPreview }) {
                       onClick={handleDownloadPDF}
                       className="dark-liquid-glass-pill w-full h-[48px] sm:h-[44px] px-5 text-[15px] sm:text-[14px] leading-[20px] tracking-[-0.01em] font-medium text-white flex items-center justify-center font-sans active:scale-[0.96] transition-transform cursor-pointer whitespace-nowrap"
                     >
-                      <span>{isGeneratingPdf ? 'Packaging...' : 'Download PDF'}</span>
+                      <span>{isGeneratingPdf ? 'Rendering PNGs...' : 'Download Print PNGs'}</span>
                     </button>
                   </div>
 
@@ -493,7 +489,7 @@ export default function ShareModal({ onClose, onOpenRecipientPreview }) {
 
                 <div className="flex flex-col items-center gap-1.5 font-sans">
                   <h3 className="text-white font-semibold text-[17px] leading-[22px] tracking-[-0.01em] font-sans">
-                    {step === 'packaging' ? 'Packaging Keepsake' : 'Pre-Flight Inspection'}
+                    {step === 'packaging' ? 'Rendering Print PNGs' : 'Pre-Flight Inspection'}
                   </h3>
                   {/* Unified typeface (Geist / font-sans) throughout */}
                   <motion.p
@@ -504,7 +500,7 @@ export default function ShareModal({ onClose, onOpenRecipientPreview }) {
                     className="text-[#0088FF] text-[13px] font-medium font-sans"
                   >
                     {step === 'packaging'
-                      ? PDF_PREFLIGHT_STEPS[preflightIndex]
+                      ? PNG_PREFLIGHT_STEPS[preflightIndex]
                       : LINK_PREFLIGHT_STEPS[preflightIndex]}
                   </motion.p>
                 </div>
@@ -526,11 +522,11 @@ export default function ShareModal({ onClose, onOpenRecipientPreview }) {
                 
                 {/* Title & Copy Group */}
                 <h3 className="text-white font-bold text-[19px] leading-[24px] tracking-[-0.02em] font-sans">
-                  Keepsake Ready to Print!
+                  Print PNGs Ready!
                 </h3>
                 
                 <p className="mt-2 text-[#999999] text-[12.5px] leading-[19px] max-w-[340px] font-sans font-normal">
-                  Your 300+ DPI keychain print sheet is in your downloads. Cut along the crop marks, laminate, and attach to your keychain!
+                  High-DPI front and back print PNGs have been saved to your downloads. Perfect for PVC card, PAN card, or photo print!
                 </p>
 
                 {/* Continue Action Button with Celebration Confetti */}
@@ -639,7 +635,7 @@ export default function ShareModal({ onClose, onOpenRecipientPreview }) {
       >
         <div 
           ref={frontRef} 
-          style={{ width: '350px', height: '488px', minWidth: '350px', maxWidth: '350px', minHeight: '488px', maxHeight: '488px', flexShrink: 0, position: 'relative', overflow: 'hidden', borderRadius: (state.cardType === 'pokemon' || state.cardType === 'metallic') ? '16px' : '0px', backgroundColor: 'transparent' }}
+          style={{ width: '350px', height: '488px', minWidth: '350px', maxWidth: '350px', minHeight: '488px', maxHeight: '488px', flexShrink: 0, position: 'relative', overflow: 'hidden', borderRadius: '0px', backgroundColor: 'transparent' }}
         >
           {state.cardType === 'pokemon' ? (
             <PokemonCardFront isPreview={true} />
@@ -652,7 +648,7 @@ export default function ShareModal({ onClose, onOpenRecipientPreview }) {
 
         <div 
           ref={backRef} 
-          style={{ width: '350px', height: '488px', minWidth: '350px', maxWidth: '350px', minHeight: '488px', maxHeight: '488px', flexShrink: 0, position: 'relative', overflow: 'hidden', borderRadius: (state.cardType === 'pokemon' || state.cardType === 'metallic') ? '16px' : '0px', backgroundColor: 'transparent' }}
+          style={{ width: '350px', height: '488px', minWidth: '350px', maxWidth: '350px', minHeight: '488px', maxHeight: '488px', flexShrink: 0, position: 'relative', overflow: 'hidden', borderRadius: '0px', backgroundColor: 'transparent' }}
         >
           {state.cardType === 'pokemon' ? (
             <PokemonCardBack isPreview={true} />

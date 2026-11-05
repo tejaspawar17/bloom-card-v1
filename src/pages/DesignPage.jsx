@@ -7,11 +7,10 @@ import MobileCustomizeSheet from '@/components/MobileCustomizeSheet';
 import TitleModal from '@/components/TitleModal';
 import MessageModal from '@/components/MessageModal';
 import ShareModal from '@/components/ShareModal';
+import CardRevealPreview from '@/components/cards/CardRevealPreview';
 import FeedbackModal from '@/components/FeedbackModal';
 import Footer from '@/components/Footer';
 import { useCard } from '@/context/CardContext';
-
-const CardRevealPreview = React.lazy(() => import('@/components/cards/CardRevealPreview'));
 
 export default function DesignPage({ isRecipientMode = false, onSetRecipientMode, isCreatorPreview = false, onSetCreatorPreview, onNavigateTab }) {
   const { dispatch } = useCard();
@@ -81,14 +80,12 @@ export default function DesignPage({ isRecipientMode = false, onSetRecipientMode
           transition={{ duration: 0.32, ease: [0.22, 1, 0.36, 1] }}
           className="w-full flex-1 flex flex-col"
         >
-          <React.Suspense fallback={null}>
-            <CardRevealPreview 
-              onCraftOwn={handleCraftOwn} 
-              isCreatorPreview={isCreatorPreview}
-              onBackToDesign={handleBackToDesign}
-              shareUrl={lastShareUrl}
-            />
-          </React.Suspense>
+          <CardRevealPreview 
+            onCraftOwn={handleCraftOwn} 
+            isCreatorPreview={isCreatorPreview}
+            onBackToDesign={handleBackToDesign}
+            shareUrl={lastShareUrl}
+          />
         </motion.div>
       ) : (
         <motion.div

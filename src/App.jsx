@@ -1,17 +1,15 @@
 import AppleToast from '@/components/ui/AppleToast';
-import React, { useState, useCallback, useEffect, Suspense } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { CardProvider, useCard } from './context/CardContext';
 import { loadSharedCard, decodeCardStateParam } from './lib/supabase';
 import Navbar from './components/Navbar';
 import DesignPage from './pages/DesignPage';
+import AboutPage from './pages/AboutPage';
+import LegalPage from './pages/LegalPage';
 import FeedbackModal from './components/FeedbackModal';
 import AnimatedAILoaderFX from '@/components/ui/AnimatedAILoaderFX';
 import { FLOWERS, POKEMON_CARDS } from './data/cardData';
-
-// Route-level code-splitting: secondary pages loaded asynchronously in background
-const AboutPage = React.lazy(() => import('./pages/AboutPage'));
-const LegalPage = React.lazy(() => import('./pages/LegalPage'));
 
 // Atmospheric page transition: pure optical opacity + blur dissolve
 const pageVariants = {
@@ -303,46 +301,38 @@ function AppShell() {
                 exit="exit"
                 className="w-full flex-1 flex flex-col min-h-0"
               >
-                <Suspense
-                  fallback={
-                    <div className="w-full flex-1 flex items-center justify-center min-h-[60vh]">
-                      <AnimatedAILoaderFX palette="framer" size={140} />
-                    </div>
-                  }
-                >
-                  {activeTab === 'design' ? (
-                    <DesignPage 
-                      isRecipientMode={isRecipientMode} 
-                      onSetRecipientMode={setIsRecipientMode} 
-                      isCreatorPreview={isCreatorPreview}
-                      onSetCreatorPreview={setIsCreatorPreview}
-                      onNavigateTab={handleTabChange}
-                    />
-                  ) : activeTab === 'terms' ? (
-                    <LegalPage 
-                      initialTab="terms"
-                      onStartCrafting={() => handleTabChange('design')}
-                      onFeedback={() => setGlobalModal('feedback')}
-                      onTerms={() => handleTabChange('terms')}
-                      onPrivacy={() => handleTabChange('privacy')}
-                    />
-                  ) : activeTab === 'privacy' ? (
-                    <LegalPage 
-                      initialTab="privacy"
-                      onStartCrafting={() => handleTabChange('design')}
-                      onFeedback={() => setGlobalModal('feedback')}
-                      onTerms={() => handleTabChange('terms')}
-                      onPrivacy={() => handleTabChange('privacy')}
-                    />
-                  ) : (
-                    <AboutPage 
-                      onStartCrafting={() => handleTabChange('design')}
-                      onFeedback={() => setGlobalModal('feedback')}
-                      onTerms={() => handleTabChange('terms')}
-                      onPrivacy={() => handleTabChange('privacy')}
-                    />
-                  )}
-                </Suspense>
+                {activeTab === 'design' ? (
+                  <DesignPage 
+                    isRecipientMode={isRecipientMode} 
+                    onSetRecipientMode={setIsRecipientMode} 
+                    isCreatorPreview={isCreatorPreview}
+                    onSetCreatorPreview={setIsCreatorPreview}
+                    onNavigateTab={handleTabChange}
+                  />
+                ) : activeTab === 'terms' ? (
+                  <LegalPage 
+                    initialTab="terms"
+                    onStartCrafting={() => handleTabChange('design')}
+                    onFeedback={() => setGlobalModal('feedback')}
+                    onTerms={() => handleTabChange('terms')}
+                    onPrivacy={() => handleTabChange('privacy')}
+                  />
+                ) : activeTab === 'privacy' ? (
+                  <LegalPage 
+                    initialTab="privacy"
+                    onStartCrafting={() => handleTabChange('design')}
+                    onFeedback={() => setGlobalModal('feedback')}
+                    onTerms={() => handleTabChange('terms')}
+                    onPrivacy={() => handleTabChange('privacy')}
+                  />
+                ) : (
+                  <AboutPage 
+                    onStartCrafting={() => handleTabChange('design')}
+                    onFeedback={() => setGlobalModal('feedback')}
+                    onTerms={() => handleTabChange('terms')}
+                    onPrivacy={() => handleTabChange('privacy')}
+                  />
+                )}
               </motion.div>
             </AnimatePresence>
           </div>
