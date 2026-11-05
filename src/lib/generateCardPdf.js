@@ -81,7 +81,10 @@ export function getStudioFontEmbedCSS() {
 function loadDecodedImage(src) {
   return new Promise((resolve, reject) => {
     const img = new Image();
-    img.crossOrigin = 'anonymous';
+    const isRemote = typeof window !== 'undefined' && /^https?:\/\//i.test(src) && !src.startsWith(window.location.origin);
+    if (isRemote) {
+      img.crossOrigin = 'anonymous';
+    }
     img.decoding = 'sync';
     img.onload = async () => {
       try {
@@ -91,7 +94,22 @@ function loadDecodedImage(src) {
       }
       resolve(img);
     };
-    img.onerror = reject;
+    img.onerror = () => {
+      if (img.crossOrigin) {
+        const fallback = new Image();
+        fallback.onload = () => resolve(fallback);
+        fallback.onerror = () => {
+          const dummy = new Image();
+          dummy.onload = () => resolve(dummy);
+          dummy.src = TRANSPARENT_PIXEL_GIF;
+        };
+        fallback.src = src;
+      } else {
+        const dummy = new Image();
+        dummy.onload = () => resolve(dummy);
+        dummy.src = TRANSPARENT_PIXEL_GIF;
+      }
+    };
     img.src = src;
   });
 }
@@ -104,58 +122,63 @@ async function rasterizeImgToDataUrl(imgEl, scale = 2) {
   const src = imgEl.currentSrc || imgEl.src;
   if (!src) return null;
 
-  const decodedImg = await loadDecodedImage(src);
-  const nw = decodedImg.naturalWidth || decodedImg.width || 688;
-  const nh = decodedImg.naturalHeight || decodedImg.height || 960;
+  try {
+    const decodedImg = await loadDecodedImage(src);
+    const nw = decodedImg.naturalWidth || decodedImg.width || 688;
+    const nh = decodedImg.naturalHeight || decodedImg.height || 960;
 
-  const computed = window.getComputedStyle(imgEl);
-  const cssW = imgEl.offsetWidth || imgEl.clientWidth || parseFloat(computed.width) || 350;
-  const cssH = imgEl.offsetHeight || imgEl.clientHeight || parseFloat(computed.height) || 488;
-  const targetW = Math.max(1, Math.round(cssW * scale));
-  const targetH = Math.max(1, Math.round(cssH * scale));
+    const computed = window.getComputedStyle(imgEl);
+    const cssW = imgEl.offsetWidth || imgEl.clientWidth || parseFloat(computed.width) || 350;
+    const cssH = imgEl.offsetHeight || imgEl.clientHeight || parseFloat(computed.height) || 488;
+    const targetW = Math.max(1, Math.round(cssW * scale));
+    const targetH = Math.max(1, Math.round(cssH * scale));
 
-  const canvas = document.createElement('canvas');
-  canvas.width = targetW;
-  canvas.height = targetH;
-  const ctx = canvas.getContext('2d');
-  if (!ctx) return null;
+    const canvas = document.createElement('canvas');
+    canvas.width = targetW;
+    canvas.height = targetH;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return null;
 
-  const objectFit = computed.objectFit || 'fill';
+    const objectFit = computed.objectFit || 'fill';
 
-  let drawX = 0;
-  let drawY = 0;
-  let drawW = targetW;
-  let drawH = targetH;
+    let drawX = 0;
+    let drawY = 0;
+    let drawW = targetW;
+    let drawH = targetH;
 
-  if (objectFit === 'cover') {
-    const scaleFactor = Math.max(targetW / nw, targetH / nh);
-    drawW = nw * scaleFactor;
-    drawH = nh * scaleFactor;
-    drawX = (targetW - drawW) / 2;
-    drawY = (targetH - drawH) / 2;
-  } else if (objectFit === 'contain') {
-    const scaleFactor = Math.min(targetW / nw, targetH / nh);
-    drawW = nw * scaleFactor;
-    drawH = nh * scaleFactor;
-    drawX = (targetW - drawW) / 2;
-    drawY = (targetH - drawH) / 2;
+    if (objectFit === 'cover') {
+      const scaleFactor = Math.max(targetW / nw, targetH / nh);
+      drawW = nw * scaleFactor;
+      drawH = nh * scaleFactor;
+      drawX = (targetW - drawW) / 2;
+      drawY = (targetH - drawH) / 2;
+    } else if (objectFit === 'contain') {
+      const scaleFactor = Math.min(targetW / nw, targetH / nh);
+      drawW = nw * scaleFactor;
+      drawH = nh * scaleFactor;
+      drawX = (targetW - drawW) / 2;
+      drawY = (targetH - drawH) / 2;
+    }
+
+    ctx.drawImage(decodedImg, drawX, drawY, drawW, drawH);
+
+    // Use PNG for assets that require alpha transparency (frames, textures, emojis, stickers, Pokémon rounded corners)
+    const needsAlpha =
+      src.includes('frame') ||
+      src.includes('texture') ||
+      src.includes('emojis') ||
+      src.includes('stickers') ||
+      src.includes('pokemon') ||
+      src.includes('metallic_back') ||
+      objectFit === 'contain';
+
+    return needsAlpha
+      ? canvas.toDataURL('image/png')
+      : canvas.toDataURL('image/jpeg', 0.92);
+  } catch (err) {
+    console.warn('rasterizeImgToDataUrl skipped image:', src, err);
+    return null;
   }
-
-  ctx.drawImage(decodedImg, drawX, drawY, drawW, drawH);
-
-  // Use PNG for assets that require alpha transparency (frames, textures, emojis, stickers, Pokémon rounded corners)
-  const needsAlpha =
-    src.includes('frame') ||
-    src.includes('texture') ||
-    src.includes('emojis') ||
-    src.includes('stickers') ||
-    src.includes('pokemon') ||
-    src.includes('metallic_back') ||
-    objectFit === 'contain';
-
-  return needsAlpha
-    ? canvas.toDataURL('image/png')
-    : canvas.toDataURL('image/jpeg', 0.92);
 }
 
 const TRANSPARENT_PIXEL_GIF =
@@ -272,22 +295,61 @@ async function prepareElementForMobileCapture(rootElement) {
   };
 }
 
-function downloadDataUrl(dataUrl, filename) {
-  const link = document.createElement('a');
-  link.download = filename;
-  link.href = dataUrl;
-  link.style.display = 'none';
-  document.body.appendChild(link);
-  link.click();
-  setTimeout(() => {
-    if (link.parentNode) link.parentNode.removeChild(link);
-  }, 200);
+async function downloadDataUrl(dataUrl, filename) {
+  try {
+    const res = await fetch(dataUrl);
+    const blob = await res.blob();
+    const isIOS =
+      typeof navigator !== 'undefined' &&
+      (/iPad|iPhone|iPod/.test(navigator.userAgent) ||
+        (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1));
+
+    // On iOS Safari, if native file sharing is available, offer native Save to Photos / Files
+    if (isIOS && navigator.canShare && typeof File !== 'undefined') {
+      try {
+        const file = new File([blob], filename, { type: 'image/png' });
+        if (navigator.canShare({ files: [file] })) {
+          await navigator.share({
+            files: [file],
+            title: 'Bloom Card Print Sheet',
+          });
+          return;
+        }
+      } catch (err) {
+        if (err.name === 'AbortError') return;
+      }
+    }
+
+    const blobUrl = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.download = filename;
+    link.href = blobUrl;
+    link.style.display = 'none';
+    document.body.appendChild(link);
+    link.click();
+    setTimeout(() => {
+      if (link.parentNode) link.parentNode.removeChild(link);
+      URL.revokeObjectURL(blobUrl);
+    }, 2000);
+  } catch (err) {
+    // Fallback to direct anchor download
+    const link = document.createElement('a');
+    link.download = filename;
+    link.href = dataUrl;
+    link.style.display = 'none';
+    document.body.appendChild(link);
+    link.click();
+    setTimeout(() => {
+      if (link.parentNode) link.parentNode.removeChild(link);
+    }, 200);
+  }
 }
 
 /**
- * High-Res Dual PNG Exporter for PAN/PVC Card Printing:
- * Captures front & back faces at pixelRatio: 3 (high-DPI print resolution, solid rectangular bleed)
- * and sequentially triggers downloads for <slug>-front.png and <slug>-back.png with a 250ms gap.
+ * High-Res Dual-Face Print Sheet Exporter for PAN/PVC Card Printing:
+ * Captures front & back faces at high-DPI print resolution (solid rectangular bleed),
+ * stitches both faces side-by-side onto a single standardized print sheet canvas,
+ * and triggers a SINGLE download in one go (zero double popups across all devices).
  */
 export async function exportCardImages({
   frontElement,
@@ -337,28 +399,61 @@ export async function exportCardImages({
         return await toPng(element, imageCaptureOptions);
       } catch (err) {
         console.warn('Initial 3x capture failed, falling back to 2x...', err);
-        return await toPng(element, {
-          ...imageCaptureOptions,
-          pixelRatio: 2,
-        });
+        try {
+          return await toPng(element, {
+            ...imageCaptureOptions,
+            pixelRatio: 2,
+          });
+        } catch (err2) {
+          console.warn('2x capture failed, falling back to 1.5x with skipFonts...', err2);
+          return await toPng(element, {
+            ...imageCaptureOptions,
+            pixelRatio: 1.5,
+            skipFonts: true,
+          });
+        }
       }
     } finally {
       cleanup();
     }
   };
 
-  // 1. Capture and download Front PNG
-  const frontDataUrl = await captureCard(frontElement);
-  downloadDataUrl(frontDataUrl, `${slug}-front.png`);
+  // 1. Capture Front and Back in parallel for fast packaging
+  const [frontDataUrl, backDataUrl] = await Promise.all([
+    captureCard(frontElement),
+    captureCard(backElement),
+  ]);
 
-  // 2. 250ms gap so Chrome / Safari never throttles the second download
-  await new Promise((resolve) => setTimeout(resolve, 250));
+  // 2. Stitch Front & Back side-by-side onto a single high-DPI Print Sheet canvas
+  const [frontImg, backImg] = await Promise.all([
+    loadDecodedImage(frontDataUrl),
+    loadDecodedImage(backDataUrl),
+  ]);
 
-  // 3. Capture and download Back PNG
-  const backDataUrl = await captureCard(backElement);
-  downloadDataUrl(backDataUrl, `${slug}-back.png`);
+  const cardW = frontImg.naturalWidth || frontImg.width || 1050;
+  const cardH = frontImg.naturalHeight || frontImg.height || 1464;
+  const gap = Math.round(cardW * 0.04); // 4% gap between front and back
+  const margin = Math.round(cardW * 0.03); // 3% margin around sheet
 
-  return { frontDataUrl, backDataUrl };
+  const canvas = document.createElement('canvas');
+  canvas.width = cardW * 2 + gap + margin * 2;
+  canvas.height = cardH + margin * 2;
+  const ctx = canvas.getContext('2d');
+
+  if (ctx) {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    // Draw Front Card on the left
+    ctx.drawImage(frontImg, margin, margin, cardW, cardH);
+    // Draw Back Card on the right
+    ctx.drawImage(backImg, margin + cardW + gap, margin, cardW, cardH);
+  }
+
+  const sheetDataUrl = canvas.toDataURL('image/png', 1.0);
+
+  // 3. Trigger single download in one go (exactly 1 file, 1 popup on all devices)
+  await downloadDataUrl(sheetDataUrl, `${slug}-print-sheet.png`);
+
+  return { sheetDataUrl, frontDataUrl, backDataUrl };
 }
 
 /**

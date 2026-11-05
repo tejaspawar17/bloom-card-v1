@@ -214,7 +214,7 @@ const LINK_PREFLIGHT_STEPS = [
 const PNG_PREFLIGHT_STEPS = [
   "Rasterizing 300+ DPI front print bleed...",
   "Rasterizing 300+ DPI back print bleed...",
-  "Downloading front & back PNGs..."
+  "Packaging print sheet in one go..."
 ];
 
 export default function ShareModal({ onClose, onOpenRecipientPreview }) {
@@ -350,7 +350,7 @@ export default function ShareModal({ onClose, onOpenRecipientPreview }) {
       setStep('choice');
       console.error('Failed to export print PNGs:', err);
       showToast({
-        title: 'Could not export print PNGs',
+        title: 'Could not export print sheet',
         description: 'Please try again or check browser permissions.',
         duration: 3500,
       });
@@ -444,7 +444,7 @@ export default function ShareModal({ onClose, onOpenRecipientPreview }) {
                       onClick={handleDownloadPDF}
                       className="dark-liquid-glass-pill w-full h-[48px] sm:h-[44px] px-5 text-[15px] sm:text-[14px] leading-[20px] tracking-[-0.01em] font-medium text-white flex items-center justify-center font-sans active:scale-[0.96] transition-transform cursor-pointer whitespace-nowrap"
                     >
-                      <span>{isGeneratingPdf ? 'Rendering PNGs...' : 'Download Print PNGs'}</span>
+                      <span>{isGeneratingPdf ? 'Rendering Print Sheet...' : 'Download Print Sheet'}</span>
                     </button>
                   </div>
 
@@ -522,11 +522,11 @@ export default function ShareModal({ onClose, onOpenRecipientPreview }) {
                 
                 {/* Title & Copy Group */}
                 <h3 className="text-white font-bold text-[19px] leading-[24px] tracking-[-0.02em] font-sans">
-                  Print PNGs Ready!
+                  Print Sheet Ready!
                 </h3>
                 
                 <p className="mt-2 text-[#999999] text-[12.5px] leading-[19px] max-w-[340px] font-sans font-normal">
-                  High-DPI front and back print PNGs have been saved to your downloads. Perfect for PVC card, PAN card, or photo print!
+                  High-DPI front and back print sheet has been saved in one go. Perfect for PVC card, PAN card, or photo print!
                 </p>
 
                 {/* Continue Action Button with Celebration Confetti */}

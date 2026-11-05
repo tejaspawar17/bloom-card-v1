@@ -202,13 +202,13 @@ export function DraggableSticker({ stickerData, isPreview = false }) {
   return (
     <motion.div 
       ref={stickerRef}
-      className={`absolute ${isPreview ? 'pointer-events-none' : 'pointer-events-auto'} top-0 left-0 ${sizeClass} z-40 ${(!isPreview && isEditingSticker) ? 'cursor-grab active:cursor-grabbing' : (isPreview ? '' : 'cursor-pointer')}`}
+      className={`absolute ${isPreview ? 'pointer-events-none' : 'pointer-events-auto'} top-0 left-0 ${sizeClass} z-40 ${(!isPreview && isEditingSticker) ? 'cursor-grab active:cursor-grabbing touch-none' : (isPreview ? '' : 'cursor-pointer')}`}
       drag={!isPreview && isEditingSticker}
       dragControls={dragControls}
       dragListener={false}
       dragMomentum={false}
       whileDrag={{ scale: 1.08 }}
-      style={{ rotate }}
+      style={{ rotate, touchAction: (!isPreview && isEditingSticker) ? 'none' : 'auto' }}
       onTouchStart={!isPreview ? handleTouchStart : undefined}
       onTouchMove={!isPreview ? handleTouchMove : undefined}
       onTouchEnd={!isPreview ? handleTouchEnd : undefined}
@@ -246,6 +246,7 @@ export function DraggableSticker({ stickerData, isPreview = false }) {
         className="w-full h-full relative touch-none select-none" 
         onPointerDown={(e) => { 
           if (!isPreview && isEditingSticker && e.isPrimary) {
+            e.stopPropagation();
             dragControls.start(e); 
           }
         }}
