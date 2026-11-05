@@ -23,8 +23,9 @@ export function FlowerInfoPill({ variant }: { variant?: 'front' | 'back' }) {
 
       <div 
         title={text}
+        style={{ WebkitFontSmoothing: "antialiased", MozOsxFontSmoothing: "grayscale" }}
         className={clsx(
-          "absolute top-[clamp(20px,5.2%,28px)] inset-x-0 mx-auto flex items-center justify-center select-none overflow-hidden z-50 pointer-events-auto",
+          "absolute top-[clamp(20px,5.2%,28px)] inset-x-0 mx-auto flex items-center justify-center select-none overflow-hidden z-50 pointer-events-auto antialiased",
           side === 'back' 
             ? "w-[clamp(240px,80%,304px)] max-w-[90%] h-[clamp(19px,5.8cqw,22px)] rounded-[62.5rem]" 
             : "w-fit min-w-[86px] px-[clamp(10px,3.5cqw,16px)] h-[clamp(19px,5.8cqw,22px)] rounded-[62.5rem]"

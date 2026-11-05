@@ -1,4 +1,5 @@
 import React from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useCard } from '@/context/CardContext';
 import { DraggableSticker } from '@/components/card/DraggableSticker';
 import { Polaroid, CardMessageBox } from '@/components/ui';
@@ -15,15 +16,27 @@ export function PokemonCardFront({ onOpenEditTitle, onOpenQuickPicker, isPreview
       onContextMenu={(e) => e.preventDefault()} className={`relative w-full h-full aspect-[688/960] rounded-[16px] ${isPreview ? 'border-none' : 'border border-[#95a0a6]/60'} overflow-hidden shadow-2xl select-none no-callout bg-transparent @container ${!isPreview && onOpenQuickPicker ? 'cursor-pointer lg:cursor-default' : ''}`} 
       style={{ containerType: "inline-size" }}
     >
-      {/* Real Pokemon Card Image from Reference (Squirtle with sunglasses) */}
-      <img
-        src={pokemonCard?.image || '/pokemon/001-003-squirtle.png'}
-        alt={pokemonCard?.name || 'Pokemon Card Front'}
-        className="absolute inset-0 w-full h-full object-cover pointer-events-none select-none no-callout"
-        draggable={false}
-        decoding="async"
-        loading="eager"
-      />
+      {/* Real Pokemon Card Image - Isolated Pure-Opacity Crossfade (180ms) */}
+      <div 
+        className="absolute inset-0 w-full h-full overflow-hidden isolate"
+        style={{ isolation: 'isolate', contain: 'paint' }}
+      >
+        <AnimatePresence initial={false}>
+          <motion.img
+            key={pokemonCard?.image || '/pokemon/001-003-squirtle.png'}
+            src={pokemonCard?.image || '/pokemon/001-003-squirtle.png'}
+            alt={pokemonCard?.name || 'Pokemon Card Front'}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.18, ease: "easeOut" }}
+            className="absolute inset-0 w-full h-full object-cover pointer-events-none select-none no-callout"
+            draggable={false}
+            decoding="async"
+            loading="eager"
+          />
+        </AnimatePresence>
+      </div>
 
       {/* Equipped Sticker if selected */}
       {state?.stickers?.filter(s => s.side === 'front').map(sticker => ( <DraggableSticker key={sticker.id} stickerData={sticker} isPreview={isPreview} /> ))}
@@ -31,13 +44,14 @@ export function PokemonCardFront({ onOpenEditTitle, onOpenQuickPicker, isPreview
       {/* Subject Box matching reference: white box with red border and magenta edit pencil */}
         <div 
           onClick={isPreview ? undefined : (e) => { e.stopPropagation(); onOpenEditTitle?.(); }}
-          className={`absolute bottom-[5%] left-1/2 -translate-x-1/2 w-[73.1%] h-[21%] -rotate-[2deg] z-20 group ${isPreview ? '' : 'cursor-pointer active:scale-[0.98]'}`}
+          className={`absolute bottom-[5%] left-1/2 -translate-x-1/2 w-[73.1%] h-[21%] -rotate-[2deg] z-20 group antialiased ${isPreview ? '' : 'cursor-pointer active:scale-[0.98]'}`}
+          style={{ WebkitFontSmoothing: 'antialiased', MozOsxFontSmoothing: 'grayscale' }}
         >
           {/* Outer White Box with Shadow (Matches Figma exact structure) */}
             <div className="w-full h-full bg-white p-[1.2cqw] rounded-[4cqw] shadow-[2px_2px_2px_0.5px_rgba(0,0,0,0.25)]">
               {/* Inner Red Border Box */}
               <div className="w-full h-full border-[1.2cqw] border-[#FF0000] rounded-[3cqw] px-[2cqw] flex flex-col justify-center items-center overflow-hidden">
-                <p className="font-['Vampiro_One'] text-[6.39cqw] text-center text-black leading-[1.1] whitespace-pre-line tracking-[-0.01em] line-clamp-2 max-w-full overflow-hidden">
+                <p className="font-['Vampiro_One'] text-[6.39cqw] text-center text-black leading-[1.1] whitespace-pre-line tracking-[-0.01em] line-clamp-2 max-w-full overflow-hidden antialiased" style={{ WebkitFontSmoothing: "antialiased", MozOsxFontSmoothing: "grayscale" }}>
                   {state.subject ?? ''}
                 </p>
               </div>

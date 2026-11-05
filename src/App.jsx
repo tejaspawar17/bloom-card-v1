@@ -195,23 +195,7 @@ function AppShell() {
           } catch {}
           setIsAppLoading(false);
 
-          // Idle pre-warm all full-resolution front artworks so switching between cards is 0ms instant
-          const frontArtworks = [
-            ...FLOWERS.map((f) => f.image).filter(Boolean),
-            ...POKEMON_CARDS.map((p) => p.image).filter(Boolean),
-          ];
-          const warmQueue = () => {
-            frontArtworks.forEach((src) => {
-              const img = new Image();
-              img.src = src;
-              img.decode?.().catch(() => {});
-            });
-          };
-          if (typeof window !== 'undefined' && 'requestIdleCallback' in window) {
-            window.requestIdleCallback(warmQueue, { timeout: 2000 });
-          } else {
-            setTimeout(warmQueue, 150);
-          }
+
         }
       }, remaining);
     };
@@ -226,6 +210,29 @@ function AppShell() {
       window.removeEventListener('popstate', syncFromUrl);
     };
   }, [syncFromUrl]);
+
+  // Step 1: Silently pre-decode all full-res card artworks into RAM/GPU cache once the splash finishes
+  useEffect(() => {
+    if (isAppLoading) return;
+    const fullResArtworks = [
+      ...FLOWERS.map((f) => f.image).filter(Boolean),
+      ...POKEMON_CARDS.map((p) => p.image).filter(Boolean),
+    ];
+    const warmQueue = () => {
+      fullResArtworks.forEach((src) => {
+        const img = new Image();
+        img.src = src;
+        img.decode?.().catch(() => {});
+      });
+    };
+    if (typeof window !== 'undefined' && 'requestIdleCallback' in window) {
+      const handle = window.requestIdleCallback(warmQueue, { timeout: 2000 });
+      return () => window.cancelIdleCallback?.(handle);
+    } else {
+      const timer = setTimeout(warmQueue, 100);
+      return () => clearTimeout(timer);
+    }
+  }, [isAppLoading]);
 
   const handleTabChange = (tab) => {
     setActiveTab(tab);

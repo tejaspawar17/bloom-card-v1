@@ -63,7 +63,7 @@ export default function CardSubjectBox({
               />
             </div>
           )}
-        <div className="w-[66%] h-[50%] flex flex-col items-center justify-center transition-opacity group-hover:opacity-70 relative z-10">
+        <div className="w-[66%] h-[50%] flex flex-col items-center justify-center transition-opacity group-hover:opacity-70 relative z-10 antialiased" style={{ WebkitFontSmoothing: "antialiased", MozOsxFontSmoothing: "grayscale" }}>
           {isEditing ? (
             <textarea
                 autoFocus

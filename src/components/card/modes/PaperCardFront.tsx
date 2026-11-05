@@ -1,4 +1,5 @@
 import React from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { PostageStampNote } from '@/components/bloom/overlays/PostageStampNote';
 import { FlowerInfoPill } from '@/components/card/FlowerInfoPill';
 import { DraggableSticker } from '@/components/card/DraggableSticker';
@@ -16,18 +17,33 @@ export function PaperCardFront({ state: propState, flower: propFlower, onOpenEdi
         onClick={!isPreview && onOpenQuickPicker ? () => onOpenQuickPicker('frontArtwork') : undefined}
         className={`absolute inset-[clamp(10px,3.3cqw,12px)] overflow-hidden rounded-none ${!isPreview && onOpenQuickPicker ? 'cursor-pointer lg:cursor-default' : ''}`}
       >
-        <img src={selectedFlower.image} 
-          alt={selectedFlower.name} 
-          className="w-full h-full object-cover pointer-events-none select-none no-callout" 
-          draggable={false}
-          decoding="async"
-          loading="eager"
-        />
+        {/* Isolated Pure-Opacity Crossfade Artwork Container (180ms) */}
+        <div 
+          className="absolute inset-0 w-full h-full overflow-hidden isolate"
+          style={{ isolation: 'isolate', contain: 'paint' }}
+        >
+          <AnimatePresence initial={false}>
+            <motion.img 
+              key={selectedFlower.image}
+              src={selectedFlower.image} 
+              alt={selectedFlower.name} 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.18, ease: "easeOut" }}
+              className="absolute inset-0 w-full h-full object-cover pointer-events-none select-none no-callout" 
+              draggable={false}
+              decoding="async"
+              loading="eager"
+            />
+          </AnimatePresence>
+        </div>
 
-        {/* Bottom Stamp Overlay (Figma: y=300 inside 456px inner image -> 18px from bottom of flower image, minus 6px built-in PNG shadow margin = 12px) */}
+        {/* Bottom Stamp Overlay (Coordinates 100% UNTOUCHED) */}
         <div 
           onClick={(e) => e.stopPropagation()}
-          className="absolute bottom-[clamp(7px,2.7cqw,10px)] inset-x-0 flex justify-center z-20"
+          className="absolute bottom-[clamp(7px,2.7cqw,10px)] inset-x-0 flex justify-center z-20 antialiased"
+          style={{ WebkitFontSmoothing: 'antialiased', MozOsxFontSmoothing: 'grayscale' }}
         >
           <PostageStampNote 
             message={state?.subject ?? ''} 

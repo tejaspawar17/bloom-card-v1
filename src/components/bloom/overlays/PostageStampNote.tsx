@@ -35,9 +35,9 @@ export function PostageStampNote({
         className="absolute inset-0 w-full h-full object-contain pointer-events-none select-none"
       />
 
-      <div className="w-full h-full flex flex-col items-center justify-center relative -translate-y-[0.4cqw] z-10">
+      <div className="w-full h-full flex flex-col items-center justify-center relative -translate-y-[0.4cqw] z-10 antialiased" style={{ WebkitFontSmoothing: "antialiased", MozOsxFontSmoothing: "grayscale" }}>
         <div 
-          className="w-[90%] text-center text-[clamp(17.5px,7.1cqw,27px)] leading-[clamp(27px,11.2cqw,43px)] font-['Homemade_Apple',cursive] text-[#FF0000]"
+          className="w-[90%] text-center text-[clamp(17.5px,7.1cqw,27px)] leading-[clamp(27px,11.2cqw,43px)] font-['Homemade_Apple',cursive] text-[#FF0000] antialiased" style={{ WebkitFontSmoothing: "antialiased", MozOsxFontSmoothing: "grayscale" }}
         >
           <span className="whitespace-pre-wrap">{message}</span>
         </div>

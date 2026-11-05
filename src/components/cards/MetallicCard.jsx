@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useCard } from '@/context/CardContext';
 import { DraggableSticker } from '@/components/card/DraggableSticker';
 import { FlowerInfoPill } from '@/components/card/FlowerInfoPill';
@@ -16,16 +17,26 @@ export function MetallicCardFront({ onOpenEditTitle, onOpenQuickPicker, isPrevie
       className={`relative w-full h-full aspect-[688/960] rounded-[16px] overflow-hidden shadow-2xl select-none bg-transparent @container ${!isPreview && onOpenQuickPicker ? 'cursor-pointer lg:cursor-default' : ''}`} 
       style={{ containerType: "inline-size" }}
     >
-      {/* Background artwork */}
-      <div className="absolute inset-[clamp(10px,3.3cqw,12px)] overflow-hidden rounded-none">
-        <img
-          src={flower?.image || '/assets/flower-illustrations/flower_1.png'}
-          alt="Metallic Card Flower"
-          className="w-full h-full object-cover pointer-events-none select-none no-callout"
-          draggable={false}
-          decoding="async"
-          loading="eager"
-        />
+      {/* Background artwork - Isolated Pure-Opacity Crossfade (180ms) */}
+      <div 
+        className="absolute inset-[clamp(10px,3.3cqw,12px)] overflow-hidden rounded-none isolate"
+        style={{ isolation: 'isolate', contain: 'paint' }}
+      >
+        <AnimatePresence initial={false}>
+          <motion.img
+            key={flower?.image || '/assets/flower-illustrations/flower_1.png'}
+            src={flower?.image || '/assets/flower-illustrations/flower_1.png'}
+            alt="Metallic Card Flower"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.18, ease: "easeOut" }}
+            className="absolute inset-0 w-full h-full object-cover pointer-events-none select-none no-callout"
+            draggable={false}
+            decoding="async"
+            loading="eager"
+          />
+        </AnimatePresence>
       </div>
 
       <FlowerInfoPill variant="front" />
@@ -51,7 +62,7 @@ export function MetallicCardFront({ onOpenEditTitle, onOpenQuickPicker, isPrevie
       {/* Subject Box */}
       <div 
         onClick={(e) => e.stopPropagation()}
-        className="absolute bottom-[4.5%] inset-x-0 mx-auto w-[86%] aspect-[738/474] z-30"
+        className="absolute bottom-[4.5%] inset-x-0 mx-auto w-[86%] aspect-[738/474] z-30 antialiased" style={{ WebkitFontSmoothing: "antialiased", MozOsxFontSmoothing: "grayscale" }}
       >
         <CardSubjectBox variant="metallic" onClick={onOpenEditTitle} isPreview={isPreview} className="w-full h-full" />
       </div>
