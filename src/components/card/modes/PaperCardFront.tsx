@@ -15,13 +15,7 @@ export function PaperCardFront({ state: propState, flower: propFlower, onOpenEdi
     <div 
       onContextMenu={(e) => e.preventDefault()} 
       className="relative bg-[#E5E1D6] shadow-2xl aspect-[688/960] w-full h-full rounded-none overflow-hidden select-none no-callout @container" 
-      style={{ 
-        containerType: "inline-size",
-        transform: 'translate3d(0, 0, 0)',
-        WebkitTransform: 'translate3d(0, 0, 0)',
-        backfaceVisibility: 'hidden',
-        WebkitBackfaceVisibility: 'hidden',
-      }}
+      style={{ containerType: "inline-size" }}
     >
       {/* Authentic Textured Paper Front Base */}
       <img
@@ -35,17 +29,9 @@ export function PaperCardFront({ state: propState, flower: propFlower, onOpenEdi
       <div 
         onClick={!isPreview && onOpenQuickPicker ? () => onOpenQuickPicker('frontArtwork') : undefined}
         className={`absolute inset-[clamp(10px,3.3cqw,12px)] overflow-hidden rounded-none ${!isPreview && onOpenQuickPicker ? 'cursor-pointer lg:cursor-default' : ''}`}
-
       >
-        {/* Isolated Pure-Opacity Crossfade Artwork Container (180ms) */}
-        <div 
-          className="absolute inset-0 w-full h-full overflow-hidden isolate"
-          style={{ 
-            isolation: 'isolate', 
-            contain: 'paint layout',
-
-          }}
-        >
+        {/* Pure-Opacity Crossfade Artwork Container (180ms) */}
+        <div className="absolute inset-0 w-full h-full overflow-hidden">
           <AnimatePresence initial={false}>
             <motion.img 
               key={selectedFlower.image}
@@ -56,7 +42,6 @@ export function PaperCardFront({ state: propState, flower: propFlower, onOpenEdi
               exit={{ opacity: 0 }}
               transition={{ duration: 0.18, ease: "easeOut" }}
               className="absolute inset-0 w-full h-full object-cover pointer-events-none select-none no-callout" 
-
               draggable={false}
               decoding="async"
               loading="eager"
@@ -79,18 +64,8 @@ export function PaperCardFront({ state: propState, flower: propFlower, onOpenEdi
         </div>
       </div>
 
-      {/* Anchored Title Pill Layer with Transform Containment */}
-      <div 
-        className="absolute inset-0 pointer-events-none z-50 overflow-visible isolate"
-        style={{
-          isolation: 'isolate',
-          contain: 'layout paint',
-          transform: 'translate3d(0, 0, 0)',
-          WebkitTransform: 'translate3d(0, 0, 0)',
-          backfaceVisibility: 'hidden',
-          WebkitBackfaceVisibility: 'hidden',
-        }}
-      >
+      {/* Anchored Title Pill Layer */}
+      <div className="absolute inset-0 pointer-events-none z-50 overflow-visible">
         <FlowerInfoPill variant="front" />
       </div>
 
