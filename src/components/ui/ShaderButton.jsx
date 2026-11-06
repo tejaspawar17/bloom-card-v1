@@ -406,10 +406,10 @@ export default function ShaderButton({
       if (canvas.width !== displayWidth || canvas.height !== displayHeight) {
         canvas.width = displayWidth;
         canvas.height = displayHeight;
-        gl.viewport(0, 0, displayWidth, displayHeight);
-        gl.uniform2f(uResolution, displayWidth, displayHeight);
-        gl.uniform1f(uPixelRatio, dpr);
       }
+      gl.viewport(0, 0, displayWidth, displayHeight);
+      gl.uniform2f(uResolution, displayWidth, displayHeight);
+      gl.uniform1f(uPixelRatio, dpr);
     };
 
     // Calculate dimensions once on mount and observe changes with ResizeObserver (zero per-frame reflow)
