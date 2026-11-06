@@ -8,6 +8,7 @@ import {
   Link,
 } from '@phosphor-icons/react';
 import ScatteredKeepsakes from '@/components/ui/ScatteredKeepsakes';
+import ShaderButton from '@/components/ui/ShaderButton';
 import CoffeeButton from '@/components/ui/CoffeeButton';
 import Footer from '@/components/Footer';
 
@@ -152,16 +153,12 @@ export default function AboutPage({ onStartCrafting, onFeedback, onTerms, onPriv
             </p>
           </div>
 
-          {/* Floating Pill CTA - Responsive across all breakpoints */}
-          <motion.button
-            whileHover={{ scale: 1.04, y: -1 }}
-            whileTap={{ scale: 0.96 }}
-            onClick={onStartCrafting}
-            className="relative inline-flex items-center justify-center gap-2 px-6 py-2.5 sm:px-7 sm:py-3 rounded-full bg-[#181818] border border-white/[0.14] text-white font-medium text-[14px] sm:text-[15px] leading-none shadow-[0_8px_24px_rgba(0,0,0,0.6)] hover:border-white/30 hover:bg-[#202020] transition-colors cursor-pointer outline-none select-none hig-focus mt-1"
-          >
-            <span>Design your card</span>
-            <ArrowRight size={15} weight="regular" className="text-white/70" />
-          </motion.button>
+          {/* Framer WebGL Liquid Gradient Shader Button */}
+          <div className="mt-1">
+            <ShaderButton onClick={onStartCrafting}>
+              Design your card
+            </ShaderButton>
+          </div>
         </div>
 
 
