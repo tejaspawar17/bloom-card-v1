@@ -384,7 +384,7 @@ export default function CardViewer({ onConfirm, onOpenEditTitle, onOpenEditMessa
         <div onContextMenu={(e) => e.preventDefault()} className="perspective-container relative w-full h-full aspect-[688/960] no-callout">
           <motion.div 
               className="w-full h-full relative"
-              style={{ transformStyle: 'preserve-3d' }}
+              style={{ transformStyle: 'preserve-3d', willChange: 'transform' }}
               animate={{ 
                 rotateY: (isFlipped ? 180 : 0) + spinDegrees
               }} 
@@ -394,10 +394,24 @@ export default function CardViewer({ onConfirm, onOpenEditTitle, onOpenEditMessa
                 rotateY: { duration: 0.62, ease: [0.22, 1, 0.36, 1] }
               }}
             >
-              <div className={`absolute inset-0 ${isFlipped ? "pointer-events-none" : "pointer-events-auto"}`} style={{ backfaceVisibility: "hidden", WebkitBackfaceVisibility: "hidden", transform: "rotateY(0deg)" }}>
+              <div 
+                className={`absolute inset-0 ${isFlipped ? "pointer-events-none" : "pointer-events-auto"}`} 
+                style={{ 
+                  backfaceVisibility: "hidden", 
+                  WebkitBackfaceVisibility: "hidden", 
+                  transform: "rotateY(0deg)"
+                }}
+              >
                 {renderFront()}
               </div>
-              <div className={`absolute inset-0 ${isFlipped ? "pointer-events-auto" : "pointer-events-none"}`} style={{ backfaceVisibility: "hidden", WebkitBackfaceVisibility: "hidden", transform: "rotateY(180deg)" }}>
+              <div 
+                className={`absolute inset-0 ${isFlipped ? "pointer-events-auto" : "pointer-events-none"}`} 
+                style={{ 
+                  backfaceVisibility: "hidden", 
+                  WebkitBackfaceVisibility: "hidden", 
+                  transform: "rotateY(180deg)"
+                }}
+              >
                 {renderBack()}
               </div>
             </motion.div>

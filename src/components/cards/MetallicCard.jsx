@@ -17,9 +17,17 @@ export function MetallicCardFront({ onOpenEditTitle, onOpenQuickPicker, isPrevie
       className={`relative w-full h-full aspect-[688/960] rounded-[16px] overflow-hidden shadow-2xl select-none bg-transparent @container ${!isPreview && onOpenQuickPicker ? 'cursor-pointer lg:cursor-default' : ''}`} 
       style={{ containerType: "inline-size" }}
     >
-      {/* Background artwork - Pure-Opacity Crossfade (180ms) */}
+      {/* Background artwork - Isolated Pure-Opacity Crossfade (180ms) */}
       <div 
-        className="absolute inset-[clamp(10px,3.3cqw,12px)] overflow-hidden rounded-none"
+        className="absolute inset-[clamp(10px,3.3cqw,12px)] overflow-hidden rounded-none isolate"
+        style={{ 
+          isolation: 'isolate', 
+          contain: 'paint layout',
+          transform: 'translate3d(0, 0, 0)',
+          WebkitTransform: 'translate3d(0, 0, 0)',
+          backfaceVisibility: 'hidden',
+          WebkitBackfaceVisibility: 'hidden'
+        }}
       >
         <AnimatePresence initial={false}>
           <motion.img
@@ -31,6 +39,12 @@ export function MetallicCardFront({ onOpenEditTitle, onOpenQuickPicker, isPrevie
             exit={{ opacity: 0 }}
             transition={{ duration: 0.18, ease: "easeOut" }}
             className="absolute inset-0 w-full h-full object-cover pointer-events-none select-none no-callout"
+            style={{
+              transform: 'translate3d(0, 0, 0)',
+              WebkitTransform: 'translate3d(0, 0, 0)',
+              backfaceVisibility: 'hidden',
+              WebkitBackfaceVisibility: 'hidden'
+            }}
             draggable={false}
             decoding="async"
             loading="eager"
@@ -38,8 +52,18 @@ export function MetallicCardFront({ onOpenEditTitle, onOpenQuickPicker, isPrevie
         </AnimatePresence>
       </div>
 
-      {/* Anchored Title Pill Layer */}
-      <div className="absolute inset-0 pointer-events-none z-50 overflow-visible">
+      {/* Anchored Title Pill Layer with Transform Containment */}
+      <div 
+        className="absolute inset-0 pointer-events-none z-50 overflow-visible isolate"
+        style={{
+          isolation: 'isolate',
+          contain: 'layout paint',
+          transform: 'translate3d(0, 0, 0)',
+          WebkitTransform: 'translate3d(0, 0, 0)',
+          backfaceVisibility: 'hidden',
+          WebkitBackfaceVisibility: 'hidden',
+        }}
+      >
         <FlowerInfoPill variant="front" />
       </div>
 
@@ -56,6 +80,12 @@ export function MetallicCardFront({ onOpenEditTitle, onOpenQuickPicker, isPrevie
         src="/assets/polaroid-defaults/metallic_frame.png" 
         alt="" 
         className="absolute inset-0 w-full h-full pointer-events-none select-none no-callout z-20" 
+        style={{
+          transform: 'translate3d(0, 0, 0)',
+          WebkitTransform: 'translate3d(0, 0, 0)',
+          backfaceVisibility: 'hidden',
+          WebkitBackfaceVisibility: 'hidden',
+        }}
         draggable={false}
       />
 
