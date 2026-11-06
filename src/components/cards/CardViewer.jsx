@@ -461,8 +461,8 @@ export default function CardViewer({ onConfirm, onOpenEditTitle, onOpenEditMessa
                 {/* Stamp Hint Pill */}
                 <div className={clsx(
                   "absolute h-[26px] px-2.5 rounded-full bg-black/80 backdrop-blur-xl border border-white/25 shadow-[0_6px_20px_rgba(0,0,0,0.65)] inline-flex items-center justify-center gap-1.5 whitespace-nowrap",
-                  state.cardType === 'pokemon' && state.pokemonSubtype === 'trainer'
-                    ? "top-[35%] left-1/2 -translate-x-1/2"
+                  state.cardType === 'pokemon'
+                    ? "top-[32%] left-1/2 -translate-x-1/2"
                     : "top-[41%] left-1/2 -translate-x-1/2"
                 )}>
                   <Smiley size={13} weight="regular" className="text-white shrink-0" />

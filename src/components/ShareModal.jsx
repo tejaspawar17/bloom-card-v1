@@ -380,7 +380,7 @@ export default function ShareModal({ onClose, onOpenRecipientPreview }) {
             role="dialog"
             aria-modal="true"
             aria-label="Generate Link or Download"
-            className="relative z-10 w-[calc(100%-8px)] sm:w-[calc(100%-32px)] max-w-[420px] sm:max-w-[466px] mx-auto flex flex-col select-none rounded-[20px] sm:rounded-[24px] bg-[#0E0E0E] border border-white/[0.12] overflow-hidden shadow-[0_24px_60px_rgba(0,0,0,0.85)] font-sans transition-all duration-200"
+            className="relative z-10 w-[calc(100%-8px)] sm:w-[calc(100%-32px)] max-w-[420px] sm:max-w-[466px] mx-auto flex flex-col select-none rounded-[20px] sm:rounded-[24px] bg-[#0E0E0E] border border-white/[0.12] overflow-hidden shadow-[0_24px_60px_rgba(0,0,0,0.85)] font-sans"
             onClick={(e) => e.stopPropagation()}
             initial={{ opacity: 0, scale: 0.95, y: 8 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
