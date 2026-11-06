@@ -280,7 +280,7 @@ void main() {
 const SIZE_CONFIGS = {
   sm: 'px-5 py-2 text-[14px]',
   md: 'px-6 py-2.5 text-[14.5px] sm:px-8 sm:py-3.5 sm:text-[16px]',
-  lg: 'px-10 py-4 text-[17px]',
+  lg: 'px-7 py-3 text-[15px] sm:px-10 sm:py-4 sm:text-[17px]',
 };
 
 export default function ShaderButton({
@@ -421,6 +421,9 @@ export default function ShaderButton({
 
     const render = (now) => {
       if (!isRunning) return;
+      if (canvas.width === 0 || canvas.height === 0) {
+        updateSize();
+      }
       const elapsed = (now - startTime) / 1000;
       gl.uniform1f(uTime, elapsed);
       gl.drawArrays(gl.TRIANGLES, 0, 6);
@@ -430,7 +433,7 @@ export default function ShaderButton({
     let isIntersecting = true;
 
     const startLoop = () => {
-      if (!animationFrameId && isRunning && isIntersecting && !document.hidden) {
+      if (!animationFrameId && isRunning && !document.hidden) {
         animationFrameId = requestAnimationFrame(render);
       }
     };
@@ -487,18 +490,19 @@ export default function ShaderButton({
       type="button"
       initial="initial"
       whileHover={canHover ? "hover" : undefined}
+      whileTap={{ scale: 0.97 }}
       onClick={onClick}
       className={`relative inline-flex items-center justify-center whitespace-nowrap ${showArrow ? 'gap-3' : 'gap-0'} ${SIZE_CONFIGS[size] || SIZE_CONFIGS.lg} rounded-full overflow-hidden cursor-pointer select-none bg-[#0A1202] text-white outline-none hig-focus ${className}`}
       style={style}
     >
-      {/* 1. WebGL Liquid Gradient Shader Canvas (Framer micro-animation: hover dims opacity to 0.4 via 0.4s tween) */}
+      {/* 1. WebGL Liquid Gradient Shader Canvas - full luminous neon waves */}
       <motion.div
         className="absolute inset-0 pointer-events-none rounded-full overflow-hidden"
         variants={{
           initial: { opacity: 1 },
-          hover: { opacity: 0.4 },
+          hover: { opacity: 1 },
         }}
-        transition={{ duration: 0.4, ease: [0.4, 0, 0.6, 1] }}
+        transition={{ duration: 0.2 }}
       >
         <canvas
           ref={canvasRef}
@@ -507,21 +511,21 @@ export default function ShaderButton({
         />
       </motion.div>
 
-      {/* 2. Inset Specular Border Glow (Framer micro-animation: hover dims opacity to 0.4 via 0.4s tween) */}
+      {/* 2. Inset Specular Border Glow - vibrant illumination */}
       <motion.div
         aria-hidden="true"
         className="absolute inset-0 pointer-events-none rounded-full"
         style={{
           backgroundColor: 'rgba(10, 18, 2, 0.02)',
-          boxShadow: 'inset 0px 0px 14px 0px rgba(217, 249, 157, 0.42)',
+          boxShadow: 'inset 0px 0px 14px 0px rgba(217, 249, 157, 0.55)',
           mixBlendMode: 'screen',
           borderRadius: '9999px',
         }}
         variants={{
           initial: { opacity: 1 },
-          hover: { opacity: 0.4 },
+          hover: { opacity: 1 },
         }}
-        transition={{ duration: 0.4, ease: [0.4, 0, 0.6, 1] }}
+        transition={{ duration: 0.2 }}
       />
 
       {/* 3. Button Text */}
