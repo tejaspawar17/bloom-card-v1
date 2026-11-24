@@ -37,7 +37,7 @@ export function PostageStampNote({
 
       <div className="w-full h-full flex flex-col items-center justify-center relative -translate-y-[0.4cqw] z-10 antialiased" style={{ WebkitFontSmoothing: "antialiased", MozOsxFontSmoothing: "grayscale" }}>
         <div 
-          className="w-[90%] text-center text-[clamp(17.5px,7.1cqw,27px)] leading-[clamp(27px,11.2cqw,43px)] font-['Homemade_Apple',cursive] text-[#FF0000] antialiased" style={{ WebkitFontSmoothing: "antialiased", MozOsxFontSmoothing: "grayscale" }}
+          className="w-[92%] text-center text-[clamp(18.5px,7.6cqw,29.5px)] leading-[clamp(28px,11.8cqw,46px)] font-['Homemade_Apple',cursive] text-[#FF0000] antialiased" style={{ WebkitFontSmoothing: "antialiased", MozOsxFontSmoothing: "grayscale" }}
         >
           <span className="whitespace-pre-wrap">{message}</span>
         </div>

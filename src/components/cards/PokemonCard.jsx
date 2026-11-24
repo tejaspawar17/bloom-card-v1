@@ -198,7 +198,7 @@ export function PokemonCardBack({ onOpenEditMessage, onOpenQuickPicker, isPrevie
           <div className="w-full h-full border-[3px] border-[#FF0000] rounded-[12px] bg-white flex flex-col overflow-hidden relative">
             {/* Header */}
             <div className="w-full h-[17.9%] bg-[#FF0000] flex items-center justify-center shrink-0">
-              <span className="font-sans font-semibold text-[5.23cqw] text-white tracking-wide whitespace-nowrap">HELLO, You've Got Mail</span>
+              <span className="font-sans font-semibold text-[5.23cqw] text-white tracking-wide whitespace-nowrap">You've Got Mail</span>
             </div>
 
             {/* Content Body */}

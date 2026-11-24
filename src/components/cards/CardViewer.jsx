@@ -46,7 +46,9 @@ export default function CardViewer({ onConfirm, onOpenEditTitle, onOpenEditMessa
   useEffect(() => {
     const texturesToWarm = visualCardType === 'pokemon'
       ? ['/assets/pokemon-back/base-card-back.png', '/assets/pokemon-back/trainer-card-frame.png', '/assets/pokemon-back/trainer-card-textures.png']
-      : ['/textures/paper_back_blank_labels.png'];
+      : visualCardType === 'metallic'
+      ? ['/assets/bloom/metallic_back.png']
+      : ['/assets/bloom/paper_back_blank_labels.png'];
 
     texturesToWarm.forEach((src) => {
       const img = new Image();
@@ -147,6 +149,8 @@ export default function CardViewer({ onConfirm, onOpenEditTitle, onOpenEditMessa
 
   // Smoothly transition Customize Dock tabs when flipping sides & trigger 1-time Back hint
   useEffect(() => {
+    if (typeof window !== 'undefined' && window.innerWidth >= 1024) return;
+
     setQuickPickerMode((prev) => {
       if (!prev) return null;
       if (isFlipped) {
@@ -381,40 +385,41 @@ export default function CardViewer({ onConfirm, onOpenEditTitle, onOpenEditMessa
         </div>
 
         {/* 3. Interactive Card */}
-        <div onContextMenu={(e) => e.preventDefault()} className="perspective-container relative w-full h-full aspect-[688/960] no-callout">
-          <motion.div 
-              className="w-full h-full relative"
-              style={{ transformStyle: 'preserve-3d', willChange: 'transform' }}
-              animate={{ 
-                rotateY: (isFlipped ? 180 : 0) + spinDegrees
-              }} 
-              initial={false} 
-              transformTemplate={({ rotateY }) => `rotateY(${rotateY || '0deg'})`}
-              transition={{ 
-                rotateY: { duration: 0.62, ease: [0.22, 1, 0.36, 1] }
+        <div
+          onContextMenu={(e) => e.preventDefault()}
+          className="perspective-container relative w-full h-full aspect-[688/960] no-callout"
+          style={{ perspective: '1500px' }}
+        >
+          <div
+            className="w-full h-full relative"
+            style={{
+              transformStyle: 'preserve-3d',
+              willChange: 'transform',
+              transform: `rotateY(${(isFlipped ? 180 : 0) + spinDegrees}deg)`,
+              transition: 'transform 0.42s cubic-bezier(0.35, 0, 0.2, 1)',
+            }}
+          >
+            <div 
+              className={`absolute inset-0 ${isFlipped ? "pointer-events-none" : "pointer-events-auto"}`} 
+              style={{ 
+                backfaceVisibility: "hidden", 
+                WebkitBackfaceVisibility: "hidden", 
+                transform: "rotateY(0deg)"
               }}
             >
-              <div 
-                className={`absolute inset-0 ${isFlipped ? "pointer-events-none" : "pointer-events-auto"}`} 
-                style={{ 
-                  backfaceVisibility: "hidden", 
-                  WebkitBackfaceVisibility: "hidden", 
-                  transform: "rotateY(0deg)"
-                }}
-              >
-                {renderFront()}
-              </div>
-              <div 
-                className={`absolute inset-0 ${isFlipped ? "pointer-events-auto" : "pointer-events-none"}`} 
-                style={{ 
-                  backfaceVisibility: "hidden", 
-                  WebkitBackfaceVisibility: "hidden", 
-                  transform: "rotateY(180deg)"
-                }}
-              >
-                {renderBack()}
-              </div>
-            </motion.div>
+              {renderFront()}
+            </div>
+            <div 
+              className={`absolute inset-0 ${isFlipped ? "pointer-events-auto" : "pointer-events-none"}`} 
+              style={{ 
+                backfaceVisibility: "hidden", 
+                WebkitBackfaceVisibility: "hidden", 
+                transform: "rotateY(180deg)"
+              }}
+            >
+              {renderBack()}
+            </div>
+          </div>
 
           {/* Option A: Auto-fading Contextual Micro-Hint Pills (Mobile/Tablet only) */}
           <AnimatePresence>

@@ -1,16 +1,16 @@
 // Exact Bloom Card Data matching the UI Reference Screen
 
 export const OCCASIONS = [
-  { id: 'sorry', label: "I'm Sorry", emoji: 'pleading-face', defaultSubject: "I'm So Sorry,\nForgive Me?", defaultCardType: 'paper', defaultFlower: 'flower_1', defaultPokemon: 'gengar' },
-  { id: 'birthday', label: 'Birthday', emoji: 'birthday-cake', defaultSubject: 'Happy Birthday!\nBest Day!', defaultCardType: 'paper', defaultFlower: 'flower_2', defaultPokemon: 'psyduck' },
-  { id: 'celebration', label: 'Celebration', emoji: 'partying-face', defaultSubject: 'Big Congrats!\nCheers! ✨', defaultCardType: 'paper', defaultFlower: 'flower_3', defaultPokemon: 'oshawott' },
+  { id: 'sorry', label: "I'm Sorry", emoji: 'pleading-face', defaultSubject: "I Messed Up,\nSo Sorry", defaultCardType: 'paper', defaultFlower: 'flower_1', defaultPokemon: 'gengar' },
+  { id: 'birthday', label: 'Birthday', emoji: 'birthday-cake', defaultSubject: 'Happiest\nBirthday Ever', defaultCardType: 'paper', defaultFlower: 'flower_2', defaultPokemon: 'psyduck' },
+  { id: 'celebration', label: 'Celebration', emoji: 'partying-face', defaultSubject: 'Big Win!\nCheers To You', defaultCardType: 'paper', defaultFlower: 'flower_3', defaultPokemon: 'oshawott' },
   { id: 'thank_you', label: 'Thank You', emoji: 'growing-heart', defaultSubject: 'Thank You\nFor Everything', defaultCardType: 'paper', defaultFlower: 'flower_4', defaultPokemon: 'squirtle' },
-  { id: 'get_well', label: 'Get Well Soon', emoji: 'face-with-head-bandage', defaultSubject: 'Get Well Soon,\nRest Up!', defaultCardType: 'paper', defaultFlower: 'flower_5', defaultPokemon: 'psyduck' },
-  { id: 'miss_you', label: 'Miss You', emoji: 'smiling-face-with-tear', defaultSubject: 'Missing You\nEvery Day', defaultCardType: 'paper', defaultFlower: 'flower_6', defaultPokemon: 'opposites' },
+  { id: 'get_well', label: 'Get Well Soon', emoji: 'face-with-head-bandage', defaultSubject: 'Get Well Soon,\nTake Care', defaultCardType: 'paper', defaultFlower: 'flower_5', defaultPokemon: 'psyduck' },
+  { id: 'miss_you', label: 'Miss You', emoji: 'smiling-face-with-tear', defaultSubject: 'Wish You\nWere Here', defaultCardType: 'paper', defaultFlower: 'flower_6', defaultPokemon: 'opposites' },
   { id: 'love', label: 'Love', emoji: 'face-blowing-a-kiss', defaultSubject: 'All My Love,\nAlways Yours', defaultCardType: 'paper', defaultFlower: 'flower_7', defaultPokemon: 'opposites' },
-  { id: 'so_proud', label: 'So Proud', emoji: 'smiling-face', defaultSubject: 'You Did It!\nSo Proud!', defaultCardType: 'paper', defaultFlower: 'flower_8', defaultPokemon: 'squirtle' },
+  { id: 'so_proud', label: 'So Proud', emoji: 'smiling-face', defaultSubject: 'So Proud\nOf You', defaultCardType: 'paper', defaultFlower: 'flower_8', defaultPokemon: 'squirtle' },
   { id: 'sad', label: 'Sad', emoji: 'dizzy-face', defaultSubject: 'Here For You,\nAlways', defaultCardType: 'paper', defaultFlower: 'flower_9', defaultPokemon: 'psyduck' },
-  { id: 'angry', label: 'Angry', emoji: 'face-with-symbols-on-mouth', defaultSubject: 'Still Mad!\nTalk Soon.', defaultCardType: 'pokemon', defaultFlower: 'flower_10', defaultPokemon: 'oshawott' },
+  { id: 'angry', label: 'Angry', emoji: 'face-with-symbols-on-mouth', defaultSubject: 'Currently\nMad At You', defaultCardType: 'pokemon', defaultFlower: 'flower_10', defaultPokemon: 'oshawott' },
   { id: 'tired', label: 'Tired', emoji: 'melting-face', defaultSubject: 'Running On Low,\nNeed Rest', defaultCardType: 'paper', defaultFlower: 'flower_10', defaultPokemon: 'psyduck' },
   { id: 'homie', label: 'Homie', emoji: 'people-hugging', defaultSubject: 'Real Ones,\nHomie For Life', defaultCardType: 'pokemon', defaultFlower: 'flower_2', defaultPokemon: 'squirtle' },
 ];
@@ -82,7 +82,7 @@ export const DEFAULT_STATE = {
   selectedPokemon: 'gengar',
   selectedBackImage: 'landscape',
   selectedFlower: 'flower_1',
-  subject: "I'm So Sorry,\nForgive Me?",
+  subject: "I Messed Up,\nSo Sorry",
   message: '',
   to: '',
   from: '',

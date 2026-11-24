@@ -10,18 +10,8 @@ export function FlowerInfoPill({ variant }: { variant?: 'front' | 'back' }) {
   // Use the passed variant or fallback to activeSide for backward compatibility
   const side = variant || state.activeSide;
   const text = side === 'front' ? flower?.name : flower?.meaning;
-  const filterId = `bloom-liquid-glass-${state.cardType || 'paper'}-${side}`;
 
   return (
-    <>
-      <svg width="0" height="0" className="absolute pointer-events-none">
-        <filter id={filterId} x="-10%" y="-10%" width="120%" height="120%" colorInterpolationFilters="sRGB">
-          <feTurbulence type="fractalNoise" baseFrequency="0.015 0.08" numOctaves="1" result="noise" />
-          <feGaussianBlur in="SourceGraphic" stdDeviation="5" result="blurred" />
-          <feDisplacementMap in="blurred" in2="noise" scale="6" xChannelSelector="R" yChannelSelector="G" />
-        </filter>
-      </svg>
-
       <div 
         title={text}
         style={{ WebkitFontSmoothing: "antialiased", MozOsxFontSmoothing: "grayscale" }}
@@ -35,7 +25,7 @@ export function FlowerInfoPill({ variant }: { variant?: 'front' | 'back' }) {
         <div
           className="absolute inset-0 rounded-[62.5rem]"
           style={{
-            backdropFilter: `url(#${filterId}) blur(12px) saturate(160%) brightness(1.2)`,
+            backdropFilter: 'blur(12px) saturate(160%) brightness(1.2)',
             WebkitBackdropFilter: 'blur(12px) saturate(160%) brightness(1.2)',
             background: 'linear-gradient(180deg, rgba(255, 255, 255, 0.70) 0%, rgba(240, 240, 240, 0.50) 50%, rgba(250, 250, 250, 0.60) 100%)',
           }}
@@ -61,7 +51,6 @@ export function FlowerInfoPill({ variant }: { variant?: 'front' | 'back' }) {
           {text}
         </span>
       </div>
-    </>
   );
 }
 

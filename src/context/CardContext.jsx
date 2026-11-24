@@ -30,9 +30,9 @@ function cardReducer(state, action) {
     case 'TOGGLE_SIDE':
       return { ...state, activeSide: state.activeSide === 'front' ? 'back' : 'front' };
     case 'SET_SELECTED_POKEMON':
-      return { ...state, selectedPokemon: action.payload };
+      return { ...state, selectedPokemon: action.payload, activeSide: 'front' };
     case 'SET_SELECTED_FLOWER':
-      return { ...state, selectedFlower: action.payload };
+      return { ...state, selectedFlower: action.payload, activeSide: 'front' };
     case 'SET_BACK_IMAGE':
       return { ...state, selectedBackImage: action.payload };
     case 'SET_SUBJECT':

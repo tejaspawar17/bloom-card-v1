@@ -161,8 +161,6 @@
     z-index: 20;
   }.figma-panel-header {
     background: rgba(31, 31, 31, 0.55);
-    backdrop-filter: blur(3px);
-    -webkit-backdrop-filter: blur(3px);
     border-bottom: 0.67px solid rgba(255, 255, 255, 0.10);
   }
 
